@@ -1,0 +1,7 @@
+{
+    "language": "Español",
+    "helloWorld": "Hola Mundo!",
+    "hello": "Hola {username}",
+    "recent_users": "Usuarias recientes"
+    
+}

@@ -1,0 +1,91 @@
+{
+  "project_info": {
+    "project_number": "813756573374",
+    "firebase_url": "https://globelgirl-2c269-default-rtdb.firebaseio.com",
+    "project_id": "globelgirl-2c269",
+    "storage_bucket": "globelgirl-2c269.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:813756573374:android:983d34f47d18b58e12a0ef",
+        "android_client_info": {
+          "package_name": "com.certainity.simpleworld"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "813756573374-ks6mie1o9rnv5nj6kg1065s9lladoois.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.certainity.simpleworld",
+            "certificate_hash": "17e6357a4e36819c5effc2e47615f10078b97361"
+          }
+        },
+        {
+          "client_id": "813756573374-b07nefslur4ncltvs74pvsghn038hcau.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDx3Q1JEtUne8wWefRk2k1HkiaTBEduDMI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "813756573374-b07nefslur4ncltvs74pvsghn038hcau.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "813756573374-3hak1cd1uspb7knfnlqvaj01s21p32c8.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.globelgirl"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:813756573374:android:25d661c01f6dfc3512a0ef",
+        "android_client_info": {
+          "package_name": "ggn.liru.yang.net"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "813756573374-b07nefslur4ncltvs74pvsghn038hcau.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDx3Q1JEtUne8wWefRk2k1HkiaTBEduDMI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "813756573374-b07nefslur4ncltvs74pvsghn038hcau.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "813756573374-3hak1cd1uspb7knfnlqvaj01s21p32c8.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.globelgirl"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
