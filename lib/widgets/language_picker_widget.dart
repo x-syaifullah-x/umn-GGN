@@ -81,12 +81,10 @@ class LanguagePickerWidget extends StatelessWidget {
   }
 
   // Show Dialog function
-  void _showDialog(
-    buildcontext,
-  ) {
+  void _showDialog(buildContext) {
     // flutter defined function
     showDialog(
-      context: buildcontext,
+      context: buildContext,
       builder: (BuildContext context) {
         // return alert dialog object
         return Provider<LocaleProvider>(
@@ -94,7 +92,7 @@ class LanguagePickerWidget extends StatelessWidget {
           child: AlertDialog(
             title: const Text('Pick Your Language'),
             content: Container(
-              height: 150.0,
+              height: 160.0,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: <Widget>[
@@ -107,7 +105,7 @@ class LanguagePickerWidget extends StatelessWidget {
                     ],
                   ).onTap(() {
                     Navigator.pop(context);
-                    final provider = Provider.of<LocaleProvider>(buildcontext,
+                    final provider = Provider.of<LocaleProvider>(buildContext,
                         listen: false);
 
                     provider.setLocale(Locale('ar'));
@@ -124,7 +122,7 @@ class LanguagePickerWidget extends StatelessWidget {
                     ],
                   ).onTap(() {
                     Navigator.pop(context);
-                    final provider = Provider.of<LocaleProvider>(buildcontext,
+                    final provider = Provider.of<LocaleProvider>(buildContext,
                         listen: false);
 
                     provider.setLocale(Locale('hi'));
@@ -141,7 +139,7 @@ class LanguagePickerWidget extends StatelessWidget {
                     ],
                   ).onTap(() {
                     Navigator.pop(context);
-                    final provider = Provider.of<LocaleProvider>(buildcontext,
+                    final provider = Provider.of<LocaleProvider>(buildContext,
                         listen: false);
 
                     provider.setLocale(Locale('es'));
@@ -158,10 +156,25 @@ class LanguagePickerWidget extends StatelessWidget {
                     ],
                   ).onTap(() {
                     Navigator.pop(context);
-                    final provider = Provider.of<LocaleProvider>(buildcontext,
+                    final provider = Provider.of<LocaleProvider>(buildContext,
                         listen: false);
-
                     provider.setLocale(Locale('en'));
+                  }),
+                  const SizedBox(
+                    height: 20.0,
+                  ),
+                  Row(
+                    children: <Widget>[
+                      Padding(
+                        padding: EdgeInsets.only(left: 8.0),
+                        child: Text(L10n.getFlagnName('zh')),
+                      ),
+                    ],
+                  ).onTap(() {
+                    Navigator.pop(context);
+                    final provider = Provider.of<LocaleProvider>(buildContext,
+                        listen: false);
+                    provider.setLocale(Locale('zh'));
                   }),
                 ],
               ),

@@ -6,29 +6,29 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import "package:flutter/material.dart";
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:nb_utils/nb_utils.dart';
+import 'package:simpleworld/data/reaction_data.dart' as Reaction;
 import 'package:simpleworld/models/user.dart';
 import 'package:simpleworld/pages/activity_feed.dart';
+import 'package:simpleworld/pages/all_videos.dart';
+import 'package:simpleworld/pages/auth/login_page.dart';
 import 'package:simpleworld/pages/chat/simpleworld_chat_main.dart';
+import 'package:simpleworld/pages/comming_soon_page.dart';
+import 'package:simpleworld/pages/edit_profile.dart';
+import 'package:simpleworld/pages/home.dart';
 import 'package:simpleworld/pages/menu/all_pdfs.dart';
 import 'package:simpleworld/pages/menu/all_stories.dart';
-import 'package:simpleworld/pages/comming_soon_page.dart';
 import 'package:simpleworld/pages/menu/dialogs/vip_dialog.dart';
 import 'package:simpleworld/pages/menu/discover.dart';
-import 'package:simpleworld/pages/all_videos.dart';
-import 'package:simpleworld/pages/edit_profile.dart';
 import 'package:simpleworld/pages/menu/help_support.dart';
-import 'package:simpleworld/pages/home.dart';
-import 'package:simpleworld/pages/auth/login_page.dart';
 import 'package:simpleworld/pages/users.dart';
 import 'package:simpleworld/share_preference/preferences_key.dart';
 import 'package:simpleworld/widgets/header.dart';
 import 'package:simpleworld/widgets/language_picker_widget.dart';
 import 'package:simpleworld/widgets/progress.dart';
 import 'package:simpleworld/widgets/simple_world_widgets.dart';
-import 'package:simpleworld/data/reaction_data.dart' as Reaction;
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class SettingsPage extends StatefulWidget {
   final String? currentUserId;
@@ -63,12 +63,6 @@ class _SettingsState extends State<SettingsPage> {
     setState(() {
       isLoading = false;
     });
-  }
-
-  logout() async {
-    await googleSignIn.signOut();
-    Navigator.push(
-        context, MaterialPageRoute(builder: (context) => const LoginPage()));
   }
 
   Future<void> _signOut() async {
@@ -602,49 +596,47 @@ class _SettingsState extends State<SettingsPage> {
                     },
                   ),
                 ),
-          ListTile(
-            title: Container(
-              margin: const EdgeInsets.only(top: 10.0),
-              height: 38,
-              width: (MediaQuery.of(context).size.width * 0.4),
-              decoration: BoxDecoration(
-                color: Colors.grey[300],
-                borderRadius: const BorderRadius.all(
-                  Radius.circular(5.0),
-                ),
-              ),
-              child: Center(
-                child: Text(
-                  "Delete User",
-                  textAlign: TextAlign.left,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.w700,
-                    fontSize: 16,
-                    letterSpacing: 0.0,
-                    color: Colors.black,
+                ListTile(
+                  title: Container(
+                    margin: const EdgeInsets.only(top: 10.0),
+                    height: 38,
+                    width: (MediaQuery.of(context).size.width * 0.4),
+                    decoration: BoxDecoration(
+                      color: Colors.grey[300],
+                      borderRadius: const BorderRadius.all(
+                        Radius.circular(5.0),
+                      ),
+                    ),
+                    child: Center(
+                      child: Text(
+                        "Delete User",
+                        textAlign: TextAlign.left,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.w700,
+                          fontSize: 16,
+                          letterSpacing: 0.0,
+                          color: Colors.black,
+                        ),
+                      ),
+                    ),
+                  ).onTap(
+                    () async {
+                      var user = FirebaseAuth.instance.currentUser!;
+                      user.delete();
+                      SharedPreferences preferences =
+                          await SharedPreferences.getInstance();
+                      preferences
+                          .remove(SharedPreferencesKey.LOGGED_IN_USERRDATA)
+                          .then((_) async {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const LoginPage()),
+                        );
+                      });
+                    },
                   ),
                 ),
-              ),
-            ).onTap(
-                  () async {
-                    var user = FirebaseAuth.instance.currentUser!;
-                    user.delete();
-                    SharedPreferences preferences =
-                    await SharedPreferences.getInstance();
-                    preferences
-                        .remove(SharedPreferencesKey.LOGGED_IN_USERRDATA)
-                        .then((_) async {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const LoginPage()),
-                      );
-                    });
-
-
-              },
-            ),
-          ),
               ]),
       ),
     );

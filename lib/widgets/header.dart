@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 header(context,
     {bool isAppTitle = false,
-    bool iscenterTitle = false,
+    bool isCenterTitle = false,
     String? titleText,
     removeBackButton = false,
     showMessengerButton = false}) {
@@ -19,7 +19,7 @@ header(context,
             fontSize: 20,
           ),
     ),
-    centerTitle: iscenterTitle ? true : false,
+    centerTitle: isCenterTitle ? true : false,
     backgroundColor: Theme.of(context).scaffoldBackgroundColor,
     elevation: 0.0,
   );

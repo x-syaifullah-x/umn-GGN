@@ -4,11 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 class AnchoredAd extends StatefulWidget {
+  const AnchoredAd({Key? key}) : super(key: key);
+
   @override
-  _AnchoredAdState createState() => _AnchoredAdState();
+  AnchoredAdState createState() => AnchoredAdState();
 }
 
-class _AnchoredAdState extends State<AnchoredAd> {
+class AnchoredAdState extends State<AnchoredAd> {
   BannerAd? _anchoredAdaptiveAd;
   bool _isLoaded = false;
   late Orientation _currentOrientation;
@@ -17,19 +19,22 @@ class _AnchoredAdState extends State<AnchoredAd> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     _currentOrientation = MediaQuery.of(context).orientation;
-    _loadAd();
+    _loadAd(context);
   }
 
-  Future<void> _loadAd() async {
+  Future<void> _loadAd(BuildContext context) async {
     await _anchoredAdaptiveAd?.dispose();
     setState(() {
       _anchoredAdaptiveAd = null;
       _isLoaded = false;
     });
 
+    if (!mounted) return;
+    var truncate = MediaQuery.of(context).size.width.truncate();
     final AnchoredAdaptiveBannerAdSize? size =
         await AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(
-            MediaQuery.of(context).size.width.truncate());
+      truncate,
+    );
 
     if (size == null) {
       print('Unable to get height of anchored banner.');
@@ -41,7 +46,7 @@ class _AnchoredAdState extends State<AnchoredAd> {
           ? 'ca-app-pub-6893234291134320/6968645751'
           : 'ca-app-pub-5132780917564352/9977646966',
       size: size,
-      request: AdRequest(),
+      request: const AdRequest(),
       listener: BannerAdListener(
         onAdLoaded: (Ad ad) {
           print('$ad loaded: ${ad.responseInfo}');
@@ -56,6 +61,7 @@ class _AnchoredAdState extends State<AnchoredAd> {
         },
       ),
     );
+
     return _anchoredAdaptiveAd!.load();
   }
 
@@ -74,7 +80,7 @@ class _AnchoredAdState extends State<AnchoredAd> {
         }
         if (_currentOrientation != orientation) {
           _currentOrientation = orientation;
-          _loadAd();
+          _loadAd(context);
         }
         return Container();
       },

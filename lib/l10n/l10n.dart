@@ -6,6 +6,7 @@ class L10n {
     const Locale('ar'),
     const Locale('hi'),
     const Locale('es'),
+    const Locale('zh')
     // const Locale('de'),
   ];
 
@@ -17,6 +18,8 @@ class L10n {
         return '🇮🇳';
       case 'es':
         return '🇪🇸';
+      case 'zh':
+        return '🇨🇳';
       // case 'de':
       //   return '🇩🇪';
       case 'en':
@@ -33,6 +36,8 @@ class L10n {
         return '🇮🇳 Hindhi';
       case 'es':
         return '🇪🇸 Spanish';
+      case 'zh':
+        return '🇨🇳 Chinese';
       // case 'de':
       //   return '🇩🇪';
       case 'en':

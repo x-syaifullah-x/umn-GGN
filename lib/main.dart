@@ -20,7 +20,9 @@ Future<void> main() async {
   await Firebase.initializeApp();
   MobileAds.instance.initialize();
 
-
+  // MobileAds.instance.updateRequestConfiguration(
+  //   RequestConfiguration(testDeviceIds: ['5DF3DDDAEA78FE6D718E9FF8B6259412']),
+  // );
   await initialize();
 
   SharedPreferences.getInstance().then(
