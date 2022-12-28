@@ -86,8 +86,9 @@ class ActivityFeedState extends State<ActivityFeed> {
                   child: ListView.separated(
                     itemCount: data.docs.length,
                     itemBuilder: (context, int index) {
-                      List feedItem = data.docs;
-                      return buildItem(feedItem, index);
+                      QueryDocumentSnapshot<Object?> feedItem =
+                          data.docs[index];
+                      return _buildItem(context, feedItem);
                     },
                     separatorBuilder: (context, index) {
                       return const Divider();
@@ -134,17 +135,25 @@ class ActivityFeedState extends State<ActivityFeed> {
     }
   }
 
-  Widget buildItem(List feedItem, int index) {
+  Widget _buildItem(
+      BuildContext context, QueryDocumentSnapshot<Object?> feedItem) {
     return Padding(
         padding: const EdgeInsets.only(bottom: 5.0),
         child: ListTile(
           title: GestureDetector(
             onTap: () {
+              String type = feedItem['type'];
+              String userID;
+              if (type == 'message') {
+                userID = feedItem['fromId'];
+              } else {
+                userID = feedItem['userId'];
+              }
               Navigator.push(
                 context,
                 MaterialPageRoute(
                   builder: (context) => Profile(
-                    profileId: feedItem[index]['userId'],
+                    profileId: userID,
                     reactions: Reaction.reactions,
                   ),
                 ),
@@ -159,29 +168,26 @@ class ActivityFeedState extends State<ActivityFeed> {
                   ),
                   children: [
                     TextSpan(
-                      text: feedItem[index]['username'],
+                      text: feedItem['username'],
                       style: Theme.of(context)
                           .textTheme
                           .bodyText1
                           ?.copyWith(fontSize: 16),
                     ),
                     TextSpan(
-                      text: feedItem[index]['type'] != null &&
-                              feedItem[index]['type'] == 'like'
+                      text: feedItem['type'] != null &&
+                              feedItem['type'] == 'like'
                           ? " reacted to your post"
-                          : feedItem[index]['type'] != null &&
-                                  feedItem[index]['type'] == 'follow'
+                          : feedItem['type'] != null &&
+                                  feedItem['type'] == 'follow'
                               ? " is following you"
-                              : feedItem[index]['type'] != null &&
-                                      feedItem[index]['type'] == 'comment'
-                                  ? " Commented on your post: " +
-                                      feedItem[index]['commentData']
-                                  : feedItem[index]['type'] != null &&
-                                          feedItem[index]['type'] == 'message'
-                                      ? " Sent you a message: " +
-                                          feedItem[index]['contentMessage']
-                                      : " Error: Unknown type " +
-                                          feedItem[index]['type'],
+                              : feedItem['type'] != null &&
+                                      feedItem['type'] == 'comment'
+                                  ? " Commented on your post: ${feedItem['commentData']}"
+                                  : feedItem['type'] != null &&
+                                          feedItem['type'] == 'message'
+                                      ? " Sent you a message: ${feedItem['contentMessage']}"
+                                      : " Error: Unknown type ${feedItem['type']}",
                       style: Theme.of(context)
                           .textTheme
                           .bodyText2
@@ -191,7 +197,7 @@ class ActivityFeedState extends State<ActivityFeed> {
             ),
           ),
           subtitle: Text(
-            time_ago.format(feedItem[index]['timestamp'].toDate()),
+            time_ago.format(feedItem['timestamp'].toDate()),
             style: TextStyle(
               color: Colors.grey[600],
               fontSize: 12.0,
@@ -203,7 +209,7 @@ class ActivityFeedState extends State<ActivityFeed> {
                 context,
                 MaterialPageRoute(
                   builder: (context) => Profile(
-                    profileId: feedItem[index]['userId'],
+                    profileId: feedItem['userId'],
                     reactions: Reaction.reactions,
                   ),
                 ),
@@ -211,8 +217,8 @@ class ActivityFeedState extends State<ActivityFeed> {
             },
             child: ClipRRect(
               borderRadius: BorderRadius.circular(15.0),
-              child: feedItem[index]['userProfileImg'] == null ||
-                      feedItem[index]['userProfileImg'].isEmpty
+              child: feedItem['userProfileImg'] == null ||
+                      feedItem['userProfileImg'].isEmpty
                   ? Container(
                       decoration: BoxDecoration(
                         color: const Color(0xFF003a54),
@@ -224,16 +230,15 @@ class ActivityFeedState extends State<ActivityFeed> {
                       ),
                     )
                   : CachedNetworkImage(
-                      imageUrl: feedItem[index]['userProfileImg'],
+                      imageUrl: feedItem['userProfileImg'],
                       height: 50.0,
                       width: 50.0,
                       fit: BoxFit.cover,
                     ),
             ),
           ),
-          trailing: feedItem[index]['type'] == 'like' ||
-                  feedItem[index]['type'] == 'comment'
-              ? feedItem[index]['mediaUrl'] != null
+          trailing: feedItem['type'] == 'like' || feedItem['type'] == 'comment'
+              ? feedItem['mediaUrl'] != null
                   ? SizedBox(
                       height: 50.0,
                       width: 50.0,
@@ -245,7 +250,7 @@ class ActivityFeedState extends State<ActivityFeed> {
                             image: DecorationImage(
                               fit: BoxFit.cover,
                               image: CachedNetworkImageProvider(
-                                  feedItem[index]['mediaUrl']),
+                                  feedItem['mediaUrl']),
                             ),
                           ),
                         ),
@@ -256,7 +261,7 @@ class ActivityFeedState extends State<ActivityFeed> {
                         MaterialPageRoute(
                           builder: (context) => PostScreen(
                             userId: currentUserId,
-                            postId: feedItem[index]['postId'],
+                            postId: feedItem['postId'],
                           ),
                         ),
                       );

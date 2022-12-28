@@ -35,16 +35,17 @@ class Profile extends StatefulWidget {
   final String? profileId;
   final List<Reaction<String>> reactions;
 
-  Profile({
+  const Profile({
+    Key? key,
     required this.profileId,
     required this.reactions,
-  });
+  }) : super(key: key);
 
   @override
-  _ProfileState createState() => _ProfileState();
+  ProfileState createState() => ProfileState();
 }
 
-class _ProfileState extends State<Profile> {
+class ProfileState extends State<Profile> {
   final String? currentUserId = globalID;
   String postOrientation = "list";
   bool isFollowing = false;

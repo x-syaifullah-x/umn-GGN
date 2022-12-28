@@ -10,10 +10,10 @@ class SimpleWorldChat extends StatefulWidget {
   const SimpleWorldChat({Key? key, this.userId}) : super(key: key);
 
   @override
-  _SimpleWorldChatState createState() => _SimpleWorldChatState();
+  SimpleWorldChatState createState() => SimpleWorldChatState();
 }
 
-class _SimpleWorldChatState extends State<SimpleWorldChat>
+class SimpleWorldChatState extends State<SimpleWorldChat>
     with SingleTickerProviderStateMixin {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 

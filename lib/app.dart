@@ -5,6 +5,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -14,37 +15,39 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:simpleworld/config/palette.dart';
 import 'package:simpleworld/l10n/l10n.dart';
 import 'package:simpleworld/pages/WalkThroughScreen.dart';
-import 'package:simpleworld/pages/home.dart';
 import 'package:simpleworld/pages/auth/login_page.dart';
+import 'package:simpleworld/pages/home.dart';
 import 'package:simpleworld/provider/locale_provider.dart';
 import 'package:simpleworld/share_preference/preferences_key.dart';
 import 'package:simpleworld/widgets/simple_world_widgets.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class App extends StatefulWidget {
   final SharedPreferences prefs;
   final AdaptiveThemeMode? savedThemeMode;
+
   static void setLocale(BuildContext context, Locale newLocale) {}
 
   const App(this.prefs, this.savedThemeMode, {Key? key}) : super(key: key);
 
   @override
-  _AppState createState() => _AppState();
+  AppState createState() => AppState();
 }
 
-class _AppState extends State<App> with WidgetsBindingObserver {
-  static FlutterLocalNotificationsPlugin notificationsPlugin =FlutterLocalNotificationsPlugin() ;
+class AppState extends State<App> with WidgetsBindingObserver {
+  static FlutterLocalNotificationsPlugin notificationsPlugin =
+      FlutterLocalNotificationsPlugin();
+
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     _configNotification();
-
   }
 
   Future<void> _configNotification() async {
     print("firebase inti");
-    print( await FirebaseMessaging.instance.getToken());
+    print(await FirebaseMessaging.instance.getToken());
+
     /// init firebase push notification
     final FirebaseMessaging fcmMessaging = FirebaseMessaging.instance;
     await fcmMessaging.requestPermission(
@@ -56,15 +59,13 @@ class _AppState extends State<App> with WidgetsBindingObserver {
         provisional: true,
         badge: true);
 
-
     fcmMessaging.getInitialMessage().then((RemoteMessage? message) {
       if (message != null) {
-        if(Platform.isIOS){
+        if (Platform.isIOS) {
           showLocalNotificationios(message);
         } else {
           showLocalNotification(message);
         }
-
       }
     });
 
@@ -72,7 +73,7 @@ class _AppState extends State<App> with WidgetsBindingObserver {
     FirebaseMessaging.onMessage.listen((RemoteMessage? message) async {
       print("+++ onMessage +++ : " + message!.notification!.title!);
 
-      if(Platform.isIOS){
+      if (Platform.isIOS) {
         showLocalNotificationios(message);
       } else {
         showLocalNotification(message);
@@ -81,34 +82,28 @@ class _AppState extends State<App> with WidgetsBindingObserver {
 
     FirebaseMessaging.onMessageOpenedApp.listen((event) async {
       print("+++ onMessageOpenedApp +++ : " + event.toString());
-
-
     });
 
     /// init local notification
 
     final NotificationAppLaunchDetails? notificationAppLaunchDetail =
-    await notificationsPlugin.getNotificationAppLaunchDetails();
-    if (notificationAppLaunchDetail?.didNotificationLaunchApp ?? false) {
-
-
-    }
+        await notificationsPlugin.getNotificationAppLaunchDetails();
+    if (notificationAppLaunchDetail?.didNotificationLaunchApp ?? false) {}
 
     const AndroidInitializationSettings initializationSettingsAndroid =
-    AndroidInitializationSettings('@mipmap/ic_launcher');
+        AndroidInitializationSettings('@mipmap/ic_launcher');
 
     final DarwinInitializationSettings initializationSettingsDarwin =
-    DarwinInitializationSettings(
-        );
+        DarwinInitializationSettings();
     final InitializationSettings initializationSettings =
-    InitializationSettings(
-        android: initializationSettingsAndroid,
-        iOS:initializationSettingsDarwin);
+        InitializationSettings(
+            android: initializationSettingsAndroid,
+            iOS: initializationSettingsDarwin);
     await notificationsPlugin.initialize(initializationSettings);
- //  notificationsPlugin.periodicallyShow(11111, "hkb", "HKKKB", INter, notificationDetails)
-    }
+    //  notificationsPlugin.periodicallyShow(11111, "hkb", "HKKKB", INter, notificationDetails)
+  }
 
-  showLocalNotificationios(RemoteMessage message) async{
+  showLocalNotificationios(RemoteMessage message) async {
     RemoteNotification? notification = message.notification;
     AndroidNotification? android = message.notification!.android;
     AppleNotification? apple = message.notification!.apple;
@@ -117,62 +112,56 @@ class _AppState extends State<App> with WidgetsBindingObserver {
         notification.hashCode,
         notification.body,
         notification.title,
-
         NotificationDetails(
             android: android != null
                 ? AndroidNotificationDetails("1", "ContestKnowledge",
-                channelDescription: "Notification",
-                priority: Priority.values[android.priority.index],
-                color: Colors.blue,
-                subText: notification.title,
-                importance: Importance.high,
-                icon: AndroidInitializationSettings('@mipmap/ic_launcher')
-                    .defaultIcon)
+                    channelDescription: "Notification",
+                    priority: Priority.values[android.priority.index],
+                    color: Colors.blue,
+                    subText: notification.title,
+                    importance: Importance.high,
+                    icon: AndroidInitializationSettings('@mipmap/ic_launcher')
+                        .defaultIcon)
                 : null,
-            iOS: apple!=null ?DarwinNotificationDetails(
-              subtitle: notification.apple!.subtitle,
-            ):null),
+            iOS: apple != null
+                ? DarwinNotificationDetails(
+                    subtitle: notification.apple!.subtitle,
+                  )
+                : null),
         payload: message.data.toString(),
       );
     }
   }
 
-
-
   Future<void> showLocalNotification(RemoteMessage message) async {
     RemoteNotification? notification = message.notification;
     print(notification!.apple);
-   var android = message.notification?.title!;
+    var android = message.notification?.title!;
     if (notification != null) {
       print(notification.title);
       await notificationsPlugin.show(
-        notification.hashCode,
-        notification.title,
-        notification.body,
-        NotificationDetails(
+          notification.hashCode,
+          notification.title,
+          notification.body,
+          NotificationDetails(
             android: android != null
                 ? AndroidNotificationDetails("1", "ContestKnowledge",
-                channelDescription: "Notification",
-
-
-                importance: Importance.high,
-                icon: AndroidInitializationSettings('@mipmap/ic_launcher')
-                    .defaultIcon)
+                    channelDescription: "Notification",
+                    importance: Importance.high,
+                    icon: AndroidInitializationSettings('@mipmap/ic_launcher')
+                        .defaultIcon)
                 : AndroidNotificationDetails("1", "ContestKnowledge",
-                channelDescription: "Notification",
-
-
-                importance: Importance.high,
-                icon: AndroidInitializationSettings('@mipmap/ic_launcher')
-                    .defaultIcon),
-        )
-      );
+                    channelDescription: "Notification",
+                    importance: Importance.high,
+                    icon: AndroidInitializationSettings('@mipmap/ic_launcher')
+                        .defaultIcon),
+          ));
     }
   }
+
   Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
     print("++++ MESSAGE RECEIVED IN BACKGROUND  +++");
   }
-
 
   @override
   Widget build(BuildContext context) => ChangeNotifierProvider(
@@ -180,6 +169,8 @@ class _AppState extends State<App> with WidgetsBindingObserver {
       builder: (context, child) {
         final provider = Provider.of<LocaleProvider>(context);
 
+        String locale = widget.prefs.getString("locale") ?? 'en';
+        provider.setLocale(Locale(locale));
         return AdaptiveTheme(
           light: ThemeData(
               brightness: Brightness.light,
