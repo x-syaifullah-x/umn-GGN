@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 
-header(context,
-    {bool isAppTitle = false,
-    bool isCenterTitle = false,
-    String? titleText,
-    removeBackButton = false,
-    showMessengerButton = false}) {
+header(
+  context, {
+  bool isAppTitle = false,
+  bool isCenterTitle = false,
+  String? titleText,
+  removeBackButton = false,
+  showMessengerButton = false,
+}) {
   return AppBar(
     toolbarHeight: 50,
     iconTheme: IconThemeData(

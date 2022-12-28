@@ -1,7 +1,6 @@
 // ignore_for_file: unused_element
 
 import 'dart:convert';
-import 'dart:io';
 import 'dart:math';
 
 import 'package:adaptive_theme/adaptive_theme.dart';
@@ -12,23 +11,24 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-
+import 'package:nb_utils/nb_utils.dart';
 import 'package:simpleworld/models/user.dart';
 import 'package:simpleworld/pages/auth/add_credit_to_account.dart';
 import 'package:simpleworld/pages/auth/create_account.dart';
 import 'package:simpleworld/pages/auth/forgotpass.dart';
-import 'package:simpleworld/pages/home.dart';
 import 'package:simpleworld/pages/auth/signup_page.dart';
+import 'package:simpleworld/pages/home.dart';
 import 'package:simpleworld/pages/menu/term_of_use.dart';
 import 'package:simpleworld/share_preference/preferences_key.dart';
 import 'package:simpleworld/widgets/bezier_container.dart';
-import 'package:nb_utils/nb_utils.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:simpleworld/widgets/language_picker_widget_home.dart';
 import 'package:simpleworld/widgets/progress.dart';
 import 'package:simpleworld/widgets/simple_world_widgets.dart';
+
+import '../../widgets/anchored_adaptive_ads.dart';
 
 GloabalUser? currentUser;
 
@@ -38,10 +38,10 @@ class LoginPage extends StatefulWidget {
   final String? title;
 
   @override
-  _LoginPageState createState() => _LoginPageState();
+  LoginPageState createState() => LoginPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class LoginPageState extends State<LoginPage> {
   bool isLoading = false;
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
@@ -181,21 +181,19 @@ class _LoginPageState extends State<LoginPage> {
                 isLoading = false;
               });
               if (peerData['username'].length > 0) {
-                if (peerData.data()!.containsKey('credit_points') ) {
-                  if (peerData['credit_points']== 0 ) {
-                  Navigator.of(context).pushReplacement(
-                    CupertinoPageRoute(
-                      builder: (context) => AddCreditToAccount(
-                        userId: globalID,
-                      ),
-                    ),
-                  );
-                }  else {
+                if (peerData.data()!.containsKey('credit_points')) {
+                  if (peerData['credit_points'] == 0) {
                     Navigator.of(context).pushReplacement(
-                        CupertinoPageRoute(
+                      CupertinoPageRoute(
+                        builder: (context) => AddCreditToAccount(
+                          userId: globalID,
+                        ),
+                      ),
+                    );
+                  } else {
+                    Navigator.of(context).pushReplacement(CupertinoPageRoute(
                         builder: (context) => Home(userId: globalID)));
                   }
-
                 } else {
                   Navigator.of(context).pushReplacement(
                     CupertinoPageRoute(
@@ -383,9 +381,7 @@ class _LoginPageState extends State<LoginPage> {
       padding: const EdgeInsets.all(6.0),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-
-        ],
+        children: [],
       ),
     );
   }
@@ -499,12 +495,12 @@ class _LoginPageState extends State<LoginPage> {
 
         if (recipientId == userId) {
           print("Notification shown!");
-          SnackBar snackbar = SnackBar(
+          SnackBar snackBar = SnackBar(
               content: Text(
             body,
             overflow: TextOverflow.ellipsis,
           ));
-          ScaffoldMessenger.of(context).showSnackBar(snackbar);
+          ScaffoldMessenger.of(context).showSnackBar(snackBar);
         }
       },
     );
@@ -546,7 +542,7 @@ class _LoginPageState extends State<LoginPage> {
     return InkWell(
       onTap: () {
         Navigator.push(context,
-            MaterialPageRoute(builder: (context) => const TermofUsePage()));
+            MaterialPageRoute(builder: (context) => const TermOfUsePage()));
       },
       child: Container(
         padding: const EdgeInsets.all(15),
@@ -648,13 +644,6 @@ class _LoginPageState extends State<LoginPage> {
     final nonce = sha256ofString(rawNonce);
     UserCredential userCredential;
 
-
-
-
-
-
-
-
     setState(() {
       isLoading = false;
     });
@@ -673,59 +662,67 @@ class _LoginPageState extends State<LoginPage> {
         body: SizedBox(
           height: height,
           child: Stack(
-            children: <Widget>[
-              Positioned(
-                  top: -height * .15,
-                  right: -MediaQuery.of(context).size.width * .4,
-                  child: const BezierContainer()),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Container(
-                        margin: const EdgeInsets.only(top: 20),
-                        alignment: Alignment.bottomLeft,
-                        child: Row(
-                          children: [
-                            IconButton(
-                              onPressed: () {
-                                if (mode == AdaptiveThemeMode.light) {
-                                  AdaptiveTheme.of(context).setDark();
-                                } else {
-                                  AdaptiveTheme.of(context).setLight();
-                                }
-                              },
-                              icon: mode == AdaptiveThemeMode.light
-                                  ? const Icon(Icons.light_mode)
-                                  : const Icon(Icons.dark_mode),
+            alignment: AlignmentDirectional.bottomCenter,
+            children: [
+              Stack(
+                children: <Widget>[
+                  Positioned(
+                      top: -height * .15,
+                      right: -MediaQuery.of(context).size.width * .4,
+                      child: const BezierContainer()),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: SingleChildScrollView(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Container(
+                            margin: const EdgeInsets.only(top: 20),
+                            alignment: Alignment.bottomLeft,
+                            child: Row(
+                              children: [
+                                IconButton(
+                                  onPressed: () {
+                                    if (mode == AdaptiveThemeMode.light) {
+                                      AdaptiveTheme.of(context).setDark();
+                                    } else {
+                                      AdaptiveTheme.of(context).setLight();
+                                    }
+                                  },
+                                  icon: mode == AdaptiveThemeMode.light
+                                      ? const Icon(Icons.light_mode)
+                                      : const Icon(Icons.dark_mode),
+                                ),
+                                const LanguagePickerWidgetHome(),
+                              ],
                             ),
-                            LanguagePickerWidgetHome(),
-                          ],
-                        ),
+                          ),
+                          SizedBox(height: height * .12),
+                          _title(),
+                          const SizedBox(height: 50),
+                          _emailPasswordWidget(),
+                          const SizedBox(height: 20),
+                          _submitButton(),
+                          _forgotPassword(),
+                          _divider(),
+                          isApple ? _iosButton() : Container(),
+                          SizedBox(height: height * .055),
+                          _createAccount(),
+                          terms(),
+                          const SizedBox(
+                            height: 70,
+                          )
+                        ],
                       ),
-                      SizedBox(height: height * .12),
-                      _title(),
-                      const SizedBox(height: 50),
-                      _emailPasswordWidget(),
-                      const SizedBox(height: 20),
-                      _submitButton(),
-                      _forgotPassword(),
-                      _divider(),
-
-                      isApple ? _iosButton() : Container(),
-                      SizedBox(height: height * .055),
-                      _createAccount(),
-                      terms(),
-                    ],
+                    ),
                   ),
-                ),
+                  isLoading == true
+                      ? Center(child: circularProgress())
+                      : Container(),
+                ],
               ),
-              isLoading == true
-                  ? Center(child: circularProgress())
-                  : Container(),
+              const AnchoredAd()
             ],
           ),
         ));

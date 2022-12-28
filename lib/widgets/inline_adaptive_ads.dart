@@ -1,12 +1,18 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:nb_utils/nb_utils.dart';
+import 'package:nb_utils/nb_utils.dart';
 
 class InlineAdaptiveAds extends StatefulWidget {
+  const InlineAdaptiveAds({Key? key}) : super(key: key);
+
   @override
-  _InlineAdaptiveAdsState createState() => _InlineAdaptiveAdsState();
+  InlineAdaptiveAdsState createState() => InlineAdaptiveAdsState();
 }
 
-class _InlineAdaptiveAdsState extends State<InlineAdaptiveAds> {
+class InlineAdaptiveAdsState extends State<InlineAdaptiveAds> {
   static const _insets = 16.0;
   AdManagerBannerAd? _inlineAdaptiveAd;
   bool _isLoaded = false;
@@ -33,9 +39,11 @@ class _InlineAdaptiveAdsState extends State<InlineAdaptiveAds> {
         _adWidth.truncate());
 
     _inlineAdaptiveAd = AdManagerBannerAd(
-      adUnitId: 'ca-app-pub-6893234291134320/6968645751',
+      adUnitId: Platform.isAndroid
+          ? 'ca-app-pub-6893234291134320/6968645751'
+          : 'ca-app-pub-5132780917564352/9977646966',
       sizes: [size],
-      request: AdManagerAdRequest(),
+      request: const AdManagerAdRequest(),
       listener: AdManagerBannerAdListener(
         onAdLoaded: (Ad ad) async {
           print('Inline adaptive banner loaded: ${ad.responseInfo}');

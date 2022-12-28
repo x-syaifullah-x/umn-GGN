@@ -3,7 +3,7 @@ import "package:flutter/material.dart";
 import 'package:nb_utils/nb_utils.dart';
 import 'package:simpleworld/pages/menu/about_us.dart';
 import 'package:simpleworld/pages/menu/privacy_policy.dart';
-import 'package:simpleworld/pages/menu/term_of_use.dart';
+import 'package:simpleworld/pages/menu/we_are_hiring.dart';
 import 'package:simpleworld/widgets/header.dart';
 import 'package:simpleworld/widgets/progress.dart';
 
@@ -108,7 +108,7 @@ class _SettingsState extends State<HelpSupportPage> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: const <Widget>[
-                              Text('Term of Use',
+                              Text('WE ARE HIRING',
                                   style: TextStyle(
                                       fontSize: 16.0,
                                       fontWeight: FontWeight.bold))
@@ -119,7 +119,7 @@ class _SettingsState extends State<HelpSupportPage> {
                         Navigator.push(
                             context,
                             CupertinoPageRoute(
-                              builder: (context) => TermofUsePage(
+                              builder: (context) => WeAreHiring(
                                 currentUserId: widget.currentUserId,
                               ),
                             ));

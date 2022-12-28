@@ -1,16 +1,16 @@
 import "package:flutter/material.dart";
 import 'package:webview_flutter/webview_flutter.dart';
 
-class PrivacyPolicyPage extends StatefulWidget {
+class WeAreHiring extends StatefulWidget {
   final String? currentUserId;
 
-  const PrivacyPolicyPage({Key? key, this.currentUserId}) : super(key: key);
+  const WeAreHiring({Key? key, this.currentUserId}) : super(key: key);
 
   @override
-  PrivacyPolicyPageState createState() => PrivacyPolicyPageState();
+  WeAreHiringState createState() => WeAreHiringState();
 }
 
-class PrivacyPolicyPageState extends State<PrivacyPolicyPage> {
+class WeAreHiringState extends State<WeAreHiring> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   bool isLoading = true;
 
@@ -42,7 +42,7 @@ class PrivacyPolicyPageState extends State<PrivacyPolicyPage> {
             Expanded(
               child: WebView(
                 javascriptMode: JavascriptMode.unrestricted,
-                initialUrl: "http://globalgirlsinc.net/?page_id=13",
+                initialUrl: "http://globalgirlsinc.net/?page_id=18",
                 onPageFinished: (url) => {
                   setState(() => {
                         isLoading = false,
@@ -83,6 +83,37 @@ class PrivacyPolicyPageState extends State<PrivacyPolicyPage> {
         //         ]),
         // ),
       ),
+
+      // child: Scaffold(
+      //   key: _scaffoldKey,
+      //   appBar:
+      //       header(context, titleText: "Terms of Use", removeBackButton: false),
+      //   body: isLoading
+      //       ? circularProgress()
+      //       : ListView(children: [
+      //           Container(
+      //             padding: const EdgeInsets.symmetric(
+      //                 horizontal: 10.0, vertical: 5.0),
+      //             child: Column(
+      //               mainAxisAlignment: MainAxisAlignment.spaceAround,
+      //               crossAxisAlignment: CrossAxisAlignment.start,
+      //               children: <Widget>[
+      //                 Text(
+      //                   'Write your Terms Of Use here',
+      //                   style: Theme.of(context).textTheme.headline5,
+      //                 ),
+      //                 const SizedBox(
+      //                   height: 10,
+      //                 ),
+      //                 Text(
+      //                   'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis sdnostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
+      //                   style: Theme.of(context).textTheme.bodyText1,
+      //                 )
+      //               ],
+      //             ),
+      //           ),
+      //         ]),
+      // ),
     );
   }
 }
