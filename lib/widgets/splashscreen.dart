@@ -1,14 +1,12 @@
 import 'dart:async';
+
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:nb_utils/nb_utils.dart';
 import 'package:simpleworld/constant/constant.dart';
 import 'package:simpleworld/models/user.dart';
-import 'package:simpleworld/widgets/bezier_container.dart';
-import 'package:simpleworld/widgets/bezier_containernew.dart';
 import 'package:simpleworld/widgets/progress.dart';
 import 'package:simpleworld/widgets/simple_world_widgets.dart';
 
@@ -16,6 +14,7 @@ class SplashScreen extends StatefulWidget {
   final String? userId;
 
   const SplashScreen({Key? key, this.userId}) : super(key: key);
+
   @override
   SplashScreenState createState() => SplashScreenState();
 }
@@ -24,13 +23,15 @@ class SplashScreenState extends State<SplashScreen>
     with SingleTickerProviderStateMixin {
   var _visible = true;
   final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
-  static FlutterLocalNotificationsPlugin notificationsPlugin =FlutterLocalNotificationsPlugin() ;
+  static FlutterLocalNotificationsPlugin notificationsPlugin =
+      FlutterLocalNotificationsPlugin();
+
   late AnimationController animationController;
   late Animation<double> animation;
 
   startTime() async {
-    var _duration = const Duration(seconds: 1);
-    return Timer(_duration, navigationPage);
+    var duration = const Duration(seconds: 1);
+    return Timer(duration, navigationPage);
   }
 
   void navigationPage() {
@@ -39,7 +40,6 @@ class SplashScreenState extends State<SplashScreen>
 
   @override
   void initState() {
-
     super.initState();
 
     animationController =
@@ -47,7 +47,7 @@ class SplashScreenState extends State<SplashScreen>
     animation =
         CurvedAnimation(parent: animationController, curve: Curves.easeOut);
 
-    animation.addListener(() => this.setState(() {}));
+    animation.addListener(() => setState(() {}));
     animationController.forward();
     if (mounted) {
       setState(() {
@@ -55,12 +55,7 @@ class SplashScreenState extends State<SplashScreen>
       });
       startTime();
     }
-
   }
-
-
-
-
 
   @override
   void dispose() {
@@ -151,9 +146,10 @@ class SplashScreenState extends State<SplashScreen>
         body: Container(
           height: height,
           width: double.infinity,
-          child: Image.asset("assets/images/Splash1.png", fit: BoxFit.contain,),
-
-
+          child: Image.asset(
+            "assets/images/Splash1.png",
+            fit: BoxFit.contain,
+          ),
 
           // child: Stack(
           //   children: <Widget>[

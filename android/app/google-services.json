@@ -40,10 +40,10 @@
               "client_type": 3
             },
             {
-              "client_id": "813756573374-3hak1cd1uspb7knfnlqvaj01s21p32c8.apps.googleusercontent.com",
+              "client_id": "813756573374-0oe4i3m57e4hpultb6h8l9dc42eg696g.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "com.example.globelgirl"
+                "bundle_id": "com.net.globalgirl"
               }
             }
           ]
@@ -53,6 +53,42 @@
     {
       "client_info": {
         "mobilesdk_app_id": "1:813756573374:android:25d661c01f6dfc3512a0ef",
+        "android_client_info": {
+          "package_name": "com.globalgnet.net"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "813756573374-b07nefslur4ncltvs74pvsghn038hcau.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDx3Q1JEtUne8wWefRk2k1HkiaTBEduDMI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "813756573374-b07nefslur4ncltvs74pvsghn038hcau.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "813756573374-0oe4i3m57e4hpultb6h8l9dc42eg696g.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.net.globalgirl"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:813756573374:android:327093530af0423c12a0ef",
         "android_client_info": {
           "package_name": "ggn.liru.yang.net"
         }
@@ -76,10 +112,10 @@
               "client_type": 3
             },
             {
-              "client_id": "813756573374-3hak1cd1uspb7knfnlqvaj01s21p32c8.apps.googleusercontent.com",
+              "client_id": "813756573374-0oe4i3m57e4hpultb6h8l9dc42eg696g.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "com.example.globelgirl"
+                "bundle_id": "com.net.globalgirl"
               }
             }
           ]

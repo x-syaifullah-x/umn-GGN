@@ -17,12 +17,13 @@ environment:
   sdk: ">=2.14.4 <=3.3.10"
 
 dependencies:
-  firebase_core_platform_interface: 4.5.1
-  firebase_storage: 10.3.7
-  firebase_auth: 1.4.1
-  firebase_messaging: 11.4.4
-  firebase_core: 1.21.1
-  cloud_firestore: 3.4.6
+  firebase_core: 1.24.0
+  cloud_firestore: 3.1.18
+  paginate_firestore: 1.0.3+1
+  firebase_auth: 3.11.2
+  firebase_storage: 10.3.11
+  firebase_messaging: 13.1.0
+
   image_picker: 0.8.5+3
   google_sign_in: 5.4.2
   uuid: 3.0.7
@@ -51,7 +52,6 @@ dependencies:
   link_preview_generator: 1.2.0
   another_flushbar: 1.12.29
   fluttericon: 2.0.0
-  paginate_firestore: 1.0.3+1
   flutter_reaction_button: 2.0.1+2
   file_picker: 5.2.4
   visibility_detector: 0.3.3

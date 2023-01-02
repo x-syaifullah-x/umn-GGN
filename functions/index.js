@@ -96,7 +96,7 @@ exports.onCreatePost = functions.firestore
   });
   
 
-  exports.onUpdatePost = functions.firestore
+exports.onUpdatePost = functions.firestore
   .document("/posts/{userId}/userPosts/{postId}")
   .onUpdate(async (change, context) => {
     const postUpdated = change.after.data();
@@ -130,7 +130,7 @@ exports.onCreatePost = functions.firestore
     });
   });
 
-  exports.onDeletePost = functions.firestore
+exports.onDeletePost = functions.firestore
   .document("/posts/{userId}/userPosts/{postId}")
   .onDelete(async (snapshot, context) => {
     const userId = context.params.userId;
@@ -163,7 +163,7 @@ exports.onCreatePost = functions.firestore
     });
   });
   
-  exports.onCreateActivityFeedItem = functions.firestore
+exports.onCreateActivityFeedItem = functions.firestore
   .document("/feed/{userId}/feedItems/{activityFeedItem}")
   .onCreate(async (snapshot, context) => {
     console.log("Activity Feed Item Created", snapshot.data());

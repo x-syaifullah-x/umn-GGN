@@ -5,20 +5,20 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:iconly/iconly.dart';
+import 'package:simpleworld/data/reaction_data.dart' as Reaction;
 import 'package:simpleworld/models/user.dart';
 import 'package:simpleworld/pages/activity_feed.dart';
-import 'package:simpleworld/pages/new_timeline.dart';
 import 'package:simpleworld/pages/menu/settings.dart';
+import 'package:simpleworld/pages/new_timeline.dart';
 import 'package:simpleworld/pages/profile.dart';
 import 'package:simpleworld/pages/search.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:simpleworld/pages/users.dart';
 import 'package:simpleworld/widgets/circle_button.dart';
 import 'package:simpleworld/widgets/count/feeds_count.dart';
 import 'package:simpleworld/widgets/count/messages_count.dart';
 import 'package:simpleworld/widgets/simple_world_widgets.dart';
-import 'package:simpleworld/data/reaction_data.dart' as Reaction;
 
 final GoogleSignIn googleSignIn = GoogleSignIn();
 final Reference storageRef = FirebaseStorage.instance.ref();
@@ -103,12 +103,14 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     QuerySnapshot snapshot =
         await usersRef.orderBy('timestamp', descending: true).get();
     print(snapshot.docs);
-    List<GloabalUser> users =
-        snapshot.docs.map((doc) => GloabalUser.fromMap(doc .data() as Map<String, dynamic>)).toList();
+    List<GloabalUser> users = snapshot.docs
+        .map((doc) => GloabalUser.fromMap(doc.data() as Map<String, dynamic>))
+        .toList();
     setState(() {
       this.users = users;
     });
   }
+
   getUserData() async {
     User? user = firebaseAuth.currentUser;
     if (user != null) {

@@ -1,8 +1,5 @@
-import 'dart:io';
-
 import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -11,7 +8,6 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:nb_utils/nb_utils.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:simpleworld/config/palette.dart';
 import 'package:simpleworld/l10n/l10n.dart';
 import 'package:simpleworld/pages/WalkThroughScreen.dart';
@@ -20,6 +16,7 @@ import 'package:simpleworld/pages/home.dart';
 import 'package:simpleworld/provider/locale_provider.dart';
 import 'package:simpleworld/share_preference/preferences_key.dart';
 import 'package:simpleworld/widgets/simple_world_widgets.dart';
+import 'package:flutter/foundation.dart';
 
 class App extends StatefulWidget {
   final SharedPreferences prefs;
@@ -61,7 +58,7 @@ class AppState extends State<App> with WidgetsBindingObserver {
 
     fcmMessaging.getInitialMessage().then((RemoteMessage? message) {
       if (message != null) {
-        if (Platform.isIOS) {
+        if (defaultTargetPlatform == TargetPlatform.iOS) {
           showLocalNotificationios(message);
         } else {
           showLocalNotification(message);
@@ -73,7 +70,7 @@ class AppState extends State<App> with WidgetsBindingObserver {
     FirebaseMessaging.onMessage.listen((RemoteMessage? message) async {
       print("+++ onMessage +++ : " + message!.notification!.title!);
 
-      if (Platform.isIOS) {
+      if (defaultTargetPlatform == TargetPlatform.iOS) {
         showLocalNotificationios(message);
       } else {
         showLocalNotification(message);
@@ -93,9 +90,9 @@ class AppState extends State<App> with WidgetsBindingObserver {
     const AndroidInitializationSettings initializationSettingsAndroid =
         AndroidInitializationSettings('@mipmap/ic_launcher');
 
-    final DarwinInitializationSettings initializationSettingsDarwin =
+    const DarwinInitializationSettings initializationSettingsDarwin =
         DarwinInitializationSettings();
-    final InitializationSettings initializationSettings =
+    const InitializationSettings initializationSettings =
         InitializationSettings(
             android: initializationSettingsAndroid,
             iOS: initializationSettingsDarwin);
@@ -120,7 +117,7 @@ class AppState extends State<App> with WidgetsBindingObserver {
                     color: Colors.blue,
                     subText: notification.title,
                     importance: Importance.high,
-                    icon: AndroidInitializationSettings('@mipmap/ic_launcher')
+                    icon: const AndroidInitializationSettings('@mipmap/ic_launcher')
                         .defaultIcon)
                 : null,
             iOS: apple != null
@@ -148,12 +145,12 @@ class AppState extends State<App> with WidgetsBindingObserver {
                 ? AndroidNotificationDetails("1", "ContestKnowledge",
                     channelDescription: "Notification",
                     importance: Importance.high,
-                    icon: AndroidInitializationSettings('@mipmap/ic_launcher')
+                    icon: const AndroidInitializationSettings('@mipmap/ic_launcher')
                         .defaultIcon)
                 : AndroidNotificationDetails("1", "ContestKnowledge",
                     channelDescription: "Notification",
                     importance: Importance.high,
-                    icon: AndroidInitializationSettings('@mipmap/ic_launcher')
+                    icon: const AndroidInitializationSettings('@mipmap/ic_launcher')
                         .defaultIcon),
           ));
     }
@@ -201,7 +198,7 @@ class AppState extends State<App> with WidgetsBindingObserver {
               textTheme: TextTheme(
                 headline4: GoogleFonts.portLligatSans(
                   textStyle: Theme.of(context).textTheme.headline4,
-                  fontSize: Platform.isAndroid ? 30 : 25,
+                  fontSize: defaultTargetPlatform == TargetPlatform.android ? 30 : 25,
                   fontWeight: FontWeight.w700,
                   color: Palette.apptitlecolor,
                 ),
@@ -270,14 +267,14 @@ class AppState extends State<App> with WidgetsBindingObserver {
   Widget _handleCurrentScreen(SharedPreferences prefs) {
     String? data = prefs.getString(SharedPreferencesKey.LOGGED_IN_USERRDATA);
     preferences = prefs;
-    bool _seen =
+    bool seen =
         (prefs.getBool(SharedPreferencesKey.IS_USER_LOGGED_IN) ?? false);
 
-    if (_seen == false && data == null) {
+    if (seen == false && data == null) {
       prefs.setBool('seen', true);
       return const WalkThroughScreen();
     } else {
-      if (_seen == true && data == null) {
+      if (seen == true && data == null) {
         return const LoginPage();
       } else {
         return Home(
