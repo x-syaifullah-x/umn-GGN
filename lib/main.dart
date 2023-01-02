@@ -16,7 +16,7 @@ Future<void> main() async {
 
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
-  MobileAds.instance.initialize();
+  await MobileAds.instance.initialize();
 
   // MobileAds.instance.updateRequestConfiguration(
   //   RequestConfiguration(testDeviceIds: ['5DF3DDDAEA78FE6D718E9FF8B6259412']),
