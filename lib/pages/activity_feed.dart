@@ -29,7 +29,7 @@ class ActivityFeedState extends State<ActivityFeed> {
   @override
   void initState() {
     super.initState();
-    _updateFeed();
+    // _updateFeed();
   }
 
   @override
@@ -60,8 +60,6 @@ class ActivityFeedState extends State<ActivityFeed> {
   }
 
   Widget _activityFeedList(String? userData) {
-    print("userData: $userData");
-    print("globalID: $globalID");
     return StreamBuilder(
       stream: activityFeedRef
           .doc(globalID)
@@ -76,7 +74,6 @@ class ActivityFeedState extends State<ActivityFeed> {
           );
 
           QuerySnapshot<Object?>? data = snapshot.data;
-          print("snapshot.data.docs.length: ${data?.docs.length}");
           if (data != null && data.docs.isNotEmpty) {
             child = Stack(
               alignment: AlignmentDirectional.bottomCenter,

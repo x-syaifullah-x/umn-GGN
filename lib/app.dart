@@ -42,10 +42,6 @@ class AppState extends State<App> with WidgetsBindingObserver {
   }
 
   Future<void> _configNotification() async {
-    print("firebase inti");
-    print(await FirebaseMessaging.instance.getToken());
-
-    /// init firebase push notification
     final FirebaseMessaging fcmMessaging = FirebaseMessaging.instance;
     await fcmMessaging.requestPermission(
         sound: true,
@@ -269,7 +265,6 @@ class AppState extends State<App> with WidgetsBindingObserver {
     preferences = prefs;
     bool seen =
         (prefs.getBool(SharedPreferencesKey.IS_USER_LOGGED_IN) ?? false);
-
     if (seen == false && data == null) {
       prefs.setBool('seen', true);
       return const WalkThroughScreen();

@@ -1,11 +1,10 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:nb_utils/nb_utils.dart';
-
+import 'package:simpleworld/data/onboarding_data.dart';
 import 'package:simpleworld/models/onboarding_model.dart';
 import 'package:simpleworld/pages/auth/login_page.dart';
-import 'package:simpleworld/data/onboarding_data.dart';
 
 class WalkThroughScreen extends StatefulWidget {
   static String tag = '/WalkThroughScreen';
@@ -25,7 +24,6 @@ class WalkThroughScreenState extends State<WalkThroughScreen> {
   void initState() {
     super.initState();
     init();
-    // updateusers();
   }
 
   Future<void> init() async {
@@ -41,20 +39,6 @@ class WalkThroughScreenState extends State<WalkThroughScreen> {
     if (mounted) super.setState(fn);
   }
 
-  //Uncomment to add new fields to existing users
-
-  // updateusers() async {
-  //   var collection = FirebaseFirestore.instance.collection('users');
-  //   var querySnapshots = await collection.get();
-  //   for (var doc in querySnapshots.docs) {
-  //     await doc.reference.update({
-  //       "userIsVerified": false,
-  //       "credit_points": 500,
-  //       "no_ads": false,
-  //     });
-  //   }
-  // }
-
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -66,10 +50,12 @@ class WalkThroughScreenState extends State<WalkThroughScreen> {
               children: List.generate(pages.length, (index) {
                 return Column(
                   children: [
-                    Image.asset(pages[index].image!,
-                        width: context.width(),
-                        height: context.height() * 0.5,
-                        fit: BoxFit.cover),
+                    Image.asset(
+                      pages[index].image!,
+                      width: context.width(),
+                      height: context.height() * 0.5,
+                      fit: context.isDesktop() ? BoxFit.fill : BoxFit.cover,
+                    ),
                     50.height,
                     Column(
                       children: [
@@ -116,9 +102,6 @@ class WalkThroughScreenState extends State<WalkThroughScreen> {
                     indicatorColor: Theme.of(context).primaryColor,
                   ),
                   AppButton(
-                    child: currentPage != 3
-                        ? const Icon(Icons.navigate_next, color: white, size: 30)
-                        : Text('Get Started', style: boldTextStyle(color: white)),
                     color: Theme.of(context).primaryColor,
                     onTap: () async {
                       if (currentPage != 3) {
@@ -128,11 +111,23 @@ class WalkThroughScreenState extends State<WalkThroughScreen> {
                       } else {
                         Navigator.pop(context);
                         Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const LoginPage()));
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const LoginPage(),
+                          ),
+                        );
                       }
                     },
+                    child: currentPage != 3
+                        ? const Icon(
+                            Icons.navigate_next,
+                            color: white,
+                            size: 30,
+                          )
+                        : Text(
+                            'Get Started',
+                            style: boldTextStyle(color: white),
+                          ),
                   ),
                 ],
               ),

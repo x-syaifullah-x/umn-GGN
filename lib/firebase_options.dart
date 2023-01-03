@@ -29,12 +29,12 @@ class DefaultFirebaseOptions {
       case TargetPlatform.windows:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for windows - '
-              'you can reconfigure this by running the FlutterFire CLI again.',
+          'you can reconfigure this by running the FlutterFire CLI again.',
         );
       case TargetPlatform.linux:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for linux - '
-              'you can reconfigure this by running the FlutterFire CLI again.',
+          'you can reconfigure this by running the FlutterFire CLI again.',
         );
       default:
         throw UnsupportedError(
@@ -44,14 +44,14 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-      apiKey: "AIzaSyCniC3TzeI8CjFPyJX_BI8fVYx3CDH_dr8",
-      authDomain: "globelgirl-2c269.firebaseapp.com",
-      databaseURL: "https://globelgirl-2c269-default-rtdb.firebaseio.com",
-      projectId: "globelgirl-2c269",
-      storageBucket: "globelgirl-2c269.appspot.com",
-      messagingSenderId: "813756573374",
-      appId: "1:813756573374:web:814522eaf85f06cc12a0ef",
-      measurementId: "G-BH442MS22N"
+    apiKey: 'AIzaSyCniC3TzeI8CjFPyJX_BI8fVYx3CDH_dr8',
+    appId: '1:813756573374:web:814522eaf85f06cc12a0ef',
+    messagingSenderId: '813756573374',
+    projectId: 'globelgirl-2c269',
+    authDomain: 'globelgirl-2c269.firebaseapp.com',
+    databaseURL: 'https://globelgirl-2c269-default-rtdb.firebaseio.com',
+    storageBucket: 'globelgirl-2c269.appspot.com',
+    measurementId: 'G-BH442MS22N',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
@@ -59,26 +59,31 @@ class DefaultFirebaseOptions {
     appId: '1:813756573374:android:327093530af0423c12a0ef',
     messagingSenderId: '813756573374',
     projectId: 'globelgirl-2c269',
+    databaseURL: 'https://globelgirl-2c269-default-rtdb.firebaseio.com',
     storageBucket: 'globelgirl-2c269.appspot.com',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyDe2MXV-1IGGNt1imJGhowKMBELh-1ayRM',
-    appId: '1:560568355737:ios:77538d1971e3bd21d62108',
-    messagingSenderId: '560568355737',
-    projectId: 'x-x-x-test',
-    storageBucket: 'x-x-x-test.appspot.com',
-    iosClientId: '560568355737-itb1f7453lnt9s2mnjdtsk759d3dcpqu.apps.googleusercontent.com',
-    iosBundleId: 'com.example.test',
+    apiKey: 'AIzaSyCyspSzqWm44Io5XnIIyR5KlrobPLP8c9g',
+    appId: '1:813756573374:ios:240f00dd02d45f2d12a0ef',
+    messagingSenderId: '813756573374',
+    projectId: 'globelgirl-2c269',
+    databaseURL: 'https://globelgirl-2c269-default-rtdb.firebaseio.com',
+    storageBucket: 'globelgirl-2c269.appspot.com',
+    androidClientId: '813756573374-ks6mie1o9rnv5nj6kg1065s9lladoois.apps.googleusercontent.com',
+    iosClientId: '813756573374-6vg3mc5sqt99trbdm2e22m8avcufgkrs.apps.googleusercontent.com',
+    iosBundleId: 'com.gg.globalgirlsnet',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyDe2MXV-1IGGNt1imJGhowKMBELh-1ayRM',
-    appId: '1:560568355737:ios:77538d1971e3bd21d62108',
-    messagingSenderId: '560568355737',
-    projectId: 'x-x-x-test',
-    storageBucket: 'x-x-x-test.appspot.com',
-    iosClientId: '560568355737-itb1f7453lnt9s2mnjdtsk759d3dcpqu.apps.googleusercontent.com',
-    iosBundleId: 'com.example.test',
+    apiKey: 'AIzaSyCyspSzqWm44Io5XnIIyR5KlrobPLP8c9g',
+    appId: '1:813756573374:ios:b6490055ff5f1e0c12a0ef',
+    messagingSenderId: '813756573374',
+    projectId: 'globelgirl-2c269',
+    databaseURL: 'https://globelgirl-2c269-default-rtdb.firebaseio.com',
+    storageBucket: 'globelgirl-2c269.appspot.com',
+    androidClientId: '813756573374-ks6mie1o9rnv5nj6kg1065s9lladoois.apps.googleusercontent.com',
+    iosClientId: '813756573374-kvkp75j8ehi0e25bf5d1lek5g7qc4qpi.apps.googleusercontent.com',
+    iosBundleId: 'com.certainity.simpleworld',
   );
 }

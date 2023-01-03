@@ -11,6 +11,7 @@ import 'package:nb_utils/nb_utils.dart';
 import 'package:simpleworld/pages/home.dart';
 import 'package:simpleworld/widgets/header.dart';
 import 'package:simpleworld/widgets/progress.dart';
+
 // ignore: library_prefixes
 import 'package:simpleworld/widgets/simple_world_widgets.dart';
 import 'package:uuid/uuid.dart';
@@ -18,31 +19,20 @@ import 'package:uuid/uuid.dart';
 // ignore: must_be_immutable
 class AddImageStory extends StatefulWidget {
   File file;
+
   AddImageStory({required this.file});
+
   @override
-  _AddImageStoryState createState() => _AddImageStoryState();
+  AddImageStoryState createState() => AddImageStoryState();
 }
 
-class _AddImageStoryState extends State<AddImageStory>
+class AddImageStoryState extends State<AddImageStory>
     with AutomaticKeepAliveClientMixin<AddImageStory> {
   Color? mainColor = Colors.deepPurple[400];
   TextEditingController captionController = TextEditingController();
 
   bool isUploading = false;
   String storyId = const Uuid().v4();
-
-  // compressImage() async {
-  //   final tempDir = await getTemporaryDirectory();
-  //   final path = tempDir.path;
-  //   Im.Image imageFile = Im.decodeImage(widget.file.readAsBytesSync())!;
-  //   final compressedImageFile = File('$path/img_$storyId.jpg')
-  //     ..writeAsBytesSync(Im.encodeJpg(imageFile, quality: 85));
-  //   if (mounted) {
-  //     setState(() {
-  //       widget.file = compressedImageFile;
-  //     });
-  //   }
-  // }
 
   Future<String> uploadImage(imageFile) async {
     UploadTask uploadTask = storageRef
@@ -55,19 +45,20 @@ class _AddImageStoryState extends State<AddImageStory>
   }
 
   List yourItemList = [];
+
   createPostInFirestore(
-      {String? stories, String? storymediaUrl, String? storydescription}) {
+      {String? stories, String? storyMediaURL, String? storyDescription}) {
     storiesRef.doc(globalID).get().then((docSnapshot) async => {
           yourItemList.add({
             "filetype": 'image',
-            "url": {"en": storymediaUrl},
-            "fileTitle": {"en": storydescription}
+            "url": {"en": storyMediaURL},
+            "fileTitle": {"en": storyDescription}
           }),
           if (docSnapshot.exists)
             {
               await storiesRef.doc(globalID).update(
                 {
-                  "previewImage": storymediaUrl,
+                  "previewImage": storyMediaURL,
                   "photoUrl": globalImage,
                   "stories": FieldValue.arrayUnion(yourItemList),
                 },
@@ -79,13 +70,13 @@ class _AddImageStoryState extends State<AddImageStory>
                 "storyId": storyId,
                 "storyownerId": globalID,
                 "username": {"en": globalName},
-                "previewImage": storymediaUrl,
+                "previewImage": storyMediaURL,
                 "photoUrl": globalImage,
                 "stories": [
                   {
                     "filetype": 'image',
-                    "url": {"en": storymediaUrl},
-                    "fileTitle": {"en": storydescription}
+                    "url": {"en": storyMediaURL},
+                    "fileTitle": {"en": storyDescription}
                   }
                 ],
                 "date": timestamp,
@@ -98,9 +89,9 @@ class _AddImageStoryState extends State<AddImageStory>
     setState(() {
       isUploading = true;
     });
-    String storymediaUrl = await uploadImage(widget.file);
+    String storyMediaURL = await uploadImage(widget.file);
     createPostInFirestore(
-        storymediaUrl: storymediaUrl, storydescription: captionController.text);
+        storyMediaURL: storyMediaURL, storyDescription: captionController.text);
     if (mounted) {
       setState(() {
         isUploading = false;
@@ -155,6 +146,8 @@ class _AddImageStoryState extends State<AddImageStory>
               ],
             ),
             alignment: Alignment.center,
+            width: double.infinity,
+            margin: const EdgeInsets.all(20.0),
             child: Center(
               child: Stack(
                 children: <Widget>[
@@ -162,19 +155,17 @@ class _AddImageStoryState extends State<AddImageStory>
                   (widget.file == null)
                       ? Container()
                       : Material(
+                          clipBehavior: Clip.hardEdge,
                           child: Image.file(
                             widget.file,
                             width: MediaQuery.of(context).size.width,
                             height: 220.0,
                             fit: BoxFit.cover,
                           ),
-                          clipBehavior: Clip.hardEdge,
                         ),
                 ],
               ),
             ),
-            width: double.infinity,
-            margin: const EdgeInsets.all(20.0),
           ),
           Container(
             margin: const EdgeInsets.only(left: 20, right: 20),
@@ -203,9 +194,9 @@ class _AddImageStoryState extends State<AddImageStory>
                 ),
               ),
             ),
-          ).onTap(
-            () => isUploading ? null : handleSubmit(),
-          ),
+          ).onTap(() {
+            isUploading ? null : handleSubmit();
+          }),
         ],
       ),
     );

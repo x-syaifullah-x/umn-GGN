@@ -7,15 +7,15 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:nb_utils/nb_utils.dart';
 import 'package:simpleworld/models/user.dart';
 import 'package:simpleworld/pages/home.dart';
 import 'package:simpleworld/widgets/progress.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:simpleworld/widgets/simple_world_widgets.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:uuid/uuid.dart';
 
 class Upload extends StatefulWidget {
@@ -274,7 +274,7 @@ class _UploadState extends State<Upload>
             subtitle: (widget.location != null)
                 ? Text('at ${widget.location}')
                 : (_currentAddress != null)
-                    ? Text('at ${_currentAddress}')
+                    ? Text('at $_currentAddress')
                     : const Text(''),
           ),
           Container(
@@ -292,9 +292,9 @@ class _UploadState extends State<Upload>
           Container(
             height: 450.0,
             alignment: Alignment.center,
-            child: Center(child: _previewImages()),
             width: double.infinity,
             margin: const EdgeInsets.all(20.0),
+            child: Center(child: _previewImages()),
           ),
           Column(
             children: [
@@ -367,17 +367,19 @@ class _UploadState extends State<Upload>
     }
     if (widget.imageFileList != null) {
       return Semantics(
-          child: GridView.builder(
-              itemCount: widget.imageFileList!.length,
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 3),
-              itemBuilder: (BuildContext context, int index) {
-                return Image.file(
-                  i.File(widget.imageFileList![index].path),
-                  fit: BoxFit.cover,
-                );
-              }),
-          label: 'image_picker_example_picked_images');
+        label: 'image_picker_example_picked_images',
+        child: GridView.builder(
+          itemCount: widget.imageFileList!.length,
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 3),
+          itemBuilder: (BuildContext context, int index) {
+            return Image.file(
+              i.File(widget.imageFileList![index].path),
+              fit: BoxFit.cover,
+            );
+          },
+        ),
+      );
     } else if (_pickImageError != null) {
       return Text(
         'Pick image error: $_pickImageError',

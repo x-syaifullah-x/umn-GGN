@@ -6,16 +6,17 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+
+// ignore: library_prefixes
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:iconly/iconly.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:nb_utils/nb_utils.dart';
-import 'package:simpleworld/pages/home.dart';
 import 'package:simpleworld/pages/auth/login_page.dart';
+import 'package:simpleworld/pages/home.dart';
 import 'package:simpleworld/story/add_image_story.dart';
 import 'package:simpleworld/story/add_video_story.dart';
 import 'package:simpleworld/widgets/progress.dart';
-// ignore: library_prefixes
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:simpleworld/widgets/simple_world_widgets.dart';
 import 'package:uuid/uuid.dart';
 import 'package:video_compress/video_compress.dart';
@@ -23,10 +24,10 @@ import 'package:video_compress/video_compress.dart';
 // ignore: must_be_immutable
 class AddStory extends StatefulWidget {
   @override
-  _AddStoryState createState() => _AddStoryState();
+  AddStoryState createState() => AddStoryState();
 }
 
-class _AddStoryState extends State<AddStory>
+class AddStoryState extends State<AddStory>
     with AutomaticKeepAliveClientMixin<AddStory> {
   Color? mainColor = Colors.deepPurple[400];
   final ImagePicker _picker = ImagePicker();
@@ -42,19 +43,15 @@ class _AddStoryState extends State<AddStory>
     final navigator = Navigator.of(context);
     final pickedFile =
         await _picker.pickImage(source: ImageSource.gallery, imageQuality: 50);
-print(pickedFile!.path);
     setState(() async {
-      // ignore: unnecessary_this
       this.file = file;
       if (pickedFile != null) {
         file = File(pickedFile.path);
-        // print(file);
         navigator.pop();
         await navigator.push(
           MaterialPageRoute(
-            builder: (context) => AddImageStory(
-              file: file!,
-            ),
+            builder: (context) =>
+                AddImageStory(file: file!),
           ),
         );
       } else {
@@ -81,11 +78,9 @@ print(pickedFile!.path);
             includeAudio: true,
           );
           print(info!.path);
-          if (info != null) {
-            setState(() {
-              newvediofile = File(info.path!);
-            });
-          }
+          setState(() {
+            newvediofile = File(info.path!);
+          });
           int size = newvediofile!.lengthSync();
           double sizeInMb = size / (1024 * 1024);
           if (sizeInMb > 5) {
@@ -116,6 +111,7 @@ print(pickedFile!.path);
   }
 
   List yourItemList = [];
+
   createPostInFirestore(
       {String? stories, String? storymediaUrl, String? storydescription}) {
     storiesRef.doc(globalID).get().then(

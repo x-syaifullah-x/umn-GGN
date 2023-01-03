@@ -54,11 +54,11 @@ class LoginPageState extends State<LoginPage> {
   @override
   void initState() {
     super.initState();
-    getUserData();
+    _getUserData();
     FirebaseMessaging.instance.getInitialMessage().then((message) {});
   }
 
-  getUserData() async {
+  _getUserData() async {
     User? user = _auth.currentUser;
     if (user != null) {
       usersRef.doc(user.uid).get().then((peerData) {
@@ -98,7 +98,10 @@ class LoginPageState extends State<LoginPage> {
               obscureText: isPassword,
               decoration: InputDecoration(
                   border: InputBorder.none,
-                  fillColor: Theme.of(context).inputDecorationTheme.fillColor,
+                  fillColor: Theme
+                      .of(context)
+                      .inputDecorationTheme
+                      .fillColor,
                   filled: true))
         ],
       ),
@@ -107,7 +110,10 @@ class LoginPageState extends State<LoginPage> {
 
   Widget _submitButton() {
     return Container(
-      width: MediaQuery.of(context).size.width,
+      width: MediaQuery
+          .of(context)
+          .size
+          .width,
       padding: const EdgeInsets.symmetric(vertical: 15),
       alignment: Alignment.center,
       decoration: BoxDecoration(
@@ -185,9 +191,10 @@ class LoginPageState extends State<LoginPage> {
                   if (peerData['credit_points'] == 0) {
                     Navigator.of(context).pushReplacement(
                       CupertinoPageRoute(
-                        builder: (context) => AddCreditToAccount(
-                          userId: globalID,
-                        ),
+                        builder: (context) =>
+                            AddCreditToAccount(
+                              userId: globalID,
+                            ),
                       ),
                     );
                   } else {
@@ -218,7 +225,7 @@ class LoginPageState extends State<LoginPage> {
         });
       });
       FirebaseMessaging.onMessage.listen(
-        (message) async {
+            (message) async {
           final String recipientId = userId;
           final String body = message.notification?.body ?? '';
 
@@ -226,9 +233,9 @@ class LoginPageState extends State<LoginPage> {
             print("Notification shown!");
             SnackBar snackbar = SnackBar(
                 content: Text(
-              body,
-              overflow: TextOverflow.ellipsis,
-            ));
+                  body,
+                  overflow: TextOverflow.ellipsis,
+                ));
             ScaffoldMessenger.of(context).showSnackBar(snackbar);
           }
         },
@@ -401,7 +408,7 @@ class LoginPageState extends State<LoginPage> {
       }
       final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
       final GoogleSignInAuthentication googleAuth =
-          await googleUser!.authentication;
+      await googleUser!.authentication;
       final googleAuthCredential = GoogleAuthProvider.credential(
         accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,
@@ -489,7 +496,7 @@ class LoginPageState extends State<LoginPage> {
       });
     });
     FirebaseMessaging.onMessage.listen(
-      (message) async {
+          (message) async {
         final String recipientId = userId;
         final String body = message.notification?.body ?? '';
 
@@ -497,9 +504,9 @@ class LoginPageState extends State<LoginPage> {
           print("Notification shown!");
           SnackBar snackBar = SnackBar(
               content: Text(
-            body,
-            overflow: TextOverflow.ellipsis,
-          ));
+                body,
+                overflow: TextOverflow.ellipsis,
+              ));
           ScaffoldMessenger.of(context).showSnackBar(snackBar);
         }
       },
@@ -576,7 +583,10 @@ class LoginPageState extends State<LoginPage> {
       text: TextSpan(
         text: 'Global Net',
         style: GoogleFonts.portLligatSans(
-          textStyle: Theme.of(context).textTheme.headline4,
+          textStyle: Theme
+              .of(context)
+              .textTheme
+              .headline4,
           fontSize: 30,
           fontWeight: FontWeight.w700,
           color: Colors.red[800],
@@ -654,11 +664,18 @@ class LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    final mode = AdaptiveTheme.of(context).mode;
+    final mode = AdaptiveTheme
+        .of(context)
+        .mode;
 
-    final height = MediaQuery.of(context).size.height;
+    final height = MediaQuery
+        .of(context)
+        .size
+        .height;
     return Scaffold(
-        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        backgroundColor: Theme
+            .of(context)
+            .scaffoldBackgroundColor,
         body: SizedBox(
           height: height,
           child: Stack(
@@ -668,7 +685,10 @@ class LoginPageState extends State<LoginPage> {
                 children: <Widget>[
                   Positioned(
                       top: -height * .15,
-                      right: -MediaQuery.of(context).size.width * .4,
+                      right: -MediaQuery
+                          .of(context)
+                          .size
+                          .width * .4,
                       child: const BezierContainer()),
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 20),
