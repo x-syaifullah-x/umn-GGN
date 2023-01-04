@@ -7,7 +7,7 @@ import 'package:simpleworld/pages/chat/simpleworld_messenger.dart';
 class SimpleWorldChat extends StatefulWidget {
   final String? userId;
 
-  const SimpleWorldChat({Key? key, this.userId}) : super(key: key);
+  const SimpleWorldChat({Key? key, required this.userId}) : super(key: key);
 
   @override
   SimpleWorldChatState createState() => SimpleWorldChatState();
@@ -100,7 +100,9 @@ class SimpleWorldChatState extends State<SimpleWorldChat>
         body: TabBarView(
           controller: _tabController,
           children: [
-            const Messenger(),
+            Messenger(
+              userId: widget.userId!,
+            ),
             GroupChatList(
               userId: widget.userId,
             ),

@@ -3,35 +3,25 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:nb_utils/nb_utils.dart';
 import 'package:simpleworld/pages/chat/simpleworld_chat_main.dart';
 import 'package:simpleworld/pages/home.dart';
 import 'package:simpleworld/widgets/circle_button.dart';
 
 class MessagesCount extends StatefulWidget {
   final String? currentUserId;
-  // final String receiverId;
 
   const MessagesCount({
     Key? key,
     this.currentUserId,
-    // required this.receiverId,
   }) : super(key: key);
 
   @override
-  // ignore: no_logic_in_create_state
-  MessagesState createState() => MessagesState(
-        currentUserId: currentUserId,
-        // receiverId: receiverId,
-      );
+  MessagesState createState() => MessagesState();
 }
 
 class MessagesState extends State<MessagesCount> {
-  final String? currentUserId;
   String sum = '0';
-
-  MessagesState({
-    this.currentUserId,
-  });
 
   @override
   void initState() {
@@ -39,9 +29,10 @@ class MessagesState extends State<MessagesCount> {
   }
 
   Stream<QuerySnapshot> requestCount() {
+    String currentUserId = widget.currentUserId!;
     return messengerRef
         .doc(currentUserId)
-        .collection(currentUserId!)
+        .collection(currentUserId)
         .snapshots();
   }
 
@@ -56,6 +47,10 @@ class MessagesState extends State<MessagesCount> {
           for (int i = 0; i < ds.length; i++) {
             sum += (int.parse(ds[i]['badge']));
           }
+
+          IconData iconData =
+              isWeb ? Icons.message : MdiIcons.facebookMessenger;
+
           if (sum > 0) {
             return Badge(
               position: BadgePosition.topEnd(top: 0, end: 3),
@@ -66,30 +61,34 @@ class MessagesState extends State<MessagesCount> {
                 style: const TextStyle(color: Colors.white),
               ),
               child: CircleButton(
-                icon: MdiIcons.facebookMessenger,
+                icon: iconData,
                 iconSize: 25.0,
                 onPressed: () {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => const SimpleWorldChat()),
+                      builder: (context) =>
+                          SimpleWorldChat(userId: widget.currentUserId),
+                    ),
                   );
                 },
               ),
             );
           }
           return CircleButton(
-            icon: MdiIcons.facebookMessenger,
+            icon: iconData,
             iconSize: 25.0,
             onPressed: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => const SimpleWorldChat()),
+                  builder: (context) =>
+                      SimpleWorldChat(userId: widget.currentUserId),
+                ),
               );
             },
           );
-        } else if (!snapshot.hasData) {}
+        }
         return const Center(
           child: CupertinoActivityIndicator(),
         );

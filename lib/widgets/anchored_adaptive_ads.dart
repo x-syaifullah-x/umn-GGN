@@ -37,7 +37,6 @@ class AnchoredAdState extends State<AnchoredAd> {
     );
 
     if (size == null) {
-      print('Unable to get height of anchored banner.');
       return;
     }
 

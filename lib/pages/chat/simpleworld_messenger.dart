@@ -5,19 +5,18 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:simpleworld/pages/chat/simpleworld_chat.dart';
 import 'package:simpleworld/pages/home.dart';
-import 'package:simpleworld/widgets/simple_world_widgets.dart';
 import 'package:timeago/timeago.dart';
 
 class Messenger extends StatefulWidget {
-  const Messenger({Key? key}) : super(key: key);
+  final String userId;
+
+  const Messenger({required this.userId, Key? key}) : super(key: key);
 
   @override
-  _MessengerState createState() => _MessengerState();
+  MessengerState createState() => MessengerState();
 }
 
-class _MessengerState extends State<Messenger> {
-  final String? currentUserId = globalID;
-
+class MessengerState extends State<Messenger> {
   @override
   void initState() {
     super.initState();
@@ -36,10 +35,11 @@ class _MessengerState extends State<Messenger> {
               child: Container(
                 decoration: const BoxDecoration(
                   borderRadius: BorderRadius.only(
-                      topRight: Radius.circular(40),
-                      topLeft: Radius.circular(40)),
+                    topRight: Radius.circular(40),
+                    topLeft: Radius.circular(40),
+                  ),
                 ),
-                child: chatListToMessage(currentUserId!),
+                child: chatListToMessage(widget.userId),
               ),
             ),
           ],

@@ -178,7 +178,6 @@ class ProfileState extends State<Profile> {
       isLoading = false;
       postCount = snapshot.docs.length;
       posts = snapshot.docs.map((doc) => SinglePost.fromDocument(doc)).toList();
-      print(posts);
     });
   }
 

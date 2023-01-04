@@ -18,7 +18,7 @@ Future<void> main() async {
   final savedThemeMode = await AdaptiveTheme.getThemeMode();
 
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  // const host = "localhost";
+  // const host = "192.168.0.1";
   // FirebaseAuth.instance.useAuthEmulator(host, 9099);
   // FirebaseFirestore.instance.useFirestoreEmulator(host, 8080);
   // FirebaseStorage.instance.useStorageEmulator(host, 9199);

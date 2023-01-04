@@ -12,6 +12,8 @@ class LocaleProvider extends ChangeNotifier {
   void setLocale(Locale locale) async {
     if (!L10n.all.contains(locale)) return;
 
+    if(_locale == locale) return;
+
     SharedPreferences preferences = await SharedPreferences.getInstance();
     preferences.setString("locale", locale.languageCode);
     _locale = locale;

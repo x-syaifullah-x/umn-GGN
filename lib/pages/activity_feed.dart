@@ -29,7 +29,7 @@ class ActivityFeedState extends State<ActivityFeed> {
   @override
   void initState() {
     super.initState();
-    // _updateFeed();
+    _updateFeed();
   }
 
   @override
@@ -60,6 +60,13 @@ class ActivityFeedState extends State<ActivityFeed> {
   }
 
   Widget _activityFeedList(String? userData) {
+    Widget child = const Center(
+      child: Text("Currently you don't have any messages"),
+    );
+
+    if (userData == null || globalID?.isEmpty == true) {
+      return child;
+    }
     return StreamBuilder(
       stream: activityFeedRef
           .doc(globalID)
@@ -69,10 +76,6 @@ class ActivityFeedState extends State<ActivityFeed> {
           .snapshots(),
       builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
         if (snapshot.hasData) {
-          Widget child = const Center(
-            child: Text("Currently you don't have any messages"),
-          );
-
           QuerySnapshot<Object?>? data = snapshot.data;
           if (data != null && data.docs.isNotEmpty) {
             child = Stack(

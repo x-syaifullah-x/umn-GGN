@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:iconly/iconly.dart';
-import 'package:simpleworld/data/reaction_data.dart' as Reaction;
+import 'package:simpleworld/data/reaction_data.dart' as reaction;
 import 'package:simpleworld/models/user.dart';
 import 'package:simpleworld/pages/activity_feed.dart';
 import 'package:simpleworld/pages/menu/settings.dart';
@@ -45,10 +45,10 @@ class Home extends StatefulWidget {
   const Home({Key? key, this.userId}) : super(key: key);
 
   @override
-  _HomeState createState() => _HomeState();
+  HomeState createState() => HomeState();
 }
 
-class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
+class HomeState extends State<Home> with SingleTickerProviderStateMixin {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   final PageController pageController = PageController(initialPage: 0);
@@ -84,8 +84,6 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
 
   getAllStories() async {
     QuerySnapshot<Map<String, dynamic>> doc = await storiesRef.get();
-    print('storiess');
-    // print(doc.s);
   }
 
   checkIfFollowing() async {
@@ -102,7 +100,6 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   getAllUsers() async {
     QuerySnapshot snapshot =
         await usersRef.orderBy('timestamp', descending: true).get();
-    print(snapshot.docs);
     List<GloabalUser> users = snapshot.docs
         .map((doc) => GloabalUser.fromMap(doc.data() as Map<String, dynamic>))
         .toList();
@@ -114,27 +111,36 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   getUserData() async {
     User? user = firebaseAuth.currentUser;
     if (user != null) {
-      usersRef.doc(user.uid).get().then((peerData) {
+      final peerData  = await usersRef.doc(user.uid).get();
         if (peerData.exists) {
-          if (mounted) {
-            setState(() {
-              globalID = user.uid;
-              globalName = peerData['username'];
-              globalImage = peerData['photoUrl'];
-              globalBio = peerData['bio'];
-              globalCover = peerData['coverUrl'];
-              globalDisplayName = peerData['displayName'];
-              globalCredits = 0.0.toString();
-            });
-          }
+            globalID = user.uid;
+            globalName = peerData['username'];
+            globalImage = peerData['photoUrl'];
+            globalBio = peerData['bio'];
+            globalCover = peerData['coverUrl'];
+            globalDisplayName = peerData['displayName'];
+            globalCredits = 0.0.toString();
         }
-      });
+
+      // usersRef.doc(user.uid).get().then((peerData) {
+      //   if (peerData.exists) {
+      //     setState(() {
+      //       globalID = user.uid;
+      //       globalName = peerData['username'];
+      //       globalImage = peerData['photoUrl'];
+      //       globalBio = peerData['bio'];
+      //       globalCover = peerData['coverUrl'];
+      //       globalDisplayName = peerData['displayName'];
+      //       globalCredits = 0.0.toString();
+      //     });
+      //   }
+      // });
     }
   }
 
   AnimatedTheme buildAuthScreen() {
     final mode = AdaptiveTheme.of(context).mode;
-
+    final userId = widget.userId;
     return AnimatedTheme(
       duration: const Duration(milliseconds: 300),
       data: Theme.of(context),
@@ -166,7 +172,6 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
             ],
           ),
           actions: [
-            // LanguagePickerWidget(),
             Container(
               alignment: Alignment.center,
               width: 40,
@@ -199,7 +204,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
               },
             ),
             MessagesCount(
-              currentUserId: widget.userId,
+              currentUserId: userId,
             ),
           ],
           elevation: 0.0,
@@ -237,7 +242,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                     : const Icon(IconlyLight.profile),
               ),
               FeedsCount(
-                userId: widget.userId,
+                userId: userId,
                 tabController: _tabController,
               ),
               Tab(
@@ -255,16 +260,16 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
           controller: _tabController,
           children: [
             NewTimeline(
-              UserId: widget.userId,
-              reactions: Reaction.reactions,
+              UserId: userId,
+              reactions: reaction.reactions,
             ),
-            UsersList(userId: widget.userId),
+            UsersList(userId: userId),
             Profile(
-              profileId: widget.userId,
-              reactions: Reaction.reactions,
+              profileId: userId,
+              reactions: reaction.reactions,
             ),
             const ActivityFeed(),
-            SettingsPage(currentUserId: widget.userId),
+            SettingsPage(currentUserId: userId),
           ],
         ),
       ),
@@ -273,6 +278,12 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    return buildAuthScreen();
+    return FutureBuilder(
+      future: getUserData(),
+      builder: (context, snapshot) {
+        return buildAuthScreen();
+      },
+    );
+    // return buildAuthScreen();
   }
 }

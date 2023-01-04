@@ -44,13 +44,14 @@ class AppState extends State<App> with WidgetsBindingObserver {
   Future<void> _configNotification() async {
     final FirebaseMessaging fcmMessaging = FirebaseMessaging.instance;
     await fcmMessaging.requestPermission(
-        sound: true,
-        alert: true,
-        announcement: true,
-        carPlay: true,
-        criticalAlert: true,
-        provisional: true,
-        badge: true);
+      sound: true,
+      alert: true,
+      announcement: true,
+      carPlay: true,
+      criticalAlert: true,
+      provisional: true,
+      badge: true,
+    );
 
     fcmMessaging.getInitialMessage().then((RemoteMessage? message) {
       if (message != null) {
@@ -113,7 +114,8 @@ class AppState extends State<App> with WidgetsBindingObserver {
                     color: Colors.blue,
                     subText: notification.title,
                     importance: Importance.high,
-                    icon: const AndroidInitializationSettings('@mipmap/ic_launcher')
+                    icon: const AndroidInitializationSettings(
+                            '@mipmap/ic_launcher')
                         .defaultIcon)
                 : null,
             iOS: apple != null
@@ -128,10 +130,8 @@ class AppState extends State<App> with WidgetsBindingObserver {
 
   Future<void> showLocalNotification(RemoteMessage message) async {
     RemoteNotification? notification = message.notification;
-    print(notification!.apple);
     var android = message.notification?.title!;
     if (notification != null) {
-      print(notification.title);
       await notificationsPlugin.show(
           notification.hashCode,
           notification.title,
@@ -141,13 +141,18 @@ class AppState extends State<App> with WidgetsBindingObserver {
                 ? AndroidNotificationDetails("1", "ContestKnowledge",
                     channelDescription: "Notification",
                     importance: Importance.high,
-                    icon: const AndroidInitializationSettings('@mipmap/ic_launcher')
+                    icon: const AndroidInitializationSettings(
+                            '@mipmap/ic_launcher')
                         .defaultIcon)
-                : AndroidNotificationDetails("1", "ContestKnowledge",
+                : AndroidNotificationDetails(
+                    "1",
+                    "ContestKnowledge",
                     channelDescription: "Notification",
                     importance: Importance.high,
-                    icon: const AndroidInitializationSettings('@mipmap/ic_launcher')
-                        .defaultIcon),
+                    icon: const AndroidInitializationSettings(
+                      '@mipmap/ic_launcher',
+                    ).defaultIcon,
+                  ),
           ));
     }
   }
@@ -157,108 +162,111 @@ class AppState extends State<App> with WidgetsBindingObserver {
   }
 
   @override
-  Widget build(BuildContext context) => ChangeNotifierProvider(
-      create: (context) => LocaleProvider(),
-      builder: (context, child) {
-        final provider = Provider.of<LocaleProvider>(context);
-
-        String locale = widget.prefs.getString("locale") ?? 'en';
-        provider.setLocale(Locale(locale));
-        return AdaptiveTheme(
-          light: ThemeData(
-              brightness: Brightness.light,
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider(
+        create: (context) => LocaleProvider(),
+        builder: (context, child) {
+          final provider = Provider.of<LocaleProvider>(context);
+          String locale = widget.prefs.getString("locale") ?? 'en';
+          provider.setLocale(Locale(locale));
+          return AdaptiveTheme(
+            light: ThemeData(
+                brightness: Brightness.light,
+                primarySwatch: Colors.red,
+                primaryColor: Palette.primaryColor,
+                primaryColorDark: Colors.white,
+                canvasColor: Colors.white,
+                disabledColor: Palette.menuBackgroundColor,
+                backgroundColor: Palette.backgroundColor,
+                appBarTheme: const AppBarTheme(
+                  backgroundColor: Palette.appbarbackgroundColor,
+                  actionsIconTheme: IconThemeData(
+                    color: Palette.appbariconcolor,
+                  ),
+                  iconTheme: IconThemeData(
+                    color: Palette.appbariconcolor,
+                    size: 24,
+                  ),
+                  systemOverlayStyle: SystemUiOverlayStyle.dark,
+                  brightness: Brightness.dark,
+                ),
+                tabBarTheme: const TabBarTheme(
+                  labelColor: Palette.tabbarlabelColor,
+                  unselectedLabelColor: Palette.tabbarunselectedLabelColor,
+                ),
+                iconTheme: const IconThemeData(color: Palette.iconThemeColor),
+                scaffoldBackgroundColor: Palette.scaffoldBackgroundColor,
+                textTheme: TextTheme(
+                  headline4: GoogleFonts.portLligatSans(
+                    textStyle: Theme.of(context).textTheme.headline4,
+                    fontSize: defaultTargetPlatform == TargetPlatform.android
+                        ? 30
+                        : 25,
+                    fontWeight: FontWeight.w700,
+                    color: Palette.apptitlecolor,
+                  ),
+                ),
+                cardColor: Palette.cardColor,
+                shadowColor: Palette.shadowColor,
+                inputDecorationTheme: const InputDecorationTheme(
+                  fillColor: Palette.inputfillcolor,
+                ),
+                secondaryHeaderColor: Palette.secondaryHeaderColor),
+            dark: ThemeData(
+              brightness: Brightness.dark,
               primarySwatch: Colors.red,
-              primaryColor: Palette.primaryColor,
-              primaryColorDark: Colors.white,
-              canvasColor: Colors.white,
-              disabledColor: Palette.menuBackgroundColor,
-              backgroundColor: Palette.backgroundColor,
+              backgroundColor: Palette.backgroundColordark,
+              disabledColor: Palette.scaffoldBackgroundColordark,
+              secondaryHeaderColor: Palette.secondaryHeaderColorDark,
               appBarTheme: const AppBarTheme(
-                backgroundColor: Palette.appbarbackgroundColor,
                 actionsIconTheme: IconThemeData(
-                  color: Palette.appbariconcolor,
+                  color: Palette.appbariconcolordark,
                 ),
-                iconTheme: IconThemeData(
-                  color: Palette.appbariconcolor,
-                  size: 24,
-                ),
-                systemOverlayStyle: SystemUiOverlayStyle.dark,
-                brightness: Brightness.dark,
+                backgroundColor: Palette.appbarbackgroundColordark,
+                iconTheme:
+                    IconThemeData(color: Palette.appbariconcolordark, size: 24),
+                systemOverlayStyle: SystemUiOverlayStyle.light,
+                brightness: Brightness.light,
               ),
               tabBarTheme: const TabBarTheme(
-                labelColor: Palette.tabbarlabelColor,
-                unselectedLabelColor: Palette.tabbarunselectedLabelColor,
+                labelColor: Palette.tabbarlabelColordark,
+                unselectedLabelColor: Palette.tabbarunselectedLabelColordark,
               ),
-              iconTheme: const IconThemeData(color: Palette.iconThemeColor),
-              scaffoldBackgroundColor: Palette.scaffoldBackgroundColor,
+              iconTheme: const IconThemeData(color: Palette.iconThemeColordark),
+              scaffoldBackgroundColor: Palette.scaffoldBackgroundColordark,
               textTheme: TextTheme(
                 headline4: GoogleFonts.portLligatSans(
                   textStyle: Theme.of(context).textTheme.headline4,
-                  fontSize: defaultTargetPlatform == TargetPlatform.android ? 30 : 25,
+                  fontSize: 30,
                   fontWeight: FontWeight.w700,
-                  color: Palette.apptitlecolor,
+                  color: Palette.apptitlecolordark,
                 ),
               ),
-              cardColor: Palette.cardColor,
-              shadowColor: Palette.shadowColor,
+              cardColor: Palette.cardColordark,
+              shadowColor: Palette.shadowColordark,
               inputDecorationTheme: const InputDecorationTheme(
-                fillColor: Palette.inputfillcolor,
-              ),
-              secondaryHeaderColor: Palette.secondaryHeaderColor),
-          dark: ThemeData(
-            brightness: Brightness.dark,
-            primarySwatch: Colors.red,
-            backgroundColor: Palette.backgroundColordark,
-            disabledColor: Palette.scaffoldBackgroundColordark,
-            secondaryHeaderColor: Palette.secondaryHeaderColorDark,
-            appBarTheme: const AppBarTheme(
-              actionsIconTheme: IconThemeData(
-                color: Palette.appbariconcolordark,
-              ),
-              backgroundColor: Palette.appbarbackgroundColordark,
-              iconTheme:
-                  IconThemeData(color: Palette.appbariconcolordark, size: 24),
-              systemOverlayStyle: SystemUiOverlayStyle.light,
-              brightness: Brightness.light,
-            ),
-            tabBarTheme: const TabBarTheme(
-              labelColor: Palette.tabbarlabelColordark,
-              unselectedLabelColor: Palette.tabbarunselectedLabelColordark,
-            ),
-            iconTheme: const IconThemeData(color: Palette.iconThemeColordark),
-            scaffoldBackgroundColor: Palette.scaffoldBackgroundColordark,
-            textTheme: TextTheme(
-              headline4: GoogleFonts.portLligatSans(
-                textStyle: Theme.of(context).textTheme.headline4,
-                fontSize: 30,
-                fontWeight: FontWeight.w700,
-                color: Palette.apptitlecolordark,
+                fillColor: Palette.inputfillcolordark,
               ),
             ),
-            cardColor: Palette.cardColordark,
-            shadowColor: Palette.shadowColordark,
-            inputDecorationTheme: const InputDecorationTheme(
-              fillColor: Palette.inputfillcolordark,
+            initial: widget.savedThemeMode ?? AdaptiveThemeMode.light,
+            builder: (theme, darkTheme) => MaterialApp(
+              title: 'Global  net',
+              theme: theme,
+              darkTheme: darkTheme,
+              debugShowCheckedModeBanner: false,
+              home: _handleCurrentScreen(widget.prefs),
+              locale: provider.locale,
+              supportedLocales: L10n.all,
+              localizationsDelegates: const [
+                AppLocalizations.delegate,
+                GlobalMaterialLocalizations.delegate,
+                GlobalCupertinoLocalizations.delegate,
+                GlobalWidgetsLocalizations.delegate,
+              ],
             ),
-          ),
-          initial: widget.savedThemeMode ?? AdaptiveThemeMode.light,
-          builder: (theme, darkTheme) => MaterialApp(
-            title: 'Global  net',
-            theme: theme,
-            darkTheme: darkTheme,
-            debugShowCheckedModeBanner: false,
-            home: _handleCurrentScreen(widget.prefs),
-            locale: provider.locale,
-            supportedLocales: L10n.all,
-            localizationsDelegates: const [
-              AppLocalizations.delegate,
-              GlobalMaterialLocalizations.delegate,
-              GlobalCupertinoLocalizations.delegate,
-              GlobalWidgetsLocalizations.delegate,
-            ],
-          ),
-        );
-      });
+          );
+        });
+  }
 
   Widget _handleCurrentScreen(SharedPreferences prefs) {
     String? data = prefs.getString(SharedPreferencesKey.LOGGED_IN_USERRDATA);
