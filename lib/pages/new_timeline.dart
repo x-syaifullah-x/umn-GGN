@@ -1,9 +1,8 @@
-// ignore_for_file: use_key_in_widget_constructors, implementation_imports, unnecessary_this, no_logic_in_create_state, avoid_print
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:flutter_reaction_button/flutter_reaction_button.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -16,15 +15,15 @@ import 'package:share/share.dart';
 import 'package:simpleworld/data/reaction_data.dart';
 import 'package:simpleworld/models/user.dart';
 import 'package:simpleworld/pages/activity_feed.dart';
-import 'package:simpleworld/widgets/count/comments_count.dart';
-import 'package:simpleworld/pages/home.dart';
 import 'package:simpleworld/pages/auth/login_page.dart';
 import 'package:simpleworld/pages/create_post/post_box.dart';
+import 'package:simpleworld/pages/home.dart';
 import 'package:simpleworld/pages/post_screen.dart';
 import 'package:simpleworld/pages/post_screen_album.dart';
 import 'package:simpleworld/pages/story_list.dart';
 import 'package:simpleworld/pages/suggested_users.dart';
 import 'package:simpleworld/widgets/album_posts.dart';
+import 'package:simpleworld/widgets/count/comments_count.dart';
 import 'package:simpleworld/widgets/count/reaction_button.dart';
 import 'package:simpleworld/widgets/count/reactions_count.dart';
 import 'package:simpleworld/widgets/inline_adaptive_ads.dart';
@@ -37,25 +36,22 @@ import 'package:simpleworld/widgets/single_post.dart';
 import 'package:string_validator/string_validator.dart';
 import 'package:timeago/timeago.dart';
 import 'package:visibility_detector/visibility_detector.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class NewTimeline extends StatefulWidget {
-  // ignore: non_constant_identifier_names
-  final String? UserId;
+  final String? userId;
   final List<Reaction<String>> reactions;
 
-  // ignore: non_constant_identifier_names
   const NewTimeline({
     Key? key,
-    this.UserId,
+    this.userId,
     required this.reactions,
   }) : super(key: key);
 
   @override
-  _NewTimelineState createState() => _NewTimelineState(currentUserId: UserId);
+  NewTimelineState createState() => NewTimelineState(currentUserId: userId);
 }
 
-class _NewTimelineState extends State<NewTimeline> {
+class NewTimelineState extends State<NewTimeline> {
   final String? currentUserId;
 
   bool isGlobal = false;
@@ -65,7 +61,7 @@ class _NewTimelineState extends State<NewTimeline> {
 
   var reportPostData;
 
-  _NewTimelineState({
+  NewTimelineState({
     this.currentUserId,
   });
 
@@ -104,7 +100,7 @@ class _NewTimelineState extends State<NewTimeline> {
                 height: 210,
                 child: StoryList(),
               ),
-             SvgPicture.asset(
+              SvgPicture.asset(
                 'assets/images/no_content.svg',
                 height: 260.0,
               ),
@@ -145,7 +141,7 @@ class _NewTimelineState extends State<NewTimeline> {
                   color: Colors.yellow,
                   child: const SuggestedUsersList(),
                 ),
-                InlineAdaptiveAds(),
+                const InlineAdaptiveAds(),
               ],
             );
           } else {
@@ -167,7 +163,7 @@ class _NewTimelineState extends State<NewTimeline> {
           }
         },
         query: timelineRef
-            .doc(widget.UserId)
+            .doc(widget.userId)
             .collection('timelinePosts')
             .orderBy('timestamp', descending: true),
         isLive: true,
@@ -179,7 +175,7 @@ class _NewTimelineState extends State<NewTimeline> {
   }
 
   Widget buildPostHeader(post) {
-    bool haslocation = post['location']?.isNotEmpty == true;
+    bool hasLocation = post['location']?.isNotEmpty == true;
     return FutureBuilder<GloabalUser?>(
       future: GloabalUser.fetchUser(post['ownerId']),
       builder: (context, snapshot) {
@@ -234,7 +230,7 @@ class _NewTimelineState extends State<NewTimeline> {
                               fontWeight: FontWeight.w700,
                             ),
                           ),
-                          if (haslocation)
+                          if (hasLocation)
                             Text(
                               ' is at ',
                               style:
@@ -242,7 +238,7 @@ class _NewTimelineState extends State<NewTimeline> {
                                         fontSize: 12.0,
                                       ),
                             ),
-                          if (haslocation)
+                          if (hasLocation)
                             SizedBox(
                               width: 150,
                               child: Text(
@@ -293,7 +289,7 @@ class _NewTimelineState extends State<NewTimeline> {
 
   Widget buildPostImage(post) {
     print(post['description']);
-    bool hasdesc = post['description']?.isNotEmpty == true;
+    bool hasDesc = post['description']?.isNotEmpty == true;
     bool isPdf = post['type'] == 'pdf';
     bool isVide = post['type'] == 'video';
     bool isPhoto = post['type'] == 'photo';
@@ -303,9 +299,9 @@ class _NewTimelineState extends State<NewTimeline> {
           RegExp(r'(?:(?:https?|ftp):\/\/)?[\w/\-?=%.]+\.[\w/\-?=%.]+');
       Iterable<RegExpMatch> matches = urlRegExp.allMatches(textData);
 
-      matches.forEach((match) {
+      for (var match in matches) {
         textData = textData.substring(match.start, match.end);
-      });
+      }
       return textData;
     }
 
@@ -313,7 +309,7 @@ class _NewTimelineState extends State<NewTimeline> {
     bool isValid = isURL(userInput);
 
     if (isPhoto) {
-      if (hasdesc) {
+      if (hasDesc) {
         return GestureDetector(
           onTap: () => Navigator.push(
               context,
@@ -337,7 +333,7 @@ class _NewTimelineState extends State<NewTimeline> {
                 alignment: Alignment.center,
                 children: <Widget>[
                   Center(
-                      child: Container(
+                      child: SizedBox(
                     width: double.infinity,
                     height: MediaQuery.of(context).size.height * 0.5,
                     child: PhotoGrid(
@@ -418,7 +414,7 @@ class _NewTimelineState extends State<NewTimeline> {
         ),
       );
     } else if (isVide) {
-      if (hasdesc) {
+      if (hasDesc) {
         return Column(
           children: [
             Container(
@@ -498,7 +494,7 @@ class _NewTimelineState extends State<NewTimeline> {
         ),
       );
     } else if (isPdf) {
-      if (hasdesc) {
+      if (hasDesc) {
         return GestureDetector(
           onTap: () => Navigator.push(
               context,
@@ -744,7 +740,7 @@ class _NewTimelineState extends State<NewTimeline> {
               const SizedBox(
                 height: 10,
               ),
-              post['ownerId'] == widget.UserId
+              post['ownerId'] == widget.userId
                   ? ListTile(
                       onTap: () {
                         Navigator.pop(context);
@@ -757,7 +753,7 @@ class _NewTimelineState extends State<NewTimeline> {
                       ),
                     )
                   : Container(),
-              post['ownerId'] != widget.UserId
+              post['ownerId'] != widget.userId
                   ? ListTile(
                       onTap: () {
                         Navigator.pop(context);
@@ -770,7 +766,7 @@ class _NewTimelineState extends State<NewTimeline> {
                       ),
                     )
                   : Container(),
-              post['ownerId'] != widget.UserId
+              post['ownerId'] != widget.userId
                   ? ListTile(
                       onTap: () {
                         Navigator.pop(context);
@@ -783,7 +779,7 @@ class _NewTimelineState extends State<NewTimeline> {
                       ),
                     )
                   : Container(),
-              post['ownerId'] != widget.UserId
+              post['ownerId'] != widget.userId
                   ? ListTile(
                       onTap: () {
                         Navigator.pop(context);
@@ -795,7 +791,7 @@ class _NewTimelineState extends State<NewTimeline> {
                       ),
                     )
                   : Container(),
-              post['ownerId'] != widget.UserId
+              post['ownerId'] != widget.userId
                   ? ListTile(
                       onTap: () {
                         Navigator.pop(context);
@@ -882,7 +878,7 @@ class _NewTimelineState extends State<NewTimeline> {
 
   hidePost(post) async {
     timelineRef
-        .doc(widget.UserId)
+        .doc(widget.userId)
         .collection('timelinePosts')
         .doc(post['postId'])
         .get()

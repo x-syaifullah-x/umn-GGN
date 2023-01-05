@@ -1,25 +1,27 @@
 // ignore_for_file: unnecessary_this
 
 import 'dart:io';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_reaction_button/flutter_reaction_button.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:nb_utils/nb_utils.dart';
 import 'package:simpleworld/models/user.dart';
+import 'package:simpleworld/pages/auth/login_page.dart';
+import 'package:simpleworld/pages/chat/simpleworld_chat.dart';
 import 'package:simpleworld/pages/comming_soon_page.dart';
+import 'package:simpleworld/pages/create_post/post_box.dart';
 import 'package:simpleworld/pages/disliked_list.dart';
+import 'package:simpleworld/pages/edit_profile.dart';
 import 'package:simpleworld/pages/followers_list.dart';
 import 'package:simpleworld/pages/following_users_list.dart';
 import 'package:simpleworld/pages/home.dart';
-import 'package:simpleworld/pages/auth/login_page.dart';
-import 'package:simpleworld/pages/create_post/post_box.dart';
-import 'package:simpleworld/pages/chat/simpleworld_chat.dart';
-import 'package:simpleworld/pages/edit_profile.dart';
 import 'package:simpleworld/pages/liked_list.dart';
 import 'package:simpleworld/pages/menu/dialogs/store_products.dart';
 import 'package:simpleworld/pages/ppviewed_list.dart';
@@ -29,7 +31,6 @@ import 'package:simpleworld/widgets/multi_manager/flick_multi_manager.dart';
 import 'package:simpleworld/widgets/progress.dart';
 import 'package:simpleworld/widgets/simple_world_widgets.dart';
 import 'package:simpleworld/widgets/single_post.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class Profile extends StatefulWidget {
   final String? profileId;
@@ -52,15 +53,15 @@ class ProfileState extends State<Profile> {
   bool isLiked = false;
   bool isDisliked = false;
   bool isLoading = false;
-  int currentusercredit = 0;
+  int currentUserCredit = 0;
   int postCount = 0;
   int followerCount = 0;
   int likedCount = 0;
   int dislikedCount = 0;
-  int ppviewCount = 0;
+  int ppViewCount = 0;
   int followingCount = 0;
   final ImagePicker _picker = ImagePicker();
-  File? storyfile;
+  File? storyFile;
   File? imageFileAvatar;
   File? imageFileCover;
   String? imageFileAvatarUrl;
@@ -73,20 +74,20 @@ class ProfileState extends State<Profile> {
   void initState() {
     super.initState();
     getProfilePosts();
-    getFollowers();
-    getFollowing();
-    checkIfFollowing();
+    _getFollowers();
+    _getFollowing();
+    _checkIfFollowing();
     flickMultiManager = FlickMultiManager();
-    checkIfLiked();
-    checkIfDislikedLiked();
-    getLikedusers();
-    getcurrentusercredits();
-    getDisLikedusers();
-    viewMyProfile();
-    getppviwedusers();
+    _checkIfLiked();
+    _checkIfDislikedLiked();
+    _getLikedUsers();
+    _getCurrentUserCredits();
+    _getDisLikedUsers();
+    _viewMyProfile();
+    _getPpViewUsers();
   }
 
-  checkIfFollowing() async {
+  _checkIfFollowing() async {
     DocumentSnapshot doc = await followersRef
         .doc(widget.profileId)
         .collection('userFollowers')
@@ -97,7 +98,7 @@ class ProfileState extends State<Profile> {
     });
   }
 
-  checkIfLiked() async {
+  _checkIfLiked() async {
     DocumentSnapshot doc = await likedRef
         .doc(widget.profileId)
         .collection('userlikes')
@@ -108,7 +109,7 @@ class ProfileState extends State<Profile> {
     });
   }
 
-  checkIfDislikedLiked() async {
+  _checkIfDislikedLiked() async {
     DocumentSnapshot doc = await dislikedRef
         .doc(widget.profileId)
         .collection('userDislikes')
@@ -119,7 +120,7 @@ class ProfileState extends State<Profile> {
     });
   }
 
-  getLikedusers() async {
+  _getLikedUsers() async {
     QuerySnapshot snapshot =
         await likedRef.doc(widget.profileId).collection('userlikes').get();
     setState(() {
@@ -127,7 +128,7 @@ class ProfileState extends State<Profile> {
     });
   }
 
-  getDisLikedusers() async {
+  _getDisLikedUsers() async {
     QuerySnapshot snapshot = await dislikedRef
         .doc(widget.profileId)
         .collection('userDislikes')
@@ -137,15 +138,15 @@ class ProfileState extends State<Profile> {
     });
   }
 
-  getppviwedusers() async {
+  _getPpViewUsers() async {
     QuerySnapshot snapshot =
         await ppviewsRef.doc(widget.profileId).collection('userviews').get();
     setState(() {
-      ppviewCount = snapshot.docs.length;
+      ppViewCount = snapshot.docs.length;
     });
   }
 
-  getFollowers() async {
+  _getFollowers() async {
     QuerySnapshot snapshot = await followersRef
         .doc(widget.profileId)
         .collection('userFollowers')
@@ -155,7 +156,7 @@ class ProfileState extends State<Profile> {
     });
   }
 
-  getFollowing() async {
+  _getFollowing() async {
     QuerySnapshot snapshot = await followingRef
         .doc(widget.profileId)
         .collection('userFollowing')
@@ -181,15 +182,15 @@ class ProfileState extends State<Profile> {
     });
   }
 
-  getcurrentusercredits() async {
+  _getCurrentUserCredits() async {
     usersRef.doc(globalID).get().then(
           (value) => setState(() {
-            currentusercredit = value["credit_points"];
+            currentUserCredit = value["credit_points"];
           }),
         );
   }
 
-  viewMyProfile() {
+  _viewMyProfile() {
     bool isProfileOwner = currentUserId == widget.profileId;
     isProfileOwner
         ? Container()
@@ -206,9 +207,9 @@ class ProfileState extends State<Profile> {
 
     if (mounted) {
       setState(() async {
-        this.storyfile = storyfile;
+        this.storyFile = storyFile;
         if (pickedFile != null) {
-          storyfile = File(pickedFile.path);
+          storyFile = File(pickedFile.path);
 
           await navigator
               .push(MaterialPageRoute(builder: (context) => AddStory()));
@@ -220,7 +221,8 @@ class ProfileState extends State<Profile> {
   }
 
   buildCountColumn(String label, int count, Function() onTap) {
-    double maxWidth = MediaQuery.of(context).size.width * 0.2;
+    double maxWidth = MediaQuery.of(context).size.width *
+        (isWeb && (MediaQuery.of(context).size.width > 850) ? 0.1 : 0.2);
     return Card(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -256,8 +258,12 @@ class ProfileState extends State<Profile> {
   }
 
   buildProfileButton() {
-    double maxWidth = MediaQuery.of(context).size.width * 0.4;
-
+    double maxWidth;
+    if (isWeb && (MediaQuery.of(context).size.width > 850)) {
+      maxWidth = MediaQuery.of(context).size.width * 0.2;
+    } else {
+      maxWidth = MediaQuery.of(context).size.width * 0.4;
+    }
     bool isProfileOwner = currentUserId == widget.profileId;
     if (isProfileOwner) {
       return Row(
@@ -285,11 +291,9 @@ class ProfileState extends State<Profile> {
                 ),
               ),
             ),
-          ).onTap(
-            () {
-              handleChooseFromGallery();
-            },
-          ),
+          ).onTap(() {
+            handleChooseFromGallery();
+          }),
           const SizedBox(width: 10),
           Container(
             margin: const EdgeInsets.only(top: 10.0),
@@ -313,11 +317,9 @@ class ProfileState extends State<Profile> {
                 ),
               ),
             ),
-          ).onTap(
-            () {
-              editProfile();
-            },
-          )
+          ).onTap(() {
+            editProfile();
+          })
         ],
       );
     } else if (isFollowing) {
@@ -695,13 +697,13 @@ class ProfileState extends State<Profile> {
                             ),
                           )
                     : Material(
+                        clipBehavior: Clip.hardEdge,
                         child: Image.file(
                           imageFileCover!,
                           width: double.infinity,
                           height: 200.0,
                           fit: BoxFit.cover,
                         ),
-                        clipBehavior: Clip.hardEdge,
                       ),
                 isProfileOwner
                     ? Container()
@@ -781,15 +783,15 @@ class ProfileState extends State<Profile> {
                                       ),
                               )
                             : Material(
+                                borderRadius: const BorderRadius.all(
+                                    Radius.circular(15.0)),
+                                clipBehavior: Clip.hardEdge,
                                 child: Image.file(
                                   imageFileAvatar!,
                                   width: 120.0,
                                   height: 120.0,
                                   fit: BoxFit.cover,
                                 ),
-                                borderRadius: const BorderRadius.all(
-                                    Radius.circular(15.0)),
-                                clipBehavior: Clip.hardEdge,
                               ),
                         isProfileOwner
                             ? SvgPicture.asset(
@@ -880,7 +882,7 @@ class ProfileState extends State<Profile> {
                           margin: const EdgeInsets.only(right: 5),
                           child: Image.asset('assets/images/verified_badge.png',
                               width: 30, height: 30))
-                      : Container(width: 0, height: 0),
+                      : const SizedBox(width: 0, height: 0),
                 ],
               ),
               const SizedBox(height: 3),
@@ -894,30 +896,19 @@ class ProfileState extends State<Profile> {
                 Row(
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
-                    Row(
-                      children: [
-                        Text(AppLocalizations.of(context)!.you_have,
-                            style: Theme.of(context)
-                                .textTheme
-                                .headline6!
-                                .copyWith(fontSize: 14)),
-                        Text(user.credit_points.toString(),
-                            style: Theme.of(context)
-                                .textTheme
-                                .headline6!
-                                .copyWith(fontSize: 14)),
-                        Text(AppLocalizations.of(context)!.credits,
-                            style: Theme.of(context)
-                                .textTheme
-                                .headline6!
-                                .copyWith(fontSize: 14)),
-                      ],
+                    Text(
+                      "${AppLocalizations.of(context)!.you_have} ${user.credit_points} ${AppLocalizations.of(context)!.credits}",
+                      style: Theme.of(context)
+                          .textTheme
+                          .headline6!
+                          .copyWith(fontSize: 14),
                     ),
-                    const SizedBox(width: 10),
                     Container(
-                      margin: const EdgeInsets.only(top: 10.0),
+                      margin: const EdgeInsets.only(top: 10.0, left: 10),
+                      padding: const EdgeInsets.only(left: 10, right: 10),
                       height: 38,
-                      width: (context.width() - (3 * 16)) * 0.4,
+                      // width: (context.width() - (3 * 16)) * 0.4,
+                      // width: double.infinity,
                       decoration: const BoxDecoration(
                         color: Color(0xffE5E6EB),
                         borderRadius: BorderRadius.all(
@@ -937,12 +928,24 @@ class ProfileState extends State<Profile> {
                         ),
                       ),
                     ).onTap(() {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => Upgrade(),
-                        ),
-                      );
+                      if (!isWeb) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const Upgrade(),
+                          ),
+                        );
+                      } else {
+                        final scaffold = ScaffoldMessenger.of(context);
+                        scaffold.showSnackBar(
+                          SnackBar(
+                            content: const Text("NOT SUPPORTED"),
+                            action: SnackBarAction(
+                                label: 'Ok',
+                                onPressed: scaffold.hideCurrentSnackBar),
+                          ),
+                        );
+                      }
                     }),
                   ],
                 ),
@@ -1057,7 +1060,7 @@ class ProfileState extends State<Profile> {
                             },
                           );
                         } else {
-                          bool noCredit = currentusercredit < 20;
+                          bool noCredit = currentUserCredit < 20;
                           consentSheet(
                             context,
                             AppLocalizations.of(context)!.followed_consent3,
@@ -1148,7 +1151,7 @@ class ProfileState extends State<Profile> {
                             },
                           );
                         } else {
-                          bool noCredit = currentusercredit < 20;
+                          bool noCredit = currentUserCredit < 20;
                           consentSheet(
                             context,
                             AppLocalizations.of(context)!.following_consent3,
@@ -1205,7 +1208,7 @@ class ProfileState extends State<Profile> {
                   children: <Widget>[
                     buildCountColumn(
                       "Views",
-                      ppviewCount,
+                      ppViewCount,
                       () {
                         if (isProfileOwner) {
                           bool noCredit = user.credit_points < 10;
@@ -1238,7 +1241,7 @@ class ProfileState extends State<Profile> {
                             },
                           );
                         } else {
-                          bool noCredit = currentusercredit < 20;
+                          bool noCredit = currentUserCredit < 20;
                           consentSheet(
                             context,
                             'Would you like to see users who viewed  this Profile?',
@@ -1303,7 +1306,7 @@ class ProfileState extends State<Profile> {
                           },
                         );
                       } else {
-                        bool noCredit = currentusercredit < 20;
+                        bool noCredit = currentUserCredit < 20;
                         consentSheet(
                           context,
                           'Would you like to see users who liked  this Profile?',
@@ -1367,7 +1370,7 @@ class ProfileState extends State<Profile> {
                           },
                         );
                       } else {
-                        bool noCredit = currentusercredit < 20;
+                        bool noCredit = currentUserCredit < 20;
                         consentSheet(
                           context,
                           'Would you like to see users who Disliked  this Profile?',

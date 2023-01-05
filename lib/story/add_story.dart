@@ -32,8 +32,8 @@ class AddStoryState extends State<AddStory>
   Color? mainColor = Colors.deepPurple[400];
   final ImagePicker _picker = ImagePicker();
   File? file;
-  File? vediofile;
-  File? newvediofile;
+  File? videoFile;
+  File? newVideoFile;
   TextEditingController captionController = TextEditingController();
 
   bool isUploading = false;
@@ -66,22 +66,22 @@ class AddStoryState extends State<AddStory>
 
     if (mounted) {
       setState(() async {
-        vediofile = vediofile;
+        videoFile = videoFile;
         if (pickedFile != null) {
-          vediofile = File(pickedFile.path);
-          print(vediofile);
+          videoFile = File(pickedFile.path);
+          print(videoFile);
           await VideoCompress.setLogLevel(0);
           final MediaInfo? info = await VideoCompress.compressVideo(
-            vediofile!.path,
+            videoFile!.path,
             quality: VideoQuality.LowQuality,
             deleteOrigin: false,
             includeAudio: true,
           );
           print(info!.path);
           setState(() {
-            newvediofile = File(info.path!);
+            newVideoFile = File(info.path!);
           });
-          int size = newvediofile!.lengthSync();
+          int size = newVideoFile!.lengthSync();
           double sizeInMb = size / (1024 * 1024);
           if (sizeInMb > 5) {
             simpleworldtoast("", "File Size is larger then 5mb", context);
@@ -91,7 +91,7 @@ class AddStoryState extends State<AddStory>
           await navigator.push(MaterialPageRoute(
               builder: (context) => CreateVideoStory(
                   currentUser: currentUser,
-                  file: vediofile!,
+                  file: videoFile!,
                   videopath: pickedFile.path)));
         } else {
           // print('No image selected.');

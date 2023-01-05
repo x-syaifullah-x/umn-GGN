@@ -1,0 +1,77 @@
+{
+  "hosting": {
+    "public": "public",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ]
+  },
+  "emulators": {
+    "auth": {
+      "host": "192.168.0.1",
+      "port": 9099
+    },
+    "functions": {
+      "host": "192.168.0.1",
+      "port": 5001
+    },
+    "firestore": {
+      "host": "192.168.0.1",
+      "port": 8080
+    },
+    "database": {
+      "host": "192.168.0.1",
+      "port": 9000
+    },
+    "hosting": {
+      "host": "192.168.0.1",
+      "port": 5000
+    },
+    "storage": {
+      "host": "192.168.0.1",
+      "port": 9199
+    },
+    "eventarc": {
+      "host": "192.168.0.1",
+      "port": 9299
+    },
+    "ui": {
+      "enabled": true
+    },
+    "singleProjectMode": true,
+    "pubsub": {
+      "host": "192.168.0.1",
+      "port": 8086
+    }
+  },
+  "database": {
+    "rules": "database.rules.json"
+  },
+  "firestore": {
+    "rules": "firestore.rules",
+    "indexes": "firestore.indexes.json"
+  },
+  "functions": [
+    {
+      "source": "functions",
+      "codebase": "default",
+      "ignore": [
+        "node_modules",
+        ".git",
+        "firebase-debug.log",
+        "firebase-debug.*.log"
+      ],
+      "predeploy": [
+        "npm --prefix \"$RESOURCE_DIR\" run lint",
+        "npm --prefix \"$RESOURCE_DIR\" run build"
+      ]
+    }
+  ],
+  "storage": {
+    "rules": "storage.rules"
+  },
+  "remoteconfig": {
+    "template": "remoteconfig.template.json"
+  }
+}

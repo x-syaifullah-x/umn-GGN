@@ -111,16 +111,16 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
   getUserData() async {
     User? user = firebaseAuth.currentUser;
     if (user != null) {
-      final peerData  = await usersRef.doc(user.uid).get();
-        if (peerData.exists) {
-            globalID = user.uid;
-            globalName = peerData['username'];
-            globalImage = peerData['photoUrl'];
-            globalBio = peerData['bio'];
-            globalCover = peerData['coverUrl'];
-            globalDisplayName = peerData['displayName'];
-            globalCredits = 0.0.toString();
-        }
+      final peerData = await usersRef.doc(user.uid).get();
+      if (peerData.exists) {
+        globalID = user.uid;
+        globalName = peerData['username'];
+        globalImage = peerData['photoUrl'];
+        globalBio = peerData['bio'];
+        globalCover = peerData['coverUrl'];
+        globalDisplayName = peerData['displayName'];
+        globalCredits = 0.0.toString();
+      }
 
       // usersRef.doc(user.uid).get().then((peerData) {
       //   if (peerData.exists) {
@@ -138,13 +138,145 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
     }
   }
 
-  AnimatedTheme buildAuthScreen() {
+  Widget _mobile(BuildContext context, String? userId) {
     final mode = AdaptiveTheme.of(context).mode;
-    final userId = widget.userId;
-    return AnimatedTheme(
-      duration: const Duration(milliseconds: 300),
-      data: Theme.of(context),
-      child: Scaffold(
+
+    return Scaffold(
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      key: _scaffoldKey,
+      appBar: AppBar(
+        backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
+        automaticallyImplyLeading: false,
+        shape: Border(
+          bottom: BorderSide(
+            color: Theme.of(context).shadowColor,
+            width: 1.0,
+          ),
+        ),
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            Row(
+              children: <Widget>[
+                Text(
+                  'Global  Net',
+                  style: GoogleFonts.portLligatSans(
+                    textStyle: Theme.of(context).textTheme.headline4,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+        actions: [
+          Container(
+            alignment: Alignment.center,
+            width: 40,
+            margin: const EdgeInsets.all(6.0),
+            decoration: BoxDecoration(
+              color: Theme.of(context).secondaryHeaderColor,
+              shape: BoxShape.circle,
+            ),
+            child: IconButton(
+              onPressed: () {
+                if (mode == AdaptiveThemeMode.light) {
+                  AdaptiveTheme.of(context).setDark();
+                } else {
+                  AdaptiveTheme.of(context).setLight();
+                }
+              },
+              icon: mode == AdaptiveThemeMode.light
+                  ? const Icon(Icons.light_mode)
+                  : const Icon(Icons.dark_mode),
+            ),
+          ),
+          CircleButton(
+            icon: Icons.search,
+            iconSize: 25.0,
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const Search()),
+              );
+            },
+          ),
+          MessagesCount(
+            currentUserId: userId,
+          ),
+        ],
+        elevation: 0.0,
+        bottom: TabBar(
+          indicator: UnderlineTabIndicator(
+            borderSide: BorderSide(width: 4.0, color: Colors.red.shade800),
+          ),
+          controller: _tabController,
+          unselectedLabelColor:
+              Theme.of(context).tabBarTheme.unselectedLabelColor,
+          labelColor: Theme.of(context).tabBarTheme.labelColor,
+          tabs: [
+            Tab(
+              icon: _tabController.index == 0
+                  ? const Icon(
+                      IconlyBold.home,
+                      color: Color(0xFFC62828),
+                    )
+                  : const Icon(IconlyLight.home),
+            ),
+            Tab(
+              icon: _tabController.index == 1
+                  ? const Icon(
+                      IconlyBold.plus,
+                      color: Color(0xFFC62828),
+                    )
+                  : const Icon(IconlyLight.plus),
+            ),
+            Tab(
+              icon: _tabController.index == 2
+                  ? const Icon(
+                      IconlyBold.profile,
+                      color: Color(0xFFC62828),
+                    )
+                  : const Icon(IconlyLight.profile),
+            ),
+            FeedsCount(
+              userId: userId,
+              tabController: _tabController,
+            ),
+            Tab(
+              icon: _tabController.index == 4
+                  ? const Icon(
+                      IconlyBold.category,
+                      color: Color(0xFFC62828),
+                    )
+                  : const Icon(IconlyLight.category),
+            ),
+          ],
+        ),
+      ),
+      body: TabBarView(
+        controller: _tabController,
+        children: [
+          NewTimeline(
+            userId: userId,
+            reactions: reaction.reactions,
+          ),
+          UsersList(userId: userId),
+          Profile(
+            profileId: userId,
+            reactions: reaction.reactions,
+          ),
+          const ActivityFeed(),
+          SettingsPage(currentUserId: userId),
+        ],
+      ),
+    );
+  }
+
+  Widget _desktop(BuildContext context, String? userId) {
+    final AdaptiveThemeMode mode = AdaptiveTheme.of(context).mode;
+    final double sizeWidth = MediaQuery.of(context).size.width;
+    final double sizeWidth_3_4 = sizeWidth - ((3 * sizeWidth) / 4);
+    return Scaffold(
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         key: _scaffoldKey,
         appBar: AppBar(
@@ -209,6 +341,7 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
           ],
           elevation: 0.0,
           bottom: TabBar(
+            // padding: EdgeInsets.only(left: a, right: a),
             indicator: UnderlineTabIndicator(
               borderSide: BorderSide(width: 4.0, color: Colors.red.shade800),
             ),
@@ -256,23 +389,34 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
             ],
           ),
         ),
-        body: TabBarView(
-          controller: _tabController,
-          children: [
-            NewTimeline(
-              UserId: userId,
-              reactions: reaction.reactions,
-            ),
-            UsersList(userId: userId),
-            Profile(
-              profileId: userId,
-              reactions: reaction.reactions,
-            ),
-            const ActivityFeed(),
-            SettingsPage(currentUserId: userId),
-          ],
-        ),
-      ),
+        body: Container(
+          margin: EdgeInsets.only(left: sizeWidth_3_4, right: sizeWidth_3_4),
+          child: TabBarView(
+            controller: _tabController,
+            children: [
+              NewTimeline(
+                userId: userId,
+                reactions: reaction.reactions,
+              ),
+              UsersList(userId: userId),
+              Profile(
+                profileId: userId,
+                reactions: reaction.reactions,
+              ),
+              const ActivityFeed(),
+              SettingsPage(currentUserId: userId),
+            ],
+          ),
+        ));
+  }
+
+  AnimatedTheme buildAuthScreen(BuildContext context, String? userId) {
+    double width = MediaQuery.of(context).size.width;
+    return AnimatedTheme(
+      duration: const Duration(milliseconds: 300),
+      data: Theme.of(context),
+      child:
+          (width > 850) ? _desktop(context, userId) : _mobile(context, userId),
     );
   }
 
@@ -281,7 +425,13 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
     return FutureBuilder(
       future: getUserData(),
       builder: (context, snapshot) {
-        return buildAuthScreen();
+        return NotificationListener(
+          child: buildAuthScreen(context, widget.userId),
+          onNotification: (notification) {
+            return true;
+          },
+        );
+        // return buildAuthScreen();
       },
     );
     // return buildAuthScreen();

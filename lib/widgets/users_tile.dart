@@ -1,32 +1,28 @@
-// ignore_for_file: must_be_immutable, no_logic_in_create_state
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:simpleworld/models/user.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:nb_utils/nb_utils.dart';
+import 'package:simpleworld/data/reaction_data.dart' as reaction;
+import 'package:simpleworld/models/user.dart';
+import 'package:simpleworld/pages/chat/simpleworld_chat.dart';
 import 'package:simpleworld/pages/home.dart';
 import 'package:simpleworld/pages/profile.dart';
-import 'package:simpleworld/pages/chat/simpleworld_chat.dart';
 import 'package:simpleworld/widgets/progress.dart';
 import 'package:simpleworld/widgets/simple_world_widgets.dart';
-import 'package:simpleworld/data/reaction_data.dart' as Reaction;
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class UserTile extends StatefulWidget {
-  Map<dynamic, dynamic>? userdoc;
+  final Map<dynamic, dynamic>? userDoc;
 
-  UserTile(this.userdoc, {Key? key}) : super(key: key);
+  const UserTile(this.userDoc, {Key? key}) : super(key: key);
 
   @override
-  State createState() => UserTileState(userdoc);
+  State createState() => UserTileState();
 }
 
 class UserTileState extends State<UserTile> {
-  Map<dynamic, dynamic>? userdoc;
-  UserTileState(this.userdoc);
-
   final String? currentUserId = globalID;
+
   bool isFollowing = false;
 
   @override
@@ -37,7 +33,7 @@ class UserTileState extends State<UserTile> {
 
   checkIfFollowing() async {
     DocumentSnapshot doc = await followersRef
-        .doc(userdoc!['id'])
+        .doc(widget.userDoc!['id'])
         .collection('userFollowers')
         .doc(globalID)
         .get();
@@ -71,8 +67,8 @@ class UserTileState extends State<UserTile> {
               context,
               MaterialPageRoute(
                 builder: (context) => Profile(
-                  profileId: userdoc!['id'],
-                  reactions: Reaction.reactions,
+                  profileId: widget.userDoc!['id'],
+                  reactions: reaction.reactions,
                 ),
               ),
             ).then((value) => setState(() {})),
@@ -89,7 +85,7 @@ class UserTileState extends State<UserTile> {
 
   buildUsers() {
     return FutureBuilder<GloabalUser?>(
-      future: GloabalUser.fetchUser(userdoc!['id']),
+      future: GloabalUser.fetchUser(widget.userDoc!['id']),
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
           return circularProgress();
@@ -128,48 +124,50 @@ class UserTileState extends State<UserTile> {
                         ),
                       ),
                     ),
-              user.username.isNotEmpty ?    Container(
-                decoration: BoxDecoration(
-                  borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(12),
-                      topRight: Radius.circular(12)),
-                  // image: DecorationImage(
-                  //     image: CachedNetworkImageProvider(user.coverUrl,
-                  //         scale: 1.0),
-                  //     fit: BoxFit.cover)
-                ),
-                child: SizedBox(
-                  width: double.infinity,
-                  height: 60,
-                  child: Container(
-                    alignment: const Alignment(0.0, 5.5),
-                    child: user.photoUrl.isNotEmpty
-                        ? ClipRRect(
-                            borderRadius: BorderRadius.circular(15.0),
-                            child: CachedNetworkImage(
-                              imageUrl: user.photoUrl,
-                              height: 50.0,
-                              width: 50.0,
-                              fit: BoxFit.cover,
-                            ),
-                          )
-                        : Container(
-                            decoration: BoxDecoration(
-                              color: const Color(0xFF003a54),
-                              borderRadius: BorderRadius.circular(15.0),
-                            ),
-                            child: Image.asset(
-                              'assets/images/defaultavatar.png',
-                              width: 50,
-                            ),
-                          ),
-                  ),
-                ),
-              ): SizedBox.shrink(),
+              user.username.isNotEmpty
+                  ? Container(
+                      decoration: const BoxDecoration(
+                        borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(12),
+                            topRight: Radius.circular(12)),
+                        // image: DecorationImage(
+                        //     image: CachedNetworkImageProvider(user.coverUrl,
+                        //         scale: 1.0),
+                        //     fit: BoxFit.cover)
+                      ),
+                      child: SizedBox(
+                        width: double.infinity,
+                        height: 60,
+                        child: Container(
+                          alignment: const Alignment(0.0, 5.5),
+                          child: user.photoUrl.isNotEmpty
+                              ? ClipRRect(
+                                  borderRadius: BorderRadius.circular(15.0),
+                                  child: CachedNetworkImage(
+                                    imageUrl: user.photoUrl,
+                                    height: 50.0,
+                                    width: 50.0,
+                                    fit: BoxFit.cover,
+                                  ),
+                                )
+                              : Container(
+                                  decoration: BoxDecoration(
+                                    color: const Color(0xFF003a54),
+                                    borderRadius: BorderRadius.circular(15.0),
+                                  ),
+                                  child: Image.asset(
+                                    'assets/images/defaultavatar.png',
+                                    width: 50,
+                                  ),
+                                ),
+                        ),
+                      ),
+                    )
+                  : const SizedBox.shrink(),
             ]),
             const SizedBox(height: 30),
             Text(
-              user.username?? "",
+              user.username,
               style:
                   Theme.of(context).textTheme.headline6!.copyWith(fontSize: 16),
               maxLines: 1,
@@ -182,7 +180,7 @@ class UserTileState extends State<UserTile> {
                   Container(
                     margin: const EdgeInsets.only(top: 10.0),
                     height: 30,
-                    width: (context.width() - (3 * 16)) * 0.2,
+                    width: (context.width() - (3 * 16)) * (isWeb && (MediaQuery.of(context).size.width > 850) ? 0.1 : 0.2),
                     decoration: const BoxDecoration(
                       color: Color(0xffE5E6EB),
                       borderRadius: BorderRadius.all(
@@ -221,7 +219,8 @@ class UserTileState extends State<UserTile> {
                         ? Container(
                             margin: const EdgeInsets.only(top: 10.0),
                             height: 30,
-                            width: (context.width() - (3 * 16)) * 0.2,
+                            width: (context.width() - (3 * 16)) *
+                                (isWeb && (MediaQuery.of(context).size.width > 850) ? 0.1 : 0.2),
                             decoration: BoxDecoration(
                               color: Colors.redAccent[700],
                               borderRadius: const BorderRadius.all(
@@ -246,7 +245,8 @@ class UserTileState extends State<UserTile> {
                         : Container(
                             margin: const EdgeInsets.only(top: 10.0),
                             height: 30,
-                            width: (context.width() - (3 * 16)) * 0.2,
+                            width: (context.width() - (3 * 16)) *
+                                (isWeb && (MediaQuery.of(context).size.width > 850) ? 0.1 : 0.2),
                             decoration: BoxDecoration(
                               color: Colors.blue[700],
                               borderRadius: const BorderRadius.all(
@@ -282,7 +282,7 @@ class UserTileState extends State<UserTile> {
       isFollowing = false;
     });
     followersRef
-        .doc(userdoc!['id'])
+        .doc(widget.userDoc!['id'])
         .collection('userFollowers')
         .doc(currentUserId)
         .get()
@@ -294,7 +294,7 @@ class UserTileState extends State<UserTile> {
     followingRef
         .doc(currentUserId)
         .collection('userFollowing')
-        .doc(userdoc!['id'])
+        .doc(widget.userDoc!['id'])
         .get()
         .then((doc) {
       if (doc.exists) {
@@ -302,7 +302,7 @@ class UserTileState extends State<UserTile> {
       }
     });
     activityFeedRef
-        .doc(userdoc!['id'])
+        .doc(widget.userDoc!['id'])
         .collection('feedItems')
         .doc(currentUserId)
         .get()
@@ -347,24 +347,22 @@ class UserTileState extends State<UserTile> {
       isFollowing = true;
     });
     followersRef
-        .doc(userdoc!['id'])
+        .doc(widget.userDoc!['id'])
         .collection('userFollowers')
         .doc(currentUserId)
         .set({'userId': currentUserId});
-    ;
     followingRef
         .doc(currentUserId)
         .collection('userFollowing')
-        .doc(userdoc!['id'])
-        .set({'userId': userdoc!['id']});
-    ;
+        .doc(widget.userDoc!['id'])
+        .set({'userId': widget.userDoc!['id']});
     activityFeedRef
-        .doc(userdoc!['id'])
+        .doc(widget.userDoc!['id'])
         .collection('feedItems')
         .doc(currentUserId)
         .set({
       "type": "follow",
-      "ownerId": userdoc!['id'],
+      "ownerId": widget.userDoc!['id'],
       "username": globalName,
       "userId": currentUserId,
       "userProfileImg": globalImage,

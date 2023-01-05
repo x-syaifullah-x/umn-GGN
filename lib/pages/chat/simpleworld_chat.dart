@@ -195,9 +195,16 @@ class ChatScreenState extends State<ChatScreen> {
 
   createStickers() {
     return Container(
+      decoration: BoxDecoration(
+          border: const Border(top: BorderSide(color: Colors.grey, width: 0.5)),
+          color: Theme.of(context).scaffoldBackgroundColor),
+      padding: const EdgeInsets.all(5.0),
+      height: 210.0,
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: <Widget>[
           Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               TextButton(
                 style: TextButton.styleFrom(
@@ -236,9 +243,9 @@ class ChatScreenState extends State<ChatScreen> {
                 ),
               ),
             ],
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           ),
           Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               TextButton(
                 style: TextButton.styleFrom(
@@ -277,9 +284,9 @@ class ChatScreenState extends State<ChatScreen> {
                 ),
               ),
             ],
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           ),
           Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               TextButton(
                 style: TextButton.styleFrom(
@@ -318,16 +325,9 @@ class ChatScreenState extends State<ChatScreen> {
                 ),
               ),
             ],
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           ),
         ],
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       ),
-      decoration: BoxDecoration(
-          border: const Border(top: BorderSide(color: Colors.grey, width: 0.5)),
-          color: Theme.of(context).scaffoldBackgroundColor),
-      padding: const EdgeInsets.all(5.0),
-      height: 210.0,
     );
   }
 

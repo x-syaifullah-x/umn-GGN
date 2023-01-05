@@ -30,11 +30,13 @@ const List<String> _kProductIds = <String>[
 ];
 
 class Upgrade extends StatefulWidget {
+  const Upgrade({Key? key}) : super(key: key);
+
   @override
-  _MyAppState createState() => _MyAppState();
+  MyAppState createState() => MyAppState();
 }
 
-class _MyAppState extends State<Upgrade> {
+class MyAppState extends State<Upgrade> {
   final InAppPurchase _inAppPurchase = InAppPurchase.instance;
   late StreamSubscription<List<PurchaseDetails>> _subscription;
   List<String> _notFoundIds = <String>[];

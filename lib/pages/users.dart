@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:paginate_firestore/bloc/pagination_listeners.dart';
 import 'package:paginate_firestore/paginate_firestore.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:simpleworld/pages/home.dart';
 import 'package:simpleworld/widgets/header.dart';
 import 'package:simpleworld/widgets/simple_world_widgets.dart';
@@ -11,17 +11,17 @@ import 'package:simpleworld/widgets/users_tile.dart';
 class UsersList extends StatefulWidget {
   final String? userId;
 
-  UsersList({
+  const UsersList({
+    Key? key,
     this.userId,
-  });
+  }) : super(key: key);
 
   @override
-  _UsersListState createState() => _UsersListState();
+  UsersListState createState() => UsersListState();
 }
 
-class _UsersListState extends State<UsersList>
+class UsersListState extends State<UsersList>
     with AutomaticKeepAliveClientMixin<UsersList> {
-  String userOrientation = "grid";
   bool isFollowing = false;
   bool isLoading = false;
   final String? currentUserId = globalID;
@@ -30,10 +30,10 @@ class _UsersListState extends State<UsersList>
   void initState() {
     super.initState();
 
-    checkIfFollowing();
+    _checkIfFollowing();
   }
 
-  checkIfFollowing() async {
+  _checkIfFollowing() async {
     DocumentSnapshot doc = await followersRef
         .doc(widget.userId)
         .collection('userFollowers')
@@ -44,6 +44,7 @@ class _UsersListState extends State<UsersList>
     });
   }
 
+  @override
   bool get wantKeepAlive => true;
 
   @override
@@ -53,16 +54,18 @@ class _UsersListState extends State<UsersList>
         PaginateRefreshedChangeListener();
 
     return Scaffold(
-      appBar: header(context,
-          titleText: AppLocalizations.of(context)!.recent_users,
-          removeBackButton: false),
+      appBar: header(
+        context,
+        titleText: AppLocalizations.of(context)!.recent_users,
+        removeBackButton: false,
+      ),
       body: RefreshIndicator(
           child: PaginateFirestore(
             itemBuilderType: PaginateBuilderType.gridView,
             itemBuilder: (context, documentSnapshot, index) {
-              final userdoc = documentSnapshot[index].data() as Map?;
+              final userDoc = documentSnapshot[index].data() as Map?;
 
-              return UserTile(userdoc);
+              return UserTile(userDoc);
             },
             query: usersRef.orderBy('timestamp', descending: true),
             isLive: true,

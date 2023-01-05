@@ -136,9 +136,8 @@ class MessengerState extends State<Messenger> {
             messenger[index]['type'] != null && messenger[index]['type'] == 1
                 ? "📷 Image"
                 : messenger[index]['content'],
-            style: Theme.of(context).textTheme.bodyText2!.copyWith(
-                  fontSize: 15,
-                ),
+            style:
+                Theme.of(context).textTheme.bodyText2!.copyWith(fontSize: 15),
             maxLines: 1,
             overflow: TextOverflow.ellipsis),
         trailing: Column(

@@ -81,6 +81,11 @@ class SettingsState extends State<SettingsPage> {
   @override
   Widget build(BuildContext context) {
     final mode = AdaptiveTheme.of(context).mode;
+    final double sizeWidth = MediaQuery.of(context).size.width;
+    final double sizeWidth_3_4 =
+        (isWeb && MediaQuery.of(context).size.width > 850)
+            ? sizeWidth - ((3 * sizeWidth) / 4)
+            : 0;
     return AnimatedTheme(
       duration: const Duration(milliseconds: 300),
       data: Theme.of(context),
@@ -98,7 +103,9 @@ class SettingsState extends State<SettingsPage> {
                 children: [
                   Container(
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 10.0, vertical: 5.0),
+                      horizontal: 10.0,
+                      vertical: 5.0,
+                    ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: <Widget>[
@@ -106,7 +113,7 @@ class SettingsState extends State<SettingsPage> {
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12.0)),
                           child: Container(
-                            width: MediaQuery.of(context).size.width / 2 - 20,
+                            width: (sizeWidth / 2 - sizeWidth_3_4) - 20,
                             height: 85.0,
                             padding:
                                 const EdgeInsets.only(left: 20.0, right: 20),
@@ -153,7 +160,7 @@ class SettingsState extends State<SettingsPage> {
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12.0)),
                           child: Container(
-                            width: MediaQuery.of(context).size.width / 2 - 30,
+                            width: (sizeWidth / 2 - sizeWidth_3_4) - 20,
                             height: 85.0,
                             padding:
                                 const EdgeInsets.only(left: 20.0, right: 20),
@@ -195,7 +202,7 @@ class SettingsState extends State<SettingsPage> {
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12.0)),
                           child: Container(
-                            width: MediaQuery.of(context).size.width / 2 - 20,
+                            width: (sizeWidth / 2 - sizeWidth_3_4) - 20,
                             height: 85.0,
                             padding:
                                 const EdgeInsets.only(left: 20.0, right: 20),
@@ -226,7 +233,7 @@ class SettingsState extends State<SettingsPage> {
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12.0)),
                           child: Container(
-                            width: MediaQuery.of(context).size.width / 2 - 30,
+                            width: (sizeWidth / 2 - sizeWidth_3_4) - 20,
                             height: 85.0,
                             padding:
                                 const EdgeInsets.only(left: 20.0, right: 20),
@@ -268,7 +275,7 @@ class SettingsState extends State<SettingsPage> {
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12.0)),
                           child: Container(
-                            width: MediaQuery.of(context).size.width / 2 - 20,
+                            width: (sizeWidth / 2 - sizeWidth_3_4) - 20,
                             height: 85.0,
                             padding:
                                 const EdgeInsets.only(left: 20.0, right: 20),
@@ -300,7 +307,7 @@ class SettingsState extends State<SettingsPage> {
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12.0)),
                           child: Container(
-                            width: MediaQuery.of(context).size.width / 2 - 30,
+                            width: (sizeWidth / 2 - sizeWidth_3_4) - 20,
                             height: 85.0,
                             padding:
                                 const EdgeInsets.only(left: 20.0, right: 20),
@@ -342,7 +349,7 @@ class SettingsState extends State<SettingsPage> {
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12.0)),
                           child: Container(
-                            width: MediaQuery.of(context).size.width / 2 - 20,
+                            width: (sizeWidth / 2 - sizeWidth_3_4) - 20,
                             height: 85.0,
                             padding:
                                 const EdgeInsets.only(left: 20.0, right: 20),
@@ -376,7 +383,7 @@ class SettingsState extends State<SettingsPage> {
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12.0)),
                           child: Container(
-                            width: MediaQuery.of(context).size.width / 2 - 30,
+                            width: (sizeWidth / 2 - sizeWidth_3_4) - 20,
                             height: 85.0,
                             padding:
                                 const EdgeInsets.only(left: 20.0, right: 20),
@@ -419,7 +426,7 @@ class SettingsState extends State<SettingsPage> {
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12.0)),
                           child: Container(
-                            width: MediaQuery.of(context).size.width / 2 - 20,
+                            width: (sizeWidth / 2 - sizeWidth_3_4) - 20,
                             height: 85.0,
                             padding:
                                 const EdgeInsets.only(left: 20.0, right: 20),
@@ -452,7 +459,7 @@ class SettingsState extends State<SettingsPage> {
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12.0)),
                           child: Container(
-                            width: MediaQuery.of(context).size.width / 2 - 30,
+                            width: (sizeWidth / 2 - sizeWidth_3_4) - 20,
                             height: 85.0,
                             padding:
                                 const EdgeInsets.only(left: 20.0, right: 20),
