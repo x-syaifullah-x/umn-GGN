@@ -64,12 +64,12 @@ class ActivityFeedState extends State<ActivityFeed> {
       child: Text("Currently you don't have any messages"),
     );
 
-    if (userData == null || globalID?.isEmpty == true) {
+    if (userData?.isEmpty == true) {
       return child;
     }
     return StreamBuilder(
       stream: activityFeedRef
-          .doc(globalID)
+          .doc(userData)
           .collection('feedItems')
           .orderBy('timestamp', descending: true)
           .limit(50)

@@ -11,14 +11,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:nb_utils/nb_utils.dart';
 import 'package:simpleworld/config/size_config.dart';
 import 'package:simpleworld/pages/home.dart';
-import 'package:simpleworld/widgets/full_image_widget.dart';
 import 'package:simpleworld/widgets/chat_appbar.dart';
+import 'package:simpleworld/widgets/full_image_widget.dart';
 import 'package:simpleworld/widgets/progress.dart';
-import 'package:intl/intl.dart';
 import 'package:simpleworld/widgets/simple_world_widgets.dart';
 
 class Chat extends StatelessWidget {
@@ -105,6 +105,7 @@ class ChatScreenState extends State<ChatScreen> {
   final ImagePicker _picker = ImagePicker();
 
   String? chatId;
+
   // ignore: prefer_typing_uninitialized_variables
   var listMessage;
 
@@ -730,16 +731,14 @@ class ChatScreenState extends State<ChatScreen> {
     );
   }
 
-  void onSendMessage(String contentMsg, int type)async {
+  void onSendMessage(String contentMsg, int type) async {
     int badgeCount = 0;
     if (contentMsg != "") {
       textEditingController.clear();
-
       var docRef = msgRef
           .doc(chatId)
           .collection(chatId!)
           .doc(DateTime.now().millisecondsSinceEpoch.toString());
-
       FirebaseFirestore.instance.runTransaction((transaction) async {
         transaction.set(docRef, {
           "idFrom": currentUserId,
@@ -770,7 +769,7 @@ class ChatScreenState extends State<ChatScreen> {
               .doc(currentUserId)
               .get()
               .then((doc) async {
-            debugPrint(doc["badge"]);
+            debugPrint("doc[\"badge\"]: ${doc["badge"]}");
             if (doc["badge"] != null) {
               badgeCount = int.parse(doc["badge"]);
               await messengerRef
@@ -826,23 +825,30 @@ class ChatScreenState extends State<ChatScreen> {
               "isSeen": false,
             });
           });
-          print(e);
+          debugPrint("$e");
         }
       });
 
-      listscrollController.animateTo(0.0,
-          duration: const Duration(microseconds: 300), curve: Curves.easeOut);
+      listscrollController.animateTo(
+        0.0,
+        duration: const Duration(microseconds: 300),
+        curve: Curves.easeOut,
+      );
     } else {
       Fluttertoast.showToast(msg: "Empty Message. can not be send");
     }
-var user =  await usersRef.doc(receiverId).get();
-    var current =await usersRef.doc(currentUserId).get();
+    var user = await usersRef.doc(receiverId).get();
+    var current = await usersRef.doc(currentUserId).get();
 
     //currentUserId
     print(user.data()!["androidNotificationToken"]);
 
     //displayName
-   getapi(user.data()!["androidNotificationToken"], current.data()!["displayName"], contentMsg);
+    getapi(
+      user.data()!["androidNotificationToken"],
+      current.data()!["displayName"],
+      contentMsg,
+    );
   }
 
   Future getImage() async {
@@ -875,43 +881,36 @@ var user =  await usersRef.doc(receiverId).get();
       onSendMessage(imageUrl!, 1);
     });
   }
-
-
 }
 
-
-getapi(
-    String token, String username , String msg
-    ) async {
+getapi(String token, String username, String msg) async {
   var dio = Dio();
   final response = await dio.post("https://fcm.googleapis.com/fcm/send",
       data: {
-        "to":token,
-        "priority":"HIGH",
+        "to": token,
+        "priority": "HIGH",
         "notification": {
           "title": "$username sent you Message",
           "body": "$msg",
         },
         "data": {
-
           "title": "Hello",
           "notification": {
             "title": "$username sent you Message",
             "body": "$msg",
           },
-
           "android": "",
-          "apple":"",
+          "apple": "",
         }
       },
-      options: Options(headers: {
-
-        "authorization": 'key=AAAAvXer5r4:APA91bGggY3wt1_z6GlcKyi-6PXLLf03oMqs6SYjRVrHW5NsF1Eq1TkUOmIVqCYany-eA_8DHxzpucyypO2FYsowMlwNIeqmuusXtOr1bATNinWw-MBAJoXip2gZZ3Aso-EUp1i7g2BV',
-        "Content-Type": "application/json",
-      },
-
+      options: Options(
+        headers: {
+          "authorization":
+              'key=AAAAvXer5r4:APA91bGggY3wt1_z6GlcKyi-6PXLLf03oMqs6SYjRVrHW5NsF1Eq1TkUOmIVqCYany-eA_8DHxzpucyypO2FYsowMlwNIeqmuusXtOr1bATNinWw-MBAJoXip2gZZ3Aso-EUp1i7g2BV',
+          "Content-Type": "application/json",
+        },
       ));
 
-  print(response.statusCode!);
-  print(response.data);
+  print("getApi: ${response.statusCode!}");
+  print("getApi: ${response.data}");
 }

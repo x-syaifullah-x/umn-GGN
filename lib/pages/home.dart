@@ -72,6 +72,23 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
     _tabController.addListener(_handleTabSelection);
   }
 
+    @override
+  Widget build(BuildContext context) {
+    return FutureBuilder(
+      future: getUserData(),
+      builder: (context, snapshot) {
+        return NotificationListener(
+          child: buildAuthScreen(context, widget.userId),
+          onNotification: (notification) {
+            return true;
+          },
+        );
+        // return buildAuthScreen();
+      },
+    );
+    // return buildAuthScreen();
+  }
+
   @override
   void dispose() {
     pageController.dispose();
@@ -418,22 +435,5 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
       child:
           (width > 850) ? _desktop(context, userId) : _mobile(context, userId),
     );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: getUserData(),
-      builder: (context, snapshot) {
-        return NotificationListener(
-          child: buildAuthScreen(context, widget.userId),
-          onNotification: (notification) {
-            return true;
-          },
-        );
-        // return buildAuthScreen();
-      },
-    );
-    // return buildAuthScreen();
   }
 }

@@ -1,5 +1,6 @@
 import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -16,7 +17,6 @@ import 'package:simpleworld/pages/home.dart';
 import 'package:simpleworld/provider/locale_provider.dart';
 import 'package:simpleworld/share_preference/preferences_key.dart';
 import 'package:simpleworld/widgets/simple_world_widgets.dart';
-import 'package:flutter/foundation.dart';
 
 class App extends StatefulWidget {
   final SharedPreferences prefs;
@@ -54,9 +54,10 @@ class AppState extends State<App> with WidgetsBindingObserver {
     );
 
     fcmMessaging.getInitialMessage().then((RemoteMessage? message) {
+      print("fcmMessaging.getInitialMessage() $message");
       if (message != null) {
         if (defaultTargetPlatform == TargetPlatform.iOS) {
-          showLocalNotificationios(message);
+          showLocalNotificationIOS(message);
         } else {
           showLocalNotification(message);
         }
@@ -65,10 +66,9 @@ class AppState extends State<App> with WidgetsBindingObserver {
 
     //FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
     FirebaseMessaging.onMessage.listen((RemoteMessage? message) async {
-      print("+++ onMessage +++ : " + message!.notification!.title!);
-
+      if (message == null) return;
       if (defaultTargetPlatform == TargetPlatform.iOS) {
-        showLocalNotificationios(message);
+        showLocalNotificationIOS(message);
       } else {
         showLocalNotification(message);
       }
@@ -97,7 +97,7 @@ class AppState extends State<App> with WidgetsBindingObserver {
     //  notificationsPlugin.periodicallyShow(11111, "hkb", "HKKKB", INter, notificationDetails)
   }
 
-  showLocalNotificationios(RemoteMessage message) async {
+  showLocalNotificationIOS(RemoteMessage message) async {
     RemoteNotification? notification = message.notification;
     AndroidNotification? android = message.notification!.android;
     AppleNotification? apple = message.notification!.apple;
@@ -115,8 +115,8 @@ class AppState extends State<App> with WidgetsBindingObserver {
                     subText: notification.title,
                     importance: Importance.high,
                     icon: const AndroidInitializationSettings(
-                            '@mipmap/ic_launcher')
-                        .defaultIcon)
+                      '@mipmap/ic_launcher',
+                    ).defaultIcon)
                 : null,
             iOS: apple != null
                 ? DarwinNotificationDetails(
@@ -130,30 +130,23 @@ class AppState extends State<App> with WidgetsBindingObserver {
 
   Future<void> showLocalNotification(RemoteMessage message) async {
     RemoteNotification? notification = message.notification;
-    var android = message.notification?.title!;
     if (notification != null) {
       await notificationsPlugin.show(
-          notification.hashCode,
-          notification.title,
-          notification.body,
-          NotificationDetails(
-            android: android != null
-                ? AndroidNotificationDetails("1", "ContestKnowledge",
-                    channelDescription: "Notification",
-                    importance: Importance.high,
-                    icon: const AndroidInitializationSettings(
-                            '@mipmap/ic_launcher')
-                        .defaultIcon)
-                : AndroidNotificationDetails(
-                    "1",
-                    "ContestKnowledge",
-                    channelDescription: "Notification",
-                    importance: Importance.high,
-                    icon: const AndroidInitializationSettings(
-                      '@mipmap/ic_launcher',
-                    ).defaultIcon,
-                  ),
-          ));
+        notification.hashCode,
+        notification.title,
+        notification.body,
+        NotificationDetails(
+          android: AndroidNotificationDetails(
+            "1",
+            "ContestKnowledge",
+            channelDescription: "Notification",
+            importance: Importance.high,
+            icon: const AndroidInitializationSettings(
+              '@mipmap/ic_launcher',
+            ).defaultIcon,
+          ),
+        ),
+      );
     }
   }
 

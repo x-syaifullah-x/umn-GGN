@@ -302,8 +302,7 @@ class _SignUpPageState extends State<SignUpPage> {
       });
     });
 
-    FirebaseMessaging.onMessage.listen(
-      (message) async {
+    FirebaseMessaging.onMessage.listen((message) async {
         final String recipientId = userId;
         final String body = message.notification?.body ?? '';
 
@@ -316,8 +315,7 @@ class _SignUpPageState extends State<SignUpPage> {
           ));
           ScaffoldMessenger.of(context).showSnackBar(snackbar);
         }
-      },
-    );
+      });
   }
 
   Widget _loginAccount() {

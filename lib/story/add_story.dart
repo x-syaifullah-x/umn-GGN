@@ -43,21 +43,19 @@ class AddStoryState extends State<AddStory>
     final navigator = Navigator.of(context);
     final pickedFile =
         await _picker.pickImage(source: ImageSource.gallery, imageQuality: 50);
-    setState(() async {
-      this.file = file;
-      if (pickedFile != null) {
-        file = File(pickedFile.path);
-        navigator.pop();
-        await navigator.push(
-          MaterialPageRoute(
-            builder: (context) =>
-                AddImageStory(file: file!),
-          ),
-        );
-      } else {
-        // print('No image selected.');
-      }
-    });
+    this.file = file;
+    if (pickedFile != null) {
+      file = File(pickedFile.path);
+      navigator.pop();
+      await navigator.push(
+        MaterialPageRoute(
+          builder: (context) => AddImageStory(file: file!),
+        ),
+      );
+    } else {
+      // print('No image selected.');
+    }
+    setState(() {});
   }
 
   Future selectVideoFile() async {
@@ -66,7 +64,6 @@ class AddStoryState extends State<AddStory>
 
     if (mounted) {
       setState(() async {
-        videoFile = videoFile;
         if (pickedFile != null) {
           videoFile = File(pickedFile.path);
           print(videoFile);

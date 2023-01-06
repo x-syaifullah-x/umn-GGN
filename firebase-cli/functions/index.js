@@ -173,6 +173,7 @@ exports.onCreateActivityFeedItem = functions.firestore
 
     const userRef = admin.firestore().doc(`users/${userId}`);
     const doc = await userRef.get();
+    console.log("Activity Feed Item Created doc", doc.data());
 
     // 2) Once we have user, check if they have a notification token; send notification, if they have a token
     const androidNotificationToken = doc.data().androidNotificationToken;

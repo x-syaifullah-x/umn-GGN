@@ -1,5 +1,3 @@
-// ignore_for_file: unused_element
-
 import 'dart:convert';
 import 'dart:math';
 
@@ -23,12 +21,11 @@ import 'package:simpleworld/pages/auth/signup_page.dart';
 import 'package:simpleworld/pages/home.dart';
 import 'package:simpleworld/pages/menu/term_of_use.dart';
 import 'package:simpleworld/share_preference/preferences_key.dart';
+import 'package:simpleworld/widgets/anchored_adaptive_ads.dart';
 import 'package:simpleworld/widgets/bezier_container.dart';
 import 'package:simpleworld/widgets/language_picker_widget_home.dart';
 import 'package:simpleworld/widgets/progress.dart';
 import 'package:simpleworld/widgets/simple_world_widgets.dart';
-
-import '../../widgets/anchored_adaptive_ads.dart';
 
 GloabalUser? currentUser;
 
@@ -56,6 +53,99 @@ class LoginPageState extends State<LoginPage> {
     super.initState();
     _getUserData();
     FirebaseMessaging.instance.getInitialMessage().then((message) {});
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      body: NotificationListener(
+        onNotification: ((notification) {
+          return true;
+        }),
+        child: SafeArea(child: _body(context)),
+      ),
+    );
+  }
+
+  Widget _body(BuildContext context) {
+    final AdaptiveThemeMode mode = AdaptiveTheme.of(context).mode;
+    final double height = MediaQuery.of(context).size.height;
+    final double width = MediaQuery.of(context).size.width;
+    final double a = (width > 750) ? (width / 5) : 20;
+    return SizedBox(
+      height: height,
+      child: Stack(
+        alignment: AlignmentDirectional.bottomCenter,
+        children: [
+          Stack(
+            children: <Widget>[
+              Positioned(
+                top: -height * .15,
+                right: -MediaQuery.of(context).size.width * .4,
+                child: const BezierContainer(),
+              ),
+              SingleChildScrollView(
+                child: Container(
+                  padding: EdgeInsets.only(left: a, right: a),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Container(
+                        margin: const EdgeInsets.only(top: 20),
+                        alignment: Alignment.bottomLeft,
+                        child: Row(
+                          children: [
+                            IconButton(
+                              onPressed: () {
+                                if (mode == AdaptiveThemeMode.light) {
+                                  AdaptiveTheme.of(context).setDark();
+                                } else {
+                                  AdaptiveTheme.of(context).setLight();
+                                }
+                              },
+                              icon: mode == AdaptiveThemeMode.light
+                                  ? const Icon(Icons.light_mode)
+                                  : const Icon(Icons.dark_mode),
+                            ),
+                            const LanguagePickerWidgetHome(),
+                          ],
+                        ),
+                      ),
+                      SizedBox(height: height * .12),
+                      _title(),
+                      const SizedBox(height: 50),
+                      _emailPasswordWidget(),
+                      const SizedBox(height: 20),
+                      _submitButton(),
+                      _forgotPassword(),
+                      _divider(),
+                      isApple ? _iosButton() : Container(),
+                      SizedBox(height: height * .055),
+                      _createAccount(),
+                      terms(),
+                      const SizedBox(
+                        height: 70,
+                      )
+                    ],
+                  ),
+                ),
+              ),
+              // Container(
+              //   // padding: const EdgeInsets.symmetric(horizontal: 20),
+              //   padding: EdgeInsets.only(left: a, right: a),
+              //   child: ,
+              // ),
+              isLoading == true
+                  ? Center(child: circularProgress())
+                  : Container(),
+            ],
+          ),
+          const AnchoredAd()
+        ],
+      ),
+    );
   }
 
   _getUserData() async {
@@ -98,10 +188,7 @@ class LoginPageState extends State<LoginPage> {
               obscureText: isPassword,
               decoration: InputDecoration(
                   border: InputBorder.none,
-                  fillColor: Theme
-                      .of(context)
-                      .inputDecorationTheme
-                      .fillColor,
+                  fillColor: Theme.of(context).inputDecorationTheme.fillColor,
                   filled: true))
         ],
       ),
@@ -110,10 +197,7 @@ class LoginPageState extends State<LoginPage> {
 
   Widget _submitButton() {
     return Container(
-      width: MediaQuery
-          .of(context)
-          .size
-          .width,
+      width: MediaQuery.of(context).size.width,
       padding: const EdgeInsets.symmetric(vertical: 15),
       alignment: Alignment.center,
       decoration: BoxDecoration(
@@ -191,10 +275,9 @@ class LoginPageState extends State<LoginPage> {
                   if (peerData['credit_points'] == 0) {
                     Navigator.of(context).pushReplacement(
                       CupertinoPageRoute(
-                        builder: (context) =>
-                            AddCreditToAccount(
-                              userId: globalID,
-                            ),
+                        builder: (context) => AddCreditToAccount(
+                          userId: globalID,
+                        ),
                       ),
                     );
                   } else {
@@ -225,7 +308,7 @@ class LoginPageState extends State<LoginPage> {
         });
       });
       FirebaseMessaging.onMessage.listen(
-            (message) async {
+        (message) async {
           final String recipientId = userId;
           final String body = message.notification?.body ?? '';
 
@@ -233,9 +316,9 @@ class LoginPageState extends State<LoginPage> {
             print("Notification shown!");
             SnackBar snackbar = SnackBar(
                 content: Text(
-                  body,
-                  overflow: TextOverflow.ellipsis,
-                ));
+              body,
+              overflow: TextOverflow.ellipsis,
+            ));
             ScaffoldMessenger.of(context).showSnackBar(snackbar);
           }
         },
@@ -408,7 +491,7 @@ class LoginPageState extends State<LoginPage> {
       }
       final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
       final GoogleSignInAuthentication googleAuth =
-      await googleUser!.authentication;
+          await googleUser!.authentication;
       final googleAuthCredential = GoogleAuthProvider.credential(
         accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,
@@ -496,7 +579,7 @@ class LoginPageState extends State<LoginPage> {
       });
     });
     FirebaseMessaging.onMessage.listen(
-          (message) async {
+      (message) async {
         final String recipientId = userId;
         final String body = message.notification?.body ?? '';
 
@@ -504,9 +587,9 @@ class LoginPageState extends State<LoginPage> {
           print("Notification shown!");
           SnackBar snackBar = SnackBar(
               content: Text(
-                body,
-                overflow: TextOverflow.ellipsis,
-              ));
+            body,
+            overflow: TextOverflow.ellipsis,
+          ));
           ScaffoldMessenger.of(context).showSnackBar(snackBar);
         }
       },
@@ -583,10 +666,7 @@ class LoginPageState extends State<LoginPage> {
       text: TextSpan(
         text: 'Global Net',
         style: GoogleFonts.portLligatSans(
-          textStyle: Theme
-              .of(context)
-              .textTheme
-              .headline4,
+          textStyle: Theme.of(context).textTheme.headline4,
           fontSize: 30,
           fontWeight: FontWeight.w700,
           color: Colors.red[800],
@@ -660,91 +740,5 @@ class LoginPageState extends State<LoginPage> {
     print(e);
     return simpleworldtoast(
         "Error", 'Failed to sign in with Apple ID', context);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final mode = AdaptiveTheme
-        .of(context)
-        .mode;
-
-    final height = MediaQuery
-        .of(context)
-        .size
-        .height;
-    return Scaffold(
-        backgroundColor: Theme
-            .of(context)
-            .scaffoldBackgroundColor,
-        body: SizedBox(
-          height: height,
-          child: Stack(
-            alignment: AlignmentDirectional.bottomCenter,
-            children: [
-              Stack(
-                children: <Widget>[
-                  Positioned(
-                      top: -height * .15,
-                      right: -MediaQuery
-                          .of(context)
-                          .size
-                          .width * .4,
-                      child: const BezierContainer()),
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    child: SingleChildScrollView(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Container(
-                            margin: const EdgeInsets.only(top: 20),
-                            alignment: Alignment.bottomLeft,
-                            child: Row(
-                              children: [
-                                IconButton(
-                                  onPressed: () {
-                                    if (mode == AdaptiveThemeMode.light) {
-                                      AdaptiveTheme.of(context).setDark();
-                                    } else {
-                                      AdaptiveTheme.of(context).setLight();
-                                    }
-                                  },
-                                  icon: mode == AdaptiveThemeMode.light
-                                      ? const Icon(Icons.light_mode)
-                                      : const Icon(Icons.dark_mode),
-                                ),
-                                const LanguagePickerWidgetHome(),
-                              ],
-                            ),
-                          ),
-                          SizedBox(height: height * .12),
-                          _title(),
-                          const SizedBox(height: 50),
-                          _emailPasswordWidget(),
-                          const SizedBox(height: 20),
-                          _submitButton(),
-                          _forgotPassword(),
-                          _divider(),
-                          isApple ? _iosButton() : Container(),
-                          SizedBox(height: height * .055),
-                          _createAccount(),
-                          terms(),
-                          const SizedBox(
-                            height: 70,
-                          )
-                        ],
-                      ),
-                    ),
-                  ),
-                  isLoading == true
-                      ? Center(child: circularProgress())
-                      : Container(),
-                ],
-              ),
-              const AnchoredAd()
-            ],
-          ),
-        ));
   }
 }

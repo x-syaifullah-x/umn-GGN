@@ -20,10 +20,10 @@ class CreateAccount extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _CreateAccountState createState() => _CreateAccountState();
+  CreateAccountState createState() => CreateAccountState();
 }
 
-class _CreateAccountState extends State<CreateAccount> {
+class CreateAccountState extends State<CreateAccount> {
   final _formkey = GlobalKey<FormState>();
   String? username;
   int credits = 0;
@@ -33,10 +33,58 @@ class _CreateAccountState extends State<CreateAccount> {
   @override
   void initState() {
     super.initState();
-    getcredit();
+    getCredit();
   }
 
-  getcredit() async {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: NotificationListener(
+        onNotification: (notification) {
+          return true;
+        },
+        child: SafeArea(
+          child: _body(context),
+        ),
+      ),
+    );
+  }
+
+  Widget _body(BuildContext context) {
+    print("object");
+    final height = MediaQuery.of(context).size.height;
+    return SizedBox(
+      height: height,
+      child: Stack(
+        children: <Widget>[
+          Positioned(
+              top: -height * .15,
+              right: -MediaQuery.of(context).size.width * .4,
+              child: const BezierContainer()),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  SizedBox(height: height * .25),
+                  _title(),
+                  const SizedBox(height: 50),
+                  _emailPasswordWidget(),
+                  const SizedBox(height: 20),
+                  _submitButton(),
+                ],
+              ),
+            ),
+          ),
+          isLoading == true ? Center(child: circularProgress()) : Container(),
+        ],
+      ),
+    );
+  }
+
+  getCredit() async {
     usersRef.doc(globalID).get().then(
           (value) => setState(() {
             credits = value["credit_points"];
@@ -142,40 +190,5 @@ class _CreateAccountState extends State<CreateAccount> {
         ),
       ],
     );
-  }
-
-  @override
-  Widget build(BuildContext parentContext) {
-    final height = MediaQuery.of(context).size.height;
-    return Scaffold(
-        body: SizedBox(
-      height: height,
-      child: Stack(
-        children: <Widget>[
-          Positioned(
-              top: -height * .15,
-              right: -MediaQuery.of(context).size.width * .4,
-              child: const BezierContainer()),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  SizedBox(height: height * .25),
-                  _title(),
-                  const SizedBox(height: 50),
-                  _emailPasswordWidget(),
-                  const SizedBox(height: 20),
-                  _submitButton(),
-                ],
-              ),
-            ),
-          ),
-          isLoading == true ? Center(child: circularProgress()) : Container(),
-        ],
-      ),
-    ));
   }
 }

@@ -425,7 +425,7 @@ class NewTimelineState extends State<NewTimeline> {
             VisibilityDetector(
               key: ObjectKey(flickMultiManager),
               onVisibilityChanged: (visibility) {
-                if (visibility.visibleFraction == 0 && this.mounted) {
+                if (visibility.visibleFraction == 0 && mounted) {
                   flickMultiManager.pause();
                 }
               },
@@ -445,7 +445,7 @@ class NewTimelineState extends State<NewTimeline> {
       return VisibilityDetector(
         key: ObjectKey(flickMultiManager),
         onVisibilityChanged: (visibility) {
-          if (visibility.visibleFraction < 1 && this.mounted) {
+          if (visibility.visibleFraction < 1 && mounted) {
             flickMultiManager.pause();
           }
         },
