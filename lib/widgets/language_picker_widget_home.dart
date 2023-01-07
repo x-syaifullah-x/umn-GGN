@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:simpleworld/l10n/l10n.dart';
@@ -47,10 +48,6 @@ class LanguagePickerWidgetHome extends StatelessWidget {
 
                 return DropdownMenuItem(
                   alignment: Alignment.center,
-                  child: Text(
-                    flag,
-                    style: TextStyle(fontSize: 20),
-                  ),
                   value: locale,
                   onTap: () {
                     final provider =
@@ -58,6 +55,10 @@ class LanguagePickerWidgetHome extends StatelessWidget {
 
                     provider.setLocale(locale);
                   },
+                  child: Text(
+                    kIsWeb ? "语言: $flag" : flag,
+                    style: const TextStyle(fontSize: 20),
+                  ),
                 );
               },
             ).toList(),

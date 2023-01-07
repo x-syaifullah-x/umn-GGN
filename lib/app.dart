@@ -159,7 +159,8 @@ class AppState extends State<App> with WidgetsBindingObserver {
         create: (context) => LocaleProvider(),
         builder: (context, child) {
           final provider = Provider.of<LocaleProvider>(context);
-          String locale = widget.prefs.getString("locale") ?? 'en';
+          String locale =
+              widget.prefs.getString("locale") ?? (kIsWeb ? "zh" : 'en');
           provider.setLocale(Locale(locale));
           return AdaptiveTheme(
             light: ThemeData(

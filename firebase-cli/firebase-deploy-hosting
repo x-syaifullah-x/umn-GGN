@@ -1,0 +1,14 @@
+#! /bin/bash
+
+if [ "$1" = "" ]; then
+    exit $?
+fi
+
+FIREBASE_CLI=$PWD
+FLUTTER_PROJECT=$1
+cd $FLUTTER_PROJECT
+# flutter clean
+flutter build web --web-renderer html --release 
+cd $FIREBASE_CLI
+export GOOGLE_APPLICATION_CREDENTIALS="${PWD}/globelgirl-2c269-firebase-adminsdk-nj8qf-4b563aa841.json"
+firebase deploy --only hosting
