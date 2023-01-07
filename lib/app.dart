@@ -54,7 +54,6 @@ class AppState extends State<App> with WidgetsBindingObserver {
     );
 
     fcmMessaging.getInitialMessage().then((RemoteMessage? message) {
-      print("fcmMessaging.getInitialMessage() $message");
       if (message != null) {
         if (defaultTargetPlatform == TargetPlatform.iOS) {
           showLocalNotificationIOS(message);

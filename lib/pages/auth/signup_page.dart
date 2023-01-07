@@ -19,11 +19,11 @@ class SignUpPage extends StatefulWidget {
   const SignUpPage({Key? key}) : super(key: key);
 
   @override
-  _SignUpPageState createState() => _SignUpPageState();
+  SignUpPageState createState() => SignUpPageState();
 }
 
-class _SignUpPageState extends State<SignUpPage> {
-  bool isLoading = false;
+class SignUpPageState extends State<SignUpPage> {
+  bool _isLoading = false;
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
   late String userId;
@@ -39,6 +39,62 @@ class _SignUpPageState extends State<SignUpPage> {
   @override
   void initState() {
     super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: NotificationListener(
+        child: _body(context),
+        onNotification: (notification) => true,
+      ),
+    );
+  }
+
+  Widget _body(BuildContext context) {
+    final double height = MediaQuery.of(context).size.height;
+    final double width = MediaQuery.of(context).size.width;
+    final double a = (width > 750) ? (width / 5) : 20;
+    return SizedBox(
+      height: height,
+      child: Stack(
+        children: <Widget>[
+          Positioned(
+            top: -MediaQuery.of(context).size.height * .15,
+            right: -MediaQuery.of(context).size.width * .4,
+            child: const BezierContainer(),
+          ),
+          SingleChildScrollView(
+            child: Container(
+              padding: EdgeInsets.only(left: a, right: a),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  SizedBox(height: height * .2),
+                  _title(),
+                  const SizedBox(
+                    height: 50,
+                  ),
+                  _emailPasswordWidget(),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  _termsCondition(context),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  _submitButton(),
+                  SizedBox(height: height * .14),
+                  _loginAccount(),
+                ],
+              ),
+            ),
+          ),
+          Positioned(top: 40, left: 0, child: _backButton()),
+        ],
+      ),
+    );
   }
 
   Widget _backButton() {
@@ -202,12 +258,12 @@ class _SignUpPageState extends State<SignUpPage> {
   Future<void> _register() async {
     try {
       setState(() {
-        isLoading = true;
+        _isLoading = true;
       });
       final valid = await usernameCheck(nameController.text);
       if (!valid) {
         setState(() {
-          isLoading = false;
+          _isLoading = false;
         });
         simpleworldtoast("Error", "Username is taken ", context);
       } else {
@@ -221,7 +277,7 @@ class _SignUpPageState extends State<SignUpPage> {
         } else {
           setState(() {
             isAuth = false;
-            isLoading = false;
+            _isLoading = false;
           });
           simpleworldtoast(
               "Error", "Something went wrong please try again ", context);
@@ -230,7 +286,7 @@ class _SignUpPageState extends State<SignUpPage> {
     } catch (e) {
       setState(() {
         isAuth = false;
-        isLoading = false;
+        _isLoading = false;
       });
       // print(e.toString());
       simpleworldtoast("Error",
@@ -276,7 +332,7 @@ class _SignUpPageState extends State<SignUpPage> {
 
     setState(() {
       globalID = userId;
-      isLoading = false;
+      _isLoading = false;
       isAuth = true;
     });
 
@@ -303,19 +359,19 @@ class _SignUpPageState extends State<SignUpPage> {
     });
 
     FirebaseMessaging.onMessage.listen((message) async {
-        final String recipientId = userId;
-        final String body = message.notification?.body ?? '';
+      final String recipientId = userId;
+      final String body = message.notification?.body ?? '';
 
-        if (recipientId == userId) {
-          // print("Notification shown!");
-          SnackBar snackbar = SnackBar(
-              content: Text(
-            body,
-            overflow: TextOverflow.ellipsis,
-          ));
-          ScaffoldMessenger.of(context).showSnackBar(snackbar);
-        }
-      });
+      if (recipientId == userId) {
+        // print("Notification shown!");
+        SnackBar snackbar = SnackBar(
+            content: Text(
+          body,
+          overflow: TextOverflow.ellipsis,
+        ));
+        ScaffoldMessenger.of(context).showSnackBar(snackbar);
+      }
+    });
   }
 
   Widget _loginAccount() {
@@ -376,54 +432,6 @@ class _SignUpPageState extends State<SignUpPage> {
             TextInputAction.next,
             isPassword: true),
       ],
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    //
-    final height = MediaQuery.of(context).size.height;
-    return Scaffold(
-      body: SizedBox(
-        height: height,
-        child: Stack(
-          children: <Widget>[
-            Positioned(
-              top: -MediaQuery.of(context).size.height * .15,
-              right: -MediaQuery.of(context).size.width * .4,
-              child: const BezierContainer(),
-            ),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    SizedBox(height: height * .2),
-                    _title(),
-                    const SizedBox(
-                      height: 50,
-                    ),
-                    _emailPasswordWidget(),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    _termsCondition(context),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    _submitButton(),
-                    SizedBox(height: height * .14),
-                    _loginAccount(),
-                  ],
-                ),
-              ),
-            ),
-            Positioned(top: 40, left: 0, child: _backButton()),
-          ],
-        ),
-      ),
     );
   }
 }

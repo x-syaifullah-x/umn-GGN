@@ -201,11 +201,15 @@ class LoginPageState extends State<LoginPage> {
       padding: const EdgeInsets.symmetric(vertical: 15),
       alignment: Alignment.center,
       decoration: BoxDecoration(
-          borderRadius: const BorderRadius.all(Radius.circular(5)),
-          gradient: LinearGradient(
-              begin: Alignment.centerLeft,
-              end: Alignment.centerRight,
-              colors: [Colors.red.shade500, Colors.red.shade900])),
+        borderRadius: const BorderRadius.all(
+          Radius.circular(5),
+        ),
+        gradient: LinearGradient(
+          begin: Alignment.centerLeft,
+          end: Alignment.centerRight,
+          colors: [Colors.red.shade500, Colors.red.shade900],
+        ),
+      ),
       child: Text(
         AppLocalizations.of(context)!.login,
         style: const TextStyle(fontSize: 20, color: Colors.white),
@@ -234,13 +238,14 @@ class LoginPageState extends State<LoginPage> {
       setState(() {
         isLoading = true;
       });
-      final User? user = (await _auth.signInWithEmailAndPassword(
+      final UserCredential userCredential =
+          await _auth.signInWithEmailAndPassword(
         email: emailController.text.trim(),
         password: passwordController.text,
-      ))
-          .user;
+      );
+      final User? user = userCredential.user;
       if (user != null) {
-        dataEntry(user.uid, user.email);
+        _dataEntry(user.uid, user.email);
       } else {
         setState(() {
           isLoading = false;
@@ -254,75 +259,83 @@ class LoginPageState extends State<LoginPage> {
     }
   }
 
-  dataEntry(userId, email) async {
+  void _dataEntry(userId, email) async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
 
     preferences
         .setString(SharedPreferencesKey.LOGGED_IN_USERRDATA, userId)
-        .then((value) {
-      FirebaseMessaging.instance.getToken().then((token) {
-        usersRef.doc(userId).update({
+        .then((value) async {
+      try {
+        String vApiKey =
+            "BIxps5Is9CmqlWy6PpPjZXiM0hTlCcnFIcFtQwos8yvFoumKit1TUpZqpkaU13KEh0n9M5pXGF8W33b1S-TFnZw";
+        String? token = await FirebaseMessaging.instance
+            .getToken(vapidKey: (kIsWeb ? vApiKey : null));
+        await usersRef.doc(userId).update({
           "androidNotificationToken": token,
-        }).then((value) {
-          usersRef.doc(userId).get().then((peerData) {
-            if (peerData.exists) {
-              setState(() {
-                globalID = userId;
-                isLoading = false;
-              });
-              if (peerData['username'].length > 0) {
-                if (peerData.data()!.containsKey('credit_points')) {
-                  if (peerData['credit_points'] == 0) {
-                    Navigator.of(context).pushReplacement(
-                      CupertinoPageRoute(
-                        builder: (context) => AddCreditToAccount(
-                          userId: globalID,
-                        ),
-                      ),
-                    );
-                  } else {
-                    Navigator.of(context).pushReplacement(CupertinoPageRoute(
-                        builder: (context) => Home(userId: globalID)));
-                  }
-                } else {
-                  Navigator.of(context).pushReplacement(
-                    CupertinoPageRoute(
-                      builder: (context) => Home(userId: globalID),
+        });
+      } catch (e) {
+        log(e);
+      }
+      // FirebaseMessaging.instance.getToken().then((token) {
+      //   usersRef.doc(userId).update({
+      //     "androidNotificationToken": token,
+      //   }).then((value) {
+
+      //   });
+      // }).catchError(onError);
+
+      usersRef.doc(userId).get().then((peerData) {
+        if (peerData.exists) {
+          setState(() {
+            globalID = userId;
+            isLoading = false;
+          });
+          if (peerData['username'].length > 0) {
+            if (peerData.data()!.containsKey('credit_points')) {
+              if (peerData['credit_points'] == 0) {
+                Navigator.of(context).pushReplacement(
+                  CupertinoPageRoute(
+                    builder: (context) => AddCreditToAccount(
+                      userId: globalID,
                     ),
-                  );
-                }
+                  ),
+                );
               } else {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const CreateAccount()));
+                Navigator.of(context).pushReplacement(CupertinoPageRoute(
+                    builder: (context) => Home(userId: globalID)));
               }
             } else {
-              setState(() {
-                isLoading = false;
-              });
-              simpleworldtoast("Error",
-                  'Failed to sign in with Google, please try again:', context);
+              Navigator.of(context).pushReplacement(
+                CupertinoPageRoute(
+                  builder: (context) => Home(userId: globalID),
+                ),
+              );
             }
-          });
-        });
-      });
-      FirebaseMessaging.onMessage.listen(
-        (message) async {
-          final String recipientId = userId;
-          final String body = message.notification?.body ?? '';
-
-          if (recipientId == userId) {
-            print("Notification shown!");
-            SnackBar snackbar = SnackBar(
-                content: Text(
-              body,
-              overflow: TextOverflow.ellipsis,
-            ));
-            ScaffoldMessenger.of(context).showSnackBar(snackbar);
+          } else {
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => const CreateAccount()));
           }
-        },
-      );
+        } else {
+          setState(() {
+            isLoading = false;
+          });
+          simpleworldtoast("Error",
+              'Failed to sign in with Google, please try again:', context);
+        }
+      });
+      FirebaseMessaging.onMessage.listen((message) async {
+        final String recipientId = userId;
+        final String body = message.notification?.body ?? '';
+        if (recipientId == userId) {
+          print("Notification shown!");
+          SnackBar snackbar = SnackBar(
+              content: Text(
+            body,
+            overflow: TextOverflow.ellipsis,
+          ));
+          ScaffoldMessenger.of(context).showSnackBar(snackbar);
+        }
+      });
     });
   }
 
@@ -361,60 +374,60 @@ class LoginPageState extends State<LoginPage> {
     );
   }
 
-  Widget _googleButton() {
-    return Container(
-      height: 50,
-      margin: const EdgeInsets.symmetric(vertical: 20),
-      decoration: const BoxDecoration(
-        borderRadius: BorderRadius.all(Radius.circular(10)),
-      ),
-      child: Row(
-        children: <Widget>[
-          Expanded(
-            flex: 1,
-            child: Container(
-              decoration: const BoxDecoration(
-                color: Color(0xff1959a9),
-                borderRadius: BorderRadius.only(
-                    bottomLeft: Radius.circular(5),
-                    topLeft: Radius.circular(5)),
-              ),
-              alignment: Alignment.center,
-              child: const Text('G',
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 25,
-                      fontWeight: FontWeight.w400)),
-            ),
-          ),
-          Expanded(
-            flex: 5,
-            child: Container(
-              decoration: const BoxDecoration(
-                color: Colors.red,
-                borderRadius: BorderRadius.only(
-                    bottomRight: Radius.circular(5),
-                    topRight: Radius.circular(5)),
-              ),
-              alignment: Alignment.center,
-              child: const Text('Log in with Google',
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 18,
-                      fontWeight: FontWeight.w400)),
-            ),
-          ),
-        ],
-      ),
-    ).onTap(() {
-      _signInWithGoogle();
-    });
-  }
+  // Widget _googleButton() {
+  //   return Container(
+  //     height: 50,
+  //     margin: const EdgeInsets.symmetric(vertical: 20),
+  //     decoration: const BoxDecoration(
+  //       borderRadius: BorderRadius.all(Radius.circular(10)),
+  //     ),
+  //     child: Row(
+  //       children: <Widget>[
+  //         Expanded(
+  //           flex: 1,
+  //           child: Container(
+  //             decoration: const BoxDecoration(
+  //               color: Color(0xff1959a9),
+  //               borderRadius: BorderRadius.only(
+  //                   bottomLeft: Radius.circular(5),
+  //                   topLeft: Radius.circular(5)),
+  //             ),
+  //             alignment: Alignment.center,
+  //             child: const Text('G',
+  //                 style: TextStyle(
+  //                     color: Colors.white,
+  //                     fontSize: 25,
+  //                     fontWeight: FontWeight.w400)),
+  //           ),
+  //         ),
+  //         Expanded(
+  //           flex: 5,
+  //           child: Container(
+  //             decoration: const BoxDecoration(
+  //               color: Colors.red,
+  //               borderRadius: BorderRadius.only(
+  //                   bottomRight: Radius.circular(5),
+  //                   topRight: Radius.circular(5)),
+  //             ),
+  //             alignment: Alignment.center,
+  //             child: const Text('Log in with Google',
+  //                 style: TextStyle(
+  //                     color: Colors.white,
+  //                     fontSize: 18,
+  //                     fontWeight: FontWeight.w400)),
+  //           ),
+  //         ),
+  //       ],
+  //     ),
+  //   ).onTap(() {
+  //     _signInWithGoogle();
+  //   });
+  // }
 
   checkappleUserExists(userId, email, name) async {
     usersRef.doc(userId).get().then((peerData) {
       if (peerData.exists) {
-        dataEntry(userId, email);
+        _dataEntry(userId, email);
       } else {
         createappleUserInFirestore(userId, email, name);
         print('user does not exist');
@@ -515,7 +528,7 @@ class LoginPageState extends State<LoginPage> {
   checkUserExists(userId, email, name, image) async {
     usersRef.doc(userId).get().then((peerData) {
       if (peerData.exists) {
-        dataEntry(userId, email);
+        _dataEntry(userId, email);
       } else {
         createUserInFirestore(userId, email, name, image);
       }
@@ -568,8 +581,6 @@ class LoginPageState extends State<LoginPage> {
 
   configurePushNotifications(userId) async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
-    final prefs = await SharedPreferences.getInstance();
-
     preferences
         .setString(SharedPreferencesKey.LOGGED_IN_USERRDATA, userId)
         .then((value) {

@@ -12,10 +12,10 @@ class ForgetPass extends StatefulWidget {
   const ForgetPass({Key? key}) : super(key: key);
 
   @override
-  _ForgetPassState createState() => _ForgetPassState();
+  ForgetPassState createState() => ForgetPassState();
 }
 
-class _ForgetPassState extends State<ForgetPass> {
+class ForgetPassState extends State<ForgetPass> {
   bool isLoading = false;
   TextEditingController emailController = TextEditingController();
   var scaffoldKey = GlobalKey<ScaffoldState>();
@@ -24,7 +24,9 @@ class _ForgetPassState extends State<ForgetPass> {
 
   @override
   Widget build(BuildContext context) {
-    final height = MediaQuery.of(context).size.height;
+    final double height = MediaQuery.of(context).size.height;
+    final double width = MediaQuery.of(context).size.width;
+    final double a = (width > 750) ? (width / 5) : 20;
     return Scaffold(
         body: SizedBox(
       height: height,
@@ -34,9 +36,9 @@ class _ForgetPassState extends State<ForgetPass> {
               top: -height * .15,
               right: -MediaQuery.of(context).size.width * .4,
               child: const BezierContainer()),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: SingleChildScrollView(
+          SingleChildScrollView(
+            child: Container(
+              padding: EdgeInsets.only(left: a, right: a),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.center,

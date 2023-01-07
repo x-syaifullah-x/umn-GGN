@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
@@ -14,6 +15,32 @@ class AnchoredAdState extends State<AnchoredAd> {
   BannerAd? _anchoredAdaptiveAd;
   bool _isLoaded = false;
   late Orientation _currentOrientation;
+
+  @override
+  Widget build(BuildContext context) => _getAdWidget(context);
+
+  Widget _getAdWidget(BuildContext context) {
+    if (kIsWeb) return Container();
+    return OrientationBuilder(
+      builder: (context, orientation) {
+        if (_currentOrientation == orientation &&
+            _anchoredAdaptiveAd != null &&
+            _isLoaded) {
+          return Container(
+            color: Theme.of(context).scaffoldBackgroundColor,
+            width: _anchoredAdaptiveAd!.size.width.toDouble(),
+            height: _anchoredAdaptiveAd!.size.height.toDouble(),
+            child: AdWidget(ad: _anchoredAdaptiveAd!),
+          );
+        }
+        if (_currentOrientation != orientation) {
+          _currentOrientation = orientation;
+          _loadAd(context);
+        }
+        return Container();
+      },
+    );
+  }
 
   @override
   void didChangeDependencies() {
@@ -48,14 +75,12 @@ class AnchoredAdState extends State<AnchoredAd> {
       request: const AdRequest(),
       listener: BannerAdListener(
         onAdLoaded: (Ad ad) {
-          print('$ad loaded: ${ad.responseInfo}');
           setState(() {
             _anchoredAdaptiveAd = ad as BannerAd;
             _isLoaded = true;
           });
         },
         onAdFailedToLoad: (Ad ad, LoadAdError error) {
-          print('Anchored adaptive banner failedToLoad: $error');
           ad.dispose();
         },
       ),
@@ -63,31 +88,6 @@ class AnchoredAdState extends State<AnchoredAd> {
 
     return _anchoredAdaptiveAd!.load();
   }
-
-  Widget _getAdWidget() {
-    return OrientationBuilder(
-      builder: (context, orientation) {
-        if (_currentOrientation == orientation &&
-            _anchoredAdaptiveAd != null &&
-            _isLoaded) {
-          return Container(
-            color: Theme.of(context).scaffoldBackgroundColor,
-            width: _anchoredAdaptiveAd!.size.width.toDouble(),
-            height: _anchoredAdaptiveAd!.size.height.toDouble(),
-            child: AdWidget(ad: _anchoredAdaptiveAd!),
-          );
-        }
-        if (_currentOrientation != orientation) {
-          _currentOrientation = orientation;
-          _loadAd(context);
-        }
-        return Container();
-      },
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) => _getAdWidget();
 
   @override
   void dispose() {
