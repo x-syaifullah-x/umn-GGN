@@ -5,12 +5,12 @@ import 'package:flutter_reaction_button/flutter_reaction_button.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:paginate_firestore/bloc/pagination_listeners.dart';
 import 'package:paginate_firestore/paginate_firestore.dart';
-import 'package:simpleworld/data/reaction_data.dart';
-import 'package:simpleworld/pages/home.dart';
-import 'package:simpleworld/widgets/album_posts.dart';
-import 'package:simpleworld/widgets/header.dart';
-import 'package:simpleworld/widgets/multi_manager/flick_multi_manager.dart';
-import 'package:simpleworld/widgets/post_layout.dart';
+import 'package:global_net/data/reaction_data.dart';
+import 'package:global_net/pages/home.dart';
+import 'package:global_net/widgets/album_posts.dart';
+import 'package:global_net/widgets/header.dart';
+import 'package:global_net/widgets/multi_manager/flick_multi_manager.dart';
+import 'package:global_net/widgets/post_layout.dart';
 
 class AllPdfs extends StatefulWidget {
   // ignore: non_constant_identifier_names

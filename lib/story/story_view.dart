@@ -7,7 +7,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:collection/collection.dart' show IterableExtension;
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:simpleworld/widgets/simple_world_widgets.dart';
+import 'package:global_net/widgets/simple_world_widgets.dart';
 import 'story_video.dart';
 import 'story_image.dart';
 import 'story_controller.dart';

@@ -43,22 +43,15 @@ android {
         versionName flutterVersionName
     }
 
-    flavorDimensions "tv"
+    flavorDimensions "app"
     productFlavors {
-        tv {
-            dimension "tv"
+        "mobile" {}
+        "tv" {
             applicationIdSuffix ".tv"
             // resValue "string", "app_name", "Global Net TV"
             versionNameSuffix ".tv"
         }
     }
-    // flavor {
-    //     tv {
-    //         // dimension "default"
-    //         // resValue "string", "app_name", "free flavor example"
-    //         // applicationId ".tv"
-    //     }
-    // }
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8

@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:simpleworld/story/story_view.dart';
+import 'package:global_net/story/story_view.dart';
 import 'dart:convert';
 import 'stories.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';

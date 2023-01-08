@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:nb_utils/nb_utils.dart';
 import 'package:provider/provider.dart';
-import 'package:simpleworld/l10n/l10n.dart';
-import 'package:simpleworld/provider/locale_provider.dart';
+import 'package:global_net/l10n/l10n.dart';
+import 'package:global_net/provider/locale_provider.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class LanguageWidget extends StatelessWidget {
+  const LanguageWidget({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     final locale = Localizations.localeOf(context);
@@ -82,101 +85,40 @@ class LanguagePickerWidget extends StatelessWidget {
 
   // Show Dialog function
   void _showDialog(buildContext) {
-    // flutter defined function
     showDialog(
       context: buildContext,
       builder: (BuildContext context) {
-        // return alert dialog object
         return Provider<LocaleProvider>(
           create: (_) => LocaleProvider(),
           child: AlertDialog(
-            title: const Text('Pick Your Language'),
-            content: Container(
-              height: 160.0,
+            title: Text(AppLocalizations.of(context)?.pick_your_language ??
+                "Pick Your Language"),
+            content: SizedBox(
+              height: 180.0,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: <Widget>[
-                  Row(
-                    children: <Widget>[
-                      Padding(
-                        padding: const EdgeInsets.only(left: 8.0),
-                        child: Text(L10n.getFlagnName('ar')),
-                      ),
-                    ],
-                  ).onTap(() {
-                    Navigator.pop(context);
-                    final provider = Provider.of<LocaleProvider>(buildContext,
-                        listen: false);
-
-                    provider.setLocale(Locale('ar'));
-                  }),
-                  const SizedBox(
-                    height: 20.0,
-                  ),
-                  Row(
-                    children: <Widget>[
-                      Padding(
-                        padding: EdgeInsets.only(left: 8.0),
-                        child: Text(L10n.getFlagnName('hi')),
-                      ),
-                    ],
-                  ).onTap(() {
-                    Navigator.pop(context);
-                    final provider = Provider.of<LocaleProvider>(buildContext,
-                        listen: false);
-
-                    provider.setLocale(Locale('hi'));
-                  }),
-                  const SizedBox(
-                    height: 20.0,
-                  ),
-                  Row(
-                    children: <Widget>[
-                      Padding(
-                        padding: EdgeInsets.only(left: 8.0),
-                        child: Text(L10n.getFlagnName('es')),
-                      ),
-                    ],
-                  ).onTap(() {
-                    Navigator.pop(context);
-                    final provider = Provider.of<LocaleProvider>(buildContext,
-                        listen: false);
-
-                    provider.setLocale(Locale('es'));
-                  }),
-                  const SizedBox(
-                    height: 20.0,
-                  ),
-                  Row(
-                    children: <Widget>[
-                      Padding(
-                        padding: EdgeInsets.only(left: 8.0),
-                        child: Text(L10n.getFlagnName('en')),
-                      ),
-                    ],
-                  ).onTap(() {
-                    Navigator.pop(context);
-                    final provider = Provider.of<LocaleProvider>(buildContext,
-                        listen: false);
-                    provider.setLocale(Locale('en'));
-                  }),
-                  const SizedBox(
-                    height: 20.0,
-                  ),
-                  Row(
-                    children: <Widget>[
-                      Padding(
-                        padding: EdgeInsets.only(left: 8.0),
-                        child: Text(L10n.getFlagnName('zh')),
-                      ),
-                    ],
-                  ).onTap(() {
-                    Navigator.pop(context);
-                    final provider = Provider.of<LocaleProvider>(buildContext,
-                        listen: false);
-                    provider.setLocale(Locale('zh'));
-                  }),
-                ],
+                children: L10n.alls
+                    .map((e) => Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.only(
+                            left: 8,
+                            right: 8,
+                            top: 10,
+                            bottom: 10,
+                          ),
+                          child: Text(
+                            L10n.getFlagnName(e.languageCode),
+                            // textAlign: TextAlign.left,
+                          ),
+                        ).onTap(() {
+                          Navigator.pop(context);
+                          final provider = Provider.of<LocaleProvider>(
+                            buildContext,
+                            listen: false,
+                          );
+                          provider.setLocale(e);
+                        }))
+                    .toList(),
               ),
             ),
           ),

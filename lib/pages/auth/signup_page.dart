@@ -4,16 +4,16 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:simpleworld/models/user.dart';
-import 'package:simpleworld/pages/home.dart';
-import 'package:simpleworld/pages/auth/login_page.dart';
-import 'package:simpleworld/pages/auth/signup_page2.dart';
-import 'package:simpleworld/pages/webview/webview.dart';
-import 'package:simpleworld/share_preference/preferences_key.dart';
-import 'package:simpleworld/widgets/bezier_container.dart';
+import 'package:global_net/models/user.dart';
+import 'package:global_net/pages/home.dart';
+import 'package:global_net/pages/auth/login_page.dart';
+import 'package:global_net/pages/auth/signup_page2.dart';
+import 'package:global_net/pages/webview/webview.dart';
+import 'package:global_net/share_preference/preferences_key.dart';
+import 'package:global_net/widgets/bezier_container.dart';
 import 'package:nb_utils/nb_utils.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:simpleworld/widgets/simple_world_widgets.dart';
+import 'package:global_net/widgets/simple_world_widgets.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({Key? key}) : super(key: key);
@@ -350,7 +350,7 @@ class SignUpPageState extends State<SignUpPage> {
   configurePushNotifications(userId) async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     preferences
-        .setString(SharedPreferencesKey.LOGGED_IN_USERRDATA, userId)
+        .setString(SharedPreferencesKey.loggedInUserData, userId)
         .then((value) {
       _firebaseMessaging.getToken().then((token) {
         // print("Firebase Messaging Token: $token\n");

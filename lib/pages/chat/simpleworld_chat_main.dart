@@ -1,8 +1,8 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:simpleworld/pages/chat/GroupChatlist.dart';
-import 'package:simpleworld/pages/menu/all_stories.dart';
-import 'package:simpleworld/pages/chat/simpleworld_messenger.dart';
+import 'package:global_net/pages/chat/GroupChatlist.dart';
+import 'package:global_net/pages/menu/all_stories.dart';
+import 'package:global_net/pages/chat/simpleworld_messenger.dart';
 
 class SimpleWorldChat extends StatefulWidget {
   final String? userId;

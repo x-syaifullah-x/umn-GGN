@@ -1,8 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:simpleworld/l10n/l10n.dart';
-import 'package:simpleworld/provider/locale_provider.dart';
+import 'package:global_net/l10n/l10n.dart';
+import 'package:global_net/provider/locale_provider.dart';
 
 class LanguageWidgetHome extends StatelessWidget {
   const LanguageWidgetHome({Key? key}) : super(key: key);
@@ -42,7 +42,7 @@ class LanguagePickerWidgetHome extends StatelessWidget {
           child: DropdownButton(
             value: locale,
             icon: Container(width: 12),
-            items: L10n.all.map(
+            items: L10n.alls.map(
               (locale) {
                 final flag = L10n.getFlag(locale.languageCode);
 

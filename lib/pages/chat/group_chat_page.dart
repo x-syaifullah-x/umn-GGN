@@ -4,10 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
-import 'package:simpleworld/config/size_config.dart';
-import 'package:simpleworld/services/database_service.dart';
-import 'package:simpleworld/widgets/groupchatdrawer.dart';
-import 'package:simpleworld/widgets/message_tile.dart';
+import 'package:global_net/config/size_config.dart';
+import 'package:global_net/services/database_service.dart';
+import 'package:global_net/widgets/groupchatdrawer.dart';
+import 'package:global_net/widgets/message_tile.dart';
 
 class ChatPage extends StatefulWidget {
   final String groupId;

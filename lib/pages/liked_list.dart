@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:paginate_firestore/bloc/pagination_listeners.dart';
 import 'package:paginate_firestore/paginate_firestore.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:simpleworld/pages/home.dart';
-import 'package:simpleworld/widgets/header.dart';
-import 'package:simpleworld/widgets/liked_users_tile.dart';
-import 'package:simpleworld/widgets/simple_world_widgets.dart';
+import 'package:global_net/pages/home.dart';
+import 'package:global_net/widgets/header.dart';
+import 'package:global_net/widgets/liked_users_tile.dart';
+import 'package:global_net/widgets/simple_world_widgets.dart';
 
 class UsersLikedMyProfileList extends StatefulWidget {
   final String userId;

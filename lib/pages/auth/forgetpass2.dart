@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:nb_utils/src/extensions/widget_extensions.dart';
-import 'package:simpleworld/pages/auth/login_page.dart';
-import 'package:simpleworld/widgets/bezier_container.dart';
-import 'package:simpleworld/widgets/progress.dart';
+import 'package:global_net/pages/auth/login_page.dart';
+import 'package:global_net/widgets/bezier_container.dart';
+import 'package:global_net/widgets/progress.dart';
 
 class ForgetPass2 extends StatefulWidget {
   const ForgetPass2({Key? key}) : super(key: key);

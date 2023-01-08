@@ -1,7 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
-import 'package:simpleworld/config/size_config.dart';
+import 'package:global_net/config/size_config.dart';
 
 class MyCustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final double height;

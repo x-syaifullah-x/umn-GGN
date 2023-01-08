@@ -1,4 +1,4 @@
-import 'package:simpleworld/models/onboarding_model.dart';
+import 'package:global_net/models/onboarding_model.dart';
 
 List<WalkThroughItemModel> getWalkThroughItems() {
   List<WalkThroughItemModel> walkThroughItems = [];

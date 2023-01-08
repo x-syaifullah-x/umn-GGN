@@ -12,12 +12,12 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:iconly/iconly.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:nb_utils/nb_utils.dart';
-import 'package:simpleworld/pages/auth/login_page.dart';
-import 'package:simpleworld/pages/home.dart';
-import 'package:simpleworld/story/add_image_story.dart';
-import 'package:simpleworld/story/add_video_story.dart';
-import 'package:simpleworld/widgets/progress.dart';
-import 'package:simpleworld/widgets/simple_world_widgets.dart';
+import 'package:global_net/pages/auth/login_page.dart';
+import 'package:global_net/pages/home.dart';
+import 'package:global_net/story/add_image_story.dart';
+import 'package:global_net/story/add_video_story.dart';
+import 'package:global_net/widgets/progress.dart';
+import 'package:global_net/widgets/simple_world_widgets.dart';
 import 'package:uuid/uuid.dart';
 import 'package:video_compress/video_compress.dart';
 

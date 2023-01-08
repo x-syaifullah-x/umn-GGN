@@ -2,12 +2,12 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:simpleworld/pages/chat/group_chat_page.dart';
-import 'package:simpleworld/pages/home.dart';
-import 'package:simpleworld/services/database_service.dart';
-import 'package:simpleworld/share_preference/preferences_key.dart';
-import 'package:simpleworld/widgets/header.dart';
-import 'package:simpleworld/widgets/simple_world_widgets.dart';
+import 'package:global_net/pages/chat/group_chat_page.dart';
+import 'package:global_net/pages/home.dart';
+import 'package:global_net/services/database_service.dart';
+import 'package:global_net/share_preference/preferences_key.dart';
+import 'package:global_net/widgets/header.dart';
+import 'package:global_net/widgets/simple_world_widgets.dart';
 
 class SearchPage extends StatefulWidget {
   final String? userId;

@@ -3,11 +3,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:nb_utils/nb_utils.dart';
-import 'package:simpleworld/models/user.dart';
-import 'package:simpleworld/pages/activity_feed.dart';
-import 'package:simpleworld/pages/home.dart';
-import 'package:simpleworld/widgets/header.dart';
-import 'package:simpleworld/widgets/progress.dart';
+import 'package:global_net/models/user.dart';
+import 'package:global_net/pages/activity_feed.dart';
+import 'package:global_net/pages/home.dart';
+import 'package:global_net/widgets/header.dart';
+import 'package:global_net/widgets/progress.dart';
 
 class Search extends StatefulWidget {
   const Search({Key? key}) : super(key: key);

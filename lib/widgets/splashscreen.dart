@@ -5,10 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:nb_utils/nb_utils.dart';
-import 'package:simpleworld/constant/constant.dart';
-import 'package:simpleworld/models/user.dart';
-import 'package:simpleworld/widgets/progress.dart';
-import 'package:simpleworld/widgets/simple_world_widgets.dart';
+import 'package:global_net/constant/constant.dart';
+import 'package:global_net/models/user.dart';
+import 'package:global_net/widgets/progress.dart';
+import 'package:global_net/widgets/simple_world_widgets.dart';
 
 class SplashScreen extends StatefulWidget {
   final String? userId;

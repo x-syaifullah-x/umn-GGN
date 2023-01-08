@@ -1,11 +1,10 @@
-// ignore_for_file: file_names
-
 import 'package:nb_utils/nb_utils.dart';
 
 class SharedPreferencesKey {
-  static const String IS_USER_LOGGED_IN = "IS_USER_LOGGED_IN";
-  static const String LOGGED_IN_USERRDATA = "LOGGED_IN_USERRDATA";
-  static const String USERR_TYPE = "USERR_TYPE";
+  static const String isUserLoggedIn = "IS_USER_LOGGED_IN";
+  static const String loggedInUserData = "LOGGED_IN_USERRDATA";
+  static const String userType = "USERR_TYPE";
+  static const String languageCode = "language_code";
 }
 
 class HelperFunctions {
@@ -34,16 +33,16 @@ class HelperFunctions {
   // fetching data from sharedpreference
   static Future<bool?> getUserLoggedInSharedPreference() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
-    return await preferences.getBool(sharedPreferenceUserLoggedInKey);
+    return preferences.getBool(sharedPreferenceUserLoggedInKey);
   }
 
   static Future<String?> getUserNameSharedPreference() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
-    return await preferences.getString(sharedPreferenceUserNameKey);
+    return preferences.getString(sharedPreferenceUserNameKey);
   }
 
   static Future<String?> getUserEmailSharedPreference() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
-    return await preferences.getString(sharedPreferenceUserEmailKey);
+    return preferences.getString(sharedPreferenceUserEmailKey);
   }
 }

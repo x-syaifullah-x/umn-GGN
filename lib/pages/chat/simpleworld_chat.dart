@@ -14,12 +14,12 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:nb_utils/nb_utils.dart';
-import 'package:simpleworld/config/size_config.dart';
-import 'package:simpleworld/pages/home.dart';
-import 'package:simpleworld/widgets/chat_appbar.dart';
-import 'package:simpleworld/widgets/full_image_widget.dart';
-import 'package:simpleworld/widgets/progress.dart';
-import 'package:simpleworld/widgets/simple_world_widgets.dart';
+import 'package:global_net/config/size_config.dart';
+import 'package:global_net/pages/home.dart';
+import 'package:global_net/widgets/chat_appbar.dart';
+import 'package:global_net/widgets/full_image_widget.dart';
+import 'package:global_net/widgets/progress.dart';
+import 'package:global_net/widgets/simple_world_widgets.dart';
 
 class Chat extends StatelessWidget {
   final String receiverId;

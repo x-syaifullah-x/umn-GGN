@@ -10,16 +10,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:share/share.dart';
-import 'package:simpleworld/data/reaction_data.dart';
-import 'package:simpleworld/models/user.dart';
-import 'package:simpleworld/pages/activity_feed.dart';
-import 'package:simpleworld/pages/comments.dart';
-import 'package:simpleworld/pages/home.dart';
-import 'package:simpleworld/widgets/count/reaction_button_album_posts.dart';
-import 'package:simpleworld/widgets/count/reactions_count_album_posts.dart';
-import 'package:simpleworld/widgets/full_image_widget.dart';
-import 'package:simpleworld/widgets/progress.dart';
-import 'package:simpleworld/widgets/simple_world_widgets.dart';
+import 'package:global_net/data/reaction_data.dart';
+import 'package:global_net/models/user.dart';
+import 'package:global_net/pages/activity_feed.dart';
+import 'package:global_net/pages/comments.dart';
+import 'package:global_net/pages/home.dart';
+import 'package:global_net/widgets/count/reaction_button_album_posts.dart';
+import 'package:global_net/widgets/count/reactions_count_album_posts.dart';
+import 'package:global_net/widgets/full_image_widget.dart';
+import 'package:global_net/widgets/progress.dart';
+import 'package:global_net/widgets/simple_world_widgets.dart';
 import 'package:timeago/timeago.dart';
 
 class AlbumPosts extends StatefulWidget {

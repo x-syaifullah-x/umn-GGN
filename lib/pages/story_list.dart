@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:simpleworld/story/simpleworld_stories.dart';
+import 'package:global_net/story/simpleworld_stories.dart';
 
 class StoryList extends StatefulWidget {
   const StoryList({Key? key}) : super(key: key);

@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:simpleworld/pages/home.dart';
-import 'package:simpleworld/widgets/_build_list.dart';
+import 'package:global_net/pages/home.dart';
+import 'package:global_net/widgets/_build_list.dart';
 
 class CommentsCount extends StatefulWidget {
   final String? postId;

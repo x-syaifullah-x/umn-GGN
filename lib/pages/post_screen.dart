@@ -1,9 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:simpleworld/pages/home.dart';
-import 'package:simpleworld/widgets/header.dart';
-import 'package:simpleworld/widgets/progress.dart';
-import 'package:simpleworld/widgets/single_post.dart';
+import 'package:global_net/pages/home.dart';
+import 'package:global_net/widgets/header.dart';
+import 'package:global_net/widgets/progress.dart';
+import 'package:global_net/widgets/single_post.dart';
 
 class PostScreen extends StatelessWidget {
   final String? userId;

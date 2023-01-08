@@ -1,4 +1,4 @@
-import 'package:simpleworld/widgets/multi_manager/portrait_controls.dart';
+import 'package:global_net/widgets/multi_manager/portrait_controls.dart';
 
 import './flick_multi_manager.dart';
 import 'package:flick_video_player/flick_video_player.dart';

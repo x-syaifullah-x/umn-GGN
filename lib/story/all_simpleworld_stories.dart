@@ -5,9 +5,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:simpleworld/config/palette.dart';
-import 'package:simpleworld/story/add_story.dart';
-import 'package:simpleworld/widgets/simple_world_widgets.dart';
+import 'package:global_net/config/palette.dart';
+import 'package:global_net/story/add_story.dart';
+import 'package:global_net/widgets/simple_world_widgets.dart';
 
 import 'models/stories.dart';
 import 'models/stories_list_with_pressed.dart';

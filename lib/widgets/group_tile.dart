@@ -1,6 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:simpleworld/pages/chat/group_chat_page.dart';
+import 'package:global_net/pages/chat/group_chat_page.dart';
 
 class GroupTile extends StatelessWidget {
   final String userName;

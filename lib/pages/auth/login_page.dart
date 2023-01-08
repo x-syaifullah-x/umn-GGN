@@ -13,19 +13,19 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:nb_utils/nb_utils.dart';
-import 'package:simpleworld/models/user.dart';
-import 'package:simpleworld/pages/auth/add_credit_to_account.dart';
-import 'package:simpleworld/pages/auth/create_account.dart';
-import 'package:simpleworld/pages/auth/forgotpass.dart';
-import 'package:simpleworld/pages/auth/signup_page.dart';
-import 'package:simpleworld/pages/home.dart';
-import 'package:simpleworld/pages/menu/term_of_use.dart';
-import 'package:simpleworld/share_preference/preferences_key.dart';
-import 'package:simpleworld/widgets/anchored_adaptive_ads.dart';
-import 'package:simpleworld/widgets/bezier_container.dart';
-import 'package:simpleworld/widgets/language_picker_widget_home.dart';
-import 'package:simpleworld/widgets/progress.dart';
-import 'package:simpleworld/widgets/simple_world_widgets.dart';
+import 'package:global_net/models/user.dart';
+import 'package:global_net/pages/auth/add_credit_to_account.dart';
+import 'package:global_net/pages/auth/create_account.dart';
+import 'package:global_net/pages/auth/forgotpass.dart';
+import 'package:global_net/pages/auth/signup_page.dart';
+import 'package:global_net/pages/home.dart';
+import 'package:global_net/pages/menu/term_of_use.dart';
+import 'package:global_net/share_preference/preferences_key.dart';
+import 'package:global_net/widgets/anchored_adaptive_ads.dart';
+import 'package:global_net/widgets/bezier_container.dart';
+import 'package:global_net/widgets/language_picker_widget_home.dart';
+import 'package:global_net/widgets/progress.dart';
+import 'package:global_net/widgets/simple_world_widgets.dart';
 
 GloabalUser? currentUser;
 
@@ -263,7 +263,7 @@ class LoginPageState extends State<LoginPage> {
     SharedPreferences preferences = await SharedPreferences.getInstance();
 
     preferences
-        .setString(SharedPreferencesKey.LOGGED_IN_USERRDATA, userId)
+        .setString(SharedPreferencesKey.loggedInUserData, userId)
         .then((value) async {
       try {
         String vApiKey =
@@ -582,7 +582,7 @@ class LoginPageState extends State<LoginPage> {
   configurePushNotifications(userId) async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     preferences
-        .setString(SharedPreferencesKey.LOGGED_IN_USERRDATA, userId)
+        .setString(SharedPreferencesKey.loggedInUserData, userId)
         .then((value) {
       _firebaseMessaging.getToken().then((token) {
         print("Firebase Messaging Token: $token\n");

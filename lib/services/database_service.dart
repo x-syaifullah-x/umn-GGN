@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:simpleworld/widgets/simple_world_widgets.dart';
+import 'package:global_net/widgets/simple_world_widgets.dart';
 
 class DatabaseService {
   final String? uid;

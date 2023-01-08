@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flick_video_player/flick_video_player.dart';
 import 'package:provider/provider.dart';
-import 'package:simpleworld/widgets/multi_manager/flick_multi_manager.dart';
+import 'package:global_net/widgets/multi_manager/flick_multi_manager.dart';
 
 class FeedPlayerPortraitControls extends StatelessWidget {
   const FeedPlayerPortraitControls(

@@ -8,8 +8,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:simpleworld/widgets/simple_world_widgets.dart';
-import 'package:simpleworld/widgets/splashscreen.dart';
+import 'package:global_net/widgets/simple_world_widgets.dart';
+import 'package:global_net/widgets/splashscreen.dart';
 
 void main() {
   testWidgets('Counter increments smoke test', (WidgetTester tester) async {

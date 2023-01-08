@@ -9,14 +9,14 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:nb_utils/nb_utils.dart';
 import 'package:provider/provider.dart';
-import 'package:simpleworld/config/palette.dart';
-import 'package:simpleworld/l10n/l10n.dart';
-import 'package:simpleworld/pages/WalkThroughScreen.dart';
-import 'package:simpleworld/pages/auth/login_page.dart';
-import 'package:simpleworld/pages/home.dart';
-import 'package:simpleworld/provider/locale_provider.dart';
-import 'package:simpleworld/share_preference/preferences_key.dart';
-import 'package:simpleworld/widgets/simple_world_widgets.dart';
+import 'package:global_net/config/palette.dart';
+import 'package:global_net/l10n/l10n.dart';
+import 'package:global_net/pages/WalkThroughScreen.dart';
+import 'package:global_net/pages/auth/login_page.dart';
+import 'package:global_net/pages/home.dart';
+import 'package:global_net/provider/locale_provider.dart';
+import 'package:global_net/share_preference/preferences_key.dart';
+import 'package:global_net/widgets/simple_world_widgets.dart';
 
 class App extends StatefulWidget {
   final SharedPreferences prefs;
@@ -155,13 +155,13 @@ class AppState extends State<App> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
+    SharedPreferences preferences = widget.prefs;
+    String? languageCode =
+        preferences.getString(SharedPreferencesKey.languageCode);
     return ChangeNotifierProvider(
-        create: (context) => LocaleProvider(),
+        create: (context) => LocaleProvider.from(languageCode),
         builder: (context, child) {
           final provider = Provider.of<LocaleProvider>(context);
-          String locale =
-              widget.prefs.getString("locale") ?? (kIsWeb ? "zh" : 'en');
-          provider.setLocale(Locale(locale));
           return AdaptiveTheme(
             light: ThemeData(
                 brightness: Brightness.light,
@@ -247,9 +247,9 @@ class AppState extends State<App> with WidgetsBindingObserver {
               theme: theme,
               darkTheme: darkTheme,
               debugShowCheckedModeBanner: false,
-              home: _handleCurrentScreen(widget.prefs),
+              home: _handleCurrentScreen(preferences),
               locale: provider.locale,
-              supportedLocales: L10n.all,
+              supportedLocales: L10n.alls,
               localizationsDelegates: const [
                 AppLocalizations.delegate,
                 GlobalMaterialLocalizations.delegate,
@@ -262,10 +262,9 @@ class AppState extends State<App> with WidgetsBindingObserver {
   }
 
   Widget _handleCurrentScreen(SharedPreferences prefs) {
-    String? data = prefs.getString(SharedPreferencesKey.LOGGED_IN_USERRDATA);
+    String? data = prefs.getString(SharedPreferencesKey.loggedInUserData);
     preferences = prefs;
-    bool seen =
-        (prefs.getBool(SharedPreferencesKey.IS_USER_LOGGED_IN) ?? false);
+    bool seen = (prefs.getBool(SharedPreferencesKey.isUserLoggedIn) ?? false);
     if (seen == false && data == null) {
       prefs.setBool('seen', true);
       return const WalkThroughScreen();

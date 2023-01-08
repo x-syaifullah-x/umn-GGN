@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:simpleworld/story/all_simpleworld_stories.dart';
-import 'package:simpleworld/widgets/header.dart';
-import 'package:simpleworld/widgets/simple_world_widgets.dart';
+import 'package:global_net/story/all_simpleworld_stories.dart';
+import 'package:global_net/widgets/header.dart';
+import 'package:global_net/widgets/simple_world_widgets.dart';
 
 class AllStories extends StatefulWidget {
   final String? userId;

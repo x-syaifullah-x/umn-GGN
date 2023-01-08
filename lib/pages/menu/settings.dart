@@ -9,26 +9,26 @@ import "package:flutter/material.dart";
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:nb_utils/nb_utils.dart';
-import 'package:simpleworld/data/reaction_data.dart' as Reaction;
-import 'package:simpleworld/models/user.dart';
-import 'package:simpleworld/pages/activity_feed.dart';
-import 'package:simpleworld/pages/all_videos.dart';
-import 'package:simpleworld/pages/auth/login_page.dart';
-import 'package:simpleworld/pages/chat/simpleworld_chat_main.dart';
-import 'package:simpleworld/pages/comming_soon_page.dart';
-import 'package:simpleworld/pages/edit_profile.dart';
-import 'package:simpleworld/pages/home.dart';
-import 'package:simpleworld/pages/menu/all_pdfs.dart';
-import 'package:simpleworld/pages/menu/all_stories.dart';
-import 'package:simpleworld/pages/menu/dialogs/vip_dialog.dart';
-import 'package:simpleworld/pages/menu/discover.dart';
-import 'package:simpleworld/pages/menu/help_support.dart';
-import 'package:simpleworld/pages/users.dart';
-import 'package:simpleworld/share_preference/preferences_key.dart';
-import 'package:simpleworld/widgets/header.dart';
-import 'package:simpleworld/widgets/language_picker_widget.dart';
-import 'package:simpleworld/widgets/progress.dart';
-import 'package:simpleworld/widgets/simple_world_widgets.dart';
+import 'package:global_net/data/reaction_data.dart' as Reaction;
+import 'package:global_net/models/user.dart';
+import 'package:global_net/pages/activity_feed.dart';
+import 'package:global_net/pages/all_videos.dart';
+import 'package:global_net/pages/auth/login_page.dart';
+import 'package:global_net/pages/chat/simpleworld_chat_main.dart';
+import 'package:global_net/pages/comming_soon_page.dart';
+import 'package:global_net/pages/edit_profile.dart';
+import 'package:global_net/pages/home.dart';
+import 'package:global_net/pages/menu/all_pdfs.dart';
+import 'package:global_net/pages/menu/all_stories.dart';
+import 'package:global_net/pages/menu/dialogs/vip_dialog.dart';
+import 'package:global_net/pages/menu/discover.dart';
+import 'package:global_net/pages/menu/help_support.dart';
+import 'package:global_net/pages/users.dart';
+import 'package:global_net/share_preference/preferences_key.dart';
+import 'package:global_net/widgets/header.dart';
+import 'package:global_net/widgets/language_picker_widget.dart';
+import 'package:global_net/widgets/progress.dart';
+import 'package:global_net/widgets/simple_world_widgets.dart';
 
 class SettingsPage extends StatefulWidget {
   final String? currentUserId;
@@ -585,7 +585,7 @@ class SettingsState extends State<SettingsPage> {
                           SharedPreferences preferences =
                               await SharedPreferences.getInstance();
                           preferences
-                              .remove(SharedPreferencesKey.LOGGED_IN_USERRDATA)
+                              .remove(SharedPreferencesKey.loggedInUserData)
                               .then((_) async {
                             Navigator.push(
                               context,
@@ -627,7 +627,7 @@ class SettingsState extends State<SettingsPage> {
                         SharedPreferences preferences =
                             await SharedPreferences.getInstance();
                         preferences
-                            .remove(SharedPreferencesKey.LOGGED_IN_USERRDATA)
+                            .remove(SharedPreferencesKey.loggedInUserData)
                             .then((_) async {
                           Navigator.push(
                             context,
