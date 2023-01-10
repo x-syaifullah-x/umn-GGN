@@ -4,6 +4,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:global_net/ads/a.dart';
+import 'package:global_net/widgets/anchored_adaptive_ads.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:iconly/iconly.dart';
@@ -19,6 +21,8 @@ import 'package:global_net/widgets/circle_button.dart';
 import 'package:global_net/widgets/count/feeds_count.dart';
 import 'package:global_net/widgets/count/messages_count.dart';
 import 'package:global_net/widgets/simple_world_widgets.dart';
+import 'package:nb_utils/nb_utils.dart';
+import 'dart:ui' as ui;
 
 final GoogleSignIn googleSignIn = GoogleSignIn();
 final Reference storageRef = FirebaseStorage.instance.ref();
@@ -60,10 +64,24 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
   late List<GloabalUser> users;
   bool showElevatedButtonBadge = true;
 
+  final List<String> _dataSideLeft = [
+    "SHOP",
+    "CHANNEL",
+    "EMAIL",
+    "NEWS",
+    "IPTV",
+    "CHAT",
+    "GROUP",
+    "APPS",
+    "GO DARK",
+    "CREDIT LINES",
+    "CROWD FUNDING",
+    "BUSINESS STRUCTURE",
+  ];
+
   @override
   void initState() {
     super.initState();
-    getUserData();
     getAllUsers();
     getAllStories();
 
@@ -72,21 +90,267 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
     _tabController.addListener(_handleTabSelection);
   }
 
-    @override
+  @override
   Widget build(BuildContext context) {
+    final String? userId = widget.userId;
+    if (userId == null || userId.isEmpty) {
+      throw Exception("need user id");
+    }
     return FutureBuilder(
       future: getUserData(),
       builder: (context, snapshot) {
         return NotificationListener(
-          child: buildAuthScreen(context, widget.userId),
-          onNotification: (notification) {
-            return true;
-          },
+          child: AnimatedTheme(
+            duration: const Duration(milliseconds: 300),
+            data: Theme.of(context),
+            child: Scaffold(
+              backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+              key: _scaffoldKey,
+              appBar: _appBar(context, userId),
+              body: _body(context, userId, _tabController),
+            ),
+          ),
         );
-        // return buildAuthScreen();
       },
     );
-    // return buildAuthScreen();
+  }
+
+  getUserData() async {
+    User? user = firebaseAuth.currentUser;
+    if (user != null) {
+      final peerData = await usersRef.doc(user.uid).get();
+      if (peerData.exists) {
+        globalID = user.uid;
+        globalName = peerData['username'];
+        globalImage = peerData['photoUrl'];
+        globalBio = peerData['bio'];
+        globalCover = peerData['coverUrl'];
+        globalDisplayName = peerData['displayName'];
+        globalCredits = 0.0.toString();
+      }
+    }
+  }
+
+  PreferredSizeWidget _appBar(BuildContext context, String userId) {
+    final AdaptiveThemeMode mode = AdaptiveTheme.of(context).mode;
+    return AppBar(
+      backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
+      automaticallyImplyLeading: false,
+      shape: Border(
+        bottom: BorderSide(
+          color: Theme.of(context).shadowColor,
+          width: 1.0,
+        ),
+      ),
+      title: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          Row(
+            children: <Widget>[
+              Text(
+                'Global Net',
+                style: GoogleFonts.portLligatSans(
+                  textStyle: Theme.of(context).textTheme.headline4,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+      actions: [
+        Container(
+          alignment: Alignment.center,
+          width: 40,
+          margin: const EdgeInsets.all(6.0),
+          decoration: BoxDecoration(
+            color: Theme.of(context).secondaryHeaderColor,
+            shape: BoxShape.circle,
+          ),
+          child: IconButton(
+            onPressed: () {
+              if (mode == AdaptiveThemeMode.light) {
+                AdaptiveTheme.of(context).setDark();
+              } else {
+                AdaptiveTheme.of(context).setLight();
+              }
+            },
+            icon: mode == AdaptiveThemeMode.light
+                ? const Icon(Icons.light_mode)
+                : const Icon(Icons.dark_mode),
+          ),
+        ),
+        CircleButton(
+          icon: Icons.search,
+          iconSize: 25.0,
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const Search()),
+            );
+          },
+        ),
+        MessagesCount(
+          currentUserId: userId,
+        ),
+      ],
+      elevation: 0.0,
+      bottom: TabBar(
+        // padding: EdgeInsets.only(left: a, right: a),
+        indicator: UnderlineTabIndicator(
+          borderSide: BorderSide(width: 4.0, color: Colors.red.shade800),
+        ),
+        controller: _tabController,
+        unselectedLabelColor:
+            Theme.of(context).tabBarTheme.unselectedLabelColor,
+        labelColor: Theme.of(context).tabBarTheme.labelColor,
+        tabs: [
+          Tab(
+            icon: _tabController.index == 0
+                ? const Icon(
+                    IconlyBold.home,
+                    color: Color(0xFFC62828),
+                  )
+                : const Icon(IconlyLight.home),
+          ),
+          Tab(
+            icon: _tabController.index == 1
+                ? const Icon(
+                    IconlyBold.plus,
+                    color: Color(0xFFC62828),
+                  )
+                : const Icon(IconlyLight.plus),
+          ),
+          Tab(
+            icon: _tabController.index == 2
+                ? const Icon(
+                    IconlyBold.profile,
+                    color: Color(0xFFC62828),
+                  )
+                : const Icon(IconlyLight.profile),
+          ),
+          FeedsCount(
+            userId: userId,
+            tabController: _tabController,
+          ),
+          Tab(
+            icon: _tabController.index == 4
+                ? const Icon(
+                    IconlyBold.category,
+                    color: Color(0xFFC62828),
+                  )
+                : const Icon(IconlyLight.category),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _body(BuildContext c, String userId, TabController tabController) {
+    final Size size = MediaQuery.of(c).size;
+    final double width = size.width;
+
+    final double widthContentRight;
+    final double widthContentLeft;
+    final data = MediaQueryData.fromWindow(WidgetsBinding.instance.window);
+    if (data.size.shortestSide > 550) {
+      widthContentRight = width * 0.25;
+      widthContentLeft = width * 0.25;
+    } else {
+      widthContentRight = 0;
+      widthContentLeft = 0;
+    }
+
+    final double widthContentCenter =
+        width - widthContentLeft - widthContentRight;
+    return Row(
+      children: [
+        Container(
+          decoration: BoxDecoration(
+            color: Colors.white.withOpacity(0.8),
+            // borderRadius: BorderRadius.only(
+            //   topLeft: Radius.circular(10),
+            //   topRight: Radius.circular(10),
+            //   bottomLeft: Radius.circular(10),
+            //   bottomRight: Radius.circular(10),
+            // ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.5),
+                blurRadius: 8,
+                // spreadRadius: 5,
+                // blurRadius: 7,
+                // offset: const Offset(4, 8), // changes position of shadow
+              ),
+            ],
+          ),
+          margin: const EdgeInsets.only(right: 8),
+          width: widthContentLeft - 8,
+          height: double.infinity,
+          child: ListView.builder(
+            itemCount: _dataSideLeft.length,
+            itemBuilder: (context, index) {
+              return InkWell(
+                child: Container(
+                  padding: const EdgeInsets.all(10),
+                  child: Text(
+                    _dataSideLeft[index],
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                onTap: () {
+                  toastLong(
+                    "${_dataSideLeft[index]} will be available soon",
+                  );
+                },
+              );
+            },
+          ),
+        ),
+        SizedBox(
+          width: widthContentCenter,
+          height: double.infinity,
+          child: _tabBarView(tabController, userId),
+        ),
+        Container(
+          decoration: BoxDecoration(
+            color: Colors.white.withOpacity(0.8),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.5),
+                spreadRadius: 8,
+                // blurRadius: 7,
+                // offset: const Offset(0, 3), // changes position of shadow
+              ),
+            ],
+          ),
+          margin: const EdgeInsets.only(left: 8),
+          width: widthContentRight - 8,
+          height: double.infinity,
+          child: const Ads(),
+        ),
+      ],
+    );
+  }
+
+  Widget _tabBarView(TabController tabController, String userId) {
+    return TabBarView(
+      controller: tabController,
+      children: [
+        NewTimeline(
+          userId: userId,
+          reactions: reaction.reactions,
+        ),
+        UsersList(userId: userId),
+        Profile(
+          profileId: userId,
+          reactions: reaction.reactions,
+        ),
+        const ActivityFeed(),
+        SettingsPage(currentUserId: userId),
+      ],
+    );
   }
 
   @override
@@ -100,7 +364,7 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
   }
 
   getAllStories() async {
-    QuerySnapshot<Map<String, dynamic>> doc = await storiesRef.get();
+    await storiesRef.get();
   }
 
   checkIfFollowing() async {
@@ -123,317 +387,5 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
     setState(() {
       this.users = users;
     });
-  }
-
-  getUserData() async {
-    User? user = firebaseAuth.currentUser;
-    if (user != null) {
-      final peerData = await usersRef.doc(user.uid).get();
-      if (peerData.exists) {
-        globalID = user.uid;
-        globalName = peerData['username'];
-        globalImage = peerData['photoUrl'];
-        globalBio = peerData['bio'];
-        globalCover = peerData['coverUrl'];
-        globalDisplayName = peerData['displayName'];
-        globalCredits = 0.0.toString();
-      }
-
-      // usersRef.doc(user.uid).get().then((peerData) {
-      //   if (peerData.exists) {
-      //     setState(() {
-      //       globalID = user.uid;
-      //       globalName = peerData['username'];
-      //       globalImage = peerData['photoUrl'];
-      //       globalBio = peerData['bio'];
-      //       globalCover = peerData['coverUrl'];
-      //       globalDisplayName = peerData['displayName'];
-      //       globalCredits = 0.0.toString();
-      //     });
-      //   }
-      // });
-    }
-  }
-
-  Widget _mobile(BuildContext context, String? userId) {
-    final mode = AdaptiveTheme.of(context).mode;
-
-    return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      key: _scaffoldKey,
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
-        automaticallyImplyLeading: false,
-        shape: Border(
-          bottom: BorderSide(
-            color: Theme.of(context).shadowColor,
-            width: 1.0,
-          ),
-        ),
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            Row(
-              children: <Widget>[
-                Text(
-                  'Global  Net',
-                  style: GoogleFonts.portLligatSans(
-                    textStyle: Theme.of(context).textTheme.headline4,
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-        actions: [
-          Container(
-            alignment: Alignment.center,
-            width: 40,
-            margin: const EdgeInsets.all(6.0),
-            decoration: BoxDecoration(
-              color: Theme.of(context).secondaryHeaderColor,
-              shape: BoxShape.circle,
-            ),
-            child: IconButton(
-              onPressed: () {
-                if (mode == AdaptiveThemeMode.light) {
-                  AdaptiveTheme.of(context).setDark();
-                } else {
-                  AdaptiveTheme.of(context).setLight();
-                }
-              },
-              icon: mode == AdaptiveThemeMode.light
-                  ? const Icon(Icons.light_mode)
-                  : const Icon(Icons.dark_mode),
-            ),
-          ),
-          CircleButton(
-            icon: Icons.search,
-            iconSize: 25.0,
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const Search()),
-              );
-            },
-          ),
-          MessagesCount(
-            currentUserId: userId,
-          ),
-        ],
-        elevation: 0.0,
-        bottom: TabBar(
-          indicator: UnderlineTabIndicator(
-            borderSide: BorderSide(width: 4.0, color: Colors.red.shade800),
-          ),
-          controller: _tabController,
-          unselectedLabelColor:
-              Theme.of(context).tabBarTheme.unselectedLabelColor,
-          labelColor: Theme.of(context).tabBarTheme.labelColor,
-          tabs: [
-            Tab(
-              icon: _tabController.index == 0
-                  ? const Icon(
-                      IconlyBold.home,
-                      color: Color(0xFFC62828),
-                    )
-                  : const Icon(IconlyLight.home),
-            ),
-            Tab(
-              icon: _tabController.index == 1
-                  ? const Icon(
-                      IconlyBold.plus,
-                      color: Color(0xFFC62828),
-                    )
-                  : const Icon(IconlyLight.plus),
-            ),
-            Tab(
-              icon: _tabController.index == 2
-                  ? const Icon(
-                      IconlyBold.profile,
-                      color: Color(0xFFC62828),
-                    )
-                  : const Icon(IconlyLight.profile),
-            ),
-            FeedsCount(
-              userId: userId,
-              tabController: _tabController,
-            ),
-            Tab(
-              icon: _tabController.index == 4
-                  ? const Icon(
-                      IconlyBold.category,
-                      color: Color(0xFFC62828),
-                    )
-                  : const Icon(IconlyLight.category),
-            ),
-          ],
-        ),
-      ),
-      body: TabBarView(
-        controller: _tabController,
-        children: [
-          NewTimeline(
-            userId: userId,
-            reactions: reaction.reactions,
-          ),
-          UsersList(userId: userId),
-          Profile(
-            profileId: userId,
-            reactions: reaction.reactions,
-          ),
-          const ActivityFeed(),
-          SettingsPage(currentUserId: userId),
-        ],
-      ),
-    );
-  }
-
-  Widget _desktop(BuildContext context, String? userId) {
-    final AdaptiveThemeMode mode = AdaptiveTheme.of(context).mode;
-    final double sizeWidth = MediaQuery.of(context).size.width;
-    final double sizeWidth_3_4 = sizeWidth - ((3 * sizeWidth) / 4);
-    return Scaffold(
-        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-        key: _scaffoldKey,
-        appBar: AppBar(
-          backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
-          automaticallyImplyLeading: false,
-          shape: Border(
-            bottom: BorderSide(
-              color: Theme.of(context).shadowColor,
-              width: 1.0,
-            ),
-          ),
-          title: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              Row(
-                children: <Widget>[
-                  Text(
-                    'Global  Net',
-                    style: GoogleFonts.portLligatSans(
-                      textStyle: Theme.of(context).textTheme.headline4,
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-          actions: [
-            Container(
-              alignment: Alignment.center,
-              width: 40,
-              margin: const EdgeInsets.all(6.0),
-              decoration: BoxDecoration(
-                color: Theme.of(context).secondaryHeaderColor,
-                shape: BoxShape.circle,
-              ),
-              child: IconButton(
-                onPressed: () {
-                  if (mode == AdaptiveThemeMode.light) {
-                    AdaptiveTheme.of(context).setDark();
-                  } else {
-                    AdaptiveTheme.of(context).setLight();
-                  }
-                },
-                icon: mode == AdaptiveThemeMode.light
-                    ? const Icon(Icons.light_mode)
-                    : const Icon(Icons.dark_mode),
-              ),
-            ),
-            CircleButton(
-              icon: Icons.search,
-              iconSize: 25.0,
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const Search()),
-                );
-              },
-            ),
-            MessagesCount(
-              currentUserId: userId,
-            ),
-          ],
-          elevation: 0.0,
-          bottom: TabBar(
-            // padding: EdgeInsets.only(left: a, right: a),
-            indicator: UnderlineTabIndicator(
-              borderSide: BorderSide(width: 4.0, color: Colors.red.shade800),
-            ),
-            controller: _tabController,
-            unselectedLabelColor:
-                Theme.of(context).tabBarTheme.unselectedLabelColor,
-            labelColor: Theme.of(context).tabBarTheme.labelColor,
-            tabs: [
-              Tab(
-                icon: _tabController.index == 0
-                    ? const Icon(
-                        IconlyBold.home,
-                        color: Color(0xFFC62828),
-                      )
-                    : const Icon(IconlyLight.home),
-              ),
-              Tab(
-                icon: _tabController.index == 1
-                    ? const Icon(
-                        IconlyBold.plus,
-                        color: Color(0xFFC62828),
-                      )
-                    : const Icon(IconlyLight.plus),
-              ),
-              Tab(
-                icon: _tabController.index == 2
-                    ? const Icon(
-                        IconlyBold.profile,
-                        color: Color(0xFFC62828),
-                      )
-                    : const Icon(IconlyLight.profile),
-              ),
-              FeedsCount(
-                userId: userId,
-                tabController: _tabController,
-              ),
-              Tab(
-                icon: _tabController.index == 4
-                    ? const Icon(
-                        IconlyBold.category,
-                        color: Color(0xFFC62828),
-                      )
-                    : const Icon(IconlyLight.category),
-              ),
-            ],
-          ),
-        ),
-        body: Container(
-          margin: EdgeInsets.only(left: sizeWidth_3_4, right: sizeWidth_3_4),
-          child: TabBarView(
-            controller: _tabController,
-            children: [
-              NewTimeline(
-                userId: userId,
-                reactions: reaction.reactions,
-              ),
-              UsersList(userId: userId),
-              Profile(
-                profileId: userId,
-                reactions: reaction.reactions,
-              ),
-              const ActivityFeed(),
-              SettingsPage(currentUserId: userId),
-            ],
-          ),
-        ));
-  }
-
-  AnimatedTheme buildAuthScreen(BuildContext context, String? userId) {
-    double width = MediaQuery.of(context).size.width;
-    return AnimatedTheme(
-      duration: const Duration(milliseconds: 300),
-      data: Theme.of(context),
-      child:
-          (width > 850) ? _desktop(context, userId) : _mobile(context, userId),
-    );
   }
 }

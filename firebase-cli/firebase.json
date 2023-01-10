@@ -9,37 +9,38 @@
   },
   "emulators": {
     "auth": {
-      "host": "192.168.0.1",
+      "host": "192.168.42.1",
       "port": 9099
     },
     "functions": {
-      "host": "192.168.0.1",
+      "host": "192.168.42.1",
       "port": 5001
     },
     "firestore": {
-      "host": "192.168.0.1",
+      "host": "192.168.42.1",
       "port": 8080
     },
     "database": {
-      "host": "192.168.0.1",
+      "host": "192.168.42.1",
       "port": 9000
     },
     "hosting": {
-      "host": "192.168.0.1",
+      "host": "192.168.42.1",
       "port": 5000
     },
     "eventarc": {
-      "host": "192.168.0.1",
+      "host": "192.168.42.1",
       "port": 9299
     },
     "ui": {
       "enabled": true
     },
     "pubsub": {
-      "host": "192.168.0.1",
+      "host": "192.168.42.1",
       "port": 8086
     },
     "storage": {
+      "host": "192.168.42.1",
       "port": 9199
     },
     "singleProjectMode": true

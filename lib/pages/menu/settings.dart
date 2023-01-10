@@ -82,10 +82,7 @@ class SettingsState extends State<SettingsPage> {
   Widget build(BuildContext context) {
     final mode = AdaptiveTheme.of(context).mode;
     final double sizeWidth = MediaQuery.of(context).size.width;
-    final double sizeWidth_3_4 =
-        (isWeb && MediaQuery.of(context).size.width > 850)
-            ? sizeWidth - ((3 * sizeWidth) / 4)
-            : 0;
+    final double sizeWidth_3_4 = context.width() * 0.25;
     return AnimatedTheme(
       duration: const Duration(milliseconds: 300),
       data: Theme.of(context),

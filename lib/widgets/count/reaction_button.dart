@@ -141,9 +141,13 @@ class ReactionButtonWidgetState extends State<ReactionButtonWidget> {
         .collection('like')
         .doc(userId)
         .get();
-    setState(() {
-      isLike = doc.exists;
-    });
+    try {
+      setState(() {
+        isLike = doc.exists;
+      });
+    } catch (e) {
+      print(e);
+    }
   }
 
   addLikeToActivityFeed() {

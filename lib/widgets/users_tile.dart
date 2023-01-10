@@ -180,7 +180,7 @@ class UserTileState extends State<UserTile> {
                   Container(
                     margin: const EdgeInsets.only(top: 10.0),
                     height: 30,
-                    width: (context.width() - (3 * 16)) * (isWeb && (MediaQuery.of(context).size.width > 850) ? 0.1 : 0.2),
+                    width: (context.width() - (3 * 16)) * (isWeb || (MediaQuery.of(context).size.width > 850) ? 0.1 : 0.2),
                     decoration: const BoxDecoration(
                       color: Color(0xffE5E6EB),
                       borderRadius: BorderRadius.all(
@@ -220,7 +220,7 @@ class UserTileState extends State<UserTile> {
                             margin: const EdgeInsets.only(top: 10.0),
                             height: 30,
                             width: (context.width() - (3 * 16)) *
-                                (isWeb && (MediaQuery.of(context).size.width > 850) ? 0.1 : 0.2),
+                                (isWeb || (MediaQuery.of(context).size.width > 850) ? 0.1 : 0.2),
                             decoration: BoxDecoration(
                               color: Colors.redAccent[700],
                               borderRadius: const BorderRadius.all(
@@ -246,7 +246,7 @@ class UserTileState extends State<UserTile> {
                             margin: const EdgeInsets.only(top: 10.0),
                             height: 30,
                             width: (context.width() - (3 * 16)) *
-                                (isWeb && (MediaQuery.of(context).size.width > 850) ? 0.1 : 0.2),
+                                (isWeb || (MediaQuery.of(context).size.width > 850) ? 0.1 : 0.2),
                             decoration: BoxDecoration(
                               color: Colors.blue[700],
                               borderRadius: const BorderRadius.all(
@@ -332,13 +332,13 @@ class UserTileState extends State<UserTile> {
   //       .collection('feedItems')
   //       .doc(currentUserId)
   //       .set({
-  //     "type": "follow",
-  //     "ownerId": userdoc!['id'],
-  //     "username": globalName,
-  //     "userId": currentUserId,
-  //     "userProfileImg": globalImage,
-  //     "timestamp": timestamp,
-  //     "isSeen": false,
+  //     'type': 'follow',
+  //     'ownerId': userdoc!['id'],
+  //     'username': globalName,
+  //     'userId': currentUserId,
+  //     'userProfileImg': globalImage,
+  //     'timestamp': timestamp,
+  //     'isSeen': false,
   //   });
   // }
 
@@ -361,13 +361,13 @@ class UserTileState extends State<UserTile> {
         .collection('feedItems')
         .doc(currentUserId)
         .set({
-      "type": "follow",
-      "ownerId": widget.userDoc!['id'],
-      "username": globalName,
-      "userId": currentUserId,
-      "userProfileImg": globalImage,
-      "timestamp": timestamp,
-      "isSeen": false,
+      'type': 'follow',
+      'ownerId': widget.userDoc!['id'],
+      'username': globalName,
+      'userId': currentUserId,
+      'userProfileImg': globalImage,
+      'timestamp': timestamp,
+      'isSeen': false,
     });
   }
 }

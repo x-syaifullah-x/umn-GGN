@@ -7,7 +7,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 
-// ignore: library_prefixes
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:iconly/iconly.dart';
 import 'package:image_picker/image_picker.dart';
@@ -43,7 +42,6 @@ class AddStoryState extends State<AddStory>
     final navigator = Navigator.of(context);
     final pickedFile =
         await _picker.pickImage(source: ImageSource.gallery, imageQuality: 50);
-    this.file = file;
     if (pickedFile != null) {
       file = File(pickedFile.path);
       navigator.pop();

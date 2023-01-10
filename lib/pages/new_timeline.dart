@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_linkify/flutter_linkify.dart';
@@ -48,22 +49,16 @@ class NewTimeline extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  NewTimelineState createState() => NewTimelineState(currentUserId: userId);
+  NewTimelineState createState() => NewTimelineState();
 }
 
 class NewTimelineState extends State<NewTimeline> {
-  final String? currentUserId;
-
   bool isGlobal = false;
   bool isLoading = false;
   late FlickMultiManager flickMultiManager;
   List<AlbumPosts> posts = [];
 
-  var reportPostData;
-
-  NewTimelineState({
-    this.currentUserId,
-  });
+  dynamic reportPostData;
 
   @override
   void initState() {
@@ -73,22 +68,23 @@ class NewTimelineState extends State<NewTimeline> {
   }
 
   @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Theme.of(context).backgroundColor,
+      body: followersPostList(widget.userId!),
+    );
+  }
+
+  @override
   void dispose() {
     flickMultiManager = FlickMultiManager();
     super.dispose();
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Theme.of(context).backgroundColor,
-      body: followersPostList(currentUserId!),
-    );
-  }
-
   Widget followersPostList(String userData) {
     PaginateRefreshedChangeListener refreshChangeListener =
         PaginateRefreshedChangeListener();
+    print(context.height());
     return RefreshIndicator(
       child: PaginateFirestore(
         onEmpty: Padding(
@@ -102,7 +98,7 @@ class NewTimelineState extends State<NewTimeline> {
               ),
               SvgPicture.asset(
                 'assets/images/no_content.svg',
-                height: 260.0,
+                height: context.height() <= 600 ? 220.0 : 250,
               ),
               const Padding(
                 padding: EdgeInsets.only(top: 20.0),
@@ -119,20 +115,19 @@ class NewTimelineState extends State<NewTimeline> {
           ),
         ),
         header: SliverToBoxAdapter(
-            child: Column(
-          children: [
-            PostBox(currentUser: currentUser),
-            const SizedBox(
-              height: 210,
-              child: StoryList(),
-            ),
-          ],
-        )),
+          child: Column(
+            children: [
+              PostBox(currentUser: currentUser),
+              const SizedBox(
+                height: 210,
+                child: StoryList(),
+              ),
+            ],
+          ),
+        ),
         itemBuilderType: PaginateBuilderType.listView,
         itemBuilder: (context, documentSnapshots, index) {
           final post = documentSnapshots[index].data() as Map?;
-          print(post);
-
           if ((index + 1) % 5 == 0) {
             return Column(
               children: [
@@ -627,7 +622,7 @@ class NewTimelineState extends State<NewTimeline> {
                         ReactionButtonWidget(
                           postId: post['postId'],
                           ownerId: post['ownerId'],
-                          userId: currentUserId,
+                          userId: widget.userId,
                           reactions: reactions,
                           mediaUrl: post['mediaUrl'][0],
                         ),
@@ -639,7 +634,7 @@ class NewTimelineState extends State<NewTimeline> {
                         ReactionButtonWidget(
                           postId: post['postId'],
                           ownerId: post['ownerId'],
-                          userId: currentUserId,
+                          userId: widget.userId,
                           reactions: reactions,
                           // mediaUrl: post['mediaUrl'],
                         ),

@@ -22,33 +22,21 @@ class SplashScreen extends StatefulWidget {
 class SplashScreenState extends State<SplashScreen>
     with SingleTickerProviderStateMixin {
   var _visible = true;
-  final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
-  static FlutterLocalNotificationsPlugin notificationsPlugin =
-      FlutterLocalNotificationsPlugin();
 
-  late AnimationController animationController;
-  late Animation<double> animation;
-
-  startTime() async {
-    var duration = const Duration(seconds: 1);
-    return Timer(duration, navigationPage);
-  }
-
-  void navigationPage() {
-    Navigator.of(context).pushReplacementNamed(APP_SCREEN);
-  }
+  late AnimationController _animationController;
+  late Animation<double> _animation;
 
   @override
   void initState() {
     super.initState();
 
-    animationController =
+    _animationController =
         AnimationController(vsync: this, duration: const Duration(seconds: 2));
-    animation =
-        CurvedAnimation(parent: animationController, curve: Curves.easeOut);
+    _animation =
+        CurvedAnimation(parent: _animationController, curve: Curves.easeOut);
 
-    animation.addListener(() => setState(() {}));
-    animationController.forward();
+    _animation.addListener(() => setState(() {}));
+    _animationController.forward();
     if (mounted) {
       setState(() {
         _visible = !_visible;
@@ -57,49 +45,13 @@ class SplashScreenState extends State<SplashScreen>
     }
   }
 
-  @override
-  void dispose() {
-    animationController.dispose();
-    super.dispose();
+  startTime() async {
+    var duration = const Duration(seconds: 1);
+    return Timer(duration, navigationPage);
   }
 
-  Widget _welcomeNote() {
-    return RichText(
-      textAlign: TextAlign.center,
-      text: TextSpan(
-        text: 'Global Girls Net',
-        style: GoogleFonts.portLligatSans(
-          textStyle: Theme.of(context).textTheme.headline4,
-          fontSize: 30,
-          fontWeight: FontWeight.w700,
-          color: Colors.red[800],
-        ),
-      ),
-    );
-  }
-
-  userName() {
-    return FutureBuilder<GloabalUser?>(
-      future: GloabalUser.fetchUser(widget.userId),
-      builder: (context, snapshot) {
-        if (!snapshot.hasData) {
-          return circularProgress();
-        }
-        final user = snapshot.data;
-
-        return Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            _welcomeNote(),
-            Text(
-              user!.username.capitalize(),
-              style: boldTextStyle(),
-            ),
-          ],
-        );
-      },
-    );
+  void navigationPage() {
+    Navigator.of(context).pushReplacementNamed(APP_SCREEN);
   }
 
   @override
@@ -118,5 +70,11 @@ class SplashScreenState extends State<SplashScreen>
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
   }
 }

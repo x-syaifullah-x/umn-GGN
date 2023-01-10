@@ -64,7 +64,6 @@ class UsersListState extends State<UsersList>
             itemBuilderType: PaginateBuilderType.gridView,
             itemBuilder: (context, documentSnapshot, index) {
               final userDoc = documentSnapshot[index].data() as Map?;
-
               return UserTile(userDoc);
             },
             query: usersRef.orderBy('timestamp', descending: true),

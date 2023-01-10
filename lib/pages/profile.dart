@@ -1,5 +1,3 @@
-// ignore_for_file: unnecessary_this
-
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
@@ -207,7 +205,6 @@ class ProfileState extends State<Profile> {
 
     if (mounted) {
       setState(() async {
-        this.storyFile = storyFile;
         if (pickedFile != null) {
           storyFile = File(pickedFile.path);
 
@@ -222,7 +219,7 @@ class ProfileState extends State<Profile> {
 
   buildCountColumn(String label, int count, Function() onTap) {
     double maxWidth = MediaQuery.of(context).size.width *
-        (isWeb && (MediaQuery.of(context).size.width > 850) ? 0.1 : 0.2);
+        (isWeb || (MediaQuery.of(context).size.width > 850) ? 0.13 : 0.2);
     return Card(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -259,7 +256,7 @@ class ProfileState extends State<Profile> {
 
   buildProfileButton() {
     double maxWidth;
-    if (isWeb && (MediaQuery.of(context).size.width > 850)) {
+    if (isWeb || (MediaQuery.of(context).size.width > 850)) {
       maxWidth = MediaQuery.of(context).size.width * 0.2;
     } else {
       maxWidth = MediaQuery.of(context).size.width * 0.4;

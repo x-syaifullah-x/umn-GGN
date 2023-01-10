@@ -5,10 +5,10 @@ class StoryList extends StatefulWidget {
   const StoryList({Key? key}) : super(key: key);
 
   @override
-  _StoryListState createState() => _StoryListState();
+  StoryListState createState() => StoryListState();
 }
 
-class _StoryListState extends State<StoryList> {
+class StoryListState extends State<StoryList> {
   static String collectionDbName = 'stories';
 
   @override
