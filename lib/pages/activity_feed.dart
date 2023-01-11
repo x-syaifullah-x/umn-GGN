@@ -1,11 +1,12 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:nb_utils/nb_utils.dart';
 import 'package:global_net/config/palette.dart';
-import 'package:global_net/data/reaction_data.dart' as Reaction;
+import 'package:global_net/data/reaction_data.dart' as reaction;
 import 'package:global_net/pages/home.dart';
 import 'package:global_net/pages/post_screen.dart';
 import 'package:global_net/pages/profile.dart';
@@ -79,6 +80,8 @@ class ActivityFeedState extends State<ActivityFeed> {
           QuerySnapshot<Object?>? data = snapshot.data;
           if (data != null && data.docs.isNotEmpty) {
             ScrollController scrollController = ScrollController();
+            final bool widthMoreThan_500 =
+                (MediaQuery.of(context).size.width > 500);
             child = Stack(
               alignment: AlignmentDirectional.bottomCenter,
               children: [
@@ -87,8 +90,8 @@ class ActivityFeedState extends State<ActivityFeed> {
                   child: RawScrollbar(
                     controller: scrollController,
                     interactive: true,
-                    thumbVisibility: (context.width() > 500),
-                    trackVisibility: (context.width() > 500),
+                    thumbVisibility: !kIsWeb && widthMoreThan_500,
+                    trackVisibility: !kIsWeb && widthMoreThan_500,
                     radius: const Radius.circular(20),
                     child: ListView.separated(
                       controller: scrollController,
@@ -163,7 +166,7 @@ class ActivityFeedState extends State<ActivityFeed> {
                 MaterialPageRoute(
                   builder: (context) => Profile(
                     profileId: userID,
-                    reactions: Reaction.reactions,
+                    reactions: reaction.reactions,
                   ),
                 ),
               ).then((value) => setState(() {}));
@@ -219,7 +222,7 @@ class ActivityFeedState extends State<ActivityFeed> {
                 MaterialPageRoute(
                   builder: (context) => Profile(
                     profileId: feedItem['userId'],
-                    reactions: Reaction.reactions,
+                    reactions: reaction.reactions,
                   ),
                 ),
               ).then((value) => setState(() {}));
@@ -331,7 +334,7 @@ showProfile(BuildContext context, {String? profileId}) {
     MaterialPageRoute(
       builder: (context) => Profile(
         profileId: profileId,
-        reactions: Reaction.reactions,
+        reactions: reaction.reactions,
       ),
     ),
   );

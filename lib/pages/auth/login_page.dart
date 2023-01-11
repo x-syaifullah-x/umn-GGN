@@ -10,6 +10,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:flutter_signin_button/button_list.dart';
+import 'package:flutter_signin_button/button_view.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:nb_utils/nb_utils.dart';
@@ -121,7 +123,12 @@ class LoginPageState extends State<LoginPage> {
                       _submitButton(),
                       _forgotPassword(),
                       _divider(),
-                      isApple ? _iosButton() : Container(),
+                      SignInButton(
+                        Buttons.GoogleDark,
+                        onPressed: () {
+                          _signInWithGoogle();
+                        },
+                      ),
                       SizedBox(height: height * .055),
                       _createAccount(),
                       terms(),
@@ -312,8 +319,14 @@ class LoginPageState extends State<LoginPage> {
               );
             }
           } else {
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => const CreateAccount()));
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => CreateAccount(
+                  userId: userId,
+                ),
+              ),
+            );
           }
         } else {
           setState(() {
@@ -574,7 +587,11 @@ class LoginPageState extends State<LoginPage> {
     configurePushNotifications(userId);
     if (isAuth = true) {
       Navigator.of(context).pushReplacement(
-        CupertinoPageRoute(builder: (context) => const CreateAccount()),
+        CupertinoPageRoute(
+          builder: (context) => CreateAccount(
+            userId: userId,
+          ),
+        ),
       );
     }
   }
@@ -629,9 +646,10 @@ class LoginPageState extends State<LoginPage> {
             Text(
               AppLocalizations.of(context)!.register,
               style: TextStyle(
-                  color: Colors.red[800],
-                  fontSize: 13,
-                  fontWeight: FontWeight.w600),
+                color: Colors.red[800],
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+              ),
             ),
           ],
         ),

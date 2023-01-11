@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:paginate_firestore/bloc/pagination_listeners.dart';
@@ -54,6 +55,7 @@ class UsersListState extends State<UsersList>
         PaginateRefreshedChangeListener();
 
     ScrollController scrollController = ScrollController();
+    final bool widthMoreThan_500 = (MediaQuery.of(context).size.width > 500);
     return Scaffold(
       appBar: header(
         context,
@@ -63,8 +65,8 @@ class UsersListState extends State<UsersList>
       body: RawScrollbar(
         controller: scrollController,
         interactive: true,
-        thumbVisibility: (MediaQuery.of(context).size.width > 500),
-        trackVisibility: (MediaQuery.of(context).size.width > 500),
+        thumbVisibility: !kIsWeb && widthMoreThan_500,
+        trackVisibility: !kIsWeb && widthMoreThan_500,
         radius: const Radius.circular(20),
         child: RefreshIndicator(
             child: PaginateFirestore(

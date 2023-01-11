@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -72,7 +73,7 @@ class NewTimelineState extends State<NewTimeline> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).backgroundColor,
-      body: followersPostList(widget.userId!),
+      body: followersPostList(context, widget.userId!),
     );
   }
 
@@ -82,15 +83,16 @@ class NewTimelineState extends State<NewTimeline> {
     super.dispose();
   }
 
-  Widget followersPostList(String userData) {
+  Widget followersPostList(BuildContext c, String userData) {
     PaginateRefreshedChangeListener refreshChangeListener =
         PaginateRefreshedChangeListener();
     ScrollController scrollController = ScrollController();
+    final bool widthMoreThan_500 = (MediaQuery.of(c).size.width > 500);
     return RawScrollbar(
       controller: scrollController,
       interactive: true,
-      thumbVisibility: true,
-      trackVisibility: true,
+      thumbVisibility: !kIsWeb && widthMoreThan_500,
+      trackVisibility: !kIsWeb && widthMoreThan_500,
       radius: const Radius.circular(20),
       child: RefreshIndicator(
         child: PaginateFirestore(
@@ -107,7 +109,7 @@ class NewTimelineState extends State<NewTimeline> {
                 ),
                 SvgPicture.asset(
                   'assets/images/no_content.svg',
-                  height: context.height() <= 600 ? 220.0 : 250,
+                  height: c.height() <= 600 ? 220.0 : 250,
                 ),
                 const Padding(
                   padding: EdgeInsets.only(top: 20.0),
@@ -154,7 +156,7 @@ class NewTimelineState extends State<NewTimeline> {
                   top: 5,
                   bottom: 5,
                 ),
-                color: Theme.of(context).cardColor,
+                color: Theme.of(c).cardColor,
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[

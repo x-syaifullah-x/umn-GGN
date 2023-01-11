@@ -5,6 +5,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import "package:flutter/material.dart";
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_svg/svg.dart';
@@ -84,6 +85,7 @@ class SettingsState extends State<SettingsPage> {
     final double sizeWidth = MediaQuery.of(context).size.width;
     final double sizeWidth_3_4 = (sizeWidth < 500) ? 0 : sizeWidth * 0.25;
     ScrollController scrollController = ScrollController();
+    final bool widthMoreThan_500 = (MediaQuery.of(context).size.width > 500);
     return AnimatedTheme(
       duration: const Duration(milliseconds: 300),
       data: Theme.of(context),
@@ -100,8 +102,8 @@ class SettingsState extends State<SettingsPage> {
             : RawScrollbar(
                 controller: scrollController,
                 interactive: true,
-                thumbVisibility: (context.width() > 500),
-                trackVisibility: (context.width() > 500),
+                thumbVisibility: !kIsWeb && widthMoreThan_500,
+                trackVisibility: !kIsWeb && widthMoreThan_500,
                 radius: const Radius.circular(20),
                 child: ListView(
                   controller: scrollController,

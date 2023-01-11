@@ -74,7 +74,7 @@ class AppState extends State<App> with WidgetsBindingObserver {
     });
 
     FirebaseMessaging.onMessageOpenedApp.listen((event) async {
-      print("+++ onMessageOpenedApp +++ : " + event.toString());
+      print('+++ onMessageOpenedApp +++ : ' + event.toString());
     });
 
     /// init local notification
@@ -93,7 +93,7 @@ class AppState extends State<App> with WidgetsBindingObserver {
             android: initializationSettingsAndroid,
             iOS: initializationSettingsDarwin);
     await notificationsPlugin.initialize(initializationSettings);
-    //  notificationsPlugin.periodicallyShow(11111, "hkb", "HKKKB", INter, notificationDetails)
+    //  notificationsPlugin.periodicallyShow(11111, 'hkb', 'HKKKB', INter, notificationDetails)
   }
 
   showLocalNotificationIOS(RemoteMessage message) async {
@@ -107,8 +107,8 @@ class AppState extends State<App> with WidgetsBindingObserver {
         notification.title,
         NotificationDetails(
             android: android != null
-                ? AndroidNotificationDetails("1", "ContestKnowledge",
-                    channelDescription: "Notification",
+                ? AndroidNotificationDetails('1', 'ContestKnowledge',
+                    channelDescription: 'Notification',
                     priority: Priority.values[android.priority.index],
                     color: Colors.blue,
                     subText: notification.title,
@@ -136,9 +136,9 @@ class AppState extends State<App> with WidgetsBindingObserver {
         notification.body,
         NotificationDetails(
           android: AndroidNotificationDetails(
-            "1",
-            "ContestKnowledge",
-            channelDescription: "Notification",
+            '1',
+            'ContestKnowledge',
+            channelDescription: 'Notification',
             importance: Importance.high,
             icon: const AndroidInitializationSettings(
               '@mipmap/ic_launcher',
@@ -150,7 +150,7 @@ class AppState extends State<App> with WidgetsBindingObserver {
   }
 
   Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-    print("++++ MESSAGE RECEIVED IN BACKGROUND  +++");
+    print('++++ MESSAGE RECEIVED IN BACKGROUND  +++');
   }
 
   @override

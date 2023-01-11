@@ -26,6 +26,7 @@ dependencies:
 
   image_picker: 0.8.5+3
   google_sign_in: 5.4.2
+  flutter_signin_button: 2.0.0
   uuid: 3.0.7
   image: 3.2.2
   cupertino_icons: 1.0.5
@@ -34,7 +35,8 @@ dependencies:
   cached_network_image: 3.2.3
   timeago: 3.3.0
   material_design_icons_flutter: 6.0.7096
-  font_awesome_flutter: 10.3.0
+  # font_awesome_flutter: 10.3.0
+  font_awesome_flutter: 9.0.0
   flutter_svg_provider: 1.0.3
   fluttertoast: 8.1.2
   photo_view: 0.14.0

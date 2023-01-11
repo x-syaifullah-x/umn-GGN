@@ -4,6 +4,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_reaction_button/flutter_reaction_button.dart';
@@ -1418,6 +1419,7 @@ class ProfileState extends State<Profile> {
   @override
   Widget build(BuildContext context) {
     ScrollController scrollController = ScrollController();
+    final bool widthMoreThan_500 = (MediaQuery.of(context).size.width > 500);
     return Scaffold(
       backgroundColor: Theme.of(context).backgroundColor,
       appBar: header(
@@ -1427,8 +1429,8 @@ class ProfileState extends State<Profile> {
       body: RawScrollbar(
         controller: scrollController,
         interactive: true,
-        thumbVisibility: (context.width() > 500),
-        trackVisibility: (context.width() > 500),
+        thumbVisibility: !kIsWeb && widthMoreThan_500,
+        trackVisibility: !kIsWeb && widthMoreThan_500,
         radius: const Radius.circular(20),
         child: SingleChildScrollView(
           controller: scrollController,
