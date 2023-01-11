@@ -116,5 +116,17 @@
     "following_consent1":"您想查看您关注的用户吗？",
     "following_consent2":"花费 10 Credits 查看您关注的用户",
     "following_consent3":"您想查看此用户关注的用户吗？",
-    "following_consent4":"花费 20 Credits 查看该用户关注的用户"
+    "following_consent4":"花费 20 Credits 查看该用户关注的用户",
+    "shop": "店铺",
+    "channel": "渠道",
+    "email": "电子邮件",
+    "news": "消息",
+    "iptv": "网络电视",
+    "chat": "聊天",
+    "group": "团体",
+    "apps": "应用",
+    "go_dark": "去黑暗",
+    "credit_lines": "信用额度",
+    "crow_funding": "众筹",
+    "business_structure": "业务结构"
 }

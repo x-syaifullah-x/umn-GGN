@@ -53,25 +53,35 @@ class UsersListState extends State<UsersList>
     PaginateRefreshedChangeListener refreshChangeListener =
         PaginateRefreshedChangeListener();
 
+    ScrollController scrollController = ScrollController();
     return Scaffold(
       appBar: header(
         context,
         titleText: AppLocalizations.of(context)!.recent_users,
         removeBackButton: false,
       ),
-      body: RefreshIndicator(
-          child: PaginateFirestore(
-            itemBuilderType: PaginateBuilderType.gridView,
-            itemBuilder: (context, documentSnapshot, index) {
-              final userDoc = documentSnapshot[index].data() as Map?;
-              return UserTile(userDoc);
-            },
-            query: usersRef.orderBy('timestamp', descending: true),
-            isLive: true,
-          ),
-          onRefresh: () async {
-            refreshChangeListener.refreshed = true;
-          }),
+      body: RawScrollbar(
+        controller: scrollController,
+        interactive: true,
+        thumbVisibility: (MediaQuery.of(context).size.width > 500),
+        trackVisibility: (MediaQuery.of(context).size.width > 500),
+        radius: const Radius.circular(20),
+        child: RefreshIndicator(
+            child: PaginateFirestore(
+              scrollController: scrollController,
+              shrinkWrap: true,
+              itemBuilderType: PaginateBuilderType.gridView,
+              itemBuilder: (context, documentSnapshot, index) {
+                final userDoc = documentSnapshot[index].data() as Map?;
+                return UserTile(userDoc);
+              },
+              query: usersRef.orderBy('timestamp', descending: true),
+              isLive: true,
+            ),
+            onRefresh: () async {
+              refreshChangeListener.refreshed = true;
+            }),
+      ),
     );
   }
 }

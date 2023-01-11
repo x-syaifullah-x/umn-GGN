@@ -22,7 +22,7 @@ import 'package:global_net/widgets/count/feeds_count.dart';
 import 'package:global_net/widgets/count/messages_count.dart';
 import 'package:global_net/widgets/simple_world_widgets.dart';
 import 'package:nb_utils/nb_utils.dart';
-import 'dart:ui' as ui;
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 final GoogleSignIn googleSignIn = GoogleSignIn();
 final Reference storageRef = FirebaseStorage.instance.ref();
@@ -63,21 +63,6 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
   bool isFollowing = false;
   late List<GloabalUser> users;
   bool showElevatedButtonBadge = true;
-
-  final List<String> _dataSideLeft = [
-    "SHOP",
-    "CHANNEL",
-    "EMAIL",
-    "NEWS",
-    "IPTV",
-    "CHAT",
-    "GROUP",
-    "APPS",
-    "GO DARK",
-    "CREDIT LINES",
-    "CROWD FUNDING",
-    "BUSINESS STRUCTURE",
-  ];
 
   @override
   void initState() {
@@ -251,85 +236,110 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
 
     final double widthContentRight;
     final double widthContentLeft;
-    final data = MediaQueryData.fromWindow(WidgetsBinding.instance.window);
-    if (data.size.shortestSide > 550) {
+    bool widthMoreThan_600 = width > 600;
+    if (widthMoreThan_600) {
       widthContentRight = width * 0.25;
       widthContentLeft = width * 0.25;
     } else {
       widthContentRight = 0;
       widthContentLeft = 0;
     }
-
     final double widthContentCenter =
         width - widthContentLeft - widthContentRight;
+    final List<String> dataSideLeft = [
+      AppLocalizations.of(context)!.shop,
+      AppLocalizations.of(context)!.channel,
+      AppLocalizations.of(context)!.email,
+      AppLocalizations.of(context)!.news,
+      AppLocalizations.of(context)!.iptv,
+      AppLocalizations.of(context)!.chat,
+      AppLocalizations.of(context)!.group,
+      AppLocalizations.of(context)!.apps,
+      AppLocalizations.of(context)!.go_dark,
+      AppLocalizations.of(context)!.credit_lines,
+      AppLocalizations.of(context)!.crow_funding,
+      AppLocalizations.of(context)!.business_structure
+    ];
+
+    ScrollController scrollController = ScrollController();
     return Row(
       children: [
-        Container(
-          decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.8),
-            // borderRadius: BorderRadius.only(
-            //   topLeft: Radius.circular(10),
-            //   topRight: Radius.circular(10),
-            //   bottomLeft: Radius.circular(10),
-            //   bottomRight: Radius.circular(10),
-            // ),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.grey.withOpacity(0.5),
-                blurRadius: 8,
-                // spreadRadius: 5,
-                // blurRadius: 7,
-                // offset: const Offset(4, 8), // changes position of shadow
-              ),
-            ],
-          ),
-          margin: const EdgeInsets.only(right: 8),
-          width: widthContentLeft - 8,
-          height: double.infinity,
-          child: ListView.builder(
-            itemCount: _dataSideLeft.length,
-            itemBuilder: (context, index) {
-              return InkWell(
-                child: Container(
-                  padding: const EdgeInsets.all(10),
-                  child: Text(
-                    _dataSideLeft[index],
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                    ),
+        if (widthMoreThan_600)
+          RawScrollbar(
+            controller: scrollController,
+            interactive: true,
+            thumbVisibility: (context.width() > 500),
+            trackVisibility: (context.width() > 500),
+            radius: const Radius.circular(20),
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.8),
+                // borderRadius: BorderRadius.only(
+                //   topLeft: Radius.circular(10),
+                //   topRight: Radius.circular(10),
+                //   bottomLeft: Radius.circular(10),
+                //   bottomRight: Radius.circular(10),
+                // ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.5),
+                    blurRadius: 8,
+                    // spreadRadius: 5,
+                    // blurRadius: 7,
+                    // offset: const Offset(4, 8), // changes position of shadow
                   ),
-                ),
-                onTap: () {
-                  toastLong(
-                    "${_dataSideLeft[index]} will be available soon",
+                ],
+              ),
+              margin: const EdgeInsets.only(right: 8),
+              width: widthContentLeft - 8,
+              height: double.infinity,
+              child: ListView.builder(
+                controller: scrollController,
+                itemCount: dataSideLeft.length,
+                itemBuilder: (context, index) {
+                  return InkWell(
+                    child: Container(
+                      padding: const EdgeInsets.all(10),
+                      child: Text(
+                        dataSideLeft[index],
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    onTap: () {
+                      toastLong(
+                        "${dataSideLeft[index]} will be available soon",
+                      );
+                    },
                   );
                 },
-              );
-            },
+              ),
+            ),
           ),
-        ),
         SizedBox(
           width: widthContentCenter,
           height: double.infinity,
           child: _tabBarView(tabController, userId),
         ),
-        Container(
-          decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.8),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.grey.withOpacity(0.5),
-                spreadRadius: 8,
-                // blurRadius: 7,
-                // offset: const Offset(0, 3), // changes position of shadow
-              ),
-            ],
+        if (widthMoreThan_600)
+          Container(
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.8),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.5),
+                  spreadRadius: 8,
+                  // blurRadius: 7,
+                  // offset: const Offset(0, 3), // changes position of shadow
+                ),
+              ],
+            ),
+            margin: const EdgeInsets.only(left: 8),
+            width: widthContentRight - 8,
+            height: double.infinity,
+            child: const Ads(),
           ),
-          margin: const EdgeInsets.only(left: 8),
-          width: widthContentRight - 8,
-          height: double.infinity,
-          child: const Ads(),
-        ),
       ],
     );
   }

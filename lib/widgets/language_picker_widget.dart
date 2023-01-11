@@ -89,7 +89,7 @@ class LanguagePickerWidget extends StatelessWidget {
       context: buildContext,
       builder: (BuildContext context) {
         return Provider<LocaleProvider>(
-          create: (_) => LocaleProvider(),
+          create: (_) => Provider.of(context),
           child: AlertDialog(
             title: Text(AppLocalizations.of(context)?.pick_your_language ??
                 "Pick Your Language"),

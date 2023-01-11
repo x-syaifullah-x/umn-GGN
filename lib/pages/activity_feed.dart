@@ -78,21 +78,30 @@ class ActivityFeedState extends State<ActivityFeed> {
         if (snapshot.hasData) {
           QuerySnapshot<Object?>? data = snapshot.data;
           if (data != null && data.docs.isNotEmpty) {
+            ScrollController scrollController = ScrollController();
             child = Stack(
               alignment: AlignmentDirectional.bottomCenter,
               children: [
                 Padding(
                   padding: const EdgeInsets.only(bottom: 50.0),
-                  child: ListView.separated(
-                    itemCount: data.docs.length,
-                    itemBuilder: (context, int index) {
-                      QueryDocumentSnapshot<Object?> feedItem =
-                          data.docs[index];
-                      return _buildItem(context, feedItem);
-                    },
-                    separatorBuilder: (context, index) {
-                      return const Divider();
-                    },
+                  child: RawScrollbar(
+                    controller: scrollController,
+                    interactive: true,
+                    thumbVisibility: (context.width() > 500),
+                    trackVisibility: (context.width() > 500),
+                    radius: const Radius.circular(20),
+                    child: ListView.separated(
+                      controller: scrollController,
+                      itemCount: data.docs.length,
+                      itemBuilder: (context, int index) {
+                        QueryDocumentSnapshot<Object?> feedItem =
+                            data.docs[index];
+                        return _buildItem(context, feedItem);
+                      },
+                      separatorBuilder: (context, index) {
+                        return const Divider();
+                      },
+                    ),
                   ),
                 ),
                 const AnchoredAd(),

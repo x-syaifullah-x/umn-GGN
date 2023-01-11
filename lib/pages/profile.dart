@@ -219,7 +219,7 @@ class ProfileState extends State<Profile> {
 
   buildCountColumn(String label, int count, Function() onTap) {
     double maxWidth = MediaQuery.of(context).size.width *
-        (isWeb || (MediaQuery.of(context).size.width > 850) ? 0.13 : 0.2);
+        (isWeb || (MediaQuery.of(context).size.width > 600) ? 0.11 : 0.2);
     return Card(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -256,8 +256,8 @@ class ProfileState extends State<Profile> {
 
   buildProfileButton() {
     double maxWidth;
-    if (isWeb || (MediaQuery.of(context).size.width > 850)) {
-      maxWidth = MediaQuery.of(context).size.width * 0.2;
+    if (isWeb || (MediaQuery.of(context).size.width > 600)) {
+      maxWidth = MediaQuery.of(context).size.width * 0.22;
     } else {
       maxWidth = MediaQuery.of(context).size.width * 0.4;
     }
@@ -1417,15 +1417,24 @@ class ProfileState extends State<Profile> {
 
   @override
   Widget build(BuildContext context) {
+    ScrollController scrollController = ScrollController();
     return Scaffold(
       backgroundColor: Theme.of(context).backgroundColor,
       appBar: header(
         context,
         titleText: AppLocalizations.of(context)!.profile,
       ),
-      body: SingleChildScrollView(
-        physics: const AlwaysScrollableScrollPhysics(),
-        child: buildProfileHeader(),
+      body: RawScrollbar(
+        controller: scrollController,
+        interactive: true,
+        thumbVisibility: (context.width() > 500),
+        trackVisibility: (context.width() > 500),
+        radius: const Radius.circular(20),
+        child: SingleChildScrollView(
+          controller: scrollController,
+          physics: const AlwaysScrollableScrollPhysics(),
+          child: buildProfileHeader(),
+        ),
       ),
     );
   }

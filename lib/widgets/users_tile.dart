@@ -113,8 +113,9 @@ class UserTileState extends State<UserTile> {
                     )
                   : ClipRRect(
                       borderRadius: const BorderRadius.only(
-                          topLeft: Radius.circular(12),
-                          topRight: Radius.circular(12)),
+                        topLeft: Radius.circular(12),
+                        topRight: Radius.circular(12),
+                      ),
                       child: SizedBox(
                         height: 60,
                         width: double.infinity,
@@ -128,8 +129,9 @@ class UserTileState extends State<UserTile> {
                   ? Container(
                       decoration: const BoxDecoration(
                         borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(12),
-                            topRight: Radius.circular(12)),
+                          topLeft: Radius.circular(12),
+                          topRight: Radius.circular(12),
+                        ),
                         // image: DecorationImage(
                         //     image: CachedNetworkImageProvider(user.coverUrl,
                         //         scale: 1.0),
@@ -180,7 +182,10 @@ class UserTileState extends State<UserTile> {
                   Container(
                     margin: const EdgeInsets.only(top: 10.0),
                     height: 30,
-                    width: (context.width() - (3 * 16)) * (isWeb || (MediaQuery.of(context).size.width > 850) ? 0.1 : 0.2),
+                    width: (context.width() - (3 * 16)) *
+                        (isWeb || (MediaQuery.of(context).size.width > 600)
+                            ? 0.1
+                            : 0.2),
                     decoration: const BoxDecoration(
                       color: Color(0xffE5E6EB),
                       borderRadius: BorderRadius.all(
@@ -220,7 +225,11 @@ class UserTileState extends State<UserTile> {
                             margin: const EdgeInsets.only(top: 10.0),
                             height: 30,
                             width: (context.width() - (3 * 16)) *
-                                (isWeb || (MediaQuery.of(context).size.width > 850) ? 0.1 : 0.2),
+                                (isWeb ||
+                                        (MediaQuery.of(context).size.width >
+                                            600)
+                                    ? 0.1
+                                    : 0.2),
                             decoration: BoxDecoration(
                               color: Colors.redAccent[700],
                               borderRadius: const BorderRadius.all(
@@ -246,7 +255,11 @@ class UserTileState extends State<UserTile> {
                             margin: const EdgeInsets.only(top: 10.0),
                             height: 30,
                             width: (context.width() - (3 * 16)) *
-                                (isWeb || (MediaQuery.of(context).size.width > 850) ? 0.1 : 0.2),
+                                (isWeb ||
+                                        (MediaQuery.of(context).size.width >
+                                            600)
+                                    ? 0.1
+                                    : 0.2),
                             decoration: BoxDecoration(
                               color: Colors.blue[700],
                               borderRadius: const BorderRadius.all(

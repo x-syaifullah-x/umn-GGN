@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:flutter_reaction_button/flutter_reaction_button.dart';
@@ -84,88 +85,97 @@ class NewTimelineState extends State<NewTimeline> {
   Widget followersPostList(String userData) {
     PaginateRefreshedChangeListener refreshChangeListener =
         PaginateRefreshedChangeListener();
-    print(context.height());
-    return RefreshIndicator(
-      child: PaginateFirestore(
-        onEmpty: Padding(
-          padding: EdgeInsets.zero,
-          child: Column(
-            children: [
-              PostBox(currentUser: currentUser),
-              const SizedBox(
-                height: 210,
-                child: StoryList(),
-              ),
-              SvgPicture.asset(
-                'assets/images/no_content.svg',
-                height: context.height() <= 600 ? 220.0 : 250,
-              ),
-              const Padding(
-                padding: EdgeInsets.only(top: 20.0),
-                child: Text(
-                  "No Posts",
-                  style: TextStyle(
-                    color: Colors.red,
-                    fontSize: 40.0,
-                    fontWeight: FontWeight.bold,
+    ScrollController scrollController = ScrollController();
+    return RawScrollbar(
+      controller: scrollController,
+      interactive: true,
+      thumbVisibility: true,
+      trackVisibility: true,
+      radius: const Radius.circular(20),
+      child: RefreshIndicator(
+        child: PaginateFirestore(
+          scrollController: scrollController,
+          shrinkWrap: true,
+          onEmpty: Padding(
+            padding: EdgeInsets.zero,
+            child: Column(
+              children: [
+                PostBox(currentUser: currentUser),
+                const SizedBox(
+                  height: 210,
+                  child: StoryList(),
+                ),
+                SvgPicture.asset(
+                  'assets/images/no_content.svg',
+                  height: context.height() <= 600 ? 220.0 : 250,
+                ),
+                const Padding(
+                  padding: EdgeInsets.only(top: 20.0),
+                  child: Text(
+                    "No Posts",
+                    style: TextStyle(
+                      color: Colors.red,
+                      fontSize: 40.0,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
-              ),
-            ],
-          ),
-        ),
-        header: SliverToBoxAdapter(
-          child: Column(
-            children: [
-              PostBox(currentUser: currentUser),
-              const SizedBox(
-                height: 210,
-                child: StoryList(),
-              ),
-            ],
-          ),
-        ),
-        itemBuilderType: PaginateBuilderType.listView,
-        itemBuilder: (context, documentSnapshots, index) {
-          final post = documentSnapshots[index].data() as Map?;
-          if ((index + 1) % 5 == 0) {
-            return Column(
-              children: [
-                Container(
-                  height: 370,
-                  color: Colors.yellow,
-                  child: const SuggestedUsersList(),
-                ),
-                const InlineAdaptiveAds(),
               ],
-            );
-          } else {
-            return Container(
-              margin: const EdgeInsets.only(
-                top: 5,
-                bottom: 5,
-              ),
-              color: Theme.of(context).cardColor,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  buildPostHeader(post),
-                  buildPostImage(post),
-                  buildPostFooter(post),
+            ),
+          ),
+          header: SliverToBoxAdapter(
+            child: Column(
+              children: [
+                PostBox(currentUser: currentUser),
+                const SizedBox(
+                  height: 210,
+                  child: StoryList(),
+                ),
+              ],
+            ),
+          ),
+          itemBuilderType: PaginateBuilderType.listView,
+          itemBuilder: (context, documentSnapshots, index) {
+            final post = documentSnapshots[index].data() as Map?;
+            if ((index + 1) % 5 == 0) {
+              return Column(
+                children: [
+                  Container(
+                    height: 370,
+                    color: Colors.yellow,
+                    child: const SuggestedUsersList(),
+                  ),
+                  const InlineAdaptiveAds(),
                 ],
-              ),
-            );
-          }
+              );
+            } else {
+              return Container(
+                margin: const EdgeInsets.only(
+                  top: 5,
+                  bottom: 5,
+                ),
+                color: Theme.of(context).cardColor,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    buildPostHeader(post),
+                    buildPostImage(post),
+                    buildPostFooter(post),
+                  ],
+                ),
+              );
+            }
+          },
+          query: timelineRef
+              .doc(widget.userId)
+              .collection('timelinePosts')
+              .orderBy('timestamp', descending: true),
+          isLive: true,
+        ),
+        onRefresh: () async {
+          refreshChangeListener.refreshed = true;
         },
-        query: timelineRef
-            .doc(widget.userId)
-            .collection('timelinePosts')
-            .orderBy('timestamp', descending: true),
-        isLive: true,
       ),
-      onRefresh: () async {
-        refreshChangeListener.refreshed = true;
-      },
     );
   }
 
@@ -283,7 +293,6 @@ class NewTimelineState extends State<NewTimeline> {
   }
 
   Widget buildPostImage(post) {
-    print(post['description']);
     bool hasDesc = post['description']?.isNotEmpty == true;
     bool isPdf = post['type'] == 'pdf';
     bool isVide = post['type'] == 'video';
