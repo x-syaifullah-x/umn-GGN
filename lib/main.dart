@@ -5,6 +5,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:global_net/data/repository/exchange_rates_data.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:nb_utils/nb_utils.dart';
 import 'package:global_net/constant/constant.dart';
@@ -13,22 +14,23 @@ import 'package:global_net/widgets/simple_world_widgets.dart';
 import 'package:global_net/widgets/splashscreen.dart';
 
 import 'app.dart';
+import 'package:http/http.dart' as http;
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final savedThemeMode = await AdaptiveTheme.getThemeMode();
 
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  const host = '192.168.42.1';
-  FirebaseAuth.instance.useAuthEmulator(host, 9099);
-  FirebaseFirestore.instance.useFirestoreEmulator(host, 8080);
-  FirebaseStorage.instance.useStorageEmulator(host, 9199);
+  // const host = '192.168.42.1';
+  // FirebaseAuth.instance.useAuthEmulator(host, 9099);
+  // FirebaseFirestore.instance.useFirestoreEmulator(host, 8080);
+  // FirebaseStorage.instance.useStorageEmulator(host, 9199);
 
   if (!kIsWeb) {
     MobileAds.instance.initialize();
-    // MobileAds.instance.updateRequestConfiguration(
-    //   RequestConfiguration(testDeviceIds: ['5DF3DDDAEA78FE6D718E9FF8B6259412']),
-    // );
+    MobileAds.instance.updateRequestConfiguration(
+      RequestConfiguration(testDeviceIds: ['5DF3DDDAEA78FE6D718E9FF8B6259412']),
+    );
   }
 
   await initialize();

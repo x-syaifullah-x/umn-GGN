@@ -16,16 +16,15 @@ class UsersToFollowList extends StatefulWidget {
   const UsersToFollowList({Key? key, this.userId}) : super(key: key);
 
   @override
-  _UsersListState createState() => _UsersListState();
+  UsersListState createState() => UsersListState();
 }
 
-class _UsersListState extends State<UsersToFollowList>
+class UsersListState extends State<UsersToFollowList>
     with AutomaticKeepAliveClientMixin<UsersToFollowList> {
   List<GloabalUser>? users;
   String userOrientation = "list";
   bool isFollowing = false;
   bool isLoading = false;
-  final String? currentUserId = globalID;
   List<String> followingList = [];
 
   @override
@@ -37,9 +36,9 @@ class _UsersListState extends State<UsersToFollowList>
 
   checkIfFollowing() async {
     DocumentSnapshot doc = await followersRef
-        .doc(globalID)
+        .doc(widget.userId)
         .collection('userFollowers')
-        .doc(currentUserId)
+        .doc(widget.userId)
         .get();
     setState(() {
       isFollowing = doc.exists;
@@ -84,7 +83,7 @@ class _UsersListState extends State<UsersToFollowList>
       List<GridTile> gridTiles = [];
 
       users!.forEach((user) {
-        final bool isAuthUser = currentUserId == user.id;
+        final bool isAuthUser = widget.userId == user.id;
         final bool isFollowingUser = followingList.contains(user.id);
         if (isAuthUser) {
           return;

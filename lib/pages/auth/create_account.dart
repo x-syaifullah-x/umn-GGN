@@ -33,7 +33,7 @@ class CreateAccountState extends State<CreateAccount> {
   @override
   void initState() {
     super.initState();
-    getCredit();
+    getCredit(widget.userId);
   }
 
   @override
@@ -83,31 +83,35 @@ class CreateAccountState extends State<CreateAccount> {
     );
   }
 
-  getCredit() async {
-    usersRef.doc(globalID).get().then(
+  getCredit(String? userId) async {
+    usersRef
+        .doc(userId)
+        .get()
+        .then(
           (value) => setState(() {
             credits = value["credit_points"];
           }),
-        );
+        )
+        .catchError(onError);
   }
 
-  submit(String globalID) {
+  submit(String userId) {
     final form = _formkey.currentState!;
 
     if (form.validate()) {
-      usersRef.doc(globalID).update({
+      usersRef.doc(userId).update({
         "username": nameController.text,
       });
       form.save();
       SnackBar snackbar = SnackBar(content: Text("Welcome $username!"));
       ScaffoldMessenger.of(context).showSnackBar(snackbar);
-      Timer(const Duration(seconds: 5), () {
-        Navigator.pop(context, username);
+      Timer(const Duration(seconds: 2), () {
+        //   Navigator.pop(context, username);
         if (credits == 0) {
           Navigator.of(context).pushReplacement(
             CupertinoPageRoute(
               builder: (context) => AddCreditToAccount(
-                userId: globalID,
+                userId: userId,
               ),
             ),
           );
@@ -116,7 +120,7 @@ class CreateAccountState extends State<CreateAccount> {
             context,
             CupertinoPageRoute(
               builder: (context) => UsersToFollowList(
-                userId: globalID,
+                userId: userId,
               ),
             ),
           );
@@ -146,11 +150,13 @@ class CreateAccountState extends State<CreateAccount> {
       padding: const EdgeInsets.symmetric(vertical: 15),
       alignment: Alignment.center,
       decoration: BoxDecoration(
-          borderRadius: const BorderRadius.all(Radius.circular(5)),
-          gradient: LinearGradient(
-              begin: Alignment.centerLeft,
-              end: Alignment.centerRight,
-              colors: [Colors.red.shade500, Colors.red.shade900])),
+        borderRadius: const BorderRadius.all(Radius.circular(5)),
+        gradient: LinearGradient(
+          begin: Alignment.centerLeft,
+          end: Alignment.centerRight,
+          colors: [Colors.red.shade500, Colors.red.shade900],
+        ),
+      ),
       child: const Text(
         'Next',
         style: TextStyle(fontSize: 20, color: Colors.white),

@@ -24,8 +24,10 @@ dependencies:
   firebase_storage: 10.3.11
   firebase_messaging: 13.1.0
 
+  http: 0.13.5
+  dropdown_button2: 1.9.2
   image_picker: 0.8.5+3
-  google_sign_in: 5.4.2
+  google_sign_in: 5.4.3
   flutter_signin_button: 2.0.0
   uuid: 3.0.7
   image: 3.2.2
@@ -128,6 +130,7 @@ flutter:
   assets:
     - assets/icon.png
     - assets/images/
+    - assets/adsense.html
     
 
 

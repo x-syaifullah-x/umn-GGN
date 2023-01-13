@@ -252,7 +252,7 @@ class LoginPageState extends State<LoginPage> {
       );
       final User? user = userCredential.user;
       if (user != null) {
-        _dataEntry(user.uid, user.email);
+        _dataEntry(user.uid, user.email!);
       } else {
         setState(() {
           isLoading = false;
@@ -266,7 +266,7 @@ class LoginPageState extends State<LoginPage> {
     }
   }
 
-  void _dataEntry(userId, email) async {
+  void _dataEntry(String userId, String email) async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
 
     preferences
@@ -303,18 +303,18 @@ class LoginPageState extends State<LoginPage> {
                 Navigator.of(context).pushReplacement(
                   CupertinoPageRoute(
                     builder: (context) => AddCreditToAccount(
-                      userId: globalID,
+                      userId: userId,
                     ),
                   ),
                 );
               } else {
                 Navigator.of(context).pushReplacement(CupertinoPageRoute(
-                    builder: (context) => Home(userId: globalID)));
+                    builder: (context) => Home(userId: userId)));
               }
             } else {
               Navigator.of(context).pushReplacement(
                 CupertinoPageRoute(
-                  builder: (context) => Home(userId: globalID),
+                  builder: (context) => Home(userId: userId),
                 ),
               );
             }
@@ -514,20 +514,26 @@ class LoginPageState extends State<LoginPage> {
       if (kIsWeb) {
         var googleProvider = GoogleAuthProvider();
         userCredential = await _auth.signInWithPopup(googleProvider);
+      } else {
+        final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+        final GoogleSignInAuthentication googleAuth =
+            await googleUser!.authentication;
+        final googleAuthCredential = GoogleAuthProvider.credential(
+          accessToken: googleAuth.accessToken,
+          idToken: googleAuth.idToken,
+        );
+        userCredential = await _auth.signInWithCredential(googleAuthCredential);
       }
-      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
-      final GoogleSignInAuthentication googleAuth =
-          await googleUser!.authentication;
-      final googleAuthCredential = GoogleAuthProvider.credential(
-        accessToken: googleAuth.accessToken,
-        idToken: googleAuth.idToken,
-      );
-      userCredential = await _auth.signInWithCredential(googleAuthCredential);
 
       final user = userCredential.user;
 
       if (user!.uid != null) {
-        checkUserExists(user.uid, user.email, user.displayName, user.photoURL);
+        checkUserExists(
+          user.uid,
+          user.email,
+          user.displayName ?? "",
+          user.photoURL ?? "",
+        );
       }
     } catch (e) {
       setState(() {
@@ -550,7 +556,6 @@ class LoginPageState extends State<LoginPage> {
 
   createUserInFirestore(userId, email, name, image) async {
     DocumentSnapshot doc = await usersRef.doc(userId).get();
-
     if (!doc.exists) {
       usersRef.doc(userId).set({
         "id": userId,

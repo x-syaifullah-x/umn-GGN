@@ -19,11 +19,11 @@ class AddCreditToAccount extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _AddCreditToAccountState createState() => _AddCreditToAccountState();
+  AddCreditToAccountState createState() => AddCreditToAccountState();
 }
 
-class _AddCreditToAccountState extends State<AddCreditToAccount> {
-  final _formkey = GlobalKey<FormState>();
+class AddCreditToAccountState extends State<AddCreditToAccount> {
+  final formkey = GlobalKey<FormState>();
   String? username;
   final TextEditingController nameController = TextEditingController();
   bool isLoading = false;
@@ -36,7 +36,7 @@ class _AddCreditToAccountState extends State<AddCreditToAccount> {
   }
 
   getcurrentusername() async {
-    usersRef.doc(globalID).get().then(
+    usersRef.doc(widget.userId).get().then(
           (value) => setState(() {
             username = value["username"];
           }),
@@ -44,7 +44,7 @@ class _AddCreditToAccountState extends State<AddCreditToAccount> {
   }
 
   addcredit() async {
-    usersRef.doc(globalID).update({
+    usersRef.doc(widget.userId).update({
       "credit_points": 500,
     });
   }
@@ -56,7 +56,7 @@ class _AddCreditToAccountState extends State<AddCreditToAccount> {
         context,
         CupertinoPageRoute(
           builder: (context) => Home(
-            userId: globalID,
+            userId: widget.userId,
           ),
         ),
       );
