@@ -49,12 +49,14 @@ class ExchangeratesRepository {
     //   return Future.error(jsonDecode(response.body)['message']);
     // }
 
-    await Future.delayed(const Duration(hours: 24));
+    await Future.delayed(const Duration(seconds: 5));
+    return Future.error("error");
 
-    return Future.value([
-      SymbolsResponse(key: "USD", value: "AS"),
-      SymbolsResponse(key: "IDR", value: "Indonesi"),
-    ]);
+    // return Future.value([
+    //   SymbolsResponse(key: "USD", value: "AS"),
+    //   SymbolsResponse(key: "IDR", value: "Indonesi"),
+    //   SymbolsResponse(key: "CNY", value: "China"),
+    // ]);
   }
 
   Future<http.Response> _get({
@@ -64,6 +66,7 @@ class ExchangeratesRepository {
       http.get(
         Uri.https("api.apilayer.com", path, queryParameters),
         // headers: {"apikey": "XElYLBe4cmyG6zzvfaNZuqNfE0sbWBka"},
+        /* api key roottingandroid */
         headers: {"apikey": "oaDScUHSnSHvyWCq0FTsSqqeisg5V14E"},
       );
 }

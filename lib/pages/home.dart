@@ -4,9 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:global_net/ads/a.dart';
-import 'package:global_net/ads/ads_web.dart';
-import 'package:global_net/widgets/anchored_adaptive_ads.dart';
+import 'package:global_net/ads/ads.dart';
 import 'package:global_net/widgets/exchange_rates_data_widget.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -232,8 +230,9 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
     );
   }
 
-  Widget _body(BuildContext c, String userId, TabController tabController) {
-    final Size size = MediaQuery.of(c).size;
+  Widget _body(
+      BuildContext context, String userId, TabController tabController) {
+    final Size size = MediaQuery.of(context).size;
     final double width = size.width;
 
     final double widthContentRight;
@@ -260,112 +259,102 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
       AppLocalizations.of(context)!.go_dark,
       AppLocalizations.of(context)!.credit_lines,
       AppLocalizations.of(context)!.crow_funding,
-      AppLocalizations.of(context)!.business_structure
+      AppLocalizations.of(context)!.business_structure,
+      AppLocalizations.of(context)!.cryptocurrency
     ];
 
     ScrollController scrollController = ScrollController();
     return Row(
-       crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         if (widthMoreThan_700)
-          RawScrollbar(
-            controller: scrollController,
-            interactive: true,
-            thumbVisibility: (context.width() > 500),
-            trackVisibility: (context.width() > 500),
-            radius: const Radius.circular(20),
-            child: Container(
-              decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.8),
-                // borderRadius: BorderRadius.only(
-                //   topLeft: Radius.circular(10),
-                //   topRight: Radius.circular(10),
-                //   bottomLeft: Radius.circular(10),
-                //   bottomRight: Radius.circular(10),
-                // ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey.withOpacity(0.5),
-                    blurRadius: 8,
-                    // spreadRadius: 5,
-                    // blurRadius: 7,
-                    // offset: const Offset(4, 8), // changes position of shadow
-                  ),
-                ],
-              ),
-              margin: const EdgeInsets.only(right: 8),
-              width: widthContentLeft - 8,
-              height: double.infinity,
-              child: ListView.builder(
-                controller: scrollController,
-                itemCount: dataSideLeft.length,
-                itemBuilder: (context, index) {
-                  return InkWell(
-                    child: Container(
-                      padding: const EdgeInsets.all(10),
-                      child: Text(
-                        dataSideLeft[index],
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                    onTap: () {
-                      toastLong(
-                        "${dataSideLeft[index]} will be available soon",
-                      );
-                    },
-                  );
-                },
-              ),
-            ),
+          _leftSide(
+            scrollController,
+            context,
+            widthContentLeft,
+            dataSideLeft,
           ),
         SizedBox(
           width: widthContentCenter,
           height: double.infinity,
           child: _tabBarView(tabController, userId),
         ),
-        if (widthMoreThan_700)
-          SingleChildScrollView(
-            child: Column(
-              // mainAxisSize: MainAxisSize.min,
-              // mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                ExchangeratesDataWidget(
-                  widthParent: (widthContentRight),
-                ),
-                // webAds(widthContentRight)
-                // Container(
-                //   height: 200,
-                //   width: widthContentRight,
-                //   color: Colors.amber,
-                // )
-              ],
-            ),
-          )
-        // Container(
-        // decoration: BoxDecoration(
-        //   color: Colors.white.withOpacity(0.8),
-        //   boxShadow: [
-        //     BoxShadow(
-        //       color: Colors.grey.withOpacity(0.2),
-        //       spreadRadius: 8,
-        //       // blurRadius: 7,
-        //       // offset: const Offset(0, 3), // changes position of shadow
-        //     ),
-        //   ],
-        // ),
-        // margin: const EdgeInsets.only(left: 8),
-        // width: widthContentRight - 8,
-        // height: double.infinity,
-
-        // child: ExchangeratesDataWidget(
-        //   widthParent: (widthContentRight),
-        // ),
-        // child: const Ads(),
-        // child: webAds(widthContentRight),
-        // ),
+        if (widthMoreThan_700) _rightSide(widthContentRight)
       ],
+    );
+  }
+
+  SingleChildScrollView _rightSide(double widthContentRight) {
+    return SingleChildScrollView(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          ExchangeratesDataWidget(
+            widthParent: (widthContentRight),
+          ),
+          Ads(space: widthContentRight),
+        ],
+      ),
+    );
+  }
+
+  RawScrollbar _leftSide(
+      ScrollController scrollController,
+      BuildContext context,
+      double widthContentLeft,
+      List<String> dataSideLeft) {
+    return RawScrollbar(
+      controller: scrollController,
+      interactive: true,
+      thumbVisibility: (context.width() > 500),
+      trackVisibility: (context.width() > 500),
+      radius: const Radius.circular(20),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white.withOpacity(0.8),
+          // borderRadius: BorderRadius.only(
+          //   topLeft: Radius.circular(10),
+          //   topRight: Radius.circular(10),
+          //   bottomLeft: Radius.circular(10),
+          //   bottomRight: Radius.circular(10),
+          // ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.5),
+              blurRadius: 8,
+              // spreadRadius: 5,
+              // blurRadius: 7,
+              // offset: const Offset(4, 8), // changes position of shadow
+            ),
+          ],
+        ),
+        margin: const EdgeInsets.only(right: 8),
+        width: widthContentLeft - 8,
+        height: double.infinity,
+        child: ListView.builder(
+          controller: scrollController,
+          itemCount: dataSideLeft.length,
+          itemBuilder: (context, index) {
+            return InkWell(
+              child: Container(
+                padding: const EdgeInsets.all(10),
+                child: Text(
+                  dataSideLeft[index],
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              onTap: () {
+                toastLong(
+                  "${dataSideLeft[index]} will be available soon",
+                );
+              },
+            );
+          },
+        ),
+      ),
     );
   }
 

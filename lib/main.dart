@@ -1,20 +1,15 @@
 import 'package:adaptive_theme/adaptive_theme.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:global_net/data/repository/exchange_rates_data.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
-import 'package:nb_utils/nb_utils.dart';
 import 'package:global_net/constant/constant.dart';
 import 'package:global_net/firebase_options.dart';
 import 'package:global_net/widgets/simple_world_widgets.dart';
 import 'package:global_net/widgets/splashscreen.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:nb_utils/nb_utils.dart';
 
 import 'app.dart';
-import 'package:http/http.dart' as http;
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -28,9 +23,13 @@ Future<void> main() async {
 
   if (!kIsWeb) {
     MobileAds.instance.initialize();
-    MobileAds.instance.updateRequestConfiguration(
-      RequestConfiguration(testDeviceIds: ['5DF3DDDAEA78FE6D718E9FF8B6259412']),
-    );
+    if (!kReleaseMode) {
+      MobileAds.instance.updateRequestConfiguration(
+        RequestConfiguration(
+          testDeviceIds: ['5DF3DDDAEA78FE6D718E9FF8B6259412'],
+        ),
+      );
+    }
   }
 
   await initialize();
@@ -40,11 +39,9 @@ Future<void> main() async {
       MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'Global Net',
-        home: SplashScreen(
-          userId: globalID,
-        ),
-        routes: <String, WidgetBuilder>{
-          APP_SCREEN: (BuildContext context) => App(prefs, savedThemeMode),
+        home: const SplashScreen(),
+        routes: {
+          App.route: (BuildContext context) => App(prefs, savedThemeMode),
         },
       ),
     );

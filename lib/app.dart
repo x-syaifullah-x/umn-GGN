@@ -19,12 +19,12 @@ import 'package:global_net/share_preference/preferences_key.dart';
 import 'package:global_net/widgets/simple_world_widgets.dart';
 
 class App extends StatefulWidget {
+  const App(this.prefs, this.savedThemeMode, {Key? key}) : super(key: key);
+
   final SharedPreferences prefs;
   final AdaptiveThemeMode? savedThemeMode;
 
-  static void setLocale(BuildContext context, Locale newLocale) {}
-
-  const App(this.prefs, this.savedThemeMode, {Key? key}) : super(key: key);
+  static const route = '/App';
 
   @override
   AppState createState() => AppState();

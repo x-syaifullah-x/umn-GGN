@@ -170,8 +170,14 @@ class _EditProfileState extends State<EditProfile> {
 
   logout() async {
     await googleSignIn.signOut();
-    Navigator.push(
-        context, MaterialPageRoute(builder: (context) => const LoginPage()));
+    if (mounted) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const LoginPage(),
+        ),
+      );
+    }
   }
 
   Future getavatarImage() async {
