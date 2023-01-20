@@ -20,7 +20,7 @@ import 'package:global_net/pages/disliked_list.dart';
 import 'package:global_net/pages/edit_profile.dart';
 import 'package:global_net/pages/followers_list.dart';
 import 'package:global_net/pages/following_users_list.dart';
-import 'package:global_net/pages/home.dart';
+import 'package:global_net/pages/home/home.dart';
 import 'package:global_net/pages/liked_list.dart';
 import 'package:global_net/pages/menu/dialogs/store_products.dart';
 import 'package:global_net/pages/ppviewed_list.dart';
@@ -1406,7 +1406,7 @@ class ProfileState extends State<Profile> {
               ),
               const SizedBox(height: 20),
               const Divider(),
-              PostBox(currentUser: currentUser),
+              PostBox(userId: widget.profileId!),
               const Divider(),
               buildProfilePosts()
             ],

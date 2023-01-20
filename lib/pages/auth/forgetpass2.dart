@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:nb_utils/src/extensions/widget_extensions.dart';
 import 'package:global_net/pages/auth/login_page.dart';
 import 'package:global_net/widgets/bezier_container.dart';
 import 'package:global_net/widgets/progress.dart';
@@ -9,7 +8,7 @@ class ForgetPass2 extends StatefulWidget {
   const ForgetPass2({Key? key}) : super(key: key);
 
   @override
-  _ForgetPass2State createState() => _ForgetPass2State();
+  State createState() => _ForgetPass2State();
 }
 
 class _ForgetPass2State extends State<ForgetPass2> {
@@ -61,7 +60,7 @@ class _ForgetPass2State extends State<ForgetPass2> {
     return RichText(
       textAlign: TextAlign.center,
       text: TextSpan(
-        text: 'Simple World',
+        text: 'Global Net',
         style: GoogleFonts.portLligatSans(
           textStyle: Theme.of(context).textTheme.headline4,
           fontSize: 30,
@@ -78,20 +77,26 @@ class _ForgetPass2State extends State<ForgetPass2> {
       padding: const EdgeInsets.symmetric(vertical: 15),
       alignment: Alignment.center,
       decoration: BoxDecoration(
-          borderRadius: const BorderRadius.all(Radius.circular(5)),
-          gradient: LinearGradient(
-              begin: Alignment.centerLeft,
-              end: Alignment.centerRight,
-              colors: [Colors.red.shade500, Colors.red.shade900])),
-      child: const Text(
-        'Next',
-        style: TextStyle(fontSize: 20, color: Colors.white),
+        borderRadius: const BorderRadius.all(Radius.circular(5)),
+        gradient: LinearGradient(
+            begin: Alignment.centerLeft,
+            end: Alignment.centerRight,
+            colors: [Colors.red.shade500, Colors.red.shade900]),
       ),
-    ).onTap(() {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => const LoginPage()),
-      );
-    });
+      child: InkWell(
+        child: const Text(
+          'Next',
+          style: TextStyle(fontSize: 20, color: Colors.white),
+        ),
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const LoginPage(),
+            ),
+          );
+        },
+      ),
+    );
   }
 }

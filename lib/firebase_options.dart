@@ -70,7 +70,7 @@ class DefaultFirebaseOptions {
     projectId: 'globelgirl-2c269',
     databaseURL: 'https://globelgirl-2c269-default-rtdb.firebaseio.com',
     storageBucket: 'globelgirl-2c269.appspot.com',
-    androidClientId: '813756573374-ks6mie1o9rnv5nj6kg1065s9lladoois.apps.googleusercontent.com',
+    androidClientId: '813756573374-5joimsmd2pho2j4687ico3jogphoo7pe.apps.googleusercontent.com',
     iosClientId: '813756573374-6vg3mc5sqt99trbdm2e22m8avcufgkrs.apps.googleusercontent.com',
     iosBundleId: 'com.gg.globalgirlsnet',
   );
@@ -82,7 +82,7 @@ class DefaultFirebaseOptions {
     projectId: 'globelgirl-2c269',
     databaseURL: 'https://globelgirl-2c269-default-rtdb.firebaseio.com',
     storageBucket: 'globelgirl-2c269.appspot.com',
-    androidClientId: '813756573374-ks6mie1o9rnv5nj6kg1065s9lladoois.apps.googleusercontent.com',
+    androidClientId: '813756573374-5joimsmd2pho2j4687ico3jogphoo7pe.apps.googleusercontent.com',
     iosClientId: '813756573374-kvkp75j8ehi0e25bf5d1lek5g7qc4qpi.apps.googleusercontent.com',
     iosBundleId: 'com.certainity.simpleworld',
   );

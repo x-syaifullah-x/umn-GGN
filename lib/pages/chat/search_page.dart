@@ -3,7 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:global_net/pages/chat/group_chat_page.dart';
-import 'package:global_net/pages/home.dart';
+import 'package:global_net/pages/home/home.dart';
 import 'package:global_net/services/database_service.dart';
 import 'package:global_net/share_preference/preferences_key.dart';
 import 'package:global_net/widgets/header.dart';

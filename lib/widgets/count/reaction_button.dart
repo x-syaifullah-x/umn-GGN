@@ -1,21 +1,13 @@
-// ignore_for_file: avoid_print
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_reaction_button/flutter_reaction_button.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:global_net/pages/home.dart';
+import 'package:global_net/pages/home/home.dart';
 import 'package:global_net/widgets/_build_list.dart';
 import 'package:global_net/widgets/simple_world_widgets.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ReactionButtonWidget extends StatefulWidget {
-  final String? postId;
-  final String? ownerId;
-  final String? userId;
-  final String? mediaUrl;
-  final List<Reaction<String>> reactions;
-
   const ReactionButtonWidget({
     Key? key,
     this.postId,
@@ -23,39 +15,29 @@ class ReactionButtonWidget extends StatefulWidget {
     this.userId,
     this.mediaUrl,
     required this.reactions,
+    this.color,
   }) : super(key: key);
 
+  final String? postId;
+  final String? ownerId;
+  final String? userId;
+  final String? mediaUrl;
+  final List<Reaction<String>> reactions;
+  final Color? color;
+
   @override
-  // ignore: no_logic_in_create_state
-  ReactionButtonWidgetState createState() => ReactionButtonWidgetState(
-        postId: postId,
-        ownerId: ownerId,
-        userId: userId,
-        mediaUrl: mediaUrl,
-      );
+  ReactionButtonWidgetState createState() => ReactionButtonWidgetState();
 }
 
 class ReactionButtonWidgetState extends State<ReactionButtonWidget> {
   TextEditingController commentController = TextEditingController();
   List<Comment> comments = [];
-  final String? postId;
-  final String? ownerId;
-  final String? userId;
-
-  final String? mediaUrl;
   bool isHappy = false;
   bool isSad = false;
   bool isAngry = false;
   bool isInlove = false;
   bool isSurprised = false;
   bool isLike = false;
-
-  ReactionButtonWidgetState({
-    this.postId,
-    this.ownerId,
-    this.userId,
-    this.mediaUrl,
-  });
 
   @override
   void initState() {
@@ -69,97 +51,113 @@ class ReactionButtonWidgetState extends State<ReactionButtonWidget> {
   }
 
   checkIfHappy() async {
-    DocumentSnapshot doc = await postsRef
-        .doc(ownerId)
-        .collection('userPosts')
-        .doc(postId)
-        .collection('happy')
-        .doc(userId)
-        .get();
-    setState(() {
-      isHappy = doc.exists;
-    });
+    try {
+      DocumentSnapshot doc = await postsRef
+          .doc(widget.ownerId)
+          .collection('userPosts')
+          .doc(widget.postId)
+          .collection('happy')
+          .doc(widget.userId)
+          .get();
+      setState(() {
+        isHappy = doc.exists;
+      });
+    } catch (e) {}
   }
 
   checkIfSad() async {
-    DocumentSnapshot doc = await postsRef
-        .doc(ownerId)
-        .collection('userPosts')
-        .doc(postId)
-        .collection('sad')
-        .doc(userId)
-        .get();
-    setState(() {
-      isSad = doc.exists;
-    });
+    try {
+      DocumentSnapshot doc = await postsRef
+          .doc(widget.ownerId)
+          .collection('userPosts')
+          .doc(widget.postId)
+          .collection('sad')
+          .doc(widget.userId)
+          .get();
+      setState(() {
+        isSad = doc.exists;
+      });
+    } catch (e) {}
   }
 
   checkIfAngry() async {
-    DocumentSnapshot doc = await postsRef
-        .doc(ownerId)
-        .collection('userPosts')
-        .doc(postId)
-        .collection('angry')
-        .doc(userId)
-        .get();
-    setState(() {
-      isAngry = doc.exists;
-    });
+    try {
+      DocumentSnapshot doc = await postsRef
+          .doc(widget.ownerId)
+          .collection('userPosts')
+          .doc(widget.postId)
+          .collection('angry')
+          .doc(widget.userId)
+          .get();
+      setState(() {
+        isAngry = doc.exists;
+      });
+    } catch (e) {}
   }
 
   checkIfInlove() async {
-    DocumentSnapshot doc = await postsRef
-        .doc(ownerId)
-        .collection('userPosts')
-        .doc(postId)
-        .collection('inlove')
-        .doc(userId)
-        .get();
-    setState(() {
-      isInlove = doc.exists;
-    });
+    try {
+      DocumentSnapshot doc = await postsRef
+          .doc(widget.ownerId)
+          .collection('userPosts')
+          .doc(widget.postId)
+          .collection('inlove')
+          .doc(widget.userId)
+          .get();
+      setState(() {
+        isInlove = doc.exists;
+      });
+    } catch (e) {}
   }
 
   checkIfSurprised() async {
-    DocumentSnapshot doc = await postsRef
-        .doc(ownerId)
-        .collection('userPosts')
-        .doc(postId)
-        .collection('surprised')
-        .doc(userId)
-        .get();
-    setState(() {
-      isSurprised = doc.exists;
-    });
+    try {
+      DocumentSnapshot doc = await postsRef
+          .doc(widget.ownerId)
+          .collection('userPosts')
+          .doc(widget.postId)
+          .collection('surprised')
+          .doc(widget.userId)
+          .get();
+      setState(() {
+        isSurprised = doc.exists;
+      });
+    } catch (e) {}
   }
 
   checkIfLike() async {
-    DocumentSnapshot doc = await postsRef
-        .doc(ownerId)
-        .collection('userPosts')
-        .doc(postId)
-        .collection('like')
-        .doc(userId)
-        .get();
     try {
-      setState(() {
-        isLike = doc.exists;
-      });
-    } catch (e) {
-      print(e);
-    }
+      DocumentSnapshot doc = await postsRef
+          .doc(widget.ownerId)
+          .collection('userPosts')
+          .doc(widget.postId)
+          .collection('like')
+          .doc(widget.userId)
+          .get();
+      try {
+        setState(() {
+          isLike = doc.exists;
+        });
+      } catch (e) {
+        print(e);
+      }
+    } catch (e) {}
   }
 
   addLikeToActivityFeed() {
-    bool isNotPostOwner = userId != ownerId;
+    bool isNotPostOwner = widget.userId != widget.ownerId;
     if (isNotPostOwner) {
-      activityFeedRef.doc(ownerId).collection("feedItems").doc(postId).set({
+      activityFeedRef
+          .doc(widget.ownerId)
+          .collection("feedItems")
+          .doc(widget.postId)
+          .set({
         "type": "like",
         "username": globalName,
-        "userId": userId,
+        "userId": widget.userId,
         "userProfileImg": globalImage,
-        "postId": postId,
-        "mediaUrl": mediaUrl,
+        "postId": widget.postId,
+        "mediaUrl": widget.mediaUrl,
         "timestamp": timestamp,
         "isSeen": false,
       });
@@ -169,145 +167,249 @@ class ReactionButtonWidgetState extends State<ReactionButtonWidget> {
   @override
   Widget build(BuildContext context) {
     if (isLike) {
-      return Row(
-        children: [
-          FittedBox(
-            child: ReactionButtonToggle<String>(
-              onReactionChanged: (String? value, bool isChecked) {
-                print('Selected value: $value, isChecked: $isChecked');
-                handleLikePost('$value');
-              },
-              reactions: widget.reactions,
-              initialReaction: widget.reactions[0],
-              selectedReaction: widget.reactions[0],
-            ),
-          )
-        ],
+      return FittedBox(
+        child: ReactionButtonToggle<String>(
+          onReactionChanged: (String? value, bool isChecked) {
+            handleLikePost('$value');
+          },
+          reactions: widget.reactions,
+          initialReaction: widget.reactions[0],
+          selectedReaction: widget.reactions[0],
+        ),
       );
     } else if (isHappy) {
-      return Row(
-        children: [
-          FittedBox(
-            child: ReactionButtonToggle<String>(
-              onReactionChanged: (String? value, bool isChecked) {
-                print('Selected value: $value, isChecked: $isChecked');
-                handleLikePost('$value');
-              },
-              reactions: widget.reactions,
-              initialReaction: widget.reactions[1],
-              selectedReaction: widget.reactions[0],
-            ),
-          )
-        ],
+      return FittedBox(
+        child: ReactionButtonToggle<String>(
+          onReactionChanged: (String? value, bool isChecked) {
+            print('Selected value: $value, isChecked: $isChecked');
+            handleLikePost('$value');
+          },
+          reactions: widget.reactions,
+          initialReaction: widget.reactions[1],
+          selectedReaction: widget.reactions[0],
+        ),
       );
     } else if (isSad) {
-      return Row(
-        children: [
-          FittedBox(
-            child: ReactionButtonToggle<String>(
-              onReactionChanged: (String? value, bool isChecked) {
-                print('Selected value: $value, isChecked: $isChecked');
-                handleLikePost('$value');
-              },
-              reactions: widget.reactions,
-              initialReaction: widget.reactions[2],
-              selectedReaction: widget.reactions[0],
-            ),
-          )
-        ],
+      return FittedBox(
+        child: ReactionButtonToggle<String>(
+          onReactionChanged: (String? value, bool isChecked) {
+            print('Selected value: $value, isChecked: $isChecked');
+            handleLikePost('$value');
+          },
+          reactions: widget.reactions,
+          initialReaction: widget.reactions[2],
+          selectedReaction: widget.reactions[0],
+        ),
       );
     } else if (isAngry) {
-      return Row(
-        children: [
-          FittedBox(
-            child: ReactionButtonToggle<String>(
-              onReactionChanged: (String? value, bool isChecked) {
-                print('Selected value: $value, isChecked: $isChecked');
-                handleLikePost('$value');
-              },
-              reactions: widget.reactions,
-              initialReaction: widget.reactions[3],
-              selectedReaction: widget.reactions[0],
-            ),
-          )
-        ],
+      return FittedBox(
+        child: ReactionButtonToggle<String>(
+          onReactionChanged: (String? value, bool isChecked) {
+            print('Selected value: $value, isChecked: $isChecked');
+            handleLikePost('$value');
+          },
+          reactions: widget.reactions,
+          initialReaction: widget.reactions[3],
+          selectedReaction: widget.reactions[0],
+        ),
       );
     } else if (isInlove) {
-      return Row(
-        children: [
-          FittedBox(
-            child: ReactionButtonToggle<String>(
-              onReactionChanged: (String? value, bool isChecked) {
-                print('Selected value: $value, isChecked: $isChecked');
-                handleLikePost('$value');
-              },
-              reactions: widget.reactions,
-              initialReaction: widget.reactions[4],
-              selectedReaction: widget.reactions[0],
-            ),
-          )
-        ],
+      return FittedBox(
+        child: ReactionButtonToggle<String>(
+          onReactionChanged: (String? value, bool isChecked) {
+            print('Selected value: $value, isChecked: $isChecked');
+            handleLikePost('$value');
+          },
+          reactions: widget.reactions,
+          initialReaction: widget.reactions[4],
+          selectedReaction: widget.reactions[0],
+        ),
       );
     } else if (isSurprised) {
-      return Row(
-        children: [
-          FittedBox(
-            child: ReactionButtonToggle<String>(
-              onReactionChanged: (String? value, bool isChecked) {
-                print('Selected value: $value, isChecked: $isChecked');
-                handleLikePost('$value');
-              },
-              reactions: widget.reactions,
-              initialReaction: widget.reactions[5],
-              selectedReaction: widget.reactions[0],
-            ),
-          )
-        ],
+      return FittedBox(
+        child: ReactionButtonToggle<String>(
+          onReactionChanged: (String? value, bool isChecked) {
+            print('Selected value: $value, isChecked: $isChecked');
+            handleLikePost('$value');
+          },
+          reactions: widget.reactions,
+          initialReaction: widget.reactions[5],
+          selectedReaction: widget.reactions[0],
+        ),
       );
     }
 
-    return Row(
-      children: [
-        FittedBox(
-          child: ReactionButtonToggle<String>(
-            onReactionChanged: (String? value, bool isChecked) {
-              print('Selected value: $value, isChecked: $isChecked');
-              handleLikePost('$value');
-            },
-            reactions: widget.reactions,
-            initialReaction: Reaction<String>(
-              value: null,
-              icon: Row(
-                children: [
-                  SvgPicture.asset(
-                    "assets/images/thumbs-up.svg",
-                    height: 20,
-                    color: Theme.of(context).iconTheme.color,
-                  ),
-                  const SizedBox(width: 5.0),
-                  Text(AppLocalizations.of(context)!.like,
-                      style: TextStyle(
-                        fontSize: 14.0,
-                        color: Theme.of(context).iconTheme.color,
-                      )),
-                ],
+    return FittedBox(
+      child: ReactionButtonToggle<String>(
+        onReactionChanged: (String? value, bool isChecked) {
+          handleLikePost('$value');
+        },
+        reactions: widget.reactions,
+        initialReaction: Reaction<String>(
+          value: null,
+          icon: Row(
+            children: [
+              SvgPicture.asset(
+                "assets/images/thumbs-up.svg",
+                height: 20,
+                color: widget.color,
               ),
-            ),
-            selectedReaction: widget.reactions[0],
+              const SizedBox(width: 5.0),
+              Text(AppLocalizations.of(context)!.like,
+                  style: TextStyle(
+                    fontSize: 14.0,
+                    color: widget.color,
+                  )),
+            ],
           ),
         ),
-      ],
+        selectedReaction: widget.reactions[0],
+      ),
     );
   }
+
+  // @override
+  // Widget build(BuildContext context) {
+  //   if (isLike) {
+  //     return Row(
+  //       children: [
+  //         FittedBox(
+  //           child: ReactionButtonToggle<String>(
+  //             onReactionChanged: (String? value, bool isChecked) {
+  //               print('Selected value: $value, isChecked: $isChecked');
+  //               handleLikePost('$value');
+  //             },
+  //             reactions: widget.reactions,
+  //             initialReaction: widget.reactions[0],
+  //             selectedReaction: widget.reactions[0],
+  //           ),
+  //         )
+  //       ],
+  //     );
+  //   } else if (isHappy) {
+  //     return Row(
+  //       children: [
+  //         FittedBox(
+  //           child: ReactionButtonToggle<String>(
+  //             onReactionChanged: (String? value, bool isChecked) {
+  //               print('Selected value: $value, isChecked: $isChecked');
+  //               handleLikePost('$value');
+  //             },
+  //             reactions: widget.reactions,
+  //             initialReaction: widget.reactions[1],
+  //             selectedReaction: widget.reactions[0],
+  //           ),
+  //         )
+  //       ],
+  //     );
+  //   } else if (isSad) {
+  //     return Row(
+  //       children: [
+  //         FittedBox(
+  //           child: ReactionButtonToggle<String>(
+  //             onReactionChanged: (String? value, bool isChecked) {
+  //               print('Selected value: $value, isChecked: $isChecked');
+  //               handleLikePost('$value');
+  //             },
+  //             reactions: widget.reactions,
+  //             initialReaction: widget.reactions[2],
+  //             selectedReaction: widget.reactions[0],
+  //           ),
+  //         )
+  //       ],
+  //     );
+  //   } else if (isAngry) {
+  //     return Row(
+  //       children: [
+  //         FittedBox(
+  //           child: ReactionButtonToggle<String>(
+  //             onReactionChanged: (String? value, bool isChecked) {
+  //               print('Selected value: $value, isChecked: $isChecked');
+  //               handleLikePost('$value');
+  //             },
+  //             reactions: widget.reactions,
+  //             initialReaction: widget.reactions[3],
+  //             selectedReaction: widget.reactions[0],
+  //           ),
+  //         )
+  //       ],
+  //     );
+  //   } else if (isInlove) {
+  //     return Row(
+  //       children: [
+  //         FittedBox(
+  //           child: ReactionButtonToggle<String>(
+  //             onReactionChanged: (String? value, bool isChecked) {
+  //               print('Selected value: $value, isChecked: $isChecked');
+  //               handleLikePost('$value');
+  //             },
+  //             reactions: widget.reactions,
+  //             initialReaction: widget.reactions[4],
+  //             selectedReaction: widget.reactions[0],
+  //           ),
+  //         )
+  //       ],
+  //     );
+  //   } else if (isSurprised) {
+  //     return Row(
+  //       children: [
+  //         FittedBox(
+  //           child: ReactionButtonToggle<String>(
+  //             onReactionChanged: (String? value, bool isChecked) {
+  //               print('Selected value: $value, isChecked: $isChecked');
+  //               handleLikePost('$value');
+  //             },
+  //             reactions: widget.reactions,
+  //             initialReaction: widget.reactions[5],
+  //             selectedReaction: widget.reactions[0],
+  //           ),
+  //         )
+  //       ],
+  //     );
+  //   }
+
+  //   return Row(
+  //     children: [
+  //       FittedBox(
+  //         child: ReactionButtonToggle<String>(
+  //           onReactionChanged: (String? value, bool isChecked) {
+  //             print('Selected value: $value, isChecked: $isChecked');
+  //             handleLikePost('$value');
+  //           },
+  //           reactions: widget.reactions,
+  //           initialReaction: Reaction<String>(
+  //             value: null,
+  //             icon: Row(
+  //               children: [
+  //                 SvgPicture.asset(
+  //                   "assets/images/thumbs-up.svg",
+  //                   height: 20,
+  //                   color: Theme.of(context).iconTheme.color,
+  //                 ),
+  //                 const SizedBox(width: 5.0),
+  //                 Text(AppLocalizations.of(context)!.like,
+  //                     style: TextStyle(
+  //                       fontSize: 14.0,
+  //                       color: Theme.of(context).iconTheme.color,
+  //                     )),
+  //               ],
+  //             ),
+  //           ),
+  //           selectedReaction: widget.reactions[0],
+  //         ),
+  //       ),
+  //     ],
+  //   );
+  // }
 
   handleLikePost(String value) {
     if (value == 'Happy') {
       postsRef
-          .doc(ownerId)
+          .doc(widget.ownerId)
           .collection('userPosts')
-          .doc(postId)
+          .doc(widget.postId)
           .collection('sad')
-          .doc(userId)
+          .doc(widget.userId)
           .get()
           .then((doc) {
         if (doc.exists) {
@@ -315,11 +417,11 @@ class ReactionButtonWidgetState extends State<ReactionButtonWidget> {
         }
       });
       postsRef
-          .doc(ownerId)
+          .doc(widget.ownerId)
           .collection('userPosts')
-          .doc(postId)
+          .doc(widget.postId)
           .collection('angry')
-          .doc(userId)
+          .doc(widget.userId)
           .get()
           .then((doc) {
         if (doc.exists) {
@@ -327,11 +429,11 @@ class ReactionButtonWidgetState extends State<ReactionButtonWidget> {
         }
       });
       postsRef
-          .doc(ownerId)
+          .doc(widget.ownerId)
           .collection('userPosts')
-          .doc(postId)
+          .doc(widget.postId)
           .collection('inlove')
-          .doc(userId)
+          .doc(widget.userId)
           .get()
           .then((doc) {
         if (doc.exists) {
@@ -339,11 +441,11 @@ class ReactionButtonWidgetState extends State<ReactionButtonWidget> {
         }
       });
       postsRef
-          .doc(ownerId)
+          .doc(widget.ownerId)
           .collection('userPosts')
-          .doc(postId)
+          .doc(widget.postId)
           .collection('surprised')
-          .doc(userId)
+          .doc(widget.userId)
           .get()
           .then((doc) {
         if (doc.exists) {
@@ -351,11 +453,11 @@ class ReactionButtonWidgetState extends State<ReactionButtonWidget> {
         }
       });
       postsRef
-          .doc(ownerId)
+          .doc(widget.ownerId)
           .collection('userPosts')
-          .doc(postId)
+          .doc(widget.postId)
           .collection('like')
-          .doc(userId)
+          .doc(widget.userId)
           .get()
           .then((doc) {
         if (doc.exists) {
@@ -364,20 +466,20 @@ class ReactionButtonWidgetState extends State<ReactionButtonWidget> {
       });
 
       postsRef
-          .doc(ownerId)
+          .doc(widget.ownerId)
           .collection('userPosts')
-          .doc(postId)
+          .doc(widget.postId)
           .collection('happy')
-          .doc(userId)
+          .doc(widget.userId)
           .set({});
       addLikeToActivityFeed();
     } else if (value == 'Sad') {
       postsRef
-          .doc(ownerId)
+          .doc(widget.ownerId)
           .collection('userPosts')
-          .doc(postId)
+          .doc(widget.postId)
           .collection('happy')
-          .doc(userId)
+          .doc(widget.userId)
           .get()
           .then((doc) {
         if (doc.exists) {
@@ -385,11 +487,11 @@ class ReactionButtonWidgetState extends State<ReactionButtonWidget> {
         }
       });
       postsRef
-          .doc(ownerId)
+          .doc(widget.ownerId)
           .collection('userPosts')
-          .doc(postId)
+          .doc(widget.postId)
           .collection('angry')
-          .doc(userId)
+          .doc(widget.userId)
           .get()
           .then((doc) {
         if (doc.exists) {
@@ -397,11 +499,11 @@ class ReactionButtonWidgetState extends State<ReactionButtonWidget> {
         }
       });
       postsRef
-          .doc(ownerId)
+          .doc(widget.ownerId)
           .collection('userPosts')
-          .doc(postId)
+          .doc(widget.postId)
           .collection('inlove')
-          .doc(userId)
+          .doc(widget.userId)
           .get()
           .then((doc) {
         if (doc.exists) {
@@ -409,11 +511,11 @@ class ReactionButtonWidgetState extends State<ReactionButtonWidget> {
         }
       });
       postsRef
-          .doc(ownerId)
+          .doc(widget.ownerId)
           .collection('userPosts')
-          .doc(postId)
+          .doc(widget.postId)
           .collection('surprised')
-          .doc(userId)
+          .doc(widget.userId)
           .get()
           .then((doc) {
         if (doc.exists) {
@@ -421,11 +523,11 @@ class ReactionButtonWidgetState extends State<ReactionButtonWidget> {
         }
       });
       postsRef
-          .doc(ownerId)
+          .doc(widget.ownerId)
           .collection('userPosts')
-          .doc(postId)
+          .doc(widget.postId)
           .collection('like')
-          .doc(userId)
+          .doc(widget.userId)
           .get()
           .then((doc) {
         if (doc.exists) {
@@ -434,20 +536,20 @@ class ReactionButtonWidgetState extends State<ReactionButtonWidget> {
       });
 
       postsRef
-          .doc(ownerId)
+          .doc(widget.ownerId)
           .collection('userPosts')
-          .doc(postId)
+          .doc(widget.postId)
           .collection('sad')
-          .doc(userId)
+          .doc(widget.userId)
           .set({});
       addLikeToActivityFeed();
     } else if (value == 'Angry') {
       postsRef
-          .doc(ownerId)
+          .doc(widget.ownerId)
           .collection('userPosts')
-          .doc(postId)
+          .doc(widget.postId)
           .collection('happy')
-          .doc(userId)
+          .doc(widget.userId)
           .get()
           .then((doc) {
         if (doc.exists) {
@@ -455,11 +557,11 @@ class ReactionButtonWidgetState extends State<ReactionButtonWidget> {
         }
       });
       postsRef
-          .doc(ownerId)
+          .doc(widget.ownerId)
           .collection('userPosts')
-          .doc(postId)
+          .doc(widget.postId)
           .collection('sad')
-          .doc(userId)
+          .doc(widget.userId)
           .get()
           .then((doc) {
         if (doc.exists) {
@@ -467,11 +569,11 @@ class ReactionButtonWidgetState extends State<ReactionButtonWidget> {
         }
       });
       postsRef
-          .doc(ownerId)
+          .doc(widget.ownerId)
           .collection('userPosts')
-          .doc(postId)
+          .doc(widget.postId)
           .collection('inlove')
-          .doc(userId)
+          .doc(widget.userId)
           .get()
           .then((doc) {
         if (doc.exists) {
@@ -479,11 +581,11 @@ class ReactionButtonWidgetState extends State<ReactionButtonWidget> {
         }
       });
       postsRef
-          .doc(ownerId)
+          .doc(widget.ownerId)
           .collection('userPosts')
-          .doc(postId)
+          .doc(widget.postId)
           .collection('surprised')
-          .doc(userId)
+          .doc(widget.userId)
           .get()
           .then((doc) {
         if (doc.exists) {
@@ -491,11 +593,11 @@ class ReactionButtonWidgetState extends State<ReactionButtonWidget> {
         }
       });
       postsRef
-          .doc(ownerId)
+          .doc(widget.ownerId)
           .collection('userPosts')
-          .doc(postId)
+          .doc(widget.postId)
           .collection('like')
-          .doc(userId)
+          .doc(widget.userId)
           .get()
           .then((doc) {
         if (doc.exists) {
@@ -504,20 +606,20 @@ class ReactionButtonWidgetState extends State<ReactionButtonWidget> {
       });
 
       postsRef
-          .doc(ownerId)
+          .doc(widget.ownerId)
           .collection('userPosts')
-          .doc(postId)
+          .doc(widget.postId)
           .collection('angry')
-          .doc(userId)
+          .doc(widget.userId)
           .set({});
       addLikeToActivityFeed();
     } else if (value == 'In love') {
       postsRef
-          .doc(ownerId)
+          .doc(widget.ownerId)
           .collection('userPosts')
-          .doc(postId)
+          .doc(widget.postId)
           .collection('happy')
-          .doc(userId)
+          .doc(widget.userId)
           .get()
           .then((doc) {
         if (doc.exists) {
@@ -525,11 +627,11 @@ class ReactionButtonWidgetState extends State<ReactionButtonWidget> {
         }
       });
       postsRef
-          .doc(ownerId)
+          .doc(widget.ownerId)
           .collection('userPosts')
-          .doc(postId)
+          .doc(widget.postId)
           .collection('sad')
-          .doc(userId)
+          .doc(widget.userId)
           .get()
           .then((doc) {
         if (doc.exists) {
@@ -537,11 +639,11 @@ class ReactionButtonWidgetState extends State<ReactionButtonWidget> {
         }
       });
       postsRef
-          .doc(ownerId)
+          .doc(widget.ownerId)
           .collection('userPosts')
-          .doc(postId)
+          .doc(widget.postId)
           .collection('angry')
-          .doc(userId)
+          .doc(widget.userId)
           .get()
           .then((doc) {
         if (doc.exists) {
@@ -549,11 +651,11 @@ class ReactionButtonWidgetState extends State<ReactionButtonWidget> {
         }
       });
       postsRef
-          .doc(ownerId)
+          .doc(widget.ownerId)
           .collection('userPosts')
-          .doc(postId)
+          .doc(widget.postId)
           .collection('surprised')
-          .doc(userId)
+          .doc(widget.userId)
           .get()
           .then((doc) {
         if (doc.exists) {
@@ -561,11 +663,11 @@ class ReactionButtonWidgetState extends State<ReactionButtonWidget> {
         }
       });
       postsRef
-          .doc(ownerId)
+          .doc(widget.ownerId)
           .collection('userPosts')
-          .doc(postId)
+          .doc(widget.postId)
           .collection('like')
-          .doc(userId)
+          .doc(widget.userId)
           .get()
           .then((doc) {
         if (doc.exists) {
@@ -574,20 +676,20 @@ class ReactionButtonWidgetState extends State<ReactionButtonWidget> {
       });
 
       postsRef
-          .doc(ownerId)
+          .doc(widget.ownerId)
           .collection('userPosts')
-          .doc(postId)
+          .doc(widget.postId)
           .collection('inlove')
-          .doc(userId)
+          .doc(widget.userId)
           .set({});
       addLikeToActivityFeed();
     } else if (value == 'Surprised') {
       postsRef
-          .doc(ownerId)
+          .doc(widget.ownerId)
           .collection('userPosts')
-          .doc(postId)
+          .doc(widget.postId)
           .collection('happy')
-          .doc(userId)
+          .doc(widget.userId)
           .get()
           .then((doc) {
         if (doc.exists) {
@@ -595,11 +697,11 @@ class ReactionButtonWidgetState extends State<ReactionButtonWidget> {
         }
       });
       postsRef
-          .doc(ownerId)
+          .doc(widget.ownerId)
           .collection('userPosts')
-          .doc(postId)
+          .doc(widget.postId)
           .collection('sad')
-          .doc(userId)
+          .doc(widget.userId)
           .get()
           .then((doc) {
         if (doc.exists) {
@@ -607,11 +709,11 @@ class ReactionButtonWidgetState extends State<ReactionButtonWidget> {
         }
       });
       postsRef
-          .doc(ownerId)
+          .doc(widget.ownerId)
           .collection('userPosts')
-          .doc(postId)
+          .doc(widget.postId)
           .collection('angry')
-          .doc(userId)
+          .doc(widget.userId)
           .get()
           .then((doc) {
         if (doc.exists) {
@@ -619,11 +721,11 @@ class ReactionButtonWidgetState extends State<ReactionButtonWidget> {
         }
       });
       postsRef
-          .doc(ownerId)
+          .doc(widget.ownerId)
           .collection('userPosts')
-          .doc(postId)
+          .doc(widget.postId)
           .collection('inlove')
-          .doc(userId)
+          .doc(widget.userId)
           .get()
           .then((doc) {
         if (doc.exists) {
@@ -631,11 +733,11 @@ class ReactionButtonWidgetState extends State<ReactionButtonWidget> {
         }
       });
       postsRef
-          .doc(ownerId)
+          .doc(widget.ownerId)
           .collection('userPosts')
-          .doc(postId)
+          .doc(widget.postId)
           .collection('like')
-          .doc(userId)
+          .doc(widget.userId)
           .get()
           .then((doc) {
         if (doc.exists) {
@@ -644,20 +746,20 @@ class ReactionButtonWidgetState extends State<ReactionButtonWidget> {
       });
 
       postsRef
-          .doc(ownerId)
+          .doc(widget.ownerId)
           .collection('userPosts')
-          .doc(postId)
+          .doc(widget.postId)
           .collection('surprised')
-          .doc(userId)
+          .doc(widget.userId)
           .set({});
       addLikeToActivityFeed();
     } else if (value == 'Like') {
       postsRef
-          .doc(ownerId)
+          .doc(widget.ownerId)
           .collection('userPosts')
-          .doc(postId)
+          .doc(widget.postId)
           .collection('happy')
-          .doc(userId)
+          .doc(widget.userId)
           .get()
           .then((doc) {
         if (doc.exists) {
@@ -665,11 +767,11 @@ class ReactionButtonWidgetState extends State<ReactionButtonWidget> {
         }
       });
       postsRef
-          .doc(ownerId)
+          .doc(widget.ownerId)
           .collection('userPosts')
-          .doc(postId)
+          .doc(widget.postId)
           .collection('sad')
-          .doc(userId)
+          .doc(widget.userId)
           .get()
           .then((doc) {
         if (doc.exists) {
@@ -677,11 +779,11 @@ class ReactionButtonWidgetState extends State<ReactionButtonWidget> {
         }
       });
       postsRef
-          .doc(ownerId)
+          .doc(widget.ownerId)
           .collection('userPosts')
-          .doc(postId)
+          .doc(widget.postId)
           .collection('angry')
-          .doc(userId)
+          .doc(widget.userId)
           .get()
           .then((doc) {
         if (doc.exists) {
@@ -689,11 +791,11 @@ class ReactionButtonWidgetState extends State<ReactionButtonWidget> {
         }
       });
       postsRef
-          .doc(ownerId)
+          .doc(widget.ownerId)
           .collection('userPosts')
-          .doc(postId)
+          .doc(widget.postId)
           .collection('inlove')
-          .doc(userId)
+          .doc(widget.userId)
           .get()
           .then((doc) {
         if (doc.exists) {
@@ -701,11 +803,11 @@ class ReactionButtonWidgetState extends State<ReactionButtonWidget> {
         }
       });
       postsRef
-          .doc(ownerId)
+          .doc(widget.ownerId)
           .collection('userPosts')
-          .doc(postId)
+          .doc(widget.postId)
           .collection('surprised')
-          .doc(userId)
+          .doc(widget.userId)
           .get()
           .then((doc) {
         if (doc.exists) {
@@ -714,11 +816,11 @@ class ReactionButtonWidgetState extends State<ReactionButtonWidget> {
       });
 
       postsRef
-          .doc(ownerId)
+          .doc(widget.ownerId)
           .collection('userPosts')
-          .doc(postId)
+          .doc(widget.postId)
           .collection('like')
-          .doc(userId)
+          .doc(widget.userId)
           .set({});
       addLikeToActivityFeed();
     }

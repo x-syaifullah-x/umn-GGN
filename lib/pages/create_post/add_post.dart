@@ -14,7 +14,7 @@ import 'package:nb_utils/nb_utils.dart';
 import 'package:global_net/models/user.dart';
 import 'package:global_net/pages/comming_soon_page.dart';
 import 'package:global_net/pages/create_post/gif_upload.dart';
-import 'package:global_net/pages/home.dart';
+import 'package:global_net/pages/home/home.dart';
 import 'package:global_net/pages/auth/login_page.dart';
 import 'package:global_net/pages/create_post/pdf_upload.dart';
 import 'package:global_net/pages/create_post/upload.dart';
@@ -27,11 +27,16 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class AddPost extends StatefulWidget {
   final GloabalUser? currentUser;
+  final String userId;
 
-  const AddPost({Key? key, this.currentUser}) : super(key: key);
+  const AddPost({
+    Key? key,
+    this.currentUser,
+    required this.userId,
+  }) : super(key: key);
 
   @override
-  _AddPostState createState() => _AddPostState();
+  State createState() => _AddPostState();
 }
 
 class _AddPostState extends State<AddPost>
@@ -51,7 +56,6 @@ class _AddPostState extends State<AddPost>
   Position? _currentPosition;
   String? _currentAddress;
   bool showmenu = false;
-  GiphyGif? _gif;
   final textFieldFocusNode = FocusNode();
 
   Future handleChooseFromGallery() async {
@@ -154,9 +158,9 @@ class _AddPostState extends State<AddPost>
   }
 
   createPostInFirestore({List? mediaUrl, String? description, int? type}) {
-    postsRef.doc(globalID).collection("userPosts").doc(postId).set({
+    postsRef.doc(widget.userId).collection("userPosts").doc(postId).set({
       "postId": postId,
-      "ownerId": globalID,
+      "ownerId": widget.userId,
       "username": globalName,
       "mediaUrl": mediaUrl,
       "description": description,
@@ -170,7 +174,7 @@ class _AddPostState extends State<AddPost>
     });
   }
 
-  handleSubmitontext() async {
+  handleSubmitontext(String userID) async {
     createPostInFirestore(mediaUrl: [], description: captionController.text);
     captionController.clear();
 
@@ -180,9 +184,10 @@ class _AddPostState extends State<AddPost>
         FocusScope.of(context).unfocus();
         Navigator.of(context).pushReplacement(
           CupertinoPageRoute(
-              builder: (context) => Home(
-                    userId: globalID,
-                  )),
+            builder: (context) => Home(
+              userId: userID,
+            ),
+          ),
         );
       });
     }
@@ -234,8 +239,7 @@ class _AddPostState extends State<AddPost>
               setState(() {
                 isLoading = true;
               });
-
-              handleSubmitontext();
+              handleSubmitontext(widget.userId);
             } else {
               simpleworldtoast("Error", "Write something", context);
             }

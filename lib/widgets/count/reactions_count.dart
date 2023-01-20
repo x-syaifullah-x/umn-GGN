@@ -1,13 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:global_net/pages/home.dart';
+import 'package:global_net/pages/home/home.dart';
 
-class reactionsCount extends StatefulWidget {
+class ReactionsCount extends StatefulWidget {
   final String? postId;
   final String? ownerId;
 
-  const reactionsCount({
+  const ReactionsCount({
     Key? key,
     this.postId,
     this.ownerId,
@@ -15,13 +15,13 @@ class reactionsCount extends StatefulWidget {
 
   @override
   // ignore: no_logic_in_create_state
-  reactionsCountState createState() => reactionsCountState(
+  ReactionsCountState createState() => ReactionsCountState(
         postId: postId,
         ownerId: ownerId,
       );
 }
 
-class reactionsCountState extends State<reactionsCount> {
+class ReactionsCountState extends State<ReactionsCount> {
   final String? postId;
   final String? ownerId;
   bool showHappy = false;
@@ -31,7 +31,7 @@ class reactionsCountState extends State<reactionsCount> {
   bool showSurprised = false;
   bool showMad = false;
 
-  reactionsCountState({
+  ReactionsCountState({
     this.postId,
     this.ownerId,
   });

@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:nb_utils/nb_utils.dart';
 import 'package:global_net/pages/chat/simpleworld_chat_main.dart';
-import 'package:global_net/pages/home.dart';
+import 'package:global_net/pages/home/home.dart';
 import 'package:global_net/widgets/circle_button.dart';
 
 class MessagesCount extends StatefulWidget {

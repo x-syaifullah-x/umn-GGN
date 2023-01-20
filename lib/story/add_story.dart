@@ -12,7 +12,7 @@ import 'package:iconly/iconly.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:nb_utils/nb_utils.dart';
 import 'package:global_net/pages/auth/login_page.dart';
-import 'package:global_net/pages/home.dart';
+import 'package:global_net/pages/home/home.dart';
 import 'package:global_net/story/add_image_story.dart';
 import 'package:global_net/story/add_video_story.dart';
 import 'package:global_net/widgets/progress.dart';

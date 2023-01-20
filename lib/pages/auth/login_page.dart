@@ -12,6 +12,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_signin_button/button_list.dart';
 import 'package:flutter_signin_button/button_view.dart';
+import 'package:global_net/ads/login_ads.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:nb_utils/nb_utils.dart';
@@ -20,10 +21,10 @@ import 'package:global_net/pages/auth/add_credit_to_account.dart';
 import 'package:global_net/pages/auth/create_account.dart';
 import 'package:global_net/pages/auth/forgotpass.dart';
 import 'package:global_net/pages/auth/signup_page.dart';
-import 'package:global_net/pages/home.dart';
+import 'package:global_net/pages/home/home.dart';
 import 'package:global_net/pages/menu/term_of_use.dart';
 import 'package:global_net/share_preference/preferences_key.dart';
-import 'package:global_net/widgets/anchored_adaptive_ads.dart';
+import 'package:global_net/ads/anchored_adaptive_ads.dart';
 import 'package:global_net/widgets/bezier_container.dart';
 import 'package:global_net/widgets/language_picker_widget_home.dart';
 import 'package:global_net/widgets/progress.dart';
@@ -149,7 +150,7 @@ class LoginPageState extends State<LoginPage> {
                   : Container(),
             ],
           ),
-          const AnchoredAd()
+          const LoginAds()
         ],
       ),
     );
@@ -158,19 +159,17 @@ class LoginPageState extends State<LoginPage> {
   _getUserData() async {
     User? user = _auth.currentUser;
     if (user != null) {
-      usersRef.doc(user.uid).get().then((peerData) {
-        if (peerData.exists) {
-          if (mounted) {
-            setState(() {
-              globalID = user.uid;
-              globalName = peerData['username'];
-              globalImage = peerData['photoUrl'];
-              globalBio = peerData['bio'];
-              globalCover = peerData['coverUrl'];
-              globalDisplayName = peerData['displayName'];
-              globalCredits = peerData['credit_points'];
-            });
-          }
+      usersRef.doc(user.uid).get().then((userData) {
+        if (userData.exists) {
+          setState(() {
+            globalID = user.uid;
+            globalName = userData['username'];
+            globalImage = userData['photoUrl'];
+            globalBio = userData['bio'];
+            globalCover = userData['coverUrl'];
+            globalDisplayName = userData['displayName'];
+            globalCredits = userData['credit_points'];
+          });
         }
       });
     }
@@ -308,8 +307,11 @@ class LoginPageState extends State<LoginPage> {
                   ),
                 );
               } else {
-                Navigator.of(context).pushReplacement(CupertinoPageRoute(
-                    builder: (context) => Home(userId: userId)));
+                Navigator.of(context).pushReplacement(
+                  CupertinoPageRoute(
+                    builder: (context) => Home(userId: userId),
+                  ),
+                );
               }
             } else {
               Navigator.of(context).pushReplacement(
@@ -340,7 +342,6 @@ class LoginPageState extends State<LoginPage> {
         final String recipientId = userId;
         final String body = message.notification?.body ?? '';
         if (recipientId == userId) {
-          print("Notification shown!");
           SnackBar snackbar = SnackBar(
               content: Text(
             body,
@@ -443,7 +444,6 @@ class LoginPageState extends State<LoginPage> {
         _dataEntry(userId, email);
       } else {
         createappleUserInFirestore(userId, email, name);
-        print('user does not exist');
       }
     });
   }

@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:nb_utils/nb_utils.dart';
 import 'package:global_net/models/user.dart';
 import 'package:global_net/pages/create_post/add_post.dart';
-import 'package:global_net/pages/home.dart';
+import 'package:global_net/pages/home/home.dart';
 import 'package:global_net/pages/auth/login_page.dart';
 import 'package:global_net/pages/create_post/pdf_upload.dart';
 import 'package:global_net/pages/create_post/upload.dart';
@@ -20,11 +20,16 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class PostBox extends StatefulWidget {
   final GloabalUser? currentUser;
+  final String userId;
 
-  const PostBox({Key? key, this.currentUser}) : super(key: key);
+  const PostBox({
+    Key? key,
+    this.currentUser,
+    required this.userId,
+  }) : super(key: key);
 
   @override
-  _PostBoxState createState() => _PostBoxState();
+  State createState() => _PostBoxState();
 }
 
 class _PostBoxState extends State<PostBox>
@@ -40,10 +45,6 @@ class _PostBoxState extends State<PostBox>
   bool isUploading = false;
   String postId = const Uuid().v4();
   List<XFile>? _imageFileList;
-
-  set _imageFile(XFile? value) {
-    _imageFileList = value == null ? null : [value];
-  }
 
   Future handleChooseFromGallery() async {
     final navigator = Navigator.of(context);
@@ -77,7 +78,6 @@ class _PostBoxState extends State<PostBox>
         vediofile = vediofile;
         if (pickedFile != null) {
           vediofile = File(pickedFile.path);
-          print(vediofile);
           await VideoCompress.setLogLevel(0);
           final MediaInfo? info = await VideoCompress.compressVideo(
             vediofile!.path,
@@ -85,7 +85,6 @@ class _PostBoxState extends State<PostBox>
             deleteOrigin: false,
             includeAudio: true,
           );
-          print(info!.path);
           if (info != null) {
             setState(() {
               newvediofile = File(info.path!);
@@ -214,26 +213,31 @@ class _PostBoxState extends State<PostBox>
                   child: Container(
                     child: IgnorePointer(
                       child: TextField(
-                          controller: captionController,
-                          decoration: InputDecoration(
-                              hintText:
-                                  AppLocalizations.of(context)!.whats_on_mind,
-                              contentPadding: const EdgeInsets.symmetric(
-                                  vertical: 4.0, horizontal: 25),
-                              // border: InputBorder.none,
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius:
-                                    const BorderRadius.all(Radius.circular(20)),
-                                borderSide: BorderSide(
-                                    color: Colors.grey.shade300, width: 1.0),
-                              ),
-                              filled: false)),
+                        controller: captionController,
+                        decoration: InputDecoration(
+                          hintText: AppLocalizations.of(context)!.whats_on_mind,
+                          contentPadding: const EdgeInsets.symmetric(
+                              vertical: 4.0, horizontal: 25),
+                          // border: InputBorder.none,
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius:
+                                const BorderRadius.all(Radius.circular(20)),
+                            borderSide: BorderSide(
+                                color: Colors.grey.shade300, width: 1.0),
+                          ),
+                          filled: false,
+                        ),
+                      ),
                     ),
                   ).onTap(() {
                     Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const AddPost()));
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => AddPost(
+                          userId: widget.userId,
+                        ),
+                      ),
+                    );
                   }),
                 ),
                 const SizedBox(width: 8.0),

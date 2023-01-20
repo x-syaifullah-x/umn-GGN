@@ -5,6 +5,8 @@ import 'package:global_net/app.dart';
 import 'package:global_net/gen/assets.gen.dart';
 
 class SplashScreen extends StatefulWidget {
+  static const route = "/";
+
   const SplashScreen({Key? key}) : super(key: key);
 
   @override

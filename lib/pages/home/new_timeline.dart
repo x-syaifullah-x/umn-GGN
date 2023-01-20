@@ -17,10 +17,10 @@ import 'package:paginate_firestore/paginate_firestore.dart';
 import 'package:share/share.dart';
 import 'package:global_net/data/reaction_data.dart';
 import 'package:global_net/models/user.dart';
-import 'package:global_net/pages/activity_feed.dart';
+import 'package:global_net/pages/home/activity_feed.dart';
 import 'package:global_net/pages/auth/login_page.dart';
 import 'package:global_net/pages/create_post/post_box.dart';
-import 'package:global_net/pages/home.dart';
+import 'package:global_net/pages/home/home.dart';
 import 'package:global_net/pages/post_screen.dart';
 import 'package:global_net/pages/post_screen_album.dart';
 import 'package:global_net/pages/story_list.dart';
@@ -29,7 +29,7 @@ import 'package:global_net/widgets/album_posts.dart';
 import 'package:global_net/widgets/count/comments_count.dart';
 import 'package:global_net/widgets/count/reaction_button.dart';
 import 'package:global_net/widgets/count/reactions_count.dart';
-import 'package:global_net/widgets/inline_adaptive_ads.dart';
+import 'package:global_net/ads/inline_adaptive_ads.dart';
 import 'package:global_net/widgets/multi_manager/flick_multi_manager.dart';
 import 'package:global_net/widgets/multi_manager/flick_multi_player.dart';
 import 'package:global_net/widgets/photo_grid.dart';
@@ -102,7 +102,7 @@ class NewTimelineState extends State<NewTimeline> {
             padding: EdgeInsets.zero,
             child: Column(
               children: [
-                PostBox(currentUser: currentUser),
+                PostBox(userId: userData),
                 const SizedBox(
                   height: 210,
                   child: StoryList(),
@@ -128,7 +128,7 @@ class NewTimelineState extends State<NewTimeline> {
           header: SliverToBoxAdapter(
             child: Column(
               children: [
-                PostBox(currentUser: currentUser),
+                PostBox(userId: userData),
                 const SizedBox(
                   height: 210,
                   child: StoryList(),
@@ -145,9 +145,12 @@ class NewTimelineState extends State<NewTimeline> {
                   Container(
                     height: 370,
                     color: Colors.yellow,
-                    child: const SuggestedUsersList(),
+                    child: SuggestedUsersList(
+                      userId: userData,
+                      scrollController: scrollController,
+                    ),
                   ),
-                  const InlineAdaptiveAds(),
+                  if (!kIsWeb) const InlineAdaptiveAds(),
                 ],
               );
             } else {
@@ -159,7 +162,7 @@ class NewTimelineState extends State<NewTimeline> {
                 color: Theme.of(c).cardColor,
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
+                  children: [
                     buildPostHeader(post),
                     buildPostImage(post),
                     buildPostFooter(post),
@@ -169,7 +172,7 @@ class NewTimelineState extends State<NewTimeline> {
             }
           },
           query: timelineRef
-              .doc(widget.userId)
+              .doc(userData)
               .collection('timelinePosts')
               .orderBy('timestamp', descending: true),
           isLive: true,
@@ -581,42 +584,48 @@ class NewTimelineState extends State<NewTimeline> {
   }
 
   Widget buildPostFooter(post) {
+    // Color? color = Theme.of(context).iconTheme.color;
+    Color? color = null;
     bool isPhoto = post['type'] == 'photo';
+    final postId = post['postId'];
+    final ownerId = post['ownerId'];
+
     return Container(
       padding: const EdgeInsets.all(8.0),
       child: Column(
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              reactionsCount(
-                postId: post['postId'],
-                ownerId: post['ownerId'],
+            children: [
+              ReactionsCount(
+                postId: postId,
+                ownerId: ownerId,
               ),
               Row(
-                children: <Widget>[
+                children: [
                   GestureDetector(
-                      onTap: () => showCommentsforalbum(
-                            context,
-                            postId: post['postId'],
-                            ownerId: post['ownerId'],
-                            // mediaUrl: post['mediaUrl'][0],
+                    onTap: () => showCommentsforalbum(
+                      context,
+                      postId: postId,
+                      ownerId: ownerId,
+                      // mediaUrl: post['mediaUrl'][0],
+                    ),
+                    child: Row(
+                      children: [
+                        SizedBox(
+                          child: CommentsCount(
+                            postId: postId,
                           ),
-                      child: Row(
-                        children: [
-                          SizedBox(
-                            child: CommentsCount(
-                              postId: post['postId'],
-                            ),
-                          ),
-                          const SizedBox(width: 5.0),
-                          Text(AppLocalizations.of(context)!.comments,
-                              style: TextStyle(
-                                fontSize: 14.0,
-                                color: Theme.of(context).iconTheme.color,
-                              )),
-                        ],
-                      )),
+                        ),
+                        const SizedBox(width: 5.0),
+                        Text(AppLocalizations.of(context)!.comments,
+                            style: TextStyle(
+                              fontSize: 14.0,
+                              color: color,
+                            )),
+                      ],
+                    ),
+                  ),
                   const SizedBox(width: 5.0),
                 ],
               ),
@@ -626,56 +635,47 @@ class NewTimelineState extends State<NewTimeline> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              isPhoto
-                  ? Row(
-                      children: <Widget>[
-                        ReactionButtonWidget(
-                          postId: post['postId'],
-                          ownerId: post['ownerId'],
-                          userId: widget.userId,
-                          reactions: reactions,
-                          mediaUrl: post['mediaUrl'][0],
+            children: [
+              Row(
+                children: [
+                  ReactionButtonWidget(
+                    postId: postId,
+                    ownerId: ownerId,
+                    userId: widget.userId,
+                    reactions: reactions,
+                    mediaUrl: isPhoto ? post['mediaUrl'][0] : null,
+                    color: color,
+                  ),
+                  const SizedBox(width: 5.0),
+                ],
+              ),
+              Row(
+                children: [
+                  GestureDetector(
+                    onTap: () => showCommentsforalbum(
+                      context,
+                      postId: postId,
+                      ownerId: ownerId,
+                      // mediaUrl: post['mediaUrl'][0],
+                    ),
+                    child: Row(
+                      children: [
+                        SvgPicture.asset(
+                          "assets/images/comment.svg",
+                          height: 20,
+                          color: color,
                         ),
                         const SizedBox(width: 5.0),
-                      ],
-                    )
-                  : Row(
-                      children: <Widget>[
-                        ReactionButtonWidget(
-                          postId: post['postId'],
-                          ownerId: post['ownerId'],
-                          userId: widget.userId,
-                          reactions: reactions,
-                          // mediaUrl: post['mediaUrl'],
+                        Text(
+                          AppLocalizations.of(context)!.comment,
+                          style: TextStyle(
+                            fontSize: 14.0,
+                            color: color,
+                          ),
                         ),
-                        const SizedBox(width: 5.0),
                       ],
                     ),
-              Row(
-                children: <Widget>[
-                  GestureDetector(
-                      onTap: () => showCommentsforalbum(
-                            context,
-                            postId: post['postId'],
-                            ownerId: post['ownerId'],
-                            // mediaUrl: post['mediaUrl'][0],
-                          ),
-                      child: Row(
-                        children: [
-                          SvgPicture.asset(
-                            "assets/images/comment.svg",
-                            height: 20,
-                            color: Theme.of(context).iconTheme.color,
-                          ),
-                          const SizedBox(width: 5.0),
-                          Text(AppLocalizations.of(context)!.comment,
-                              style: TextStyle(
-                                fontSize: 14.0,
-                                color: Theme.of(context).iconTheme.color,
-                              )),
-                        ],
-                      )),
+                  ),
                   const SizedBox(width: 5.0),
                 ],
               ),
@@ -688,13 +688,13 @@ class NewTimelineState extends State<NewTimeline> {
                           SvgPicture.asset(
                             "assets/images/share.svg",
                             height: 20,
-                            color: Theme.of(context).iconTheme.color,
+                            color: color,
                           ),
                           const SizedBox(width: 5.0),
                           Text(AppLocalizations.of(context)!.share,
                               style: TextStyle(
                                 fontSize: 14.0,
-                                color: Theme.of(context).iconTheme.color,
+                                color: color,
                               )),
                         ],
                       )),
@@ -709,7 +709,7 @@ class NewTimelineState extends State<NewTimeline> {
     );
   }
 
-  reportSheet(BuildContext context, post) {
+  void reportSheet(BuildContext context, post) {
     showModalBottomSheet(
       backgroundColor: Theme.of(context).canvasColor,
       shape: const RoundedRectangleBorder(
@@ -838,7 +838,7 @@ class NewTimelineState extends State<NewTimeline> {
     });
   }
 
-  deletePost(post) async {
+  void deletePost(post) async {
     bool isPdf = post['type'] == 'pdf';
     bool isVide = post['type'] == 'video';
     bool isPhoto = post['type'] == 'photo';
@@ -882,7 +882,7 @@ class NewTimelineState extends State<NewTimeline> {
     });
   }
 
-  hidePost(post) async {
+  void hidePost(post) async {
     timelineRef
         .doc(widget.userId)
         .collection('timelinePosts')
@@ -895,7 +895,7 @@ class NewTimelineState extends State<NewTimeline> {
     });
   }
 
-  _onShare(post, BuildContext context) async {
+  void _onShare(post, BuildContext context) async {
     bool hasdesc = post['description']?.isNotEmpty == true;
     bool isPdf = post['type'] == 'pdf';
     bool isVide = post['type'] == 'video';
@@ -923,7 +923,7 @@ class NewTimelineState extends State<NewTimeline> {
     }
   }
 
-  handleDeletePosts(BuildContext parentConext, post) {
+  Future handleDeletePosts(BuildContext parentConext, post) {
     return showDialog(
         context: parentConext,
         builder: (context) {
@@ -949,7 +949,7 @@ class NewTimelineState extends State<NewTimeline> {
         });
   }
 
-  handleHidePosts(BuildContext parentConext, post) {
+  Future handleHidePosts(BuildContext parentConext, post) {
     return showDialog(
         context: parentConext,
         builder: (context) {
@@ -975,7 +975,7 @@ class NewTimelineState extends State<NewTimeline> {
         });
   }
 
-  handleReportPosts(BuildContext parentConext, post) {
+  Future handleReportPosts(BuildContext parentConext, post) {
     return showDialog(
         context: parentConext,
         builder: (context) {
@@ -1001,7 +1001,7 @@ class NewTimelineState extends State<NewTimeline> {
         });
   }
 
-  reportPost(post) async {
+  void reportPost(post) async {
     reportsRef.doc(post['postId']).set({});
     simpleworldtoast("", "Post was reported to Admin", context);
   }

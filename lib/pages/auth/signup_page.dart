@@ -5,7 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:global_net/models/user.dart';
-import 'package:global_net/pages/home.dart';
+import 'package:global_net/pages/home/home.dart';
 import 'package:global_net/pages/auth/login_page.dart';
 import 'package:global_net/pages/auth/signup_page2.dart';
 import 'package:global_net/pages/webview/webview.dart';

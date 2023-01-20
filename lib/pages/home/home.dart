@@ -5,18 +5,18 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:global_net/ads/ads.dart';
-import 'package:global_net/widgets/exchange_rates_data_widget.dart';
+import 'package:global_net/exchange_rates/widgets/exchange_rates_data_widget.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:iconly/iconly.dart';
 import 'package:global_net/data/reaction_data.dart' as reaction;
 import 'package:global_net/models/user.dart';
-import 'package:global_net/pages/activity_feed.dart';
-import 'package:global_net/pages/menu/settings.dart';
-import 'package:global_net/pages/new_timeline.dart';
-import 'package:global_net/pages/profile.dart';
+import 'package:global_net/pages/home/activity_feed.dart';
+import 'package:global_net/pages/home/settings.dart';
+import 'package:global_net/pages/home/new_timeline.dart';
+import 'package:global_net/pages/home/profile.dart';
 import 'package:global_net/pages/search.dart';
-import 'package:global_net/pages/users.dart';
+import 'package:global_net/pages/home/users.dart';
 import 'package:global_net/widgets/circle_button.dart';
 import 'package:global_net/widgets/count/feeds_count.dart';
 import 'package:global_net/widgets/count/messages_count.dart';
@@ -44,9 +44,9 @@ final reportsRef = FirebaseFirestore.instance.collection('reports');
 final DateTime timestamp = DateTime.now();
 
 class Home extends StatefulWidget {
-  final String? userId;
-
   const Home({Key? key, this.userId}) : super(key: key);
+
+  final String? userId;
 
   @override
   HomeState createState() => HomeState();

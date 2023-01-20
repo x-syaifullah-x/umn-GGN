@@ -2,7 +2,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:nb_utils/src/extensions/widget_extensions.dart';
 import 'package:global_net/widgets/bezier_container.dart';
 import 'package:global_net/widgets/progress.dart';
 import 'package:global_net/widgets/simple_world_widgets.dart';
@@ -130,20 +129,24 @@ class ForgetPassState extends State<ForgetPass> {
               begin: Alignment.centerLeft,
               end: Alignment.centerRight,
               colors: [Colors.red.shade500, Colors.red.shade900])),
-      child: const Text(
-        'Next',
-        style: TextStyle(fontSize: 20, color: Colors.white),
+      child: InkWell(
+        child: const Text(
+          'Next',
+          style: TextStyle(fontSize: 20, color: Colors.white),
+        ),
+        onTap: () {
+          if (emailController.text.trim() != "") {
+            _signInWithEmailAndPassword();
+          } else {
+            simpleworldtoast(
+              "Error",
+              "Please, Enter your Email Address for reset your password",
+              context,
+            );
+          }
+        },
       ),
-    ).onTap(() {
-      if (emailController.text.trim() != "") {
-        _signInWithEmailAndPassword();
-      } else {
-        simpleworldtoast(
-            "Error",
-            "Please, Enter your Email Address for reset your password",
-            context);
-      }
-    });
+    );
   }
 
   Widget _backButton() {

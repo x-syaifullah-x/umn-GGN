@@ -1,29 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:paginate_firestore/paginate_firestore.dart';
-import 'package:global_net/models/user.dart';
-import 'package:global_net/pages/home.dart';
-import 'package:global_net/widgets/simple_world_widgets.dart';
+import 'package:global_net/pages/home/home.dart';
 import 'package:global_net/widgets/suggested_users_tile.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class SuggestedUsersList extends StatefulWidget {
-  final GloabalUser? currentUser;
-
   const SuggestedUsersList({
     Key? key,
-    this.currentUser,
+    required this.userId,
+    this.scrollController,
   }) : super(key: key);
 
+  final String userId;
+  final ScrollController? scrollController;
+
   @override
-  _SuggestedUsersListState createState() => _SuggestedUsersListState();
+  State createState() => _SuggestedUsersListState();
 }
 
 class _SuggestedUsersListState extends State<SuggestedUsersList>
     with AutomaticKeepAliveClientMixin<SuggestedUsersList> {
-  String userOrientation = "grid";
   bool isFollowing = false;
   bool isLoading = false;
-  final String? currentUserId = globalID;
 
   @override
   void initState() {
@@ -36,7 +34,7 @@ class _SuggestedUsersListState extends State<SuggestedUsersList>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-
+    ScrollController controller = ScrollController();
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
@@ -54,21 +52,27 @@ class _SuggestedUsersListState extends State<SuggestedUsersList>
               ),
         ),
       ),
-      body: PaginateFirestore(
-        itemBuilderType: PaginateBuilderType.listView,
-        scrollDirection: Axis.horizontal,
-        itemBuilder: (context, documentSnapshot, index) {
-          final userdoc = documentSnapshot[index].data() as Map?;
-          final bool isAuthUser = currentUserId == userdoc!['id'];
-
-          if (isAuthUser) {
-            return const Text('');
-          }
-
-          return SuggestedUserTile(userdoc);
-        },
-        query: usersRef.orderBy('timestamp', descending: true),
-        isLive: true,
+      body: RawScrollbar(
+        controller: controller,
+        interactive: true,
+        // thumbVisibility: true,
+        // trackVisibility: true,
+        radius: const Radius.circular(20),
+        child: PaginateFirestore(
+          scrollController: controller,
+          itemBuilderType: PaginateBuilderType.listView,
+          scrollDirection: Axis.horizontal,
+          itemBuilder: (context, documentSnapshot, index) {
+            final userdoc = documentSnapshot[index].data() as Map?;
+            final bool isAuthUser = widget.userId == userdoc!['id'];
+            if (isAuthUser) {
+              return const Text('');
+            }
+            return SuggestedUserTile(userdoc);
+          },
+          query: usersRef.orderBy('timestamp', descending: true),
+          isLive: true,
+        ),
       ),
     );
   }

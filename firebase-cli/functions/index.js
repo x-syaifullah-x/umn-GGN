@@ -5,9 +5,10 @@ admin.initializeApp();
 // // Create and Deploy Your First Cloud Functions
 // // https://firebase.google.com/docs/functions/write-firebase-functions
 //
-// exports.helloWorld = functions.https.onRequest((request, response) => {
-//  response.send("Hello from Firebase!");
-// });
+exports.test = functions.https.onRequest(async (request, response) => {
+  response.send("Hello from Firebase!");
+});
+
 exports.onCreateFollower = functions.firestore
   .document("/followers/{userId}/userFollowers/{followerId}")
   .onCreate(async (snapshot, context) => {
@@ -65,7 +66,7 @@ exports.onDeleteFollower = functions.firestore
     });
   });
 
- // when a post is created, add post to timeline of each follower (of post owner)
+// when a post is created, add post to timeline of each follower (of post owner)
 exports.onCreatePost = functions.firestore
   .document("/posts/{userId}/userPosts/{postId}")
   .onCreate(async (snapshot, context) => {
@@ -94,7 +95,7 @@ exports.onCreatePost = functions.firestore
         .set(postCreated);
     });
   });
-  
+
 
 exports.onUpdatePost = functions.firestore
   .document("/posts/{userId}/userPosts/{postId}")
@@ -162,7 +163,7 @@ exports.onDeletePost = functions.firestore
         });
     });
   });
-  
+
 exports.onCreateActivityFeedItem = functions.firestore
   .document("/feed/{userId}/feedItems/{activityFeedItem}")
   .onCreate(async (snapshot, context) => {
@@ -190,9 +191,8 @@ exports.onCreateActivityFeedItem = functions.firestore
       // 3) switch body value based off of notification type
       switch (activityFeedItem.type) {
         case "comment":
-          body = `${activityFeedItem.username} Commented on your post: ${
-            activityFeedItem.commentData
-          }`;
+          body = `${activityFeedItem.username} Commented on your post: ${activityFeedItem.commentData
+            }`;
           break;
         case "like":
           body = `${activityFeedItem.username} liked your post`;
@@ -201,9 +201,8 @@ exports.onCreateActivityFeedItem = functions.firestore
           body = `${activityFeedItem.username} started following you`;
           break;
         case "message":
-          body = `You have a message from ${activityFeedItem.username}: ${
-            activityFeedItem.contentMessage
-          }`;
+          body = `You have a message from ${activityFeedItem.username}: ${activityFeedItem.contentMessage
+            }`;
           break;
         default:
           break;

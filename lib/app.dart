@@ -13,7 +13,7 @@ import 'package:global_net/config/palette.dart';
 import 'package:global_net/l10n/l10n.dart';
 import 'package:global_net/pages/WalkThroughScreen.dart';
 import 'package:global_net/pages/auth/login_page.dart';
-import 'package:global_net/pages/home.dart';
+import 'package:global_net/pages/home/home.dart';
 import 'package:global_net/provider/locale_provider.dart';
 import 'package:global_net/share_preference/preferences_key.dart';
 import 'package:global_net/widgets/simple_world_widgets.dart';

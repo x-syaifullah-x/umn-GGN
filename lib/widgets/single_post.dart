@@ -12,9 +12,9 @@ import 'package:link_preview_generator/link_preview_generator.dart';
 import 'package:share/share.dart';
 import 'package:global_net/data/reaction_data.dart';
 import 'package:global_net/models/user.dart';
-import 'package:global_net/pages/activity_feed.dart';
+import 'package:global_net/pages/home/activity_feed.dart';
 import 'package:global_net/pages/comments_album.dart';
-import 'package:global_net/pages/home.dart';
+import 'package:global_net/pages/home/home.dart';
 import 'package:global_net/pages/post_screen.dart';
 import 'package:global_net/pages/post_screen_album.dart';
 import 'package:global_net/widgets/count/comments_count.dart';
@@ -552,7 +552,7 @@ class _SinglePostState extends State<SinglePost> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
-              reactionsCount(
+              ReactionsCount(
                 postId: postId,
                 ownerId: ownerId,
               ),

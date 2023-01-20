@@ -15,7 +15,7 @@ import 'package:intl/intl.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:nb_utils/nb_utils.dart';
 import 'package:global_net/config/size_config.dart';
-import 'package:global_net/pages/home.dart';
+import 'package:global_net/pages/home/home.dart';
 import 'package:global_net/widgets/chat_appbar.dart';
 import 'package:global_net/widgets/full_image_widget.dart';
 import 'package:global_net/widgets/progress.dart';

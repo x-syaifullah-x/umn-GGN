@@ -15,8 +15,11 @@ class $AssetsHtmlGen {
   /// File path: assets/html/adsense.html
   String get adsense => 'assets/html/adsense.html';
 
+  /// File path: assets/html/login_ads.html
+  String get loginAds => 'assets/html/login_ads.html';
+
   /// List of all assets
-  List<String> get values => [adsense];
+  List<String> get values => [adsense, loginAds];
 }
 
 class $AssetsImagesGen {

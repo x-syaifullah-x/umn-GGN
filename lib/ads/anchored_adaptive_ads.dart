@@ -1,7 +1,6 @@
-import 'dart:io';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:global_net/ads/adunit_id.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 class AnchoredAd extends StatefulWidget {
@@ -67,24 +66,22 @@ class AnchoredAdState extends State<AnchoredAd> {
       return;
     }
 
-    // _anchoredAdaptiveAd = BannerAd(
-    //   adUnitId: Platform.isAndroid
-    //       ? 'ca-app-pub-6893234291134320/6968645751'
-    //       : 'ca-app-pub-5132780917564352/9977646966',
-    //   size: size,
-    //   request: const AdRequest(),
-    //   listener: BannerAdListener(
-    //     onAdLoaded: (Ad ad) {
-    //       setState(() {
-    //         _anchoredAdaptiveAd = ad as BannerAd;
-    //         _isLoaded = true;
-    //       });
-    //     },
-    //     onAdFailedToLoad: (Ad ad, LoadAdError error) {
-    //       ad.dispose();
-    //     },
-    //   ),
-    // );
+    _anchoredAdaptiveAd = BannerAd(
+      adUnitId: adUnitId,
+      size: size,
+      request: const AdRequest(),
+      listener: BannerAdListener(
+        onAdLoaded: (Ad ad) {
+          setState(() {
+            _anchoredAdaptiveAd = ad as BannerAd;
+            _isLoaded = true;
+          });
+        },
+        onAdFailedToLoad: (Ad ad, LoadAdError error) {
+          ad.dispose();
+        },
+      ),
+    );
 
     return _anchoredAdaptiveAd?.load();
   }

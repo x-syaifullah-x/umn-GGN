@@ -1,9 +1,8 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:global_net/ads/adunit_id.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
-import 'package:nb_utils/nb_utils.dart';
-import 'package:nb_utils/nb_utils.dart';
 
 class InlineAdaptiveAds extends StatefulWidget {
   const InlineAdaptiveAds({Key? key}) : super(key: key);
@@ -39,19 +38,14 @@ class InlineAdaptiveAdsState extends State<InlineAdaptiveAds> {
         _adWidth.truncate());
 
     _inlineAdaptiveAd = AdManagerBannerAd(
-      adUnitId: Platform.isAndroid
-          ? 'ca-app-pub-6893234291134320/6968645751'
-          : 'ca-app-pub-5132780917564352/9977646966',
+      adUnitId: adUnitId,
       sizes: [size],
       request: const AdManagerAdRequest(),
       listener: AdManagerBannerAdListener(
         onAdLoaded: (Ad ad) async {
-          print('Inline adaptive banner loaded: ${ad.responseInfo}');
-
           AdManagerBannerAd bannerAd = (ad as AdManagerBannerAd);
           final AdSize? size = await bannerAd.getPlatformAdSize();
           if (size == null) {
-            print('Error: getPlatformAdSize() returned null for $bannerAd');
             return;
           }
 
@@ -62,7 +56,6 @@ class InlineAdaptiveAdsState extends State<InlineAdaptiveAds> {
           });
         },
         onAdFailedToLoad: (Ad ad, LoadAdError error) {
-          print('Inline adaptive banner failedToLoad: $error');
           ad.dispose();
         },
       ),
@@ -78,13 +71,14 @@ class InlineAdaptiveAdsState extends State<InlineAdaptiveAds> {
             _isLoaded &&
             _adSize != null) {
           return Align(
-              child: Container(
-            width: _adWidth,
-            height: _adSize!.height.toDouble(),
-            child: AdWidget(
-              ad: _inlineAdaptiveAd!,
+            child: SizedBox(
+              width: _adWidth,
+              height: _adSize!.height.toDouble(),
+              child: AdWidget(
+                ad: _inlineAdaptiveAd!,
+              ),
             ),
-          ));
+          );
         }
         if (_currentOrientation != orientation) {
           _currentOrientation = orientation;

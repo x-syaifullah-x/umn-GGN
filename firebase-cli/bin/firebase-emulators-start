@@ -1,0 +1,8 @@
+#! /bin/bash
+
+npx kill-port 8086 &>/dev/null
+
+# export GOOGLE_APPLICATION_CREDENTIALS="${PWD}/adminsdk.json"
+
+# exec firebase emulators:start --only auth,functions,firestore,hosting,storage,ui $@
+exec firebase emulators:start

@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:global_net/pages/chat/search_page.dart';
-import 'package:global_net/pages/home.dart';
+import 'package:global_net/pages/home/home.dart';
 import 'package:global_net/services/database_service.dart';
 import 'package:global_net/widgets/group_tile.dart';
 import 'package:global_net/widgets/simple_world_widgets.dart';

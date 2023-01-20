@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:global_net/data/repository/convert_response.dart';
-import 'package:global_net/data/repository/exchange_rates_data.dart';
-import 'package:global_net/data/repository/symbols_response.dart';
+import 'package:global_net/exchange_rates/data/repository/response/convert_response.dart';
+import 'package:global_net/exchange_rates/data/repository/exchange_rates_repository.dart';
+import 'package:global_net/exchange_rates/data/repository/response/symbol_response.dart';
 import 'package:intl/intl.dart';
 
 class ExchangeratesDataWidget extends StatefulWidget {
@@ -17,15 +17,15 @@ class ExchangeratesDataWidget extends StatefulWidget {
   State<StatefulWidget> createState() => _State();
 }
 
-typedef OnDropDownChange = Function(SymbolsResponse);
+typedef OnDropDownChange = Function(SymbolResponse);
 typedef OnTextChange = Function(String);
 
 class _State extends State<ExchangeratesDataWidget> {
   final TextEditingController textEditController = TextEditingController();
 
-  late Future<List<SymbolsResponse>> _symbls;
-  late SymbolsResponse _dropDownValueOne;
-  late SymbolsResponse _dropDownValueTwo;
+  late Future<List<SymbolResponse>> _symbls;
+  late SymbolResponse _dropDownValueOne;
+  late SymbolResponse _dropDownValueTwo;
   late String date;
   late double rate;
 
@@ -41,23 +41,23 @@ class _State extends State<ExchangeratesDataWidget> {
     _symbls = _getSymbols();
   }
 
-  Future<List<SymbolsResponse>> _getSymbols() async {
+  Future<List<SymbolResponse>> _getSymbols() async {
     final ExchangeratesRepository repo = ExchangeratesRepository.instance;
-    final List<SymbolsResponse> resultSymbols = await repo.getSymbols();
+    final List<SymbolResponse> resultSymbols = await repo.getSymbols();
     _dropDownValueOne =
-        resultSymbols.firstWhere((element) => element.key == "USD");
+        resultSymbols.firstWhere((element) => element.code == "USD");
     _dropDownValueTwo =
-        resultSymbols.firstWhere((element) => element.key == "CNY");
+        resultSymbols.firstWhere((element) => element.code == "CNY");
     String amount = "1";
     _textEditingControllerOne.text = amount;
     final ConvertResponse resultConvert = await repo.convert(
-      from: _dropDownValueOne.key,
-      to: _dropDownValueTwo.key,
+      from: _dropDownValueOne.code,
+      to: _dropDownValueTwo.code,
       amount: amount,
     );
     _textEditingControllerTwo.text = "${resultConvert.result}";
-    rate = resultConvert.rate;
-    date = _dateFormat(resultConvert.timestamp);
+    rate = resultConvert.info.rate;
+    date = _dateFormat(resultConvert.info.timestamp);
     return resultSymbols;
   }
 
@@ -88,8 +88,8 @@ class _State extends State<ExchangeratesDataWidget> {
                 return _error(widget.widthParent, '${snapshot.error}');
               }
 
-              final List<SymbolsResponse> result =
-                  snapshot.data as List<SymbolsResponse>;
+              final List<SymbolResponse> result =
+                  snapshot.data as List<SymbolResponse>;
               const double cardMargin = 6;
               final double cardWidth = widget.widthParent - (cardMargin * 2);
               return Column(
@@ -109,7 +109,7 @@ class _State extends State<ExchangeratesDataWidget> {
                               Text(
                                 _textEditingControllerOne.text +
                                     " " +
-                                    _dropDownValueOne.value +
+                                    _dropDownValueOne.currency +
                                     " equals",
                                 style: TextStyle(
                                     fontWeight: FontWeight.bold, fontSize: 12),
@@ -120,7 +120,7 @@ class _State extends State<ExchangeratesDataWidget> {
                               Text(
                                 _textEditingControllerTwo.text +
                                     " " +
-                                    _dropDownValueTwo.value,
+                                    _dropDownValueTwo.currency,
                                 style: TextStyle(
                                     fontWeight: FontWeight.bold, fontSize: 16),
                               ),
@@ -138,15 +138,15 @@ class _State extends State<ExchangeratesDataWidget> {
                             if (value == _dropDownValueOne) return;
                             final convert =
                                 ExchangeratesRepository.instance.convert(
-                              from: value.key,
-                              to: _dropDownValueTwo.key,
+                              from: value.code,
+                              to: _dropDownValueTwo.code,
                               amount: _textEditingControllerOne.text,
                             );
                             convert.then((response) {
                               setState(() {
                                 _dropDownValueOne = value;
-                                rate = response.rate;
-                                date = _dateFormat(response.timestamp);
+                                rate = response.info.rate;
+                                date = _dateFormat(response.info.timestamp);
                                 _textEditingControllerTwo.text =
                                     "${response.result}";
                               });
@@ -174,15 +174,15 @@ class _State extends State<ExchangeratesDataWidget> {
                             final amount = _textEditingControllerTwo.text;
                             final convert =
                                 ExchangeratesRepository.instance.convert(
-                              from: value.key,
-                              to: _dropDownValueOne.key,
+                              from: value.code,
+                              to: _dropDownValueOne.code,
                               amount: amount,
                             );
                             convert.then((response) {
                               try {
                                 _dropDownValueTwo = value;
                                 rate = double.parse(amount) / response.result;
-                                date = _dateFormat(response.timestamp);
+                                date = _dateFormat(response.info.timestamp);
                                 setState(() {
                                   _textEditingControllerOne.text =
                                       "${response.result}";
@@ -293,8 +293,8 @@ class _State extends State<ExchangeratesDataWidget> {
 
   Widget _input({
     required width,
-    required SymbolsResponse dropDownValue,
-    required List<SymbolsResponse> items,
+    required SymbolResponse dropDownValue,
+    required List<SymbolResponse> items,
     TextEditingController? textEditingController,
     OnDropDownChange? onDropDownChange,
     OnTextChange? onTextChange,
@@ -358,12 +358,12 @@ class _State extends State<ExchangeratesDataWidget> {
                   .map((e) => DropdownMenuItem(
                         value: e,
                         child: Text(
-                          e.key,
+                          e.code,
                         ),
                       ))
                   .toList(),
               onChanged: (value) {
-                if (value is SymbolsResponse) {
+                if (value is SymbolResponse) {
                   onDropDownChange?.call(value);
                 }
               },

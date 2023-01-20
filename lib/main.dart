@@ -1,10 +1,13 @@
 import 'package:adaptive_theme/adaptive_theme.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:global_net/constant/constant.dart';
 import 'package:global_net/firebase_options.dart';
-import 'package:global_net/widgets/simple_world_widgets.dart';
+import 'package:global_net/pages/home/home.dart';
+import 'package:global_net/exchange_rates/widgets/exchange_rates_widget.dart';
 import 'package:global_net/widgets/splashscreen.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:nb_utils/nb_utils.dart';
@@ -16,10 +19,12 @@ Future<void> main() async {
   final savedThemeMode = await AdaptiveTheme.getThemeMode();
 
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  // const host = '192.168.42.1';
-  // FirebaseAuth.instance.useAuthEmulator(host, 9099);
-  // FirebaseFirestore.instance.useFirestoreEmulator(host, 8080);
-  // FirebaseStorage.instance.useStorageEmulator(host, 9199);
+  if (kDebugMode) {
+    const host = 'localhost';
+    FirebaseAuth.instance.useAuthEmulator(host, 9099);
+    FirebaseFirestore.instance.useFirestoreEmulator(host, 8080);
+    FirebaseStorage.instance.useStorageEmulator(host, 9199);
+  }
 
   if (!kIsWeb) {
     MobileAds.instance.initialize();
@@ -39,8 +44,9 @@ Future<void> main() async {
       MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'Global Net',
-        home: const SplashScreen(),
+        initialRoute: SplashScreen.route,
         routes: {
+          SplashScreen.route: (BuildContext context) => const SplashScreen(),
           App.route: (BuildContext context) => App(prefs, savedThemeMode),
         },
       ),

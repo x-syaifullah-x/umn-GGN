@@ -87,8 +87,7 @@ class SimpleWorldStories extends StatefulWidget {
       this.languageCode = 'en'});
 
   @override
-  _SimpleWorldStoriesStoriesState createState() =>
-      _SimpleWorldStoriesStoriesState();
+  State createState() => _SimpleWorldStoriesStoriesState();
 }
 
 class _SimpleWorldStoriesStoriesState extends State<SimpleWorldStories> {
@@ -222,7 +221,6 @@ class _SimpleWorldStoriesStoriesState extends State<SimpleWorldStories> {
 
   @override
   Widget build(BuildContext context) {
-    String? res = ModalRoute.of(context)!.settings.arguments as String?;
     return Container(
       margin: const EdgeInsets.only(
         top: 10,

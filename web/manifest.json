@@ -1,6 +1,6 @@
 {
-    "name": "simpleworld",
-    "short_name": "simpleworld",
+    "name": "Global Net",
+    "short_name": "Global Net",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

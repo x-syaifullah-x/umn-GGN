@@ -2,22 +2,22 @@ import 'dart:convert';
 
 import 'package:nb_utils/nb_utils.dart';
 
-class SymbolsResponse {
-  final String key;
-  final String value;
+class SymbolResponse {
+  final String code;
+  final String currency;
 
-  SymbolsResponse({
-    required this.key,
-    required this.value,
+  SymbolResponse({
+    required this.code,
+    required this.currency,
   });
 
-  static List<SymbolsResponse> from(String responseBody) {
+  static List<SymbolResponse> from(String responseBody) {
     try {
       final dynamic jsonResponseBody = jsonDecode(responseBody);
       // final success = jsonResponseBody['success'];
       final Map<dynamic, dynamic> symbols = jsonResponseBody['symbols'];
       return symbols.entries
-          .map((e) => SymbolsResponse(key: e.key, value: e.value))
+          .map((e) => SymbolResponse(code: e.key, currency: e.value))
           .toList();
     } catch (e) {
       onError(e);
@@ -27,6 +27,6 @@ class SymbolsResponse {
 
   @override
   String toString() {
-    return key + value;
+    return code + currency;
   }
 }
