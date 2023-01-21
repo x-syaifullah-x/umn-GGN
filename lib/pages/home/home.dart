@@ -16,7 +16,7 @@ import 'package:global_net/pages/home/settings.dart';
 import 'package:global_net/pages/home/new_timeline.dart';
 import 'package:global_net/pages/home/profile.dart';
 import 'package:global_net/pages/search.dart';
-import 'package:global_net/pages/home/users.dart';
+import 'package:global_net/pages/home/users/users.dart';
 import 'package:global_net/widgets/circle_button.dart';
 import 'package:global_net/widgets/count/feeds_count.dart';
 import 'package:global_net/widgets/count/messages_count.dart';

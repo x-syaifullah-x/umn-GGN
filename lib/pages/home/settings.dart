@@ -24,7 +24,7 @@ import 'package:global_net/pages/menu/all_stories.dart';
 import 'package:global_net/pages/menu/dialogs/vip_dialog.dart';
 import 'package:global_net/pages/menu/discover.dart';
 import 'package:global_net/pages/menu/help_support.dart';
-import 'package:global_net/pages/home/users.dart';
+import 'package:global_net/pages/home/users/users.dart';
 import 'package:global_net/share_preference/preferences_key.dart';
 import 'package:global_net/widgets/header.dart';
 import 'package:global_net/widgets/language_picker_widget.dart';

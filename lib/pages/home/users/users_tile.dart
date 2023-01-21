@@ -176,60 +176,58 @@ class UserTileState extends State<UserTile> {
               overflow: TextOverflow.ellipsis,
             ),
             Row(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
+              children: [
                 if (!isProfileOwner)
-                  Container(
-                    margin: const EdgeInsets.only(top: 10.0),
-                    height: 30,
-                    width: (context.width() - (3 * 16)) *
-                        (isWeb || (MediaQuery.of(context).size.width > 600)
-                            ? 0.1
-                            : 0.2),
-                    decoration: const BoxDecoration(
-                      color: Color(0xffE5E6EB),
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(5.0),
+                  Expanded(
+                    child: Container(
+                      margin: const EdgeInsets.only(
+                        top: 10.0,
+                        left: 4,
+                        right: 4,
                       ),
-                    ),
-                    child: Center(
-                      child: Text(
-                        AppLocalizations.of(context)!.message,
-                        textAlign: TextAlign.left,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.w600,
-                          fontSize: 12,
-                          letterSpacing: 0.0,
-                          color: Colors.black,
+                      height: 30,
+                      decoration: const BoxDecoration(
+                        color: Color(0xffE5E6EB),
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(5.0),
                         ),
                       ),
-                    ),
-                  ).onTap(() {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => Chat(
-                          receiverId: user.id,
-                          receiverAvatar: user.photoUrl,
-                          receiverName: user.username,
-                          key: null,
+                      child: Center(
+                        child: Text(
+                          AppLocalizations.of(context)!.message,
+                          textAlign: TextAlign.left,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 12,
+                            letterSpacing: 0.0,
+                            color: Colors.black,
+                          ),
                         ),
                       ),
-                    );
-                  }),
-                const SizedBox(width: 5),
+                    ).onTap(() {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => Chat(
+                            receiverId: user.id,
+                            receiverAvatar: user.photoUrl,
+                            receiverName: user.username,
+                            key: null,
+                          ),
+                        ),
+                      );
+                    }),
+                  ),
                 if (!isProfileOwner)
-                  Container(
+                  Expanded(
                     child: isFollowing
                         ? Container(
-                            margin: const EdgeInsets.only(top: 10.0),
+                            margin: const EdgeInsets.only(
+                              top: 10.0,
+                              left: 4,
+                              right: 4,
+                            ),
                             height: 30,
-                            width: (context.width() - (3 * 16)) *
-                                (isWeb ||
-                                        (MediaQuery.of(context).size.width >
-                                            600)
-                                    ? 0.1
-                                    : 0.2),
                             decoration: BoxDecoration(
                               color: Colors.redAccent[700],
                               borderRadius: const BorderRadius.all(
@@ -252,14 +250,12 @@ class UserTileState extends State<UserTile> {
                             handleUnfollowUser();
                           })
                         : Container(
-                            margin: const EdgeInsets.only(top: 10.0),
+                            margin: const EdgeInsets.only(
+                              top: 10.0,
+                              left: 4,
+                              right: 4,
+                            ),
                             height: 30,
-                            width: (context.width() - (3 * 16)) *
-                                (isWeb ||
-                                        (MediaQuery.of(context).size.width >
-                                            600)
-                                    ? 0.1
-                                    : 0.2),
                             decoration: BoxDecoration(
                               color: Colors.blue[700],
                               borderRadius: const BorderRadius.all(
@@ -283,7 +279,7 @@ class UserTileState extends State<UserTile> {
                           }),
                   ),
               ],
-            ),
+            )
           ],
         );
       },

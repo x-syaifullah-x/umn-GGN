@@ -2,12 +2,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:global_net/pages/home/users/ads.dart';
 import 'package:paginate_firestore/bloc/pagination_listeners.dart';
 import 'package:paginate_firestore/paginate_firestore.dart';
 import 'package:global_net/pages/home/home.dart';
 import 'package:global_net/widgets/header.dart';
 import 'package:global_net/widgets/simple_world_widgets.dart';
-import 'package:global_net/widgets/users_tile.dart';
+import 'package:global_net/pages/home/users/users_tile.dart';
 
 class UsersList extends StatefulWidget {
   final String? userId;
@@ -68,21 +69,28 @@ class UsersListState extends State<UsersList>
         thumbVisibility: !kIsWeb && widthMoreThan_500,
         trackVisibility: !kIsWeb && widthMoreThan_500,
         radius: const Radius.circular(20),
-        child: RefreshIndicator(
-            child: PaginateFirestore(
-              scrollController: scrollController,
-              shrinkWrap: true,
-              itemBuilderType: PaginateBuilderType.gridView,
-              itemBuilder: (context, documentSnapshot, index) {
-                final userDoc = documentSnapshot[index].data() as Map?;
-                return UserTile(userDoc);
-              },
-              query: usersRef.orderBy('timestamp', descending: true),
-              isLive: true,
+        child: Column(
+          children: [
+            Expanded(
+              child: RefreshIndicator(
+                  child: PaginateFirestore(
+                    scrollController: scrollController,
+                    shrinkWrap: true,
+                    itemBuilderType: PaginateBuilderType.gridView,
+                    itemBuilder: (context, documentSnapshot, index) {
+                      final userDoc = documentSnapshot[index].data() as Map?;
+                      return UserTile(userDoc);
+                    },
+                    query: usersRef.orderBy('timestamp', descending: true),
+                    isLive: true,
+                  ),
+                  onRefresh: () async {
+                    refreshChangeListener.refreshed = true;
+                  }),
             ),
-            onRefresh: () async {
-              refreshChangeListener.refreshed = true;
-            }),
+            const AdsWidget()
+          ],
+        ),
       ),
     );
   }

@@ -12,7 +12,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:nb_utils/nb_utils.dart';
 import 'package:global_net/models/user.dart';
-import 'package:global_net/pages/auth/login_page.dart';
 import 'package:global_net/pages/chat/simpleworld_chat.dart';
 import 'package:global_net/pages/comming_soon_page.dart';
 import 'package:global_net/pages/create_post/post_box.dart';
@@ -420,13 +419,11 @@ class ProfileState extends State<Profile> {
         .collection('userFollowers')
         .doc(currentUserId)
         .set({'userId': currentUserId});
-    ;
     followingRef
         .doc(currentUserId)
         .collection('userFollowing')
         .doc(widget.profileId)
         .set({'userId': widget.profileId});
-    ;
     activityFeedRef
         .doc(widget.profileId)
         .collection('feedItems')

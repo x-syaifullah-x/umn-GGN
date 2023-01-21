@@ -6,8 +6,6 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:global_net/firebase_options.dart';
-import 'package:global_net/pages/home/home.dart';
-import 'package:global_net/exchange_rates/widgets/exchange_rates_widget.dart';
 import 'package:global_net/widgets/splashscreen.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:nb_utils/nb_utils.dart';
@@ -20,7 +18,7 @@ Future<void> main() async {
 
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   if (kDebugMode) {
-    const host = 'localhost';
+    const host = '192.168.42.1';
     FirebaseAuth.instance.useAuthEmulator(host, 9099);
     FirebaseFirestore.instance.useFirestoreEmulator(host, 8080);
     FirebaseStorage.instance.useStorageEmulator(host, 9199);
