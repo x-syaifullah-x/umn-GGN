@@ -7,7 +7,7 @@ import 'package:global_net/data/reaction_data.dart' as reaction;
 import 'package:global_net/models/user.dart';
 import 'package:global_net/pages/chat/simpleworld_chat.dart';
 import 'package:global_net/pages/home/home.dart';
-import 'package:global_net/pages/home/profile.dart';
+import 'package:global_net/pages/home/profile/profile.dart';
 import 'package:global_net/widgets/progress.dart';
 import 'package:global_net/widgets/simple_world_widgets.dart';
 

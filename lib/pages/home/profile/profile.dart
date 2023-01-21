@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_reaction_button/flutter_reaction_button.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:global_net/pages/home/profile/ads.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:nb_utils/nb_utils.dart';
 import 'package:global_net/models/user.dart';
@@ -45,7 +46,6 @@ class Profile extends StatefulWidget {
 }
 
 class ProfileState extends State<Profile> {
-  final String? currentUserId = globalID;
   String postOrientation = "list";
   bool isFollowing = false;
   bool isLiked = false;
@@ -89,7 +89,7 @@ class ProfileState extends State<Profile> {
     DocumentSnapshot doc = await followersRef
         .doc(widget.profileId)
         .collection('userFollowers')
-        .doc(currentUserId)
+        .doc(widget.profileId)
         .get();
     setState(() {
       isFollowing = doc.exists;
@@ -100,7 +100,7 @@ class ProfileState extends State<Profile> {
     DocumentSnapshot doc = await likedRef
         .doc(widget.profileId)
         .collection('userlikes')
-        .doc(currentUserId)
+        .doc(widget.profileId)
         .get();
     setState(() {
       isLiked = doc.exists;
@@ -111,7 +111,7 @@ class ProfileState extends State<Profile> {
     DocumentSnapshot doc = await dislikedRef
         .doc(widget.profileId)
         .collection('userDislikes')
-        .doc(currentUserId)
+        .doc(widget.profileId)
         .get();
     setState(() {
       isDisliked = doc.exists;
@@ -181,7 +181,7 @@ class ProfileState extends State<Profile> {
   }
 
   _getCurrentUserCredits() async {
-    usersRef.doc(globalID).get().then(
+    usersRef.doc(widget.profileId).get().then(
           (value) => setState(() {
             currentUserCredit = value["credit_points"];
           }),
@@ -189,11 +189,11 @@ class ProfileState extends State<Profile> {
   }
 
   _viewMyProfile() {
-    bool isProfileOwner = currentUserId == widget.profileId;
+    bool isProfileOwner = widget.profileId == widget.profileId;
     isProfileOwner
         ? Container()
         : ppviewsRef.doc(widget.profileId).collection('userviews').doc().set({
-            'userId': currentUserId,
+            'userId': widget.profileId,
             'timestamp': DateTime.now().millisecondsSinceEpoch.toString(),
           });
   }
@@ -249,9 +249,11 @@ class ProfileState extends State<Profile> {
 
   editProfile() {
     Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => EditProfile(currentUserId: currentUserId)));
+      context,
+      MaterialPageRoute(
+        builder: (context) => EditProfile(currentUserId: widget.profileId),
+      ),
+    );
   }
 
   buildProfileButton() {
@@ -261,7 +263,7 @@ class ProfileState extends State<Profile> {
     } else {
       maxWidth = MediaQuery.of(context).size.width * 0.4;
     }
-    bool isProfileOwner = currentUserId == widget.profileId;
+    bool isProfileOwner = widget.profileId == widget.profileId;
     if (isProfileOwner) {
       return Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -381,7 +383,7 @@ class ProfileState extends State<Profile> {
     followersRef
         .doc(widget.profileId)
         .collection('userFollowers')
-        .doc(currentUserId)
+        .doc(widget.profileId)
         .get()
         .then((doc) {
       if (doc.exists) {
@@ -389,7 +391,7 @@ class ProfileState extends State<Profile> {
       }
     });
     followingRef
-        .doc(currentUserId)
+        .doc(widget.profileId)
         .collection('userFollowing')
         .doc(widget.profileId)
         .get()
@@ -401,7 +403,7 @@ class ProfileState extends State<Profile> {
     activityFeedRef
         .doc(widget.profileId)
         .collection('feedItems')
-        .doc(currentUserId)
+        .doc(widget.profileId)
         .get()
         .then((doc) {
       if (doc.exists) {
@@ -417,22 +419,22 @@ class ProfileState extends State<Profile> {
     followersRef
         .doc(widget.profileId)
         .collection('userFollowers')
-        .doc(currentUserId)
-        .set({'userId': currentUserId});
+        .doc(widget.profileId)
+        .set({'userId': widget.profileId});
     followingRef
-        .doc(currentUserId)
+        .doc(widget.profileId)
         .collection('userFollowing')
         .doc(widget.profileId)
         .set({'userId': widget.profileId});
     activityFeedRef
         .doc(widget.profileId)
         .collection('feedItems')
-        .doc(currentUserId)
+        .doc(widget.profileId)
         .set({
       "type": "follow",
       "ownerId": widget.profileId,
       "username": globalName,
-      "userId": currentUserId,
+      "userId": widget.profileId,
       "userProfileImg": globalImage,
       "timestamp": timestamp,
       "isSeen": false,
@@ -448,7 +450,7 @@ class ProfileState extends State<Profile> {
       likedRef
           .doc(widget.profileId)
           .collection('userlikes')
-          .doc(currentUserId)
+          .doc(widget.profileId)
           .delete();
     } else {
       if (isDisliked) {
@@ -459,14 +461,14 @@ class ProfileState extends State<Profile> {
         dislikedRef
             .doc(widget.profileId)
             .collection('userDislikes')
-            .doc(currentUserId)
+            .doc(widget.profileId)
             .delete();
       }
       likedRef
           .doc(widget.profileId)
           .collection('userlikes')
-          .doc(currentUserId)
-          .set({'userId': currentUserId});
+          .doc(widget.profileId)
+          .set({'userId': widget.profileId});
       setState(() {
         isDisliked = false;
         isLiked = true;
@@ -484,7 +486,7 @@ class ProfileState extends State<Profile> {
       dislikedRef
           .doc(widget.profileId)
           .collection('userDislikes')
-          .doc(currentUserId)
+          .doc(widget.profileId)
           .delete();
     } else {
       if (isLiked) {
@@ -495,14 +497,14 @@ class ProfileState extends State<Profile> {
         likedRef
             .doc(widget.profileId)
             .collection('userlikes')
-            .doc(currentUserId)
+            .doc(widget.profileId)
             .delete();
       }
       dislikedRef
           .doc(widget.profileId)
           .collection('userDislikes')
-          .doc(currentUserId)
-          .set({'userId': currentUserId});
+          .doc(widget.profileId)
+          .set({'userId': widget.profileId});
       setState(() {
         isDisliked = true;
         isLiked = false;
@@ -529,7 +531,7 @@ class ProfileState extends State<Profile> {
   }
 
   Future uploadAvatar(imageFileAvatar) async {
-    String mFileName = globalID!;
+    String mFileName = widget.profileId!;
     Reference storageReference =
         FirebaseStorage.instance.ref().child("avatar_$mFileName.jpg");
     UploadTask storageUploadTask = storageReference.putFile(imageFileAvatar!);
@@ -563,7 +565,7 @@ class ProfileState extends State<Profile> {
   }
 
   Future uploadCover(imageFileCover) async {
-    String mFileName = globalID!;
+    String mFileName = widget.profileId!;
     Reference storageReference =
         FirebaseStorage.instance.ref().child("cover_$mFileName.jpg");
     UploadTask storageUploadTask = storageReference.putFile(imageFileCover!);
@@ -658,7 +660,7 @@ class ProfileState extends State<Profile> {
     );
   }
 
-  buildProfileHeader() {
+  Widget? buildProfileHeader() {
     return Container(
       color: Theme.of(context).scaffoldBackgroundColor,
       child: FutureBuilder<GloabalUser?>(
@@ -668,7 +670,7 @@ class ProfileState extends State<Profile> {
             return circularProgress();
           }
           final user = snapshot.data;
-          final bool isProfileOwner = currentUserId == widget.profileId;
+          final bool isProfileOwner = widget.profileId == widget.profileId;
           return Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -1071,7 +1073,7 @@ class ProfileState extends State<Profile> {
                               } else {
                                 Navigator.of(context).pop();
 
-                                usersRef.doc(globalID).update({
+                                usersRef.doc(widget.profileId).update({
                                   "credit_points": FieldValue.increment(-20),
                                 });
 
@@ -1162,7 +1164,7 @@ class ProfileState extends State<Profile> {
                               } else {
                                 Navigator.of(context).pop();
 
-                                usersRef.doc(globalID).update({
+                                usersRef.doc(widget.profileId).update({
                                   "credit_points": FieldValue.increment(-20),
                                   // 'userIsVerified': true,
                                 });
@@ -1251,7 +1253,7 @@ class ProfileState extends State<Profile> {
                               } else {
                                 Navigator.of(context).pop();
 
-                                usersRef.doc(globalID).update({
+                                usersRef.doc(widget.profileId).update({
                                   "credit_points": FieldValue.increment(-20),
                                 });
 
@@ -1316,7 +1318,7 @@ class ProfileState extends State<Profile> {
                             } else {
                               Navigator.of(context).pop();
 
-                              usersRef.doc(globalID).update({
+                              usersRef.doc(widget.profileId).update({
                                 "credit_points": FieldValue.increment(-20),
                               });
 
@@ -1380,7 +1382,7 @@ class ProfileState extends State<Profile> {
                             } else {
                               Navigator.of(context).pop();
 
-                              usersRef.doc(globalID).update({
+                              usersRef.doc(widget.profileId).update({
                                 "credit_points": FieldValue.increment(-20),
                               });
 
@@ -1423,17 +1425,24 @@ class ProfileState extends State<Profile> {
         context,
         titleText: AppLocalizations.of(context)!.profile,
       ),
-      body: RawScrollbar(
-        controller: scrollController,
-        interactive: true,
-        thumbVisibility: !kIsWeb && widthMoreThan_500,
-        trackVisibility: !kIsWeb && widthMoreThan_500,
-        radius: const Radius.circular(20),
-        child: SingleChildScrollView(
-          controller: scrollController,
-          physics: const AlwaysScrollableScrollPhysics(),
-          child: buildProfileHeader(),
-        ),
+      body: Column(
+        children: [
+          Expanded(
+            child: RawScrollbar(
+              controller: scrollController,
+              interactive: true,
+              thumbVisibility: !kIsWeb && widthMoreThan_500,
+              trackVisibility: !kIsWeb && widthMoreThan_500,
+              radius: const Radius.circular(20),
+              child: SingleChildScrollView(
+                controller: scrollController,
+                physics: const AlwaysScrollableScrollPhysics(),
+                child: buildProfileHeader(),
+              ),
+            ),
+          ),
+          const AdsWidget(),
+        ],
       ),
     );
   }

@@ -9,7 +9,7 @@ import 'package:global_net/config/palette.dart';
 import 'package:global_net/data/reaction_data.dart' as reaction;
 import 'package:global_net/pages/home/home.dart';
 import 'package:global_net/pages/post_screen.dart';
-import 'package:global_net/pages/home/profile.dart';
+import 'package:global_net/pages/home/profile/profile.dart';
 import 'package:global_net/ads/anchored_adaptive_ads.dart';
 import 'package:global_net/widgets/header.dart';
 import 'package:global_net/widgets/simple_world_widgets.dart';
