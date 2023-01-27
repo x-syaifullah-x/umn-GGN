@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:global_net/pages/home/user/ads.dart';
 import 'package:paginate_firestore/bloc/pagination_listeners.dart';
 import 'package:paginate_firestore/paginate_firestore.dart';
 import 'package:global_net/pages/home/home.dart';
@@ -88,7 +87,7 @@ class UsersListState extends State<UsersList>
                     refreshChangeListener.refreshed = true;
                   }),
             ),
-            const AdsWidget()
+            // const AdsWidget()
           ],
         ),
       ),

@@ -1,0 +1,3 @@
+cron:
+- description: "daily summary job"
+  schedule: every    hours

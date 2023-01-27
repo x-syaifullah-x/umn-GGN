@@ -69,21 +69,19 @@ class SettingsState extends State<SettingsPage> {
     try {
       await googleSignIn.signOut();
     } catch (e) {
-      print(e);
+      debugPrint('$e');
     }
 
     try {
       await FirebaseAuth.instance.signOut();
     } catch (e) {
-      print(e);
+      debugPrint('$e');
     }
   }
 
   @override
   Widget build(BuildContext context) {
     final mode = AdaptiveTheme.of(context).mode;
-    final double sizeWidth = MediaQuery.of(context).size.width;
-    final double sizeWidth_3_4 = (sizeWidth < 500) ? 0 : sizeWidth * 0.25;
     ScrollController scrollController = ScrollController();
     final bool widthMoreThan_500 = (MediaQuery.of(context).size.width > 500);
     return AnimatedTheme(
@@ -116,58 +114,60 @@ class SettingsState extends State<SettingsPage> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: <Widget>[
-                          Card(
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12.0)),
-                            child: Container(
-                              width: (sizeWidth / 2 - sizeWidth_3_4) - 20,
-                              height: 85.0,
-                              padding:
-                                  const EdgeInsets.only(left: 20.0, right: 20),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: <Widget>[
-                                  user.photoUrl.isNotEmpty
-                                      ? ClipRRect(
-                                          borderRadius:
-                                              BorderRadius.circular(10.0),
-                                          child: CachedNetworkImage(
-                                            imageUrl: user.photoUrl,
-                                            height: 40,
-                                            width: 40,
-                                            fit: BoxFit.cover,
-                                          ),
-                                        )
-                                      : Container(
-                                          decoration: BoxDecoration(
-                                            color: const Color(0xFF003a54),
+                          Expanded(
+                            child: Card(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12.0),
+                              ),
+                              child: Container(
+                                height: 85.0,
+                                padding: const EdgeInsets.only(
+                                    left: 20.0, right: 20),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: <Widget>[
+                                    user.photoUrl.isNotEmpty
+                                        ? ClipRRect(
                                             borderRadius:
                                                 BorderRadius.circular(10.0),
+                                            child: CachedNetworkImage(
+                                              imageUrl: user.photoUrl,
+                                              height: 40,
+                                              width: 40,
+                                              fit: BoxFit.cover,
+                                            ),
+                                          )
+                                        : Container(
+                                            decoration: BoxDecoration(
+                                              color: const Color(0xFF003a54),
+                                              borderRadius:
+                                                  BorderRadius.circular(10.0),
+                                            ),
+                                            child: Image.asset(
+                                              'assets/images/defaultavatar.png',
+                                              width: 40,
+                                            ),
                                           ),
-                                          child: Image.asset(
-                                            'assets/images/defaultavatar.png',
-                                            width: 40,
-                                          ),
-                                        ),
-                                  const SizedBox(height: 5.0),
-                                  Text(
-                                    user.displayName.capitalize(),
-                                    style: const TextStyle(
-                                        fontSize: 16.0,
-                                        fontWeight: FontWeight.bold),
-                                  )
-                                ],
+                                    const SizedBox(height: 5.0),
+                                    Text(
+                                      user.displayName.capitalize(),
+                                      style: const TextStyle(
+                                          fontSize: 16.0,
+                                          fontWeight: FontWeight.bold),
+                                    )
+                                  ],
+                                ),
                               ),
-                            ),
-                          ).onTap(() {
-                            showProfile(context, profileId: user.id);
-                          }),
-                          Card(
+                            ).onTap(() {
+                              showProfile(context, profileId: user.id);
+                            }),
+                          ),
+                          Expanded(
+                              child: Card(
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(12.0)),
                             child: Container(
-                              width: (sizeWidth / 2 - sizeWidth_3_4) - 20,
                               height: 85.0,
                               padding:
                                   const EdgeInsets.only(left: 20.0, right: 20),
@@ -195,7 +195,7 @@ class SettingsState extends State<SettingsPage> {
                                     userId: widget.currentUserId,
                                   ),
                                 ));
-                          }),
+                          })),
                         ],
                       ),
                     ),
@@ -205,74 +205,76 @@ class SettingsState extends State<SettingsPage> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: <Widget>[
-                          Card(
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12.0)),
-                            child: Container(
-                              width: (sizeWidth / 2 - sizeWidth_3_4) - 20,
-                              height: 85.0,
-                              padding:
-                                  const EdgeInsets.only(left: 20.0, right: 20),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: <Widget>[
-                                  SvgPicture.asset(
-                                    "assets/images/recent_useers.svg",
-                                    width: 40,
-                                  ),
-                                  const SizedBox(height: 5.0),
-                                  Text(
-                                      AppLocalizations.of(context)!
-                                          .recent_users,
-                                      style: const TextStyle(
-                                          fontSize: 16.0,
-                                          fontWeight: FontWeight.bold))
-                                ],
+                          Expanded(
+                            child: Card(
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12.0)),
+                              child: Container(
+                                height: 85.0,
+                                padding: const EdgeInsets.only(
+                                    left: 20.0, right: 20),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: <Widget>[
+                                    SvgPicture.asset(
+                                      "assets/images/recent_useers.svg",
+                                      width: 40,
+                                    ),
+                                    const SizedBox(height: 5.0),
+                                    Text(
+                                        AppLocalizations.of(context)!
+                                            .recent_users,
+                                        style: const TextStyle(
+                                            fontSize: 16.0,
+                                            fontWeight: FontWeight.bold))
+                                  ],
+                                ),
                               ),
-                            ),
-                          ).onTap(() {
-                            Navigator.push(
-                                context,
-                                CupertinoPageRoute(
-                                  builder: (context) => UsersList(),
-                                ));
-                          }),
-                          Card(
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12.0)),
-                            child: Container(
-                              width: (sizeWidth / 2 - sizeWidth_3_4) - 20,
-                              height: 85.0,
-                              padding:
-                                  const EdgeInsets.only(left: 20.0, right: 20),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: <Widget>[
-                                  SvgPicture.asset(
-                                    "assets/images/edit.svg",
-                                    width: 40,
-                                  ),
-                                  const SizedBox(height: 5.0),
-                                  Text(
-                                      AppLocalizations.of(context)!
-                                          .edit_profile,
-                                      style: const TextStyle(
-                                          fontSize: 16.0,
-                                          fontWeight: FontWeight.bold))
-                                ],
+                            ).onTap(() {
+                              Navigator.push(
+                                  context,
+                                  CupertinoPageRoute(
+                                    builder: (context) => UsersList(),
+                                  ));
+                            }),
+                          ),
+                          Expanded(
+                            child: Card(
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12.0)),
+                              child: Container(
+                                height: 85.0,
+                                padding: const EdgeInsets.only(
+                                    left: 20.0, right: 20),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: <Widget>[
+                                    SvgPicture.asset(
+                                      "assets/images/edit.svg",
+                                      width: 40,
+                                    ),
+                                    const SizedBox(height: 5.0),
+                                    Text(
+                                        AppLocalizations.of(context)!
+                                            .edit_profile,
+                                        style: const TextStyle(
+                                            fontSize: 16.0,
+                                            fontWeight: FontWeight.bold))
+                                  ],
+                                ),
                               ),
-                            ),
-                          ).onTap(() {
-                            Navigator.push(
-                                context,
-                                CupertinoPageRoute(
-                                  builder: (context) => EditProfile(
-                                    currentUserId: globalID,
-                                  ),
-                                ));
-                          }),
+                            ).onTap(() {
+                              Navigator.push(
+                                  context,
+                                  CupertinoPageRoute(
+                                    builder: (context) => EditProfile(
+                                      currentUserId: globalID,
+                                    ),
+                                  ));
+                            }),
+                          ),
                         ],
                       ),
                     ),
@@ -282,71 +284,73 @@ class SettingsState extends State<SettingsPage> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: <Widget>[
-                          Card(
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12.0)),
-                            child: Container(
-                              width: (sizeWidth / 2 - sizeWidth_3_4) - 20,
-                              height: 85.0,
-                              padding:
-                                  const EdgeInsets.only(left: 20.0, right: 20),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: <Widget>[
-                                  Image.asset(
-                                    "assets/images/earth.png",
-                                    width: 40,
-                                  ),
-                                  const SizedBox(height: 5.0),
-                                  Text(AppLocalizations.of(context)!.discover,
-                                      style: const TextStyle(
-                                          fontSize: 16.0,
-                                          fontWeight: FontWeight.bold))
-                                ],
+                          Expanded(
+                            child: Card(
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12.0)),
+                              child: Container(
+                                height: 85.0,
+                                padding: const EdgeInsets.only(
+                                    left: 20.0, right: 20),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: <Widget>[
+                                    Image.asset(
+                                      "assets/images/earth.png",
+                                      width: 40,
+                                    ),
+                                    const SizedBox(height: 5.0),
+                                    Text(AppLocalizations.of(context)!.discover,
+                                        style: const TextStyle(
+                                            fontSize: 16.0,
+                                            fontWeight: FontWeight.bold))
+                                  ],
+                                ),
                               ),
-                            ),
-                          ).onTap(() {
-                            Navigator.push(
-                                context,
-                                CupertinoPageRoute(
-                                  builder: (context) =>
-                                      Discover(UserId: globalID),
-                                ));
-                          }),
-                          Card(
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12.0)),
-                            child: Container(
-                              width: (sizeWidth / 2 - sizeWidth_3_4) - 20,
-                              height: 85.0,
-                              padding:
-                                  const EdgeInsets.only(left: 20.0, right: 20),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: <Widget>[
-                                  Image.asset(
-                                    "assets/images/open_book.png",
-                                    width: 40,
-                                  ),
-                                  const SizedBox(height: 5.0),
-                                  Text(AppLocalizations.of(context)!.stories,
-                                      style: const TextStyle(
-                                          fontSize: 16.0,
-                                          fontWeight: FontWeight.bold))
-                                ],
+                            ).onTap(() {
+                              Navigator.push(
+                                  context,
+                                  CupertinoPageRoute(
+                                    builder: (context) =>
+                                        Discover(UserId: globalID),
+                                  ));
+                            }),
+                          ),
+                          Expanded(
+                            child: Card(
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12.0)),
+                              child: Container(
+                                height: 85.0,
+                                padding: const EdgeInsets.only(
+                                    left: 20.0, right: 20),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: <Widget>[
+                                    Image.asset(
+                                      "assets/images/open_book.png",
+                                      width: 40,
+                                    ),
+                                    const SizedBox(height: 5.0),
+                                    Text(AppLocalizations.of(context)!.stories,
+                                        style: const TextStyle(
+                                            fontSize: 16.0,
+                                            fontWeight: FontWeight.bold))
+                                  ],
+                                ),
                               ),
-                            ),
-                          ).onTap(() {
-                            Navigator.push(
-                                context,
-                                CupertinoPageRoute(
-                                  builder: (context) => AllStories(
-                                    showappbar: true,
-                                  ),
-                                ));
-                          }),
+                            ).onTap(() {
+                              Navigator.push(
+                                  context,
+                                  CupertinoPageRoute(
+                                    builder: (context) => AllStories(
+                                      showappbar: true,
+                                    ),
+                                  ));
+                            }),
+                          ),
                         ],
                       ),
                     ),
@@ -356,74 +360,77 @@ class SettingsState extends State<SettingsPage> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: <Widget>[
-                          Card(
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12.0)),
-                            child: Container(
-                              width: (sizeWidth / 2 - sizeWidth_3_4) - 20,
-                              height: 85.0,
-                              padding:
-                                  const EdgeInsets.only(left: 20.0, right: 20),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: <Widget>[
-                                  Image.asset(
-                                    "assets/images/play_button.png",
-                                    width: 40,
-                                  ),
-                                  const SizedBox(height: 5.0),
-                                  Text(AppLocalizations.of(context)!.videos,
-                                      style: const TextStyle(
-                                          fontSize: 16.0,
-                                          fontWeight: FontWeight.bold))
-                                ],
+                          Expanded(
+                            child: Card(
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12.0)),
+                              child: Container(
+                                height: 85.0,
+                                padding: const EdgeInsets.only(
+                                    left: 20.0, right: 20),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: <Widget>[
+                                    Image.asset(
+                                      "assets/images/play_button.png",
+                                      width: 40,
+                                    ),
+                                    const SizedBox(height: 5.0),
+                                    Text(AppLocalizations.of(context)!.videos,
+                                        style: const TextStyle(
+                                            fontSize: 16.0,
+                                            fontWeight: FontWeight.bold))
+                                  ],
+                                ),
                               ),
-                            ),
-                          ).onTap(() {
-                            Navigator.push(
-                                context,
-                                CupertinoPageRoute(
-                                  builder: (context) => AllVideos(
-                                    UserId: globalID,
-                                    reactions: Reaction.reactions,
-                                  ),
-                                ));
-                          }),
-                          Card(
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12.0)),
-                            child: Container(
-                              width: (sizeWidth / 2 - sizeWidth_3_4) - 20,
-                              height: 85.0,
-                              padding:
-                                  const EdgeInsets.only(left: 20.0, right: 20),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: <Widget>[
-                                  Image.asset(
-                                    "assets/images/documents.png",
-                                    width: 40,
-                                  ),
-                                  const SizedBox(height: 5.0),
-                                  Text(AppLocalizations.of(context)!.documents,
-                                      style: const TextStyle(
-                                          fontSize: 16.0,
-                                          fontWeight: FontWeight.bold))
-                                ],
+                            ).onTap(() {
+                              Navigator.push(
+                                  context,
+                                  CupertinoPageRoute(
+                                    builder: (context) => AllVideos(
+                                      UserId: globalID,
+                                      reactions: Reaction.reactions,
+                                    ),
+                                  ));
+                            }),
+                          ),
+                          Expanded(
+                            child: Card(
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12.0)),
+                              child: Container(
+                                height: 85.0,
+                                padding: const EdgeInsets.only(
+                                    left: 20.0, right: 20),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: <Widget>[
+                                    Image.asset(
+                                      "assets/images/documents.png",
+                                      width: 40,
+                                    ),
+                                    const SizedBox(height: 5.0),
+                                    Text(
+                                        AppLocalizations.of(context)!.documents,
+                                        style: const TextStyle(
+                                            fontSize: 16.0,
+                                            fontWeight: FontWeight.bold))
+                                  ],
+                                ),
                               ),
-                            ),
-                          ).onTap(() {
-                            Navigator.push(
-                                context,
-                                CupertinoPageRoute(
-                                  builder: (context) => AllPdfs(
-                                    UserId: globalID,
-                                    reactions: Reaction.reactions,
-                                  ),
-                                ));
-                          }),
+                            ).onTap(() {
+                              Navigator.push(
+                                  context,
+                                  CupertinoPageRoute(
+                                    builder: (context) => AllPdfs(
+                                      UserId: globalID,
+                                      reactions: Reaction.reactions,
+                                    ),
+                                  ));
+                            }),
+                          ),
                         ],
                       ),
                     ),
@@ -433,74 +440,76 @@ class SettingsState extends State<SettingsPage> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: <Widget>[
-                          Card(
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12.0)),
-                            child: Container(
-                              width: (sizeWidth / 2 - sizeWidth_3_4) - 20,
-                              height: 85.0,
-                              padding:
-                                  const EdgeInsets.only(left: 20.0, right: 20),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: <Widget>[
-                                  Image.asset(
-                                    "assets/images/compliant.png",
-                                    width: 40,
-                                  ),
-                                  const SizedBox(height: 5.0),
-                                  Text(
-                                      AppLocalizations.of(context)!
-                                          .help_support,
-                                      style: const TextStyle(
-                                          fontSize: 16.0,
-                                          fontWeight: FontWeight.bold))
-                                ],
+                          Expanded(
+                            child: Card(
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12.0)),
+                              child: Container(
+                                height: 85.0,
+                                padding: const EdgeInsets.only(
+                                    left: 20.0, right: 20),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: <Widget>[
+                                    Image.asset(
+                                      "assets/images/compliant.png",
+                                      width: 40,
+                                    ),
+                                    const SizedBox(height: 5.0),
+                                    Text(
+                                        AppLocalizations.of(context)!
+                                            .help_support,
+                                        style: const TextStyle(
+                                            fontSize: 16.0,
+                                            fontWeight: FontWeight.bold))
+                                  ],
+                                ),
                               ),
-                            ),
-                          ).onTap(() {
-                            Navigator.push(
-                                context,
-                                CupertinoPageRoute(
-                                  builder: (context) => HelpSupportPage(
-                                    currentUserId: widget.currentUserId,
-                                  ),
-                                ));
-                          }),
-                          Card(
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12.0)),
-                            child: Container(
-                              width: (sizeWidth / 2 - sizeWidth_3_4) - 20,
-                              height: 85.0,
-                              padding:
-                                  const EdgeInsets.only(left: 20.0, right: 20),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: <Widget>[
-                                  Image.asset(
-                                    "assets/images/delete_user.png",
-                                    width: 40,
-                                  ),
-                                  const SizedBox(height: 5.0),
-                                  Text(
-                                      AppLocalizations.of(context)!
-                                          .deactive_account,
-                                      style: const TextStyle(
-                                          fontSize: 16.0,
-                                          fontWeight: FontWeight.bold))
-                                ],
+                            ).onTap(() {
+                              Navigator.push(
+                                  context,
+                                  CupertinoPageRoute(
+                                    builder: (context) => HelpSupportPage(
+                                      currentUserId: widget.currentUserId,
+                                    ),
+                                  ));
+                            }),
+                          ),
+                          Expanded(
+                            child: Card(
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12.0)),
+                              child: Container(
+                                height: 85.0,
+                                padding: const EdgeInsets.only(
+                                    left: 20.0, right: 20),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: <Widget>[
+                                    Image.asset(
+                                      "assets/images/delete_user.png",
+                                      width: 40,
+                                    ),
+                                    const SizedBox(height: 5.0),
+                                    Text(
+                                        AppLocalizations.of(context)!
+                                            .deactive_account,
+                                        style: const TextStyle(
+                                            fontSize: 16.0,
+                                            fontWeight: FontWeight.bold))
+                                  ],
+                                ),
                               ),
-                            ),
-                          ).onTap(() {
-                            Navigator.push(
-                                context,
-                                CupertinoPageRoute(
-                                  builder: (context) => const CommimgSoon(),
-                                ));
-                          }),
+                            ).onTap(() {
+                              Navigator.push(
+                                  context,
+                                  CupertinoPageRoute(
+                                    builder: (context) => const CommimgSoon(),
+                                  ));
+                            }),
+                          ),
                         ],
                       ),
                     ),

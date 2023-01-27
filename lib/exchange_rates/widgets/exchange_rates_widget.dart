@@ -53,11 +53,11 @@ class ExchangeRatesWidget extends StatelessWidget {
   Widget _content(BuildContext context) {
     final provider = Provider.of<ExchangeRatesProvider>(context, listen: true);
     final resources = provider.resources;
-    if (resources is Loading) {
+    if (resources is ResourcesLoading) {
       return const CupertinoActivityIndicator(
         animating: true,
       );
-    } else if (resources is Success<Data>) {
+    } else if (resources is ResourcesSuccess<Data>) {
       final value = resources.value;
       final symbols = value.symbols;
       final from = value.from;
@@ -110,7 +110,7 @@ class ExchangeRatesWidget extends StatelessWidget {
           )
         ],
       );
-    } else if (resources is Error) {
+    } else if (resources is ResourcesError) {
       return Text(resources.value.toString());
     }
     throw Exception();

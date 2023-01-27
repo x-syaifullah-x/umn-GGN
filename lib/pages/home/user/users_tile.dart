@@ -101,8 +101,9 @@ class UserTileState extends State<UserTile> {
               user.coverUrl.isEmpty
                   ? ClipRRect(
                       borderRadius: const BorderRadius.only(
-                          topLeft: Radius.circular(12),
-                          topRight: Radius.circular(12)),
+                        topLeft: Radius.circular(12),
+                        topRight: Radius.circular(12),
+                      ),
                       child: Image.asset(
                         'assets/images/defaultcover.png',
                         alignment: Alignment.center,

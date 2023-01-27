@@ -1,19 +1,20 @@
 name: global_net
 description: A new Flutter project.
 
-version: 1.18.5+24
+version: 1.18.8+27
 
 environment:
   sdk: ">=2.14.4 <=3.3.10"
 
 dependencies:
+  infinite_scroll_pagination: 3.2.0
+  carousel_slider: 4.2.1
   firebase_core: 1.24.0
   cloud_firestore: 3.1.18
   paginate_firestore: 1.0.3+1
   firebase_auth: 3.11.2
   firebase_storage: 10.3.11
   firebase_messaging: 13.1.0
-
   http: 0.13.5
   dropdown_button2: 1.9.2
   image_picker: 0.8.5+3
@@ -27,7 +28,6 @@ dependencies:
   cached_network_image: 3.2.3
   timeago: 3.3.0
   material_design_icons_flutter: 6.0.7096
-  # font_awesome_flutter: 10.3.0
   font_awesome_flutter: 9.0.0
   flutter_svg_provider: 1.0.3
   fluttertoast: 8.1.2

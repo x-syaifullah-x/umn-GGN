@@ -5,14 +5,47 @@ import 'package:flutter/material.dart';
 import 'package:global_net/ads/adunit_id.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
-class AdsWidget extends StatefulWidget {
-  const AdsWidget({Key? key}) : super(key: key);
+class HomeAds extends StatefulWidget {
+  const HomeAds({
+    Key? key,
+    required this.tabController,
+  }) : super(key: key);
+
+  final TabController tabController;
 
   @override
-  AdsWidgetState createState() => AdsWidgetState();
+  State<StatefulWidget> createState() => _State();
 }
 
-class AdsWidgetState extends State<AdsWidget> {
+class _State extends State<HomeAds> {
+  @override
+  void initState() {
+    super.initState();
+    final tabController = widget.tabController;
+    tabController.addListener(() {
+      setState(() {});
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final tabController = widget.tabController;
+    final isShow = ![1, 2].contains(tabController.index);
+    return Offstage(
+      offstage: isShow,
+      child: const _AdsWidget(),
+    );
+  }
+}
+
+class _AdsWidget extends StatefulWidget {
+  const _AdsWidget({Key? key}) : super(key: key);
+
+  @override
+  State createState() => _AdsWidgetState();
+}
+
+class _AdsWidgetState extends State<_AdsWidget> {
   BannerAd? _anchoredAdaptiveAd;
   bool _isLoaded = false;
 
@@ -20,7 +53,7 @@ class AdsWidgetState extends State<AdsWidget> {
   Widget build(BuildContext context) {
     final isLandscape =
         MediaQuery.of(context).orientation == Orientation.landscape;
-    final isAndroid = Platform.isAndroid;
+    final isAndroid = defaultTargetPlatform == TargetPlatform.android;
     if ((isAndroid && isLandscape) || kIsWeb) return Container();
     if (_anchoredAdaptiveAd != null && _isLoaded) {
       return Container(
@@ -41,11 +74,11 @@ class AdsWidgetState extends State<AdsWidget> {
   }
 
   Future<void> _loadAd(BuildContext context) async {
-    await _anchoredAdaptiveAd?.dispose();
-    setState(() {
-      _anchoredAdaptiveAd = null;
-      _isLoaded = false;
-    });
+    // await _anchoredAdaptiveAd?.dispose();
+    // setState(() {
+    //   _anchoredAdaptiveAd = null;
+    //   _isLoaded = false;
+    // });
 
     if (!mounted) return;
     var truncate = MediaQuery.of(context).size.width.truncate();

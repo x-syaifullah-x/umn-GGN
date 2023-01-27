@@ -150,7 +150,7 @@ class AppState extends State<App> with WidgetsBindingObserver {
   }
 
   Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-    print('++++ MESSAGE RECEIVED IN BACKGROUND  +++');
+    debugPrint('++++ MESSAGE RECEIVED IN BACKGROUND  +++');
   }
 
   @override

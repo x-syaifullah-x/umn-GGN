@@ -14,7 +14,7 @@ import 'package:in_app_purchase_storekit/store_kit_wrappers.dart';
 import 'package:global_net/pages/home/home.dart';
 import 'package:global_net/widgets/header.dart';
 import 'package:global_net/widgets/simple_world_widgets.dart';
-import 'consumable_store.dart';
+import '../../menu/dialogs/consumable_store.dart';
 
 const bool _kAutoConsume = true;
 
@@ -39,10 +39,8 @@ class Upgrade extends StatefulWidget {
 class MyAppState extends State<Upgrade> {
   final InAppPurchase _inAppPurchase = InAppPurchase.instance;
   late StreamSubscription<List<PurchaseDetails>> _subscription;
-  List<String> _notFoundIds = <String>[];
   List<ProductDetails> _products = <ProductDetails>[];
   List<PurchaseDetails> _purchases = <PurchaseDetails>[];
-  List<String> _consumables = <String>[];
   bool _isAvailable = false;
   bool _purchasePending = false;
   bool _loading = true;
@@ -71,8 +69,6 @@ class MyAppState extends State<Upgrade> {
         _isAvailable = isAvailable;
         _products = <ProductDetails>[];
         _purchases = <PurchaseDetails>[];
-        _notFoundIds = <String>[];
-        _consumables = <String>[];
         _purchasePending = false;
         _loading = false;
       });
@@ -94,8 +90,6 @@ class MyAppState extends State<Upgrade> {
         _isAvailable = isAvailable;
         _products = productDetailResponse.productDetails;
         _purchases = <PurchaseDetails>[];
-        _notFoundIds = productDetailResponse.notFoundIDs;
-        _consumables = <String>[];
         _purchasePending = false;
         _loading = false;
       });
@@ -108,20 +102,16 @@ class MyAppState extends State<Upgrade> {
         _isAvailable = isAvailable;
         _products = productDetailResponse.productDetails;
         _purchases = <PurchaseDetails>[];
-        _notFoundIds = productDetailResponse.notFoundIDs;
-        _consumables = <String>[];
         _purchasePending = false;
         _loading = false;
       });
       return;
     }
 
-    final List<String> consumables = await ConsumableStore.load();
+    await ConsumableStore.load();
     setState(() {
       _isAvailable = isAvailable;
       _products = productDetailResponse.productDetails;
-      _notFoundIds = productDetailResponse.notFoundIDs;
-      _consumables = consumables;
       _purchasePending = false;
       _loading = false;
     });
@@ -189,11 +179,14 @@ class MyAppState extends State<Upgrade> {
       return const Card(child: ListTile(title: Text('Trying to connect...')));
     }
     final Widget storeHeader = ListTile(
-      leading: Icon(_isAvailable ? Icons.check : Icons.block,
-          color: _isAvailable ? Colors.green : ThemeData.light().errorColor),
+      leading: Icon(
+        _isAvailable ? Icons.check : Icons.block,
+        color: _isAvailable ? Colors.green : ThemeData.light().errorColor,
+      ),
       title: Text(
           'The store is ' + (_isAvailable ? 'available' : 'unavailable') + '.'),
     );
+
     final List<Widget> children = <Widget>[storeHeader];
 
     if (!_isAvailable) {
@@ -213,9 +206,11 @@ class MyAppState extends State<Upgrade> {
   Card _buildProductList() {
     if (_loading) {
       return const Card(
-          child: ListTile(
-              leading: CircularProgressIndicator(),
-              title: Text('Fetching products...')));
+        child: ListTile(
+          leading: CircularProgressIndicator(),
+          title: Text('Fetching products...'),
+        ),
+      );
     }
     if (!_isAvailable) {
       return const Card();
@@ -231,6 +226,7 @@ class MyAppState extends State<Upgrade> {
       }
       return MapEntry<String, PurchaseDetails>(purchase.productID, purchase);
     }));
+
     productList.addAll(_products.map(
       (ProductDetails productDetails) {
         final PurchaseDetails? previousPurchase = purchases[productDetails.id];
@@ -246,7 +242,6 @@ class MyAppState extends State<Upgrade> {
                   onPressed: () => confirmPriceChange(context),
                   icon: const Icon(Icons.upgrade))
               : TextButton(
-                  child: Text(productDetails.price),
                   style: TextButton.styleFrom(
                     backgroundColor: Colors.green[800],
                     primary: Colors.white,
@@ -288,14 +283,21 @@ class MyAppState extends State<Upgrade> {
                           purchaseParam: purchaseParam);
                     }
                   },
+                  child: Text(productDetails.price),
                 ),
         );
       },
     ));
 
     return Card(
-        child: Column(
-            children: <Widget>[productHeader, const Divider()] + productList));
+      child: Column(
+        children: <Widget>[
+              productHeader,
+              const Divider(),
+            ] +
+            productList,
+      ),
+    );
   }
 
   Widget _buildRestoreButton() {
@@ -310,12 +312,12 @@ class MyAppState extends State<Upgrade> {
         mainAxisAlignment: MainAxisAlignment.end,
         children: <Widget>[
           TextButton(
-            child: const Text('Restore purchases'),
             style: TextButton.styleFrom(
               backgroundColor: Theme.of(context).primaryColor,
               primary: Colors.white,
             ),
             onPressed: () => _inAppPurchase.restorePurchases(),
+            child: const Text('Restore purchases'),
           ),
         ],
       ),
@@ -325,9 +327,7 @@ class MyAppState extends State<Upgrade> {
   Future<void> consume(String id) async {
     await ConsumableStore.consume(id);
     final List<String> consumables = await ConsumableStore.load();
-    setState(() {
-      _consumables = consumables;
-    });
+    setState(() {});
   }
 
   void showPendingUI() {

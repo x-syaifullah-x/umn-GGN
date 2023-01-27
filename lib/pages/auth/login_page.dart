@@ -24,7 +24,6 @@ import 'package:global_net/pages/auth/signup_page.dart';
 import 'package:global_net/pages/home/home.dart';
 import 'package:global_net/pages/menu/term_of_use.dart';
 import 'package:global_net/share_preference/preferences_key.dart';
-import 'package:global_net/ads/anchored_adaptive_ads.dart';
 import 'package:global_net/widgets/bezier_container.dart';
 import 'package:global_net/widgets/language_picker_widget_home.dart';
 import 'package:global_net/widgets/progress.dart';

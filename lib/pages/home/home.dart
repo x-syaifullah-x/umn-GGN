@@ -6,6 +6,8 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:global_net/ads/ads.dart';
 import 'package:global_net/exchange_rates/widgets/exchange_rates_data_widget.dart';
+import 'package:global_net/news/pages/news.dart';
+import 'package:global_net/pages/home/home_ads.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:iconly/iconly.dart';
@@ -44,12 +46,15 @@ final reportsRef = FirebaseFirestore.instance.collection('reports');
 final DateTime timestamp = DateTime.now();
 
 class Home extends StatefulWidget {
-  const Home({Key? key, this.userId}) : super(key: key);
+  const Home({
+    Key? key,
+    this.userId,
+  }) : super(key: key);
 
   final String? userId;
 
   @override
-  HomeState createState() => HomeState();
+  State createState() => HomeState();
 }
 
 class HomeState extends State<Home> with SingleTickerProviderStateMixin {
@@ -231,7 +236,10 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
   }
 
   Widget _body(
-      BuildContext context, String userId, TabController tabController) {
+    BuildContext context,
+    String userId,
+    TabController tabController,
+  ) {
     final Size size = MediaQuery.of(context).size;
     final double width = size.width;
 
@@ -277,9 +285,15 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
         SizedBox(
           width: widthContentCenter,
           height: double.infinity,
-          child: _tabBarView(tabController, userId),
+          child: Column(children: [
+            Expanded(child: _tabBarView(tabController, userId)),
+            HomeAds(tabController: tabController)
+          ]),
         ),
-        if (widthMoreThan_700) _rightSide(widthContentRight)
+        if (widthMoreThan_700)
+          _rightSide(
+            widthContentRight,
+          )
       ],
     );
   }
@@ -347,6 +361,12 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
                 ),
               ),
               onTap: () {
+                if (AppLocalizations.of(context)!.news == dataSideLeft[index]) {
+                  Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => News(),
+                  ));
+                  return;
+                }
                 toastLong(
                   "${dataSideLeft[index]} will be available soon",
                 );

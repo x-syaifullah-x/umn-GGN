@@ -1,22 +1,22 @@
 abstract class Resources {}
 
-class Loading implements Resources {
+class ResourcesLoading implements Resources {
   @override
-  Type get runtimeType => Success;
+  Type get runtimeType => ResourcesSuccess;
 }
 
-class Success<T> implements Resources {
-  Success(this.value);
+class ResourcesSuccess<T> implements Resources {
+  ResourcesSuccess(this.value);
   final T value;
 
   @override
-  Type get runtimeType => Success;
+  Type get runtimeType => ResourcesSuccess;
 }
 
-class Error<T extends Exception> implements Resources {
-  Error(this.value);
+class ResourcesError<T extends Exception> implements Resources {
+  ResourcesError(this.value);
   final T value;
 
   @override
-  Type get runtimeType => Error;
+  Type get runtimeType => ResourcesError;
 }

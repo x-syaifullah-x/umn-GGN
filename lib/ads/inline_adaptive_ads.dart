@@ -1,4 +1,3 @@
-import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:global_net/ads/adunit_id.dart';
@@ -28,11 +27,11 @@ class InlineAdaptiveAdsState extends State<InlineAdaptiveAds> {
   }
 
   void _loadAd() async {
-    await _inlineAdaptiveAd?.dispose();
-    setState(() {
-      _inlineAdaptiveAd = null;
-      _isLoaded = false;
-    });
+    // await _inlineAdaptiveAd?.dispose();
+    // setState(() {
+    //   _inlineAdaptiveAd = null;
+    //   _isLoaded = false;
+    // });
 
     AdSize size = AdSize.getCurrentOrientationInlineAdaptiveBannerAdSize(
         _adWidth.truncate());

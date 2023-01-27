@@ -5,9 +5,9 @@ admin.initializeApp();
 // // Create and Deploy Your First Cloud Functions
 // // https://firebase.google.com/docs/functions/write-firebase-functions
 //
-exports.test = functions.https.onRequest(async (request, response) => {
-  response.send("Hello from Firebase!");
-});
+// exports.test = functions.https.onRequest(async (request, response) => {
+//   response.send("Hello from Firebase!");
+// });
 
 exports.onCreateFollower = functions.firestore
   .document("/followers/{userId}/userFollowers/{followerId}")
@@ -227,4 +227,18 @@ exports.onCreateActivityFeedItem = functions.firestore
           console.log("Error sending message", error);
         });
     }
+  });
+
+exports.scheduledFunction = functions.pubsub.schedule('every 5 minutes')
+  .timeZone('Asia/Jakarta')
+  .onRun((context) => {
+    console.log('This will be run every 1 minutes!');
+    return null;
+  });
+
+exports.scheduledFunctionCrontab = functions.pubsub.schedule('* * * * *')
+  // .timeZone('America/New_York') // Users can choose timezone - default is America/Los_Angeles
+  .onRun((context) => {
+    console.log('This will be run every day at 11:05 AM Eastern!');
+    return null;
   });

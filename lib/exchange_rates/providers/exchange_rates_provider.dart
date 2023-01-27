@@ -10,7 +10,7 @@ class ExchangeRatesProvider with ChangeNotifier {
     final resourcesFinal = _resources;
     if (resourcesFinal == null) {
       _init();
-      return Loading();
+      return ResourcesLoading();
     }
     return resourcesFinal;
   }
@@ -28,7 +28,7 @@ class ExchangeRatesProvider with ChangeNotifier {
       );
       final timestamp = convert.info.timestamp;
       final rate = convert.info.rate;
-      _resources = Success(
+      _resources = ResourcesSuccess(
         Data(
           symbols: symbols,
           from: from,
@@ -40,7 +40,7 @@ class ExchangeRatesProvider with ChangeNotifier {
         ),
       );
     } catch (e) {
-      _resources = Error(Exception(e));
+      _resources = ResourcesError(Exception(e));
     } finally {
       notifyListeners();
     }
@@ -52,16 +52,16 @@ class ExchangeRatesProvider with ChangeNotifier {
     String amount,
   ) async {
     final resourcesFinal = resources;
-    if (resourcesFinal is Success<Data>) {
+    if (resourcesFinal is ResourcesSuccess<Data>) {
       final repo = ExchangeratesRepository.instance;
-      _resources = Loading();
+      _resources = ResourcesLoading();
       notifyListeners();
       final convertResult =
           await repo.convert(from: from.code, to: to.code, amount: amount);
       final value = resourcesFinal.value;
       final timestamp = convertResult.info.timestamp;
       final rate = convertResult.info.rate;
-      _resources = Success(
+      _resources = ResourcesSuccess(
         Data(
           symbols: value.symbols,
           from: from,
@@ -82,15 +82,15 @@ class ExchangeRatesProvider with ChangeNotifier {
     String amount,
   ) async {
     final resourcesFinal = resources;
-    if (resourcesFinal is Success<Data>) {
+    if (resourcesFinal is ResourcesSuccess<Data>) {
       final repo = ExchangeratesRepository.instance;
-      _resources = Loading();
+      _resources = ResourcesLoading();
       notifyListeners();
       final convertResult =
           await repo.convert(from: from.code, to: to.code, amount: amount);
       final timestamp = convertResult.info.timestamp;
       final rate = convertResult.info.rate;
-      _resources = Success(
+      _resources = ResourcesSuccess(
         resourcesFinal.value.copy(
           from: to,
           to: from,
@@ -106,13 +106,13 @@ class ExchangeRatesProvider with ChangeNotifier {
 
   void calculate(SymbolResponse from, SymbolResponse to, double amount) {
     final resourcesFinal = resources;
-    if (resourcesFinal is Success<Data>) {
+    if (resourcesFinal is ResourcesSuccess<Data>) {
       final value = resourcesFinal.value;
       if (from == resourcesFinal.value.from) {
-        _resources = Success(resourcesFinal.value
+        _resources = ResourcesSuccess(resourcesFinal.value
             .copy(amount: amount, result: amount * value.rate));
       } else if (from == resourcesFinal.value.to) {
-        _resources = Success(
+        _resources = ResourcesSuccess(
           resourcesFinal.value.copy(
             amount: amount / value.rate,
             result: amount,

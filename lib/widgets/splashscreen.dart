@@ -46,7 +46,8 @@ class SplashScreenState extends State<SplashScreen>
 
   @override
   Widget build(BuildContext context) {
-    final height = MediaQuery.of(context).size.height;
+    final size = MediaQuery.of(context).size;
+    final height = size.height;
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
@@ -54,7 +55,7 @@ class SplashScreenState extends State<SplashScreen>
           height: height,
           width: double.infinity,
           child: Image.asset(
-            Assets.images.splash1.path,
+            Assets.images.splash1.path, 
             fit: BoxFit.contain,
           ),
         ),

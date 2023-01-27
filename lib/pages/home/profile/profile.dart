@@ -9,7 +9,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_reaction_button/flutter_reaction_button.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:global_net/pages/home/profile/ads.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:nb_utils/nb_utils.dart';
 import 'package:global_net/models/user.dart';
@@ -22,7 +21,7 @@ import 'package:global_net/pages/followers_list.dart';
 import 'package:global_net/pages/following_users_list.dart';
 import 'package:global_net/pages/home/home.dart';
 import 'package:global_net/pages/liked_list.dart';
-import 'package:global_net/pages/menu/dialogs/store_products.dart';
+import 'package:global_net/pages/home/profile/store_products.dart';
 import 'package:global_net/pages/ppviewed_list.dart';
 import 'package:global_net/story/add_story.dart';
 import 'package:global_net/widgets/header.dart';
@@ -1441,7 +1440,7 @@ class ProfileState extends State<Profile> {
               ),
             ),
           ),
-          const AdsWidget(),
+          // const AdsWidget(),
         ],
       ),
     );
