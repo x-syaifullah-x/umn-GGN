@@ -1,5 +1,4 @@
 import "package:flutter/material.dart";
-import 'package:webview_flutter/webview_flutter.dart';
 
 import '../../widgets/header.dart';
 
@@ -31,8 +30,8 @@ class TermOfUsePageState extends State<TermOfUsePage> {
             header(context, titleText: "Terms of Use", removeBackButton: false),
         body: ListView(children: [
           Container(
-            padding: const EdgeInsets.symmetric(
-                horizontal: 10.0, vertical: 5.0),
+            padding:
+                const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               crossAxisAlignment: CrossAxisAlignment.start,

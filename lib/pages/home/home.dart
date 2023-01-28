@@ -4,27 +4,27 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:global_net/ads/ads.dart';
-import 'package:global_net/exchange_rates/widgets/exchange_rates_data_widget.dart';
-import 'package:global_net/news/pages/news.dart';
-import 'package:global_net/pages/home/home_ads.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:google_sign_in/google_sign_in.dart';
-import 'package:iconly/iconly.dart';
 import 'package:global_net/data/reaction_data.dart' as reaction;
+import 'package:global_net/exchange_rates/widgets/exchange_rates_data_widget.dart';
 import 'package:global_net/models/user.dart';
+import 'package:global_net/news/presentation/pages/news.dart';
 import 'package:global_net/pages/home/activity_feed.dart';
-import 'package:global_net/pages/home/settings.dart';
+import 'package:global_net/pages/home/home_ads.dart';
 import 'package:global_net/pages/home/new_timeline.dart';
 import 'package:global_net/pages/home/profile/profile.dart';
-import 'package:global_net/pages/search.dart';
+import 'package:global_net/pages/home/settings.dart';
 import 'package:global_net/pages/home/user/users.dart';
+import 'package:global_net/pages/search.dart';
 import 'package:global_net/widgets/circle_button.dart';
 import 'package:global_net/widgets/count/feeds_count.dart';
 import 'package:global_net/widgets/count/messages_count.dart';
 import 'package:global_net/widgets/simple_world_widgets.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:iconly/iconly.dart';
 import 'package:nb_utils/nb_utils.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 final GoogleSignIn googleSignIn = GoogleSignIn();
 final Reference storageRef = FirebaseStorage.instance.ref();
@@ -362,9 +362,9 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
               ),
               onTap: () {
                 if (AppLocalizations.of(context)!.news == dataSideLeft[index]) {
-                  Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => News(),
-                  ));
+                  Navigator.of(context).push(
+                    MaterialPageRoute(builder: (context) => const News()),
+                  );
                   return;
                 }
                 toastLong(

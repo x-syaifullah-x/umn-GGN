@@ -1,0 +1,47 @@
+<component name="ProjectRunConfigurationManager">
+    <configuration name="run on android tv debug mode" default="false" factoryName="Flutter"
+        type="FlutterRunConfigurationType">
+        <option name="additionalArgs" value="--debug" />
+        <option name="buildFlavor" value="tv" />
+        <option name="filePath" value="$PROJECT_DIR$/lib/main.dart" />
+        <method v="2" />
+    </configuration>
+
+    <configuration name="run on android tv release mode" default="false" factoryName="Flutter"
+        type="FlutterRunConfigurationType">
+        <option name="additionalArgs" value="--release" />
+        <option name="buildFlavor" value="tv" />
+        <option name="filePath" value="$PROJECT_DIR$/lib/main.dart" />
+        <method v="2" />
+    </configuration>
+
+    <configuration name="run on android debug mode" default="false" factoryName="Flutter"
+        type="FlutterRunConfigurationType">
+        <option name="additionalArgs" value="--debug" />
+        <option name="buildFlavor" value="mobile" />
+        <option name="filePath" value="$PROJECT_DIR$/lib/main.dart" />
+        <method v="2" />
+    </configuration>
+
+    <configuration name="run on android release mode" default="false" factoryName="Flutter"
+        type="FlutterRunConfigurationType">
+        <option name="additionalArgs" value="--release" />
+        <option name="buildFlavor" value="mobile" />
+        <option name="filePath" value="$PROJECT_DIR$/lib/main.dart" />
+        <method v="2" />
+    </configuration>
+
+    <configuration name="run on web debug mode" default="false" factoryName="Flutter"
+        type="FlutterRunConfigurationType">
+        <option name="additionalArgs" value="-d chrome --web-renderer html --web-hostname localhost --web-port 12345 --debug" />
+        <option name="filePath" value="$PROJECT_DIR$/lib/main.dart" />
+        <method v="2" />
+    </configuration>
+
+    <configuration name="run on web release mode" default="false" factoryName="Flutter"
+        type="FlutterRunConfigurationType">
+        <option name="additionalArgs" value="-d chrome --web-renderer html --web-hostname localhost --web-port 12345 --release" />
+        <option name="filePath" value="$PROJECT_DIR$/lib/main.dart" />
+        <method v="2" />
+    </configuration>
+</component>

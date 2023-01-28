@@ -1,28 +1,9 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:global_net/ads/anchored_adaptive_ads.dart';
+import 'package:global_net/gen/assets.gen.dart';
 
-// import 'package:global_net/gen/assets.gen.dart';
-// import 'dart:html' as html;
-// import 'dart:ui' as ui;
-
-Widget webAds(double width) {
-  // const String adViewType = 'adsense';
-  // // ignore: undefined_prefixed_name
-  // ui.platformViewRegistry.registerViewFactory(adViewType, (int viewID) {
-  //   return html.IFrameElement()
-  //     ..src = "assets/${Assets.html.loginAds}"
-  //     ..style.border = 'none';
-  // });
-  // return SizedBox(
-  //   width: width,
-  //   height: 80,
-  //   child: const HtmlElementView(
-  //     viewType: adViewType,
-  //   ),
-  // );
-  return Container();
-}
+import 'ads_web.dart';
 
 class LoginAds extends StatelessWidget {
   const LoginAds({Key? key}) : super(key: key);
@@ -30,7 +11,12 @@ class LoginAds extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (kIsWeb) {
-      return webAds(320);
+      return webAds(
+        width: 320,
+        height: 80,
+        src: 'assets/${Assets.html.loginAds}',
+        adViewType: 'adsense',
+      );
     }
     return const AnchoredAd();
   }

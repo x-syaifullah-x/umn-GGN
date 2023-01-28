@@ -6,7 +6,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:global_net/firebase_options.dart';
-import 'package:global_net/news/pages/news.dart';
+import 'package:global_net/news/presentation/pages/news.dart';
 import 'package:global_net/widgets/splashscreen.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:nb_utils/nb_utils.dart';

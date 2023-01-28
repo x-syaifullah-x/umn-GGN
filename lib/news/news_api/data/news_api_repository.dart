@@ -1,7 +1,6 @@
-import 'dart:developer';
-
 import 'package:dio/dio.dart';
-import 'package:global_net/news/data/response/news_api_response.dart';
+import 'package:global_net/domain/result.dart';
+import 'package:global_net/news/news_api/data/response/news_api_response.dart';
 
 class NewsApiRepository {
   NewsApiRepository._internal();
@@ -28,15 +27,13 @@ class NewsApiRepository {
     };
     final response =
         await _get(path: "/v2/top-headlines", queryParameters: query);
-    if (response['status'] == 'ok') {
-      return NewsApiResponse.from(response);
-    } else {
-      final message = response['message'];
-      // final status = data['status'];
-      // final code = data['status'];
-      log(message);
-      return Future.error('$message');
+    final result = NewsApiResponse.from(response);
+    if (result is ResultSuccess<NewsApiResponse>) {
+      return result.value;
+    } else if (result is ResultError) {
+      return Future.error(result.value);
     }
+    throw UnimplementedError();
   }
 
   Future<Map<String, dynamic>> _get({

@@ -13,21 +13,23 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_signin_button/button_list.dart';
 import 'package:flutter_signin_button/button_view.dart';
 import 'package:global_net/ads/login_ads.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:google_sign_in/google_sign_in.dart';
-import 'package:nb_utils/nb_utils.dart';
 import 'package:global_net/models/user.dart';
 import 'package:global_net/pages/auth/add_credit_to_account.dart';
 import 'package:global_net/pages/auth/create_account.dart';
 import 'package:global_net/pages/auth/forgotpass.dart';
 import 'package:global_net/pages/auth/signup_page.dart';
 import 'package:global_net/pages/home/home.dart';
-import 'package:global_net/pages/menu/term_of_use.dart';
 import 'package:global_net/share_preference/preferences_key.dart';
 import 'package:global_net/widgets/bezier_container.dart';
 import 'package:global_net/widgets/language_picker_widget_home.dart';
 import 'package:global_net/widgets/progress.dart';
 import 'package:global_net/widgets/simple_world_widgets.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:nb_utils/nb_utils.dart';
+import 'package:url_launcher/url_launcher.dart';
+
+import '../menu/terms_and_conditions.dart';
 
 GloabalUser? currentUser;
 
@@ -491,15 +493,15 @@ class LoginPageState extends State<LoginPage> {
     }
   }
 
-  Widget _iosButton() {
-    return Padding(
-      padding: const EdgeInsets.all(6.0),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [],
-      ),
-    );
-  }
+  // Widget _iosButton() {
+  //   return Padding(
+  //     padding: const EdgeInsets.all(6.0),
+  //     child: Column(
+  //       mainAxisAlignment: MainAxisAlignment.center,
+  //       children: [],
+  //     ),
+  //   );
+  // }
 
   Future<void> _signInWithGoogle() async {
     try {
@@ -664,8 +666,19 @@ class LoginPageState extends State<LoginPage> {
   Widget terms() {
     return InkWell(
       onTap: () {
-        Navigator.push(context,
-            MaterialPageRoute(builder: (context) => const TermOfUsePage()));
+        const url = "https://globalgirlsinc.net/?page_id=108";
+        if (kIsWeb) {
+          launchUrl(Uri.parse(url));
+        } else {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const TermsAndConditions(
+                url: url,
+              ),
+            ),
+          );
+        }
       },
       child: Container(
         padding: const EdgeInsets.all(15),

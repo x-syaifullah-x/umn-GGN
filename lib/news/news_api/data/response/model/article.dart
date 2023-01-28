@@ -1,7 +1,7 @@
-import 'package:global_net/news/data/response/model/source.dart';
+import 'package:global_net/news/news_api/data/response/model/source.dart';
 
-class Artticle {
-  Artticle({
+class Article {
+  Article({
     required this.source,
     required this.author,
     required this.title,
@@ -21,9 +21,9 @@ class Artticle {
   final String publishedAt;
   final String content;
 
-  factory Artticle.from(dynamic e) {
+  factory Article.from(dynamic e) {
     final sourceResponse = e['source'];
-    return Artticle(
+    return Article(
       source: Source(
         id: sourceResponse['id'] ?? "",
         name: sourceResponse['name'] ?? "",

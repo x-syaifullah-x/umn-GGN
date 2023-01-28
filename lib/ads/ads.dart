@@ -1,31 +1,10 @@
-import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
-import 'package:global_net/ads/adunit_id.dart';
+import 'package:flutter/material.dart';
+import 'package:global_net/ads/ad_unit_id.dart';
+import 'package:global_net/gen/assets.gen.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
-// import 'package:global_net/gen/assets.gen.dart';
-// import 'dart:html' as html;
-// import 'dart:ui' as ui;
-
-Widget webAds(double width) {
-  // const String adViewType = 'adsense';
-  // // ignore: undefined_prefixed_name
-  // ui.platformViewRegistry.registerViewFactory(adViewType, (int viewID) {
-  //   return html.IFrameElement()
-  //     // ..width = "${width}px"
-  //     // ..height = '200'
-  //     ..src = "assets/${Assets.html.adsense}"
-  //     ..style.border = 'none';
-  // });
-  // return SizedBox(
-  //   width: width,
-  //   height: 250,
-  //   child: const HtmlElementView(
-  //     viewType: adViewType,
-  //   ),
-  // );
-  return Container();
-}
+import 'ads_web.dart';
 
 class Ads extends StatefulWidget {
   final double space;
@@ -44,7 +23,14 @@ class _State extends State<Ads> {
 
   @override
   Widget build(BuildContext context) {
-    if (kIsWeb) return webAds(widget.space);
+    if (kIsWeb) {
+      return webAds(
+        width: widget.space,
+        height: 250,
+        src: 'assets/${Assets.html.adsense}',
+        adViewType: 'adsense',
+      );
+    }
     final bannerAd = _bannerAd;
     if (bannerAd != null) {
       final size = bannerAd.size;

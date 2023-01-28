@@ -1,11 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import "package:flutter/material.dart";
-import 'package:nb_utils/nb_utils.dart';
 import 'package:global_net/pages/menu/about_us.dart';
 import 'package:global_net/pages/menu/privacy_policy.dart';
 import 'package:global_net/pages/menu/we_are_hiring.dart';
 import 'package:global_net/widgets/header.dart';
 import 'package:global_net/widgets/progress.dart';
+import 'package:nb_utils/nb_utils.dart';
 
 class HelpSupportPage extends StatefulWidget {
   final String? currentUserId;
@@ -13,7 +13,7 @@ class HelpSupportPage extends StatefulWidget {
   const HelpSupportPage({Key? key, this.currentUserId}) : super(key: key);
 
   @override
-  _SettingsState createState() => _SettingsState();
+  State createState() => _SettingsState();
 }
 
 class _SettingsState extends State<HelpSupportPage> {
