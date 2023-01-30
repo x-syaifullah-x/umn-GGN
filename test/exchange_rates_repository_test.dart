@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:global_net/exchange_rates/data/repository/exchange_rates_repository.dart';
+import 'package:global_net/v2/exchange_rates/data/repository/exchange_rates_repository.dart';
 
 void main() {
   final repo = ExchangeratesRepository.instance;
