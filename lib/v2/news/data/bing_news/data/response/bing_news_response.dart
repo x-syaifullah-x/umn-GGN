@@ -19,7 +19,7 @@ class BingNewsResponse {
   final String type;
   final String name;
   final String url;
-  final Image image;
+  final ImageBing image;
   final String description;
   final List<Mention> mentions;
   final List<Provider> providers;
@@ -37,7 +37,7 @@ class BingNewsResponse {
           final description = element['description'];
           final name = element['name'];
           final url = element['url'];
-          final image = Image.from(element['image']);
+          final image = ImageBing.from(element['image']);
           final mentions = (element['mention'] as List?)
                   ?.map((e) => Mention(name: e['name'])) ??
               List.empty();

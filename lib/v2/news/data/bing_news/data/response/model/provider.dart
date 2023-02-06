@@ -7,11 +7,11 @@ class Provider {
   });
 
   final String name;
-  final Image image;
+  final ImageBing image;
 
   static Provider from(Map<String, dynamic> data) {
     final name = data['name'];
-    final image = Image.from(data['image']);
+    final image = ImageBing.from(data['image']);
     return Provider(name: name, image: image);
   }
 }

@@ -45,8 +45,7 @@ class NewsApiRepository {
       headers ??= {};
       queryParameters ??= {};
 
-      // headers['Authorization'] = '1308ecb5845a45b182afe42aab01461a';
-      headers['Authorization'] = '47c9a1ef3e6a4e139fce37ad52735f7d';
+      headers['Authorization'] = 'f1b98aec8eac4418b9f5524d7e20892f';
 
       final dio = Dio();
       dio.options.headers = headers;
