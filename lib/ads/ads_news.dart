@@ -21,14 +21,24 @@ class _State extends State<AdsNews> {
 
   @override
   Widget build(BuildContext context) {
-    // if (kIsWeb) {
-    //   return webAds(
-    //     width: widget.space,
-    //     height: 250,
-    //     src: 'assets/${Assets.html.adsense}',
-    //     adViewType: 'adsense',
-    //   );
-    // }
+    if (kIsWeb) {
+      return Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          Container(
+            width: MediaQuery.of(context).size.width * .75,
+            margin: const EdgeInsets.only(bottom: 20),
+            child: const Text(
+              'GLOBAL NET NEWS FEED',
+              style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 26,
+                  fontWeight: FontWeight.bold),
+            ),
+          ),
+        ],
+      );
+    }
     final bannerAd = _bannerAd;
     if (bannerAd != null) {
       return Column(

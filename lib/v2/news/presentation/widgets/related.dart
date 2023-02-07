@@ -1,14 +1,19 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:global_net/v2/news/bing_news/data/bing_news_repository.dart';
-import 'package:global_net/v2/news/bing_news/data/response/bing_news_response.dart';
 import 'package:global_net/v2/news/presentation/pages/news_detail.dart';
 
+import '../../data/bing_news/data/bing_news_repository.dart';
+import '../../data/bing_news/data/response/bing_news_response.dart';
+import '../../data/news_catcher/repository.dart';
+
 class Related extends StatefulWidget {
-  const Related({Key? key, required this.q, this.left = 10.0})
-      : super(key: key);
+  const Related({
+    Key? key,
+    required this.q,
+    this.left = 10.0,
+  }) : super(key: key);
 
   final String q;
   final double left;
@@ -21,11 +26,7 @@ class _RelatedState extends State<Related> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: BingNewsRepository.instance.search(
-        q: '${widget.q}&textFormat=RAW&textDecorations=BOLD',
-        pageSize: 10,
-        freshness: 'Day',
-      ),
+      future: _fetch(),
       builder: (context, AsyncSnapshot<List<BingNewsResponse>> snapshot) {
         final data = snapshot.data;
         if (snapshot.connectionState == ConnectionState.done) {
@@ -60,6 +61,17 @@ class _RelatedState extends State<Related> {
     );
   }
 
+  Future<List<BingNewsResponse>> _fetch() {
+    // if (kDebugMode) {
+    //   return Future.value([]);
+    // }
+    return BingNewsRepository.instance.search(
+      q: '${widget.q}&textFormat=RAW&textDecorations=BOLD',
+      pageSize: 10,
+      freshness: 'Day',
+    );
+  }
+
   Widget _items(List<BingNewsResponse> data) {
     final length = data.length;
     final size = length - 1;
@@ -89,7 +101,7 @@ class _RelatedState extends State<Related> {
                   decoration: BoxDecoration(
                     image: DecorationImage(
                       image: imageProvider,
-                      fit: BoxFit.cover,
+                      fit: BoxFit.fill,
                     ),
                   ),
                   child: Column(

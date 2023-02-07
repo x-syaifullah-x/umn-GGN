@@ -1,4 +1,4 @@
-import 'package:global_net/v2/news/news_api/data/response/model/source.dart';
+import 'package:global_net/v2/news/data/news_api/data/response/model/source.dart';
 
 class Article {
   Article({

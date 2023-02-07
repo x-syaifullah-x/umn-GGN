@@ -1,9 +1,9 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:global_net/v2/news/bing_news/data/response/bing_news_response.dart';
 import 'package:intl/intl.dart';
 
+import '../../data/bing_news/data/response/bing_news_response.dart';
 import '../pages/news_detail.dart';
 
 class Item extends StatelessWidget {
@@ -17,7 +17,7 @@ class Item extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final date = DateFormat('MMM d, kk:mm a').format(
-      DateTime.parse(item.datePublished),
+      DateTime.tryParse(item.datePublished)??DateTime(2021),
     );
     return InkWell(
       child: Container(

@@ -1,12 +1,16 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:global_net/v2/news/bing_news/data/response/bing_news_response.dart';
-import 'package:global_net/v2/news/bing_news/data/response/model/provider.dart';
 import 'package:global_net/v2/news/presentation/app_web_view.dart';
 import 'package:global_net/v2/news/presentation/widgets/related.dart';
 import 'package:intl/intl.dart';
-import 'package:nb_utils/nb_utils.dart';
+import 'package:share/share.dart';
 import 'package:url_launcher/url_launcher.dart';
+
+import '../../data/bing_news/data/response/bing_news_response.dart';
+import '../../data/bing_news/data/response/model/provider.dart';
+import 'news_detail_comment.dart';
 
 class NewsDetail extends StatelessWidget {
   const NewsDetail({
@@ -18,6 +22,26 @@ class NewsDetail extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    return _NewsDetail(
+      key: key,
+      article: article,
+    );
+  }
+}
+
+class _NewsDetail extends StatelessWidget {
+  const _NewsDetail({
+    Key? key,
+    required this.article,
+  }) : super(key: key);
+
+  final BingNewsResponse article;
+
+  @override
+  Widget build(BuildContext context) {
+    final auth = FirebaseAuth.instance;
+    final uid = auth.currentUser?.uid;
+
     final mediaQuery = MediaQuery.of(context);
     final size = mediaQuery.size;
     final isLandscape = mediaQuery.orientation == Orientation.landscape;
@@ -31,7 +55,7 @@ class NewsDetail extends StatelessWidget {
               _sliverAppBar(expandedHeight, article),
             ];
           },
-          body: _body(context),
+          body: _body(context, uid!),
           // body: _body(),
         ),
       ),
@@ -79,7 +103,7 @@ class NewsDetail extends StatelessWidget {
     );
   }
 
-  Widget _body(BuildContext context) {
+  Widget _body(BuildContext context, String uid) {
     final mediaQuery = MediaQuery.of(context);
     final size = mediaQuery.size;
     final double width = size.width < 600 ? 10.0 : (size.width * .2);
@@ -93,7 +117,8 @@ class NewsDetail extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _dateBuild(
-                dateTime: DateTime.parse(article.datePublished),
+                dateTime:
+                    DateTime.tryParse(article.datePublished) ?? DateTime(2021),
                 padding: EdgeInsets.only(
                     left: paddingLeft, right: paddingRight, top: 8),
               ),
@@ -106,6 +131,8 @@ class NewsDetail extends StatelessWidget {
                 ),
               ),
               _card(
+                data: article,
+                uid: uid,
                 width: size.width,
                 padding: EdgeInsets.only(
                   left: paddingLeft + 20,
@@ -172,7 +199,7 @@ class NewsDetail extends StatelessWidget {
             onPressed: () {
               openBrowser(context, article);
             },
-            child: Text('Read More'),
+            child: const Text('Read More'),
           ),
         )
       ],
@@ -234,6 +261,8 @@ class NewsDetail extends StatelessWidget {
   }
 
   Widget _card({
+    required BingNewsResponse data,
+    required String uid,
     EdgeInsets? margin,
     EdgeInsets? padding,
     double? width = double.infinity,
@@ -252,10 +281,84 @@ class NewsDetail extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              _cardItemBuild(iconData: Icons.thumb_up, title: 'Like'),
-              _cardItemBuild(iconData: Icons.comment, title: 'Comment'),
-              _cardItemBuild(iconData: Icons.share, title: 'Share'),
-              _cardItemBuild(iconData: Icons.save, title: 'Save'),
+              StreamBuilder(
+                  stream: FirebaseFirestore.instance
+                      .collection('news')
+                      .doc('like')
+                      .collection(data.name)
+                      .snapshots(),
+                  builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                    var isLike = false;
+                    final dataSnapshot = snapshot.data;
+                    final docs = dataSnapshot?.docs;
+                    final likeCount = dataSnapshot?.size;
+                    docs?.forEach((element) {
+                      if (element.id == uid) {
+                        isLike = true;
+                        return;
+                      }
+                    });
+                    return _cardItemBuild(
+                        iconData:
+                            isLike ? Icons.thumb_up : Icons.thumb_up_outlined,
+                        title: '$likeCount Like',
+                        onTap: () async {
+                          final fireStore = FirebaseFirestore.instance;
+                          if (isLike) {
+                            final newsCollections = fireStore
+                                .collection('news')
+                                .doc('like')
+                                .collection(data.name);
+                            final get = await newsCollections.get();
+                            for (var element in get.docs) {
+                              if (element.id == uid) {
+                                await element.reference.delete();
+                                return;
+                              }
+                            }
+                          } else {
+                            final newsCollections = fireStore
+                                .collection('news')
+                                .doc('like')
+                                .collection(data.name);
+                            await newsCollections.doc(uid).set({});
+                          }
+                        });
+                  }),
+              StreamBuilder(
+                stream: FirebaseFirestore.instance
+                    .collection('news')
+                    .doc('comment')
+                    .collection(data.name)
+                    .snapshots(),
+                builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                  final commentCount = snapshot.data?.size ?? 0;
+                  return _cardItemBuild(
+                      iconData: Icons.comment,
+                      title: '$commentCount Comment',
+                      onTap: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => NewsDetailComment(data: data),
+                          ),
+                        );
+                      });
+                },
+              ),
+              _cardItemBuild(
+                  iconData: Icons.share,
+                  title: 'Share',
+                  onTap: () async {
+                    await Share.share(
+                      '${data.name}\n\nhttps://play.google.com/store/apps/details?id=ggn.liru.yang.net',
+                      subject: 'TEXT',
+                      // sharePositionOrigin: box.localToGlobal(Offset.zero) & box.size
+                    );
+                  }),
+              _cardItemBuild(
+                iconData: Icons.save,
+                title: 'Save',
+              ),
             ],
           ),
         ),
@@ -263,17 +366,21 @@ class NewsDetail extends StatelessWidget {
     );
   }
 
-  Widget _cardItemBuild({required IconData iconData, required String title}) {
+  Widget _cardItemBuild({
+    required IconData iconData,
+    required String title,
+    Function? onTap,
+  }) {
     return InkWell(
+      onTap: () {
+        onTap?.call();
+      },
       child: Column(
         children: [
           Icon(iconData),
           Text(title),
         ],
       ),
-      onTap: () {
-        toast('Soon');
-      },
     );
   }
 
@@ -287,7 +394,7 @@ class NewsDetail extends StatelessWidget {
       padding: padding,
       child: Text(
         descriptions,
-        style: TextStyle(fontSize: 16),
+        style: const TextStyle(fontSize: 16),
       ),
     );
   }
@@ -310,13 +417,13 @@ class NewsDetail extends StatelessWidget {
       margin: margin,
       child: Row(
         children: [
-          Text(
+          const Text(
             'Source: ',
           ),
           InkWell(
             child: Text(
               sourceName,
-              style: TextStyle(color: Colors.indigo),
+              style: const TextStyle(color: Colors.indigo),
             ),
             onTap: () {
               openBrowser(context, article);

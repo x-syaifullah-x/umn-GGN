@@ -1,9 +1,9 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:global_net/domain/result.dart';
-import 'package:global_net/v2/news/bing_news/data/response/bing_news_response.dart';
-import 'package:global_net/v2/news/bing_news/data/response/model/image.dart';
-import 'package:global_net/v2/news/bing_news/data/response/model/thumbnail.dart';
+import 'package:global_net/v2/news/data/bing_news/data/response/bing_news_response.dart';
+import 'package:global_net/v2/news/data/bing_news/data/response/model/image.dart';
+import 'package:global_net/v2/news/data/bing_news/data/response/model/thumbnail.dart';
 
 class BingNewsRepository {
   BingNewsRepository._internal();
@@ -37,7 +37,7 @@ class BingNewsRepository {
       'mkt': mkt,
     };
     final result = await _get(
-      path: 'news/search',
+      path: '/v7.0/news/search',
       queryParameters: params,
     );
     final results = BingNewsResponse.from(result);
@@ -46,6 +46,7 @@ class BingNewsRepository {
     }
     return [
       BingNewsResponse(
+        topic: '',
         type: 'type',
         name: 'Navigating Charlotte’s top-ranking real estate market',
         url: 'url',
@@ -71,22 +72,13 @@ class BingNewsRepository {
       headers ??= {};
       queryParameters ??= {};
 
-      headers['X-BingApis-SDK'] = 'true';
-      headers['X-RapidAPI-Host'] = 'bing-news-search1.p.rapidapi.com';
-
-      // roottingandroid@gmail.com
-      headers['X-RapidAPI-Key'] =
-          'bd54b898f0msh16ad7abb16004b6p1005edjsnb07b4dc4f0d2';
-
-      // x.19.02.1992.x@gmail.com
-      // headers['X-RapidAPI-Key'] =
-      //     '91b8e8134dmsh404ff7715b547c8p1adce2jsnd0300a8c8912';
-
+      headers['Ocp-Apim-Subscription-Key'] =
+          'dfcf47c820a94caf8be90f8ae3b61419';
       final dio = Dio();
       dio.options.headers = headers;
       dio.options.queryParameters = queryParameters;
       dio.options.receiveDataWhenStatusError = true;
-      return (await dio.get("https://bing-news-search1.p.rapidapi.com/$path"))
+      return (await dio.get("https://api.bing.microsoft.com/$path"))
           .data;
     } on DioError catch (e) {
       debugPrint('${e.response}');

@@ -1,4 +1,4 @@
-import 'package:global_net/v2/news/bing_news/data/response/model/thumbnail.dart';
+import 'package:global_net/v2/news/data/bing_news/data/response/model/thumbnail.dart';
 
 class Video {
   Video(this.name, this.motionThumbnailUrl, this.thumbnail);

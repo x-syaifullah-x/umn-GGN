@@ -70,6 +70,16 @@ class ExchangeratesRepository {
   // );
   // }
 
+  Future<List<SymbolResponse>> getSymbols2() async {
+    final http.Response response = await _get(path: "rapid/latest/USD");
+    if (response.statusCode == 200) {
+      final String responseBody = response.body;
+      return SymbolResponse.from2(responseBody);
+    } else {
+      return Future.error(jsonDecode(response.body)['message']);
+    }
+  }
+
   Future<http.Response> _get({
     required String path,
     Map<String, String>? queryParameters,

@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:global_net/v2/exchange_rates/data/repository/response/convert_response.dart';
 import 'package:global_net/v2/exchange_rates/data/repository/exchange_rates_repository.dart';
+import 'package:global_net/v2/exchange_rates/data/repository/response/convert_response.dart';
 import 'package:global_net/v2/exchange_rates/data/repository/response/symbol_response.dart';
 import 'package:intl/intl.dart';
 
@@ -61,9 +61,9 @@ class _State extends State<ExchangeratesDataWidget> {
     return resultSymbols;
   }
 
-  String _dateFormat(int timestamp) {
+  String _dateFormat(int timesMillis) {
     return DateFormat('MMM d, kk:mm a UTC').format(
-      DateTime.fromMillisecondsSinceEpoch(timestamp).toUtc(),
+      DateTime.fromMillisecondsSinceEpoch(timesMillis).toUtc(),
     );
   }
 

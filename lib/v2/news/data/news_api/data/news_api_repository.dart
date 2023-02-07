@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:global_net/domain/result.dart';
-import 'package:global_net/v2/news/news_api/data/response/news_api_response.dart';
+import 'package:global_net/v2/news/data/news_api/data/response/news_api_response.dart';
 
 class NewsApiRepository {
   NewsApiRepository._internal();

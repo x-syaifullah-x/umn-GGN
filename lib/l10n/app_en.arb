@@ -129,5 +129,7 @@
     "credit_lines": "CREDIT LINES",
     "crow_funding": "CROWD FUNDING",
     "business_structure": "BUSINESS STRUCTURE",
-    "cryptocurrency": "CRYPTOCURRENCY"
+    "cryptocurrency": "CRYPTOCURRENCY",
+    "media": "MEDIA",
+    "accounting": "ACCOUNTING"
 }

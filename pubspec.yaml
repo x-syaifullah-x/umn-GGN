@@ -1,7 +1,7 @@
 name: global_net
 description: A new Flutter project.
 
-version: 1.18.9+28
+version: 1.18.10+29
 
 environment:
   sdk: ">=2.14.4 <=3.3.10"

@@ -129,5 +129,7 @@
     "credit_lines": "信用额度",
     "crow_funding": "众筹",
     "business_structure": "业务结构",
-    "cryptocurrency": "加密货币"
+    "cryptocurrency": "加密货币",
+    "media": "媒体",
+    "accounting": "会计"
 }

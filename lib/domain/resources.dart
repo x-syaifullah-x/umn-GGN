@@ -7,14 +7,16 @@ class ResourcesLoading implements Resources {
 
 class ResourcesSuccess<T> implements Resources {
   ResourcesSuccess(this.value);
+
   final T value;
 
   @override
   Type get runtimeType => ResourcesSuccess;
 }
 
-class ResourcesError<T extends Exception> implements Resources {
+class ResourcesError<T> implements Resources {
   ResourcesError(this.value);
+
   final T value;
 
   @override

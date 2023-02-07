@@ -48,7 +48,7 @@ class ExchangeRatesWidget extends StatelessWidget {
         ),
       );
 
-  Widget _subTitle() => Text("Subtitle");
+  Widget _subTitle() => const Text("Subtitle");
 
   Widget _content(BuildContext context) {
     final provider = Provider.of<ExchangeRatesProvider>(context, listen: true);

@@ -1,16 +1,12 @@
-import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:global_net/ads/ads_news.dart';
-import 'package:global_net/ads/anchored_adaptive_ads.dart';
-import 'package:global_net/ads/inline_adaptive_ads.dart';
-import 'package:global_net/l10n/l10n.dart';
-import 'package:global_net/v2/news/bing_news/data/bing_news_repository.dart';
-import 'package:global_net/v2/news/bing_news/data/response/bing_news_response.dart';
-import 'package:global_net/provider/locale_provider.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
-import 'package:provider/provider.dart';
+import 'package:nb_utils/nb_utils.dart';
 
+import '../../../../share_preference/preferences_key.dart';
+import '../../data/bing_news/data/bing_news_repository.dart';
+import '../../data/bing_news/data/response/bing_news_response.dart';
 import '../widgets/item.dart';
 
 class News extends StatefulWidget {
@@ -41,8 +37,9 @@ class _NewsState extends State<News> {
     int pageSize = 20,
   }) async {
     String country = 'en-US';
-    final locale = Provider.of<LocaleProvider>(context, listen: false).locale;
-    if (locale?.languageCode == L10n.languageCodeChinese) {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    final code = preferences.getString(SharedPreferencesKey.languageCode);
+    if (code == 'zh') {
       country = 'zh-CN';
     }
     try {

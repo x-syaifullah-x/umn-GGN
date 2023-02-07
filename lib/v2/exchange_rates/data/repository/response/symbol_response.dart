@@ -25,6 +25,20 @@ class SymbolResponse {
     }
   }
 
+    static List<SymbolResponse> from2(String responseBody) {
+    try {
+      final dynamic jsonResponseBody = jsonDecode(responseBody);
+      // final success = jsonResponseBody['success'];
+      final Map<dynamic, dynamic> symbols = jsonResponseBody['rates'];
+      return symbols.entries
+          .map((e) => SymbolResponse(code: e.key, currency: e.value))
+          .toList();
+    } catch (e) {
+      onError(e);
+      return List.empty();
+    }
+  }
+
   @override
   String toString() {
     return code + currency;

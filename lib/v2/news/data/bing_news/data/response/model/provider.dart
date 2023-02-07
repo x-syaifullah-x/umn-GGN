@@ -1,4 +1,4 @@
-import 'package:global_net/v2/news/bing_news/data/response/model/image.dart';
+import 'image.dart';
 
 class Provider {
   Provider({

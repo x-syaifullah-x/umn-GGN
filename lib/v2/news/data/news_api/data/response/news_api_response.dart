@@ -1,6 +1,5 @@
-import 'package:global_net/v2/news/news_api/data/response/model/article.dart';
-
-import '../../../../../domain/result.dart';
+import '../../../../../../domain/result.dart';
+import 'model/article.dart';
 
 class NewsApiResponse {
   NewsApiResponse({

@@ -3,13 +3,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:global_net/ads/ads.dart';
 import 'package:global_net/data/reaction_data.dart' as reaction;
-import 'package:global_net/v2/exchange_rates/widgets/exchange_rates_data_widget.dart';
 import 'package:global_net/models/user.dart';
-import 'package:global_net/v2/news/presentation/pages/news.dart';
 import 'package:global_net/pages/home/activity_feed.dart';
 import 'package:global_net/pages/home/home_ads.dart';
 import 'package:global_net/pages/home/new_timeline.dart';
@@ -17,6 +16,8 @@ import 'package:global_net/pages/home/profile/profile.dart';
 import 'package:global_net/pages/home/settings.dart';
 import 'package:global_net/pages/home/user/users.dart';
 import 'package:global_net/pages/search.dart';
+import 'package:global_net/v2/news/presentation/app_web_view.dart';
+import 'package:global_net/v2/news/presentation/pages/news.dart';
 import 'package:global_net/widgets/circle_button.dart';
 import 'package:global_net/widgets/count/feeds_count.dart';
 import 'package:global_net/widgets/count/messages_count.dart';
@@ -25,6 +26,9 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:iconly/iconly.dart';
 import 'package:nb_utils/nb_utils.dart';
+import 'package:url_launcher/url_launcher.dart';
+
+import '../../v2/exchange_rate_new/widgets/exchange_rate_new.dart';
 
 final GoogleSignIn googleSignIn = GoogleSignIn();
 final Reference storageRef = FirebaseStorage.instance.ref();
@@ -260,10 +264,12 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
       AppLocalizations.of(context)!.channel,
       AppLocalizations.of(context)!.email,
       AppLocalizations.of(context)!.news,
+      AppLocalizations.of(context)!.media,
       AppLocalizations.of(context)!.iptv,
       AppLocalizations.of(context)!.chat,
       AppLocalizations.of(context)!.group,
       AppLocalizations.of(context)!.apps,
+      AppLocalizations.of(context)!.accounting,
       AppLocalizations.of(context)!.go_dark,
       AppLocalizations.of(context)!.credit_lines,
       AppLocalizations.of(context)!.crow_funding,
@@ -291,8 +297,10 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
           ]),
         ),
         if (widthMoreThan_700)
-          _rightSide(
-            widthContentRight,
+          Expanded(
+            child: _rightSide(
+              widthContentRight,
+            ),
           )
       ],
     );
@@ -304,9 +312,10 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          ExchangeratesDataWidget(
-            widthParent: (widthContentRight),
-          ),
+          // ExchangeratesDataWidget(
+          //   widthParent: (widthContentRight),
+          // ),
+          const ExchangeRate(),
           Ads(space: widthContentRight),
         ],
       ),
@@ -361,9 +370,24 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
                 ),
               ),
               onTap: () {
-                if (AppLocalizations.of(context)!.news == dataSideLeft[index]) {
+                final item = dataSideLeft[index];
+                if (AppLocalizations.of(context)!.shop == item) {
+                  const url = 'http://globalgnet.net';
+                  if (kIsWeb) {
+                    launchUrl(Uri.parse(url));
+                  } else {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(builder: (context) {
+                        return const AppWebView(url: url, title: 'Shop');
+                      }),
+                    );
+                  }
+                  return;
+                } else if (AppLocalizations.of(context)!.news == item) {
                   Navigator.of(context).push(
-                    MaterialPageRoute(builder: (context) => const News()),
+                    MaterialPageRoute(builder: (context) {
+                      return const News();
+                    }),
                   );
                   return;
                 }
