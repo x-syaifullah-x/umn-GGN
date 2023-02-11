@@ -9,7 +9,7 @@ void main() {
       'message': 'response_error',
     };
 
-    print(NewsApiResponse.from(response) is ResultError);
+    print(NewsApiResponse.toList(response) is ResultError);
   });
 
   test("status ok", () async {
@@ -20,7 +20,7 @@ void main() {
       'articles': articles,
     };
 
-    final result = NewsApiResponse.from(response);
+    final result = NewsApiResponse.toList(response);
     if (result is ResultSuccess<NewsApiResponse>) {
       print(result.value);
     }
@@ -32,7 +32,7 @@ void main() {
       'a': '',
     };
 
-    final result = NewsApiResponse.from(response);
+    final result = NewsApiResponse.toList(response);
     if (result is ResultError) {
       print(result.value);
     }

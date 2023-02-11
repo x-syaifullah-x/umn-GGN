@@ -10,6 +10,7 @@ import 'package:global_net/ads/ads.dart';
 import 'package:global_net/data/reaction_data.dart' as reaction;
 import 'package:global_net/models/user.dart';
 import 'package:global_net/pages/home/activity_feed.dart';
+import 'package:global_net/pages/home/business_structure/business_structure.dart';
 import 'package:global_net/pages/home/home_ads.dart';
 import 'package:global_net/pages/home/new_timeline.dart';
 import 'package:global_net/pages/home/profile/profile.dart';
@@ -371,6 +372,41 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
               ),
               onTap: () {
                 final item = dataSideLeft[index];
+
+                if (AppLocalizations.of(context)!.business_structure == item) {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(builder: (context) {
+                      return BusinessStructure();
+                    }),
+                  );
+                  return;
+                }
+                if (AppLocalizations.of(context)!.accounting == item) {
+                  const url = 'http://account.globalgnet.net';
+                  if (kIsWeb) {
+                    launchUrl(Uri.parse(url));
+                  } else {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(builder: (context) {
+                        return const AppWebView(url: url, title: 'Accounting');
+                      }),
+                    );
+                  }
+                  return;
+                }
+                if (AppLocalizations.of(context)!.media == item) {
+                  const url = 'https://www.douyin.com';
+                  if (kIsWeb) {
+                    launchUrl(Uri.parse(url));
+                  } else {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(builder: (context) {
+                        return const AppWebView(url: url, title: 'Media');
+                      }),
+                    );
+                  }
+                  return;
+                }
                 if (AppLocalizations.of(context)!.shop == item) {
                   const url = 'http://globalgnet.net';
                   if (kIsWeb) {
