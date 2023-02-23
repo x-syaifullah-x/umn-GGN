@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:global_net/pages/chat/simpleworld_chat.dart';
 import 'package:global_net/pages/home/home.dart';
 import 'package:timeago/timeago.dart';
+import 'package:badges/badges.dart' as badges;
 
 class Messenger extends StatefulWidget {
   final String userId;
@@ -149,7 +150,7 @@ class MessengerState extends State<Messenger> {
                 )),
                 locale: 'en_short')),
             int.parse(messenger[index]['badge']) > 0
-                ? Badge(
+                ? badges.Badge(
                     elevation: 0,
                     shape: BadgeShape.circle,
                     padding: const EdgeInsets.all(7),

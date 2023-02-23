@@ -86,37 +86,37 @@ class _BusinessStructureState extends State<BusinessStructure> {
                         ),
                       )
                     : InteractiveViewer(
-                      constrained: false,
-                      boundaryMargin: const EdgeInsets.all(100),
-                      minScale: 0.01,
-                      maxScale: 5.6,
-                      child: GraphView(
-                        animated: true,
-                        graph: graph,
-                        algorithm: BuchheimWalkerAlgorithm(
-                          builder,
-                          TreeEdgeRenderer(builder),
+                        constrained: false,
+                        boundaryMargin: const EdgeInsets.all(100),
+                        minScale: 0.01,
+                        maxScale: 5.6,
+                        child: GraphView(
+                          animated: true,
+                          graph: graph,
+                          algorithm: BuchheimWalkerAlgorithm(
+                            builder,
+                            TreeEdgeRenderer(builder),
+                          ),
+                          paint: Paint()
+                            ..color = Theme.of(context).primaryColor
+                            ..strokeWidth = 1.5
+                            ..style = PaintingStyle.stroke,
+                          builder: (Node node) {
+                            return NodeItem(
+                              model: node.key?.value as NodeModel,
+                              onAdd: (model) {
+                                _showFormAdd(
+                                  userID: uid,
+                                  source: model,
+                                );
+                              },
+                              onRemove: (model) {
+                                _removeNode(userUID: uid, model: model);
+                              },
+                            );
+                          },
                         ),
-                        paint: Paint()
-                          ..color = Theme.of(context).primaryColor
-                          ..strokeWidth = 1.5
-                          ..style = PaintingStyle.stroke,
-                        builder: (Node node) {
-                          return NodeItem(
-                            model: node.key?.value as NodeModel,
-                            onAdd: (model) {
-                              _showFormAdd(
-                                userID: uid,
-                                source: model,
-                              );
-                            },
-                            onRemove: (model) {
-                              _removeNode(userUID: uid, model: model);
-                            },
-                          );
-                        },
-                      ),
-                    );
+                      );
               }
               throw UnimplementedError();
             },

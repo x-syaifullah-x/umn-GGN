@@ -1,4 +1,4 @@
-import 'package:badges/badges.dart';
+import 'package:badges/badges.dart' as badges;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -62,7 +62,7 @@ class FeedsCountState extends State<FeedsCount> {
                       : const Icon(IconlyLight.activity));
             } else {
               return Tab(
-                icon: Badge(
+                icon: badges.Badge(
                     badgeColor: const Color(0xFFC62828),
                     badgeContent: Text(
                       snapshot.data!.size.toString(),

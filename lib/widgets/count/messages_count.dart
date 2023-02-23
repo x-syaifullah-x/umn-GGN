@@ -7,6 +7,7 @@ import 'package:nb_utils/nb_utils.dart';
 import 'package:global_net/pages/chat/simpleworld_chat_main.dart';
 import 'package:global_net/pages/home/home.dart';
 import 'package:global_net/widgets/circle_button.dart';
+import 'package:badges/badges.dart' as badges;
 
 class MessagesCount extends StatefulWidget {
   final String? currentUserId;
@@ -52,7 +53,7 @@ class MessagesState extends State<MessagesCount> {
               isWeb ? Icons.message : MdiIcons.facebookMessenger;
 
           if (sum > 0) {
-            return Badge(
+            return badges.Badge(
               position: BadgePosition.topEnd(top: 0, end: 3),
               animationDuration: const Duration(milliseconds: 300),
               animationType: BadgeAnimationType.slide,
