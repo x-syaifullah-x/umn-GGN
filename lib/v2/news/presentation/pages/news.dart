@@ -1,9 +1,12 @@
+import 'package:applovin_max/applovin_max.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:global_net/ads/ads_news.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:nb_utils/nb_utils.dart';
 
+import '../../../../ads/applovin_ad_unit_id.dart';
 import '../../../../share_preference/preferences_key.dart';
 import '../../data/bing_news/data/bing_news_repository.dart';
 import '../../data/bing_news/data/response/bing_news_response.dart';
@@ -101,7 +104,7 @@ class _NewsState extends State<News> {
               child: isCollapse
                   ? const FlexibleSpaceBar(title: Text('GLOBAL NET NEWS FEED'))
                   : Container(
-                      child: const AdsNews(),
+                      height: 300,
                       decoration: BoxDecoration(
                         image: isCollapse
                             ? null
@@ -111,6 +114,38 @@ class _NewsState extends State<News> {
                                 ),
                                 fit: BoxFit.fill,
                               ),
+                      ),
+                      // child: const AdsNews(),
+                      // child: MaxAdView(
+                      //   adUnitId: AppLovin.adUnitId,
+                      //   adFormat: AdFormat.banner,
+                      //   listener: AdViewAdListener(
+                      //     onAdLoadedCallback: (ad) {},
+                      //     onAdLoadFailedCallback: (adUnitId, error) {},
+                      //     onAdClickedCallback: (ad) {},
+                      //     onAdExpandedCallback: (ad) {},
+                      //     onAdCollapsedCallback: (ad) {},
+                      //   ),
+                      // ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          if (!kIsWeb)
+                            MaxAdView(
+                              adUnitId: AppLovin.adUnitId,
+                              adFormat: AdFormat.banner,
+                              listener: AdViewAdListener(
+                                onAdLoadedCallback: (ad) {},
+                                onAdLoadFailedCallback: (adUnitId, error) {},
+                                onAdClickedCallback: (ad) {},
+                                onAdExpandedCallback: (ad) {},
+                                onAdCollapsedCallback: (ad) {},
+                              ),
+                            ),
+                          const SizedBox(
+                            height: 8,
+                          ),
+                        ],
                       ),
                       // child: Column(
                       //   mainAxisAlignment: MainAxisAlignment.end,

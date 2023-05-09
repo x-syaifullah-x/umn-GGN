@@ -8,9 +8,10 @@ import 'package:flutter/material.dart';
 import 'package:global_net/firebase_options.dart';
 import 'package:global_net/v2/news/presentation/pages/news.dart';
 import 'package:global_net/widgets/splashscreen.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
+// import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:nb_utils/nb_utils.dart';
-
+import 'package:applovin_max/applovin_max.dart';
+import 'ads/applovin_ad_unit_id.dart';
 import 'app.dart';
 
 Future<void> main() async {
@@ -26,14 +27,18 @@ Future<void> main() async {
   }
 
   if (!kIsWeb) {
-    MobileAds.instance.initialize();
-    if (!kReleaseMode) {
-      MobileAds.instance.updateRequestConfiguration(
-        RequestConfiguration(
-          testDeviceIds: ['5DF3DDDAEA78FE6D718E9FF8B6259412'],
-        ),
-      );
-    }
+    // MobileAds.instance.initialize();
+    Map? sdkConfiguration = await AppLovinMAX.initialize(
+      AppLovin.sdkKey,
+    );
+    log(sdkConfiguration);
+    // if (!kReleaseMode) {
+    //   MobileAds.instance.updateRequestConfiguration(
+    //     RequestConfiguration(
+    //       testDeviceIds: ['5DF3DDDAEA78FE6D718E9FF8B6259412'],
+    //     ),
+    //   );
+    // }
   }
 
   await initialize();

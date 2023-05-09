@@ -1,3 +1,4 @@
+import 'package:applovin_max/applovin_max.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -8,6 +9,8 @@ import 'package:global_net/pages/home/home.dart';
 import 'package:global_net/widgets/header.dart';
 import 'package:global_net/widgets/simple_world_widgets.dart';
 import 'package:global_net/pages/home/user/users_tile.dart';
+
+import '../../../ads/applovin_ad_unit_id.dart';
 
 class UsersList extends StatefulWidget {
   final String? userId;
@@ -88,6 +91,18 @@ class UsersListState extends State<UsersList>
                   }),
             ),
             // const AdsWidget()
+            if (!kIsWeb)
+              MaxAdView(
+                adUnitId: AppLovin.adUnitId,
+                adFormat: AdFormat.banner,
+                listener: AdViewAdListener(
+                  onAdLoadedCallback: (ad) {},
+                  onAdLoadFailedCallback: (adUnitId, error) {},
+                  onAdClickedCallback: (ad) {},
+                  onAdExpandedCallback: (ad) {},
+                  onAdCollapsedCallback: (ad) {},
+                ),
+              )
           ],
         ),
       ),

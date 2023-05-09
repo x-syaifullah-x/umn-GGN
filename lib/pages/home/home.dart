@@ -1,4 +1,5 @@
 import 'package:adaptive_theme/adaptive_theme.dart';
+import 'package:applovin_max/applovin_max.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -29,6 +30,7 @@ import 'package:iconly/iconly.dart';
 import 'package:nb_utils/nb_utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../ads/applovin_ad_unit_id.dart';
 import '../../v2/exchange_rate_new/widgets/exchange_rate_new.dart';
 
 final GoogleSignIn googleSignIn = GoogleSignIn();
@@ -294,7 +296,7 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
           height: double.infinity,
           child: Column(children: [
             Expanded(child: _tabBarView(tabController, userId)),
-            HomeAds(tabController: tabController)
+            // HomeAds(tabController: tabController)
           ]),
         ),
         if (widthMoreThan_700)
@@ -317,7 +319,19 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
           //   widthParent: (widthContentRight),
           // ),
           const ExchangeRate(),
-          Ads(space: widthContentRight),
+          // Ads(space: widthContentRight),
+          if (!kIsWeb)
+            MaxAdView(
+              adUnitId: AppLovin.adUnitId,
+              adFormat: AdFormat.banner,
+              listener: AdViewAdListener(
+                onAdLoadedCallback: (ad) {},
+                onAdLoadFailedCallback: (adUnitId, error) {},
+                onAdClickedCallback: (ad) {},
+                onAdExpandedCallback: (ad) {},
+                onAdCollapsedCallback: (ad) {},
+              ),
+            )
         ],
       ),
     );

@@ -39,6 +39,9 @@ import 'package:global_net/widgets/single_post.dart';
 import 'package:string_validator/string_validator.dart';
 import 'package:timeago/timeago.dart';
 import 'package:visibility_detector/visibility_detector.dart';
+import 'package:applovin_max/applovin_max.dart';
+
+import '../../ads/applovin_ad_unit_id.dart';
 
 class NewTimeline extends StatefulWidget {
   final String? userId;
@@ -150,7 +153,19 @@ class NewTimelineState extends State<NewTimeline> {
                       scrollController: scrollController,
                     ),
                   ),
-                  if (!kIsWeb) const InlineAdaptiveAds(),
+                  // if (!kIsWeb) const InlineAdaptiveAds(),
+                  if (!kIsWeb)
+                    MaxAdView(
+                      adUnitId: AppLovin.adUnitId,
+                      adFormat: AdFormat.banner,
+                      listener: AdViewAdListener(
+                        onAdLoadedCallback: (ad) {},
+                        onAdLoadFailedCallback: (adUnitId, error) {},
+                        onAdClickedCallback: (ad) {},
+                        onAdExpandedCallback: (ad) {},
+                        onAdCollapsedCallback: (ad) {},
+                      ),
+                    )
                 ],
               );
             } else {

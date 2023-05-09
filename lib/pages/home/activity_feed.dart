@@ -1,3 +1,4 @@
+import 'package:applovin_max/applovin_max.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
@@ -14,6 +15,8 @@ import 'package:global_net/ads/anchored_adaptive_ads.dart';
 import 'package:global_net/widgets/header.dart';
 import 'package:global_net/widgets/simple_world_widgets.dart';
 import 'package:timeago/timeago.dart' as time_ago;
+
+import '../../ads/applovin_ad_unit_id.dart';
 
 class ActivityFeed extends StatefulWidget {
   const ActivityFeed({Key? key}) : super(key: key);
@@ -107,7 +110,19 @@ class ActivityFeedState extends State<ActivityFeed> {
                     ),
                   ),
                 ),
-                const AnchoredAd(),
+                // const AnchoredAd(),
+                if (!kIsWeb)
+                  MaxAdView(
+                    adUnitId: AppLovin.adUnitId,
+                    adFormat: AdFormat.banner,
+                    listener: AdViewAdListener(
+                      onAdLoadedCallback: (ad) {},
+                      onAdLoadFailedCallback: (adUnitId, error) {},
+                      onAdClickedCallback: (ad) {},
+                      onAdExpandedCallback: (ad) {},
+                      onAdCollapsedCallback: (ad) {},
+                    ),
+                  )
               ],
             );
           }
