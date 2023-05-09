@@ -38,7 +38,7 @@ android {
     ndkVersion flutter.ndkVersion
 
     defaultConfig {
-        applicationId "ggn.liru.yang.net"
+        applicationId "net.girls.yang"
         // minSdkVersion flutter.minSdkVersion // default
         minSdkVersion 21
         targetSdkVersion flutter.targetSdkVersion

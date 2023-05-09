@@ -56,7 +56,7 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyDx3Q1JEtUne8wWefRk2k1HkiaTBEduDMI',
-    appId: '1:813756573374:android:327093530af0423c12a0ef',
+    appId: '1:813756573374:android:68328e49ed7dadff12a0ef',
     messagingSenderId: '813756573374',
     projectId: 'globelgirl-2c269',
     databaseURL: 'https://globelgirl-2c269-default-rtdb.firebaseio.com',
@@ -65,7 +65,7 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyCyspSzqWm44Io5XnIIyR5KlrobPLP8c9g',
-    appId: '1:813756573374:ios:240f00dd02d45f2d12a0ef',
+    appId: '1:813756573374:ios:d9f6faf80c18a61e12a0ef',
     messagingSenderId: '813756573374',
     projectId: 'globelgirl-2c269',
     databaseURL: 'https://globelgirl-2c269-default-rtdb.firebaseio.com',
@@ -77,7 +77,7 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions macos = FirebaseOptions(
     apiKey: 'AIzaSyCyspSzqWm44Io5XnIIyR5KlrobPLP8c9g',
-    appId: '1:813756573374:ios:b6490055ff5f1e0c12a0ef',
+    appId: '1:813756573374:ios:ea9ce46fca55d50312a0ef',
     messagingSenderId: '813756573374',
     projectId: 'globelgirl-2c269',
     databaseURL: 'https://globelgirl-2c269-default-rtdb.firebaseio.com',

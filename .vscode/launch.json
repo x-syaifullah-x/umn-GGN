@@ -21,5 +21,18 @@
                 "mobile",
             ]
         },
+        // {
+        //     "name": "build apk release",
+        //     "request": "launch",
+        //     "type": "dart",
+        //     "flutterMode": "release",
+        //     "args": [
+        //         "build",
+        //         "apk",
+        //         "--release",
+        //         "--flavor",
+        //         "mobile",
+        //     ]
+        // },
     ]
 }

@@ -1,4 +1,4 @@
-package ggn.liru.yang.net;
+package net.girls.yang;
 
 import io.flutter.embedding.android.FlutterActivity;
 
