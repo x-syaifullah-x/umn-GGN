@@ -1,6 +1,7 @@
 {
     "hosting": {
-        "public": "hosting",
+        "target": "admin-globelgirl-2c269",
+        "public": "admin-globelgirl-2c269",
         "ignore": [
             "firebase.json",
             "**/.*",

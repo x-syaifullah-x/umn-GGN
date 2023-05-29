@@ -1,0 +1,6 @@
+ADMIN:
+    https://admin-globelgirl-2c269.web.app
+
+CLIENT:
+    https://globelgirl-2c269.web.app
+

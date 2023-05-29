@@ -1,5 +1,15 @@
 {
   "projects": {
     "default": "globelgirl-2c269"
-  }
+  },
+  "targets": {
+    "globelgirl-2c269": {
+      "hosting": {
+        "admin-globelgirl-2c269": [
+          "admin-globelgirl-2c269"
+        ]
+      }
+    }
+  },
+  "etags": {}
 }

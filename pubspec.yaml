@@ -4,12 +4,13 @@ description: A new Flutter project.
 version: 1.18.10+29
 
 environment:
-  sdk: ">=2.14.4 <=3.7.12"
+  sdk: ">=2.14.4 <=3.7.12" # ref 4d9e56e
 
 dependency_overrides:
   firebase_core_platform_interface: 4.5.1
 
 dependencies:
+  sqflite: 2.2.8+4
   applovin_max: 2.5.0
   graphview: 1.1.1
   infinite_scroll_pagination: 3.2.0
@@ -98,8 +99,3 @@ flutter:
   assets:
     - assets/images/
     - assets/html/
-    
-
-
-    
-

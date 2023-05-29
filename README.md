@@ -23,3 +23,7 @@ samples, guidance on mobile development, and a full API reference.
 - 28
 ### SDK Build-Tools
 - 30.0.3
+
+### FLUTTER SDK MAX
+- 3.7.12
+    - ref 4d9e56e
