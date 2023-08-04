@@ -10,6 +10,7 @@ dependency_overrides:
   firebase_core_platform_interface: 4.5.1
 
 dependencies:
+  universal_html: 2.2.2
   sqflite: 2.2.8+4
   applovin_max: 2.5.0
   graphview: 1.1.1

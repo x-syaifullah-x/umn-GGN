@@ -20,7 +20,7 @@ Future<void> main() async {
 
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   if (kDebugMode) {
-    const host = '192.168.42.1';
+    const host = '127.0.0.1';
     FirebaseAuth.instance.useAuthEmulator(host, 9099);
     FirebaseFirestore.instance.useFirestoreEmulator(host, 8080);
     FirebaseStorage.instance.useStorageEmulator(host, 9199);

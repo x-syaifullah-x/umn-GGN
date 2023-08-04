@@ -31,11 +31,11 @@ apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 apply plugin: "com.google.gms.google-services"
 
 android {
-    namespace 'net.girls.yang'
+    namespace "net.girls.yang"
 
     int compile_sdk = 33
     compileSdk compile_sdk
-    buildToolsVersion "33.0.2"
+    buildToolsVersion "33.0.1"
 
     ndkVersion flutter.ndkVersion
 

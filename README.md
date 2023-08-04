@@ -22,8 +22,17 @@ samples, guidance on mobile development, and a full API reference.
 - 29
 - 28
 ### SDK Build-Tools
-- 30.0.3
+- 33.0.1
 
 ### FLUTTER SDK MAX
 - 3.7.12
     - ref 4d9e56e
+
+
+This will generate a JSON format file containing all messages that 
+need to be translated.
+../../../.pub-cache/hosted/pub.dev/universal_html-2.2.2/lib/src/html/dom/element_subclasses.dart:2752:30: Error: The argument type 'String?' can't be assigned to the parameter type 'Object' because 'String?' is nullable and 'Object' isn't.
+ - 'Object' is from 'dart:core'.
+    final parsed = css.parse(text);
+    replace to
+    final parsed = css.parse(text!!);

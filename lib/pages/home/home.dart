@@ -386,11 +386,23 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
               ),
               onTap: () {
                 final item = dataSideLeft[index];
-
+                if (AppLocalizations.of(context)!.email == item) {
+                  const url = 'http://xsender.globalgnet.net';
+                  if (kIsWeb) {
+                    launchUrl(Uri.parse(url));
+                  } else {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(builder: (context) {
+                        return const AppWebView(url: url, title: 'Email');
+                      }),
+                    );
+                  }
+                  return;
+                }
                 if (AppLocalizations.of(context)!.business_structure == item) {
                   Navigator.of(context).push(
                     MaterialPageRoute(builder: (context) {
-                      return BusinessStructure();
+                      return const BusinessStructure();
                     }),
                   );
                   return;
