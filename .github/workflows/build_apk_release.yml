@@ -1,0 +1,50 @@
+name: Build apk release
+
+on:
+  push:
+    branches: [ master ]
+  # pull_request:
+  #   branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: "17"
+          distribution: "adopt"
+
+      - name: Setup flutter SDK
+        uses: flutter-actions/setup-flutter@v2
+        with:
+          channel: stable
+          version: 3.7.12
+
+      - name: Flutter pub get
+        run: flutter pub get
+
+      - name: Fix Error The argument type 'String?' can't be assigned to the parameter type 'Object' because 'String?' is nullable and 'Object' isn't.- 'Object' is from 'dart:core'. final parsed = css.parse(text);
+        run: cp -rf .no_remove/element_subclasses.dart ~/.pub-cache/hosted/pub.dev/universal_html-2.2.2/lib/src/html/dom
+
+      - name: Flutter build apk mobile
+        run: flutter build apk --release --flavor mobile
+
+      - name: Uploading apk
+        uses: actions/upload-artifact@v3
+        with:
+          name: apk-mobile-release
+          path: build/app/outputs/flutter-apk/app-mobile-release.apk
+
+      - name: Flutter build apk tv
+        run: flutter build apk --release --flavor tv
+
+      - name: Uploading apk
+        uses: actions/upload-artifact@v3
+        with:
+          name: apk-tv-release
+          path: build/app/outputs/flutter-apk/app-tv-release.apk

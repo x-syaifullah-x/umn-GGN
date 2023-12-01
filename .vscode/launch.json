@@ -34,5 +34,19 @@
         //         "mobile",
         //     ]
         // },
+        {
+            "name": "Running (chrome debug mode)",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "debug",
+            "args": [
+                "-d",
+                "chrome",
+                "--web-renderer",
+                "html",
+                "--web-port",
+                "49430"
+            ]
+        }
     ]
 }

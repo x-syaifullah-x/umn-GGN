@@ -408,7 +408,8 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
                   return;
                 }
                 if (AppLocalizations.of(context)!.accounting == item) {
-                  const url = 'http://account.globalgnet.net';
+                  // const url = 'http://account.globalgnet.net';
+                  const url = 'https://account.globalgnet.net';
                   if (kIsWeb) {
                     launchUrl(Uri.parse(url));
                   } else {
