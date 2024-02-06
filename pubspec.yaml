@@ -4,7 +4,7 @@ description: A new Flutter project.
 version: 1.18.10+29
 
 environment:
-  sdk: ">=2.14.4 <=2.19.6" # ref 4d9e56e
+  sdk: ">=2.14.4 <=2.19.6" # ref 4d9e56e694
 
 dependency_overrides:
   firebase_core_platform_interface: 4.5.1

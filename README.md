@@ -16,6 +16,7 @@ For help getting started with Flutter, view our
 samples, guidance on mobile development, and a full API reference.
 
 ### SDK Platform
+- 34
 - 33
 - 31
 - 30
@@ -23,6 +24,7 @@ samples, guidance on mobile development, and a full API reference.
 - 28
 ### SDK Build-Tools
 - 33.0.1
+- 34.0.0
 
 ### FLUTTER SDK MAX
 - 3.7.12
