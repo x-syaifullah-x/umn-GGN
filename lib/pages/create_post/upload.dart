@@ -6,6 +6,7 @@ import 'dart:io' as i;
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:geocoding/geocoding.dart';
@@ -57,22 +58,21 @@ class _UploadState extends State<Upload>
   Position? _currentPosition;
   String? _currentAddress;
 
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  Future<List<String>> uploadFiles(List<XFile> _images) async {
-    var imageUrls =
-        await Future.wait(_images.map((_image) => uploadFile(_image)));
-    print(imageUrls);
+  Future<List<String>> uploadFiles(List<XFile> images) async {
+    var imageUrls = await Future.wait(images.map((image) => uploadFile(image)));
     return imageUrls;
   }
 
-  Future<String> uploadFile(XFile _image) async {
+  Future<String> uploadFile(XFile image) async {
     Reference storageReference =
-        FirebaseStorage.instance.ref().child('posts/${_image.path}');
-    UploadTask uploadTask = storageReference.putFile(i.File(_image.path));
+        FirebaseStorage.instance.ref().child('posts/${image.path}');
+    UploadTask uploadTask;
+    if (kIsWeb) {
+      var data = await image.readAsBytes();
+      uploadTask = storageReference.putData(data);
+    } else {
+      uploadTask = storageReference.putFile(i.File(image.path));
+    }
     // await uploadTask.onComplete;
     TaskSnapshot storageSnap = await uploadTask;
 
@@ -125,11 +125,7 @@ class _UploadState extends State<Upload>
       "mediaUrl": mediaUrls,
       "description": description,
       "timestamp": DateTime.now().millisecondsSinceEpoch.toString(),
-      "location": widget.location != null
-          ? widget.location
-          : _currentAddress != null
-              ? _currentAddress
-              : '',
+      "location": widget.location ?? (_currentAddress ?? ''),
       "videoUrl": '',
       "pdfUrl": '',
       "pdfsize": '',
@@ -205,7 +201,7 @@ class _UploadState extends State<Upload>
     ),
   );
 
-  Scaffold buildUploadForm() {
+  Widget buildUploadForm() {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
@@ -330,8 +326,7 @@ class _UploadState extends State<Upload>
   }
 
   _getCurrentLocation() async {
-    LocationPermission permission;
-    permission = await Geolocator.requestPermission();
+    await Geolocator.requestPermission();
     Geolocator.getCurrentPosition(
             desiredAccuracy: LocationAccuracy.best,
             forceAndroidLocationManager: true)
@@ -341,7 +336,9 @@ class _UploadState extends State<Upload>
         _getAddressFromLatLng();
       });
     }).catchError((e) {
-      print(e);
+      if (kDebugMode) {
+        print(e);
+      }
     });
   }
 
@@ -356,7 +353,9 @@ class _UploadState extends State<Upload>
         _currentAddress = "${place.locality}, ${place.country}";
       });
     } catch (e) {
-      print(e);
+      if (kDebugMode) {
+        print(e);
+      }
     }
   }
 
@@ -371,10 +370,18 @@ class _UploadState extends State<Upload>
         child: GridView.builder(
           itemCount: widget.imageFileList!.length,
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 3),
+            crossAxisCount: 3,
+          ),
           itemBuilder: (BuildContext context, int index) {
+            final String path = widget.imageFileList![index].path;
+            if (kIsWeb) {
+              return Image.network(
+                path,
+                fit: BoxFit.cover,
+              );
+            }
             return Image.file(
-              i.File(widget.imageFileList![index].path),
+              i.File(path),
               fit: BoxFit.cover,
             );
           },

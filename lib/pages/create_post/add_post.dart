@@ -67,12 +67,15 @@ class _AddPostState extends State<AddPost>
       setState(() async {
         _imageFileList = pickedFileList;
         if (pickedFileList != null) {
-          await navigator.push(MaterialPageRoute(
+          await navigator.push(
+            MaterialPageRoute(
               builder: (context) => Upload(
-                    currentUser: currentUser,
-                    imageFileList: _imageFileList,
-                    location: _currentAddress,
-                  )));
+                currentUser: currentUser,
+                imageFileList: _imageFileList,
+                location: _currentAddress,
+              ),
+            ),
+          );
         } else {}
       });
     }
