@@ -1,0 +1,33 @@
+def build_versions = [:]
+build_versions.min_sdk = 21 // android lollipop ( 5.0 )
+build_versions.target_sdk = 34 // android latest
+build_versions.compile_sdk = build_versions.target_sdk
+build_versions.build_tools = "34.0.0"
+ext.build_versions = build_versions
+
+ext {
+    vGradle = "8.1.4" // Don't change
+    vKotlin = "1.7.10" // Default version
+    kotlin_version = "$vKotlin"
+    // https://developer.android.com/ndk/downloads
+    vNdkVersion = "26.1.10909125"
+    // https://developers.google.com/android/guides/google-services-plugin
+    vGoogleServices = "4.4.0"
+}
+
+def addRepos(RepositoryHandler handler) {
+    handler.gradlePluginPortal()
+    handler.google()
+    handler.mavenCentral()
+    handler.mavenLocal()
+    handler.mavenLocal {
+        it.url("${rootDir}/.m2/repository")
+    }
+    handler.maven {
+        url "https://jcenter.bintray.com"
+        url "https://oss.sonatype.org/content/repositories/snapshots"
+        url "https://jitpack.io"
+    }
+}
+
+ext.addRepos = this.&addRepos

@@ -1,23 +1,20 @@
 buildscript {
-    repositories {
-        google()
-        gradlePluginPortal()
-        mavenCentral()
-    }
+
+    apply from: "versions.gradle"
+
+    addRepos(repositories)
 
     dependencies {
-        // classpath "com.android.tools.build:gradle:8.0.2"
-        classpath "com.android.tools.build:gradle:8.1.4"
-        // classpath "com.android.tools.build:gradle:8.2.2"
-        classpath "com.google.gms:google-services:4.3.15"
+        classpath "com.android.tools.build:gradle:$vGradle"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$vKotlin"
+        classpath "com.google.gms:google-services:$vGoogleServices"
     }
 
     subprojects {
         afterEvaluate {
-            if(it.hasProperty('android') && it.android.namespace == null){
+            if(it.hasProperty("android") && it.android.namespace == null){
                 def manifest = new XmlSlurper().parse(file(it.android.sourceSets.main.manifest.srcFile))
                 def packageName = manifest.@package.text()
-                // println("Setting ${packageName} as android namespace")
                 android.namespace= packageName
             }
         }
@@ -25,17 +22,15 @@ buildscript {
 }
 
 allprojects {
-    repositories {
-        google()
-        gradlePluginPortal()
-        mavenCentral()
-    }
+    addRepos(repositories)
 }
 
 rootProject.buildDir = "../build"
+
 subprojects {
     project.buildDir = "${rootProject.buildDir}/${project.name}"
 }
+
 subprojects {
     project.evaluationDependsOn(":app")
 }
