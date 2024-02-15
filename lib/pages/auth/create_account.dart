@@ -8,7 +8,6 @@ import 'package:global_net/pages/home/home.dart';
 import 'package:global_net/pages/user_to_follow.dart';
 import 'package:global_net/widgets/bezier_container.dart';
 import 'package:global_net/widgets/progress.dart';
-import 'package:global_net/widgets/simple_world_widgets.dart';
 import 'package:nb_utils/nb_utils.dart';
 
 class CreateAccount extends StatefulWidget {

@@ -7,23 +7,21 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:giphy_get/giphy_get.dart';
-import 'package:nb_utils/nb_utils.dart';
 import 'package:global_net/models/user.dart';
-import 'package:global_net/pages/comming_soon_page.dart';
-import 'package:global_net/pages/create_post/gif_upload.dart';
-import 'package:global_net/pages/home/home.dart';
 import 'package:global_net/pages/auth/login_page.dart';
+import 'package:global_net/pages/comming_soon_page.dart';
 import 'package:global_net/pages/create_post/pdf_upload.dart';
 import 'package:global_net/pages/create_post/upload.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:global_net/pages/create_post/video_upload.dart';
+import 'package:global_net/pages/home/home.dart';
 import 'package:global_net/widgets/simple_world_widgets.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:nb_utils/nb_utils.dart';
 import 'package:uuid/uuid.dart';
 import 'package:video_compress/video_compress.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class AddPost extends StatefulWidget {
   final GloabalUser? currentUser;

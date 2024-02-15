@@ -7,12 +7,10 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:global_net/ads/ads.dart';
 import 'package:global_net/data/reaction_data.dart' as reaction;
 import 'package:global_net/models/user.dart';
 import 'package:global_net/pages/home/activity_feed.dart';
 import 'package:global_net/pages/home/business_structure/business_structure.dart';
-import 'package:global_net/pages/home/home_ads.dart';
 import 'package:global_net/pages/home/new_timeline.dart';
 import 'package:global_net/pages/home/profile/profile.dart';
 import 'package:global_net/pages/home/settings.dart';
@@ -408,7 +406,6 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
                   return;
                 }
                 if (AppLocalizations.of(context)!.accounting == item) {
-                  // const url = 'http://account.globalgnet.net';
                   const url = 'https://account.globalgnet.net';
                   if (kIsWeb) {
                     launchUrl(Uri.parse(url));

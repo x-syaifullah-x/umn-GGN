@@ -1138,7 +1138,7 @@ class ProfileState extends State<Profile> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => followingList(
+                                    builder: (context) => FollowingList(
                                       userId: user.id,
                                     ),
                                   ),
@@ -1182,7 +1182,7 @@ class ProfileState extends State<Profile> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => followingList(
+                                    builder: (context) => FollowingList(
                                       userId: user.id,
                                     ),
                                   ),

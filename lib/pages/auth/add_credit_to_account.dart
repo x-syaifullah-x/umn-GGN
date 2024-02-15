@@ -2,12 +2,10 @@ import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:global_net/pages/home/home.dart';
-import 'package:global_net/pages/user_to_follow.dart';
 import 'package:global_net/widgets/bezier_container.dart';
 import 'package:global_net/widgets/progress.dart';
-import 'package:global_net/widgets/simple_world_widgets.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:nb_utils/nb_utils.dart';
 
 class AddCreditToAccount extends StatefulWidget {
@@ -25,28 +23,80 @@ class AddCreditToAccount extends StatefulWidget {
 class AddCreditToAccountState extends State<AddCreditToAccount> {
   final formkey = GlobalKey<FormState>();
   String? username;
+  int credit = 5;
   final TextEditingController nameController = TextEditingController();
-  bool isLoading = false;
+  bool isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    getcurrentusername();
-    addcredit();
+    _addCredit();
   }
 
-  getcurrentusername() async {
-    usersRef.doc(widget.userId).get().then(
-          (value) => setState(() {
-            username = value["username"];
-          }),
-        );
-  }
-
-  addcredit() async {
+  _addCredit() async {
     usersRef.doc(widget.userId).update({
-      "credit_points": 500,
-    });
+      "credit_points": credit,
+    }).then((value) => {
+          usersRef.doc(widget.userId).get().then(
+                (value) => setState(() {
+                  setState(() {
+                    username = value["username"];
+                    isLoading = false;
+                  });
+                }),
+              )
+        });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final height = MediaQuery.of(context).size.height;
+    return Scaffold(
+      body: SizedBox(
+        height: height,
+        child: Stack(
+          children: <Widget>[
+            Positioned(
+              top: -height * .15,
+              right: -MediaQuery.of(context).size.width * .4,
+              child: const BezierContainer(),
+            ),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    SizedBox(height: height * .25),
+                    _title(username),
+                    Text(
+                      'You have received $credit credit points \n  as a welcome gift',
+                      style: TextStyle(
+                        color: Colors.grey[600],
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 20),
+                    SizedBox(
+                      child: Image.asset(
+                        'assets/images/getcredit.png',
+                        width: context.width(),
+                        height: context.height() * 0.5,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    _submitButton(),
+                  ],
+                ),
+              ),
+            ),
+            isLoading ? Center(child: circularProgress()) : Container(),
+          ],
+        ),
+      ),
+    );
   }
 
   submit() {
@@ -63,7 +113,7 @@ class AddCreditToAccountState extends State<AddCreditToAccount> {
     });
   }
 
-  Widget _title() {
+  Widget _title(String? username) {
     return RichText(
       textAlign: TextAlign.center,
       text: TextSpan(
@@ -84,14 +134,19 @@ class AddCreditToAccountState extends State<AddCreditToAccount> {
       padding: const EdgeInsets.symmetric(vertical: 15),
       alignment: Alignment.center,
       decoration: BoxDecoration(
-          borderRadius: const BorderRadius.all(Radius.circular(5)),
-          gradient: LinearGradient(
-              begin: Alignment.centerLeft,
-              end: Alignment.centerRight,
-              colors: [Colors.red.shade500, Colors.red.shade900])),
+        borderRadius: const BorderRadius.all(Radius.circular(5)),
+        gradient: LinearGradient(
+          begin: Alignment.centerLeft,
+          end: Alignment.centerRight,
+          colors: [Colors.red.shade500, Colors.red.shade900],
+        ),
+      ),
       child: const Text(
         'Continue',
-        style: TextStyle(fontSize: 20, color: Colors.white),
+        style: TextStyle(
+          fontSize: 20,
+          color: Colors.white,
+        ),
       ),
     ).onTap(() {
       submit();
@@ -128,51 +183,4 @@ class AddCreditToAccountState extends State<AddCreditToAccount> {
   //     ],
   //   );
   // }
-
-  @override
-  Widget build(BuildContext parentContext) {
-    final height = MediaQuery.of(context).size.height;
-    return Scaffold(
-        body: SizedBox(
-      height: height,
-      child: Stack(
-        children: <Widget>[
-          Positioned(
-              top: -height * .15,
-              right: -MediaQuery.of(context).size.width * .4,
-              child: const BezierContainer()),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  SizedBox(height: height * .25),
-                  _title(),
-                  Text(
-                    'You have received 100 credit points \n  as a welcome gift',
-                    style: TextStyle(
-                      color: Colors.grey[600],
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 20),
-                  SizedBox(
-                    child: Image.asset('assets/images/getcredit.png',
-                        width: context.width(),
-                        height: context.height() * 0.5,
-                        fit: BoxFit.cover),
-                  ),
-                  const SizedBox(height: 20),
-                  _submitButton(),
-                ],
-              ),
-            ),
-          ),
-          isLoading == true ? Center(child: circularProgress()) : Container(),
-        ],
-      ),
-    ));
-  }
 }

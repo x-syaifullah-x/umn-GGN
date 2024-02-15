@@ -158,9 +158,10 @@ class LoginPageState extends State<LoginPage> {
   }
 
   _getUserData() async {
-    User? user = _auth.currentUser;
-    if (user != null) {
-      usersRef.doc(user.uid).get().then((userData) {
+    try {
+      User? user = _auth.currentUser;
+      if (user != null) {
+        final userData = await usersRef.doc(user.uid).get();
         if (userData.exists) {
           setState(() {
             globalID = user.uid;
@@ -172,7 +173,9 @@ class LoginPageState extends State<LoginPage> {
             globalCredits = userData['credit_points'];
           });
         }
-      });
+      }
+    } catch (e) {
+      log(e);
     }
   }
 
@@ -604,14 +607,19 @@ class LoginPageState extends State<LoginPage> {
 
   configurePushNotifications(userId) async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
+
     preferences
         .setString(SharedPreferencesKey.loggedInUserData, userId)
-        .then((value) {
-      _firebaseMessaging.getToken().then((token) {
+        .then((value) async {
+      try {
+        final token = await _firebaseMessaging.getToken();
         print("Firebase Messaging Token: $token\n");
         usersRef.doc(userId).update({"androidNotificationToken": token});
-      });
+      } catch (e) {
+        log(e);
+      }
     });
+
     FirebaseMessaging.onMessage.listen(
       (message) async {
         final String recipientId = userId;

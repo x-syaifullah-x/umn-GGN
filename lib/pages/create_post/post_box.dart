@@ -132,14 +132,17 @@ class _PostBoxState extends State<PostBox>
           simpleworldtoast("", "File Size is larger then 5mb", context);
           return;
         }
-        await navigator.push(MaterialPageRoute(
+        await navigator.push(
+          MaterialPageRoute(
             builder: (context) => PdfUpload(
-                  currentUser: currentUser,
-                  file: pdffile!,
-                  pdfpath: path,
-                  pdfname: fileName,
-                  pdfsize: pdfsize,
-                )));
+              currentUser: currentUser,
+              file: pdffile!,
+              pdfpath: path,
+              pdfname: fileName,
+              pdfsize: pdfsize,
+            ),
+          ),
+        );
       } else {
         // print('No image selected.');
       }

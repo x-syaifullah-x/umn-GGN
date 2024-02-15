@@ -5,15 +5,14 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:nb_utils/nb_utils.dart';
 import 'package:global_net/config/palette.dart';
 import 'package:global_net/data/reaction_data.dart' as reaction;
 import 'package:global_net/pages/home/home.dart';
-import 'package:global_net/pages/post_screen.dart';
 import 'package:global_net/pages/home/profile/profile.dart';
-import 'package:global_net/ads/anchored_adaptive_ads.dart';
+import 'package:global_net/pages/post_screen.dart';
 import 'package:global_net/widgets/header.dart';
 import 'package:global_net/widgets/simple_world_widgets.dart';
+import 'package:nb_utils/nb_utils.dart';
 import 'package:timeago/timeago.dart' as time_ago;
 
 import '../../ads/applovin_ad_unit_id.dart';

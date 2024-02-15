@@ -7,19 +7,19 @@ import 'package:global_net/widgets/followers_tile.dart';
 import 'package:global_net/widgets/header.dart';
 import 'package:global_net/widgets/simple_world_widgets.dart';
 
-class followingList extends StatefulWidget {
+class FollowingList extends StatefulWidget {
   final String userId;
 
-  followingList({
+  FollowingList({
     required this.userId,
   });
 
   @override
-  _followingListState createState() => _followingListState();
+  _FollowingListState createState() => _FollowingListState();
 }
 
-class _followingListState extends State<followingList>
-    with AutomaticKeepAliveClientMixin<followingList> {
+class _FollowingListState extends State<FollowingList>
+    with AutomaticKeepAliveClientMixin<FollowingList> {
   String userOrientation = "grid";
   bool isFollowing = false;
   bool isLoading = false;
