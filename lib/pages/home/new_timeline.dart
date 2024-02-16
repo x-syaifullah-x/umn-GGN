@@ -600,7 +600,7 @@ class NewTimelineState extends State<NewTimeline> {
 
   Widget buildPostFooter(post) {
     // Color? color = Theme.of(context).iconTheme.color;
-    Color? color = null;
+    Color? color;
     bool isPhoto = post['type'] == 'photo';
     final postId = post['postId'];
     final ownerId = post['ownerId'];

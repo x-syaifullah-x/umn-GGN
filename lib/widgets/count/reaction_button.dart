@@ -1,11 +1,14 @@
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_reaction_button/flutter_reaction_button.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:global_net/data/reaction_data.dart';
 import 'package:global_net/pages/home/home.dart';
 import 'package:global_net/widgets/_build_list.dart';
 import 'package:global_net/widgets/simple_world_widgets.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ReactionButtonWidget extends StatefulWidget {
   const ReactionButtonWidget({
@@ -147,19 +150,24 @@ class ReactionButtonWidgetState extends State<ReactionButtonWidget> {
   addLikeToActivityFeed() {
     bool isNotPostOwner = widget.userId != widget.ownerId;
     if (isNotPostOwner) {
-      activityFeedRef
+      final aa = activityFeedRef
           .doc(widget.ownerId)
           .collection("feedItems")
-          .doc(widget.postId)
-          .set({
-        "type": "like",
-        "username": globalName,
-        "userId": widget.userId,
-        "userProfileImg": globalImage,
-        "postId": widget.postId,
-        "mediaUrl": widget.mediaUrl,
-        "timestamp": timestamp,
-        "isSeen": false,
+          .doc(widget.postId);
+
+      aa.get().then((value) {
+        if (!value.exists) {
+          aa.set({
+            "type": "like",
+            "username": globalName,
+            "userId": widget.userId,
+            "userProfileImg": globalImage,
+            "postId": widget.postId,
+            "mediaUrl": widget.mediaUrl,
+            "timestamp": timestamp,
+            "isSeen": false,
+          });
+        }
       });
     }
   }
@@ -172,6 +180,7 @@ class ReactionButtonWidgetState extends State<ReactionButtonWidget> {
           onReactionChanged: (String? value, bool isChecked) {
             handleLikePost('$value');
           },
+          isChecked: true,
           reactions: widget.reactions,
           initialReaction: widget.reactions[0],
           selectedReaction: widget.reactions[0],
@@ -815,14 +824,24 @@ class ReactionButtonWidgetState extends State<ReactionButtonWidget> {
         }
       });
 
-      postsRef
+      final doc = postsRef
           .doc(widget.ownerId)
           .collection('userPosts')
           .doc(widget.postId)
           .collection('like')
-          .doc(widget.userId)
-          .set({});
-      addLikeToActivityFeed();
+          .doc(widget.userId);
+      doc.get().then((value) {
+        if (!value.exists) {
+          doc.set({
+            "createAt": DateTime.now().millisecondsSinceEpoch,
+          }).then((value) {
+            setState(() {
+              isLike = true;
+            });
+          });
+        }
+        addLikeToActivityFeed();
+      });
     }
   }
 }
