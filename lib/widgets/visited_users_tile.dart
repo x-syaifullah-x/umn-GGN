@@ -53,15 +53,19 @@ class VisitedUsersTileState extends State<VisitedUsersTile> {
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
         GestureDetector(
-          onTap: () => Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => Profile(
-                profileId: userdoc!['id'],
-                reactions: Reaction.reactions,
+          onTap: () {
+            final id = userdoc!['id'];
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => Profile(
+                  profileId: id,
+                  reactions: Reaction.reactions,
+                  isProfileOwner: id == currentUserId,
+                ),
               ),
-            ),
-          ).then((value) => setState(() {})),
+            ).then((value) => setState(() {}));
+          },
           // showProfile(context, profileId: userdoc!['id']),
           child: buildUsers(),
         ),

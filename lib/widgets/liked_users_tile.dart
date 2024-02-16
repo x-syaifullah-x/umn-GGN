@@ -66,15 +66,20 @@ class LikedUserTileState extends State<LikedUserTile> {
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           GestureDetector(
-            onTap: () => Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => Profile(
-                  profileId: userdoc!['userId'],
-                  reactions: Reaction.reactions,
+            onTap: () {
+              final id = userdoc!['userId'];
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => Profile(
+                    profileId: id,
+                    reactions: Reaction.reactions,
+                    isProfileOwner: id == currentUserId,
+                  ),
                 ),
-              ),
-            ).then((value) => setState(() {})),
+              ).then((value) => setState(() {}));
+              ;
+            },
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [buildUsers()],

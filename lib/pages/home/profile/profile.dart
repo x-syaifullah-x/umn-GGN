@@ -30,21 +30,89 @@ import 'package:global_net/widgets/progress.dart';
 import 'package:global_net/widgets/simple_world_widgets.dart';
 import 'package:global_net/widgets/single_post.dart';
 
-class Profile extends StatefulWidget {
+class Profile extends StatelessWidget {
   final String? profileId;
   final List<Reaction<String>> reactions;
+  final bool isProfileOwner;
 
   const Profile({
     Key? key,
     required this.profileId,
     required this.reactions,
+    required this.isProfileOwner,
   }) : super(key: key);
 
   @override
-  ProfileState createState() => ProfileState();
+  Widget build(BuildContext context) {
+    ScrollController scrollController = ScrollController();
+    final bool widthMoreThan_500 = (MediaQuery.of(context).size.width > 500);
+    return Scaffold(
+      backgroundColor: Theme.of(context).backgroundColor,
+      appBar: header(
+        context,
+        titleText: AppLocalizations.of(context)!.profile,
+      ),
+      body: Column(
+        children: [
+          Expanded(
+            child: RawScrollbar(
+              controller: scrollController,
+              interactive: true,
+              thumbVisibility: !kIsWeb && widthMoreThan_500,
+              trackVisibility: !kIsWeb && widthMoreThan_500,
+              radius: const Radius.circular(20),
+              child: SingleChildScrollView(
+                controller: scrollController,
+                physics: const AlwaysScrollableScrollPhysics(),
+                child: Container(
+                  color: Theme.of(context).scaffoldBackgroundColor,
+                  // child: StreamBuilder<GloabalUser?>(
+                  // future: GloabalUser.fetchUser(widget.profileId),
+                  child: StreamBuilder<DocumentSnapshot<GloabalUser>>(
+                    stream: GloabalUser.userDoc(profileId).snapshots(),
+                    builder: (context, snapshot) {
+                      final user = snapshot.data?.data();
+                      if (user == null) {
+                        return circularProgress();
+                      }
+                      return Profile2(
+                        profileId: profileId,
+                        reactions: reactions,
+                        isProfileOwner: isProfileOwner,
+                        user: user,
+                      );
+                    },
+                  ),
+                ),
+              ),
+            ),
+          ),
+          // const AdsWidget(),
+        ],
+      ),
+    );
+  }
 }
 
-class ProfileState extends State<Profile> {
+class Profile2 extends StatefulWidget {
+  final String? profileId;
+  final List<Reaction<String>> reactions;
+  final bool isProfileOwner;
+  final GloabalUser? user;
+
+  const Profile2({
+    Key? key,
+    required this.profileId,
+    required this.reactions,
+    required this.isProfileOwner,
+    required this.user,
+  }) : super(key: key);
+
+  @override
+  State<Profile2> createState() => _ProfileState();
+}
+
+class _ProfileState extends State<Profile2> {
   String postOrientation = "list";
   bool isFollowing = false;
   bool isLiked = false;
@@ -659,791 +727,1523 @@ class ProfileState extends State<Profile> {
     );
   }
 
-  Widget? buildProfileHeader() {
-    return Container(
-      color: Theme.of(context).scaffoldBackgroundColor,
-      child: FutureBuilder<GloabalUser?>(
-        future: GloabalUser.fetchUser(widget.profileId),
-        builder: (context, snapshot) {
-          if (!snapshot.hasData) {
-            return circularProgress();
-          }
-          final user = snapshot.data;
-          final bool isProfileOwner = widget.profileId == widget.profileId;
-          return Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              Stack(children: <Widget>[
-                (imageFileCover == null)
-                    ? user!.coverUrl.isEmpty
-                        ? Image.asset(
-                            'assets/images/defaultcover.png',
-                            alignment: Alignment.center,
-                            width: double.infinity,
-                            fit: BoxFit.cover,
-                            height: 200,
-                          )
-                        : SizedBox(
-                            height: 200,
-                            width: double.infinity,
-                            child: CachedNetworkImage(
-                              imageUrl: user.coverUrl,
-                              fit: BoxFit.cover,
-                            ),
-                          )
-                    : Material(
-                        clipBehavior: Clip.hardEdge,
-                        child: Image.file(
-                          imageFileCover!,
-                          width: double.infinity,
-                          height: 200.0,
-                          fit: BoxFit.cover,
-                        ),
+  Widget buildProfileHeader(GloabalUser? user) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: <Widget>[
+        Stack(children: <Widget>[
+          (imageFileCover == null)
+              ? user!.coverUrl.isEmpty
+                  ? Image.asset(
+                      'assets/images/defaultcover.png',
+                      alignment: Alignment.center,
+                      width: double.infinity,
+                      fit: BoxFit.cover,
+                      height: 200,
+                    )
+                  : SizedBox(
+                      height: 200,
+                      width: double.infinity,
+                      child: CachedNetworkImage(
+                        imageUrl: user.coverUrl,
+                        fit: BoxFit.cover,
                       ),
-                isProfileOwner
-                    ? Container()
-                    : SizedBox(
-                        width: double.infinity,
-                        height: 200,
-                        child: Container(
-                          alignment: const Alignment(-0.8, 1.5),
-                          child: Stack(
-                            children: [
-                              isLiked
-                                  ? Container(
-                                      // alignment: Alignment.center,
-                                      width: 60,
-                                      padding: const EdgeInsets.all(10.0),
-                                      margin: const EdgeInsets.all(6.0),
-                                      decoration: BoxDecoration(
-                                        color: Theme.of(context)
-                                            .secondaryHeaderColor,
-                                        shape: BoxShape.circle,
-                                      ),
-                                      child: Image.asset(
-                                        'assets/images/likedpp.png',
-                                        width: 40,
-                                      ),
-                                    ).onTap(() {
-                                      handleLikeUser();
-                                    })
-                                  : Container(
-                                      width: 60,
-                                      padding: const EdgeInsets.all(10.0),
-                                      margin: const EdgeInsets.all(6.0),
-                                      decoration: BoxDecoration(
-                                        color: Theme.of(context)
-                                            .secondaryHeaderColor,
-                                        shape: BoxShape.circle,
-                                      ),
-                                      child: Image.asset(
-                                        'assets/images/likepp.png',
-                                        width: 40,
-                                      ),
-                                    ).onTap(() {
-                                      handleLikeUser();
-                                    })
-                            ],
-                          ),
-                        ),
-                      ),
-                SizedBox(
+                    )
+              : Material(
+                  clipBehavior: Clip.hardEdge,
+                  child: Image.file(
+                    imageFileCover!,
+                    width: double.infinity,
+                    height: 200.0,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+          widget.isProfileOwner
+              ? Container()
+              : SizedBox(
                   width: double.infinity,
                   height: 200,
                   child: Container(
-                    alignment: const Alignment(0.0, 2.5),
+                    alignment: const Alignment(-0.8, 1.5),
                     child: Stack(
                       children: [
-                        (imageFileAvatar == null)
-                            ? ClipRRect(
-                                borderRadius: BorderRadius.circular(15.0),
-                                child: user!.photoUrl == null ||
-                                        user.photoUrl.isEmpty
-                                    ? Container(
-                                        decoration: BoxDecoration(
-                                          color: const Color(0xFF003a54),
-                                          borderRadius:
-                                              BorderRadius.circular(15.0),
-                                        ),
-                                        child: Image.asset(
-                                          'assets/images/defaultavatar.png',
-                                          width: 120,
-                                        ),
-                                      )
-                                    : CachedNetworkImage(
-                                        imageUrl: user.photoUrl,
-                                        height: 120,
-                                        width: 120,
-                                        fit: BoxFit.cover,
-                                      ),
-                              )
-                            : Material(
-                                borderRadius: const BorderRadius.all(
-                                    Radius.circular(15.0)),
-                                clipBehavior: Clip.hardEdge,
-                                child: Image.file(
-                                  imageFileAvatar!,
-                                  width: 120.0,
-                                  height: 120.0,
-                                  fit: BoxFit.cover,
+                        isLiked
+                            ? Container(
+                                // alignment: Alignment.center,
+                                width: 60,
+                                padding: const EdgeInsets.all(10.0),
+                                margin: const EdgeInsets.all(6.0),
+                                decoration: BoxDecoration(
+                                  color: Theme.of(context).secondaryHeaderColor,
+                                  shape: BoxShape.circle,
                                 ),
-                              ),
-                        isProfileOwner
-                            ? SvgPicture.asset(
-                                'assets/images/photo.svg',
-                                width: 40,
+                                child: Image.asset(
+                                  'assets/images/likedpp.png',
+                                  width: 40,
+                                ),
                               ).onTap(() {
-                                getavatarImage();
+                                handleLikeUser();
                               })
-                            : const Text(''),
+                            : Container(
+                                width: 60,
+                                padding: const EdgeInsets.all(10.0),
+                                margin: const EdgeInsets.all(6.0),
+                                decoration: BoxDecoration(
+                                  color: Theme.of(context).secondaryHeaderColor,
+                                  shape: BoxShape.circle,
+                                ),
+                                child: Image.asset(
+                                  'assets/images/likepp.png',
+                                  width: 40,
+                                ),
+                              ).onTap(() {
+                                handleLikeUser();
+                              })
                       ],
                     ),
                   ),
                 ),
-                isProfileOwner
-                    ? Container()
-                    : SizedBox(
-                        width: double.infinity,
-                        height: 200,
-                        child: Container(
-                          alignment: const Alignment(0.8, 1.5),
-                          child: Stack(
-                            children: [
-                              isDisliked
-                                  ? Container(
-                                      width: 60,
-                                      padding: const EdgeInsets.all(10.0),
-                                      margin: const EdgeInsets.all(6.0),
-                                      decoration: BoxDecoration(
-                                        color: Theme.of(context)
-                                            .secondaryHeaderColor,
-                                        shape: BoxShape.circle,
-                                      ),
-                                      child: Image.asset(
-                                        'assets/images/dislikedpp.png',
-                                        width: 40,
-                                      ),
-                                    ).onTap(() {
-                                      handleDislikeLikeUser();
-                                    })
-                                  : Container(
-                                      width: 60,
-                                      padding: const EdgeInsets.all(10.0),
-                                      margin: const EdgeInsets.all(6.0),
-                                      decoration: BoxDecoration(
-                                        color: Theme.of(context)
-                                            .secondaryHeaderColor,
-                                        shape: BoxShape.circle,
-                                      ),
-                                      child: Image.asset(
-                                        'assets/images/dislikepp.png',
-                                        width: 40,
-                                      ),
-                                    ).onTap(() {
-                                      handleDislikeLikeUser();
-                                    }),
-                            ],
+          SizedBox(
+            width: double.infinity,
+            height: 200,
+            child: Container(
+              alignment: const Alignment(0.0, 2.5),
+              child: Stack(
+                children: [
+                  (imageFileAvatar == null)
+                      ? ClipRRect(
+                          borderRadius: BorderRadius.circular(15.0),
+                          child: user!.photoUrl == null || user.photoUrl.isEmpty
+                              ? Container(
+                                  decoration: BoxDecoration(
+                                    color: const Color(0xFF003a54),
+                                    borderRadius: BorderRadius.circular(15.0),
+                                  ),
+                                  child: Image.asset(
+                                    'assets/images/defaultavatar.png',
+                                    width: 120,
+                                  ),
+                                )
+                              : CachedNetworkImage(
+                                  imageUrl: user.photoUrl,
+                                  height: 120,
+                                  width: 120,
+                                  fit: BoxFit.cover,
+                                ),
+                        )
+                      : Material(
+                          borderRadius:
+                              const BorderRadius.all(Radius.circular(15.0)),
+                          clipBehavior: Clip.hardEdge,
+                          child: Image.file(
+                            imageFileAvatar!,
+                            width: 120.0,
+                            height: 120.0,
+                            fit: BoxFit.cover,
                           ),
                         ),
-                      ),
-                isProfileOwner
-                    ? Positioned(
-                        bottom: 0,
-                        right: 0,
-                        child: SvgPicture.asset(
+                  widget.isProfileOwner
+                      ? SvgPicture.asset(
                           'assets/images/photo.svg',
                           width: 40,
                         ).onTap(() {
-                          getcoverImage();
-                        }))
-                    : Container(),
-              ]),
-              const SizedBox(height: 70),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    user!.username.capitalize(),
-                    style: Theme.of(context)
-                        .textTheme
-                        .headline6!
-                        .copyWith(fontSize: 16),
-                  ),
-
-                  /// Show verified badge
-                  user.userIsVerified
-                      ? Container(
-                          margin: const EdgeInsets.only(right: 5),
-                          child: Image.asset('assets/images/verified_badge.png',
-                              width: 30, height: 30))
-                      : const SizedBox(width: 0, height: 0),
+                          getavatarImage();
+                        })
+                      : const Text(''),
                 ],
               ),
-              const SizedBox(height: 3),
-              Text(user.bio,
-                  style: Theme.of(context)
-                      .textTheme
-                      .headline6!
-                      .copyWith(fontSize: 14)),
-              const SizedBox(height: 20),
-              if (isProfileOwner)
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    Text(
-                      "${AppLocalizations.of(context)!.you_have} ${user.credit_points} ${AppLocalizations.of(context)!.credits}",
-                      style: Theme.of(context)
-                          .textTheme
-                          .headline6!
-                          .copyWith(fontSize: 14),
-                    ),
-                    Container(
-                      margin: const EdgeInsets.only(top: 10.0, left: 10),
-                      padding: const EdgeInsets.only(left: 10, right: 10),
-                      height: 38,
-                      // width: (context.width() - (3 * 16)) * 0.4,
-                      // width: double.infinity,
-                      decoration: const BoxDecoration(
-                        color: Color(0xffE5E6EB),
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(5.0),
-                        ),
-                      ),
-                      child: Center(
-                        child: Text(
-                          AppLocalizations.of(context)!.buy_credits,
-                          textAlign: TextAlign.left,
-                          style: const TextStyle(
-                            fontWeight: FontWeight.w700,
-                            fontSize: 16,
-                            letterSpacing: 0.0,
-                            color: Colors.black,
-                          ),
-                        ),
-                      ),
-                    ).onTap(() {
-                      if (!isWeb) {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const Upgrade(),
-                          ),
-                        );
-                      } else {
-                        final scaffold = ScaffoldMessenger.of(context);
-                        scaffold.showSnackBar(
-                          SnackBar(
-                            content: const Text("NOT SUPPORTED"),
-                            action: SnackBarAction(
-                                label: 'Ok',
-                                onPressed: scaffold.hideCurrentSnackBar),
-                          ),
-                        );
-                      }
-                    }),
-                  ],
-                ),
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  buildProfileButton(),
-                  const SizedBox(width: 10),
-                  if (!isProfileOwner)
-                    Row(
+            ),
+          ),
+          widget.isProfileOwner
+              ? Container()
+              : SizedBox(
+                  width: double.infinity,
+                  height: 200,
+                  child: Container(
+                    alignment: const Alignment(0.8, 1.5),
+                    child: Stack(
                       children: [
-                        Container(
-                          margin: const EdgeInsets.only(top: 10.0),
-                          height: 38,
-                          width: (context.width() - (3 * 16)) * 0.4,
-                          decoration: const BoxDecoration(
-                            color: Color(0xffE5E6EB),
-                            borderRadius: BorderRadius.all(
-                              Radius.circular(5.0),
-                            ),
-                          ),
-                          child: Center(
-                            child: Text(
-                              AppLocalizations.of(context)!.message,
-                              textAlign: TextAlign.left,
-                              style: const TextStyle(
-                                fontWeight: FontWeight.w700,
-                                fontSize: 16,
-                                letterSpacing: 0.0,
-                                color: Colors.black,
-                              ),
-                            ),
-                          ),
-                        ).onTap(() {
+                        isDisliked
+                            ? Container(
+                                width: 60,
+                                padding: const EdgeInsets.all(10.0),
+                                margin: const EdgeInsets.all(6.0),
+                                decoration: BoxDecoration(
+                                  color: Theme.of(context).secondaryHeaderColor,
+                                  shape: BoxShape.circle,
+                                ),
+                                child: Image.asset(
+                                  'assets/images/dislikedpp.png',
+                                  width: 40,
+                                ),
+                              ).onTap(() {
+                                handleDislikeLikeUser();
+                              })
+                            : Container(
+                                width: 60,
+                                padding: const EdgeInsets.all(10.0),
+                                margin: const EdgeInsets.all(6.0),
+                                decoration: BoxDecoration(
+                                  color: Theme.of(context).secondaryHeaderColor,
+                                  shape: BoxShape.circle,
+                                ),
+                                child: Image.asset(
+                                  'assets/images/dislikepp.png',
+                                  width: 40,
+                                ),
+                              ).onTap(() {
+                                handleDislikeLikeUser();
+                              }),
+                      ],
+                    ),
+                  ),
+                ),
+          widget.isProfileOwner
+              ? Positioned(
+                  bottom: 0,
+                  right: 0,
+                  child: SvgPicture.asset(
+                    'assets/images/photo.svg',
+                    width: 40,
+                  ).onTap(() {
+                    getcoverImage();
+                  }))
+              : Container(),
+        ]),
+        const SizedBox(height: 70),
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              user!.username.capitalize(),
+              style:
+                  Theme.of(context).textTheme.headline6!.copyWith(fontSize: 16),
+            ),
+
+            /// Show verified badge
+            user.userIsVerified
+                ? Container(
+                    margin: const EdgeInsets.only(right: 5),
+                    child: Image.asset('assets/images/verified_badge.png',
+                        width: 30, height: 30))
+                : const SizedBox(width: 0, height: 0),
+          ],
+        ),
+        const SizedBox(height: 3),
+        Text(
+          user.bio,
+          style: Theme.of(context).textTheme.headline6!.copyWith(fontSize: 14),
+        ),
+        const SizedBox(height: 20),
+        if (widget.isProfileOwner)
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              Text(
+                "${AppLocalizations.of(context)!.you_have} ${user.credit_points} ${AppLocalizations.of(context)!.credits}",
+                style: Theme.of(context)
+                    .textTheme
+                    .headline6!
+                    .copyWith(fontSize: 14),
+              ),
+              Container(
+                margin: const EdgeInsets.only(top: 10.0, left: 10),
+                padding: const EdgeInsets.only(left: 10, right: 10),
+                height: 38,
+                // width: (context.width() - (3 * 16)) * 0.4,
+                // width: double.infinity,
+                decoration: const BoxDecoration(
+                  color: Color(0xffE5E6EB),
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(5.0),
+                  ),
+                ),
+                child: Center(
+                  child: Text(
+                    AppLocalizations.of(context)!.buy_credits,
+                    textAlign: TextAlign.left,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w700,
+                      fontSize: 16,
+                      letterSpacing: 0.0,
+                      color: Colors.black,
+                    ),
+                  ),
+                ),
+              ).onTap(() {
+                if (!isWeb) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const Upgrade(),
+                    ),
+                  );
+                } else {
+                  final scaffold = ScaffoldMessenger.of(context);
+                  scaffold.showSnackBar(
+                    SnackBar(
+                      content: const Text("NOT SUPPORTED"),
+                      action: SnackBarAction(
+                          label: 'Ok', onPressed: scaffold.hideCurrentSnackBar),
+                    ),
+                  );
+                }
+              }),
+            ],
+          ),
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            buildProfileButton(),
+            const SizedBox(width: 10),
+            if (!widget.isProfileOwner)
+              Row(
+                children: [
+                  Container(
+                    margin: const EdgeInsets.only(top: 10.0),
+                    height: 38,
+                    width: (context.width() - (3 * 16)) * 0.4,
+                    decoration: const BoxDecoration(
+                      color: Color(0xffE5E6EB),
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(5.0),
+                      ),
+                    ),
+                    child: Center(
+                      child: Text(
+                        AppLocalizations.of(context)!.message,
+                        textAlign: TextAlign.left,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.w700,
+                          fontSize: 16,
+                          letterSpacing: 0.0,
+                          color: Colors.black,
+                        ),
+                      ),
+                    ),
+                  ).onTap(() {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => Chat(
+                          receiverId: user.id,
+                          receiverAvatar: user.photoUrl,
+                          receiverName: user.username,
+                          key: null,
+                        ),
+                      ),
+                    );
+                  }),
+                ],
+              ),
+          ],
+        ),
+        const SizedBox(height: 20),
+        const Divider(),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 50),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              buildCountColumn(
+                AppLocalizations.of(context)!.posts,
+                postCount,
+                () => Navigator.push(
+                  context,
+                  CupertinoPageRoute(
+                    builder: (context) => const CommimgSoon(),
+                  ),
+                ),
+              ),
+              buildCountColumn(
+                AppLocalizations.of(context)!.followers,
+                followerCount,
+                () {
+                  if (widget.isProfileOwner) {
+                    bool noCredit = user.credit_points < 10;
+                    consentSheet(
+                      context,
+                      AppLocalizations.of(context)!.followed_consent1,
+                      AppLocalizations.of(context)!.followed_consent2,
+                      () async {
+                        if (noCredit) {
+                          Navigator.of(context).pop();
+                          simpleworldtoast(
+                              AppLocalizations.of(context)!.error,
+                              AppLocalizations.of(context)!
+                                  .not_enough_credit_10,
+                              context);
+                        } else {
+                          Navigator.of(context).pop();
+                          usersRef.doc(widget.profileId).update({
+                            "credit_points": FieldValue.increment(-10),
+                          });
+
+                          //##Uncomment the below code to get user id of followers
+                          // var querySnapshots = await followersRef
+                          //     .doc(user.id)
+                          //     .collection('userFollowers')
+                          //     .get();
+                          // for (var doc in querySnapshots.docs) {
+                          //   await doc.reference.update({
+                          //     "userId": doc.id,
+                          //   });
+                          // }
+
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => Chat(
-                                receiverId: user.id,
-                                receiverAvatar: user.photoUrl,
-                                receiverName: user.username,
-                                key: null,
+                              builder: (context) => followersList(
+                                userId: user.id,
                               ),
                             ),
                           );
-                        }),
-                      ],
-                    ),
-                ],
-              ),
-              const SizedBox(height: 20),
-              const Divider(),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 50),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    buildCountColumn(
-                      AppLocalizations.of(context)!.posts,
-                      postCount,
-                      () => Navigator.push(
-                        context,
-                        CupertinoPageRoute(
-                          builder: (context) => const CommimgSoon(),
-                        ),
-                      ),
-                    ),
-                    buildCountColumn(
-                      AppLocalizations.of(context)!.followers,
-                      followerCount,
-                      () {
-                        if (isProfileOwner) {
-                          bool noCredit = user.credit_points < 10;
-                          consentSheet(
-                            context,
-                            AppLocalizations.of(context)!.followed_consent1,
-                            AppLocalizations.of(context)!.followed_consent2,
-                            () async {
-                              if (noCredit) {
-                                Navigator.of(context).pop();
-                                simpleworldtoast(
-                                    AppLocalizations.of(context)!.error,
-                                    AppLocalizations.of(context)!
-                                        .not_enough_credit_10,
-                                    context);
-                              } else {
-                                Navigator.of(context).pop();
-                                usersRef.doc(widget.profileId).update({
-                                  "credit_points": FieldValue.increment(-10),
-                                });
-
-                                //##Uncomment the below code to get user id of followers
-                                // var querySnapshots = await followersRef
-                                //     .doc(user.id)
-                                //     .collection('userFollowers')
-                                //     .get();
-                                // for (var doc in querySnapshots.docs) {
-                                //   await doc.reference.update({
-                                //     "userId": doc.id,
-                                //   });
-                                // }
-
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => followersList(
-                                      userId: user.id,
-                                    ),
-                                  ),
-                                );
-                              }
-                            },
-                          );
+                        }
+                      },
+                    );
+                  } else {
+                    bool noCredit = currentUserCredit < 20;
+                    consentSheet(
+                      context,
+                      AppLocalizations.of(context)!.followed_consent3,
+                      AppLocalizations.of(context)!.followed_consent4,
+                      () async {
+                        if (noCredit) {
+                          Navigator.of(context).pop();
+                          simpleworldtoast(
+                              AppLocalizations.of(context)!.error,
+                              AppLocalizations.of(context)!
+                                  .not_enough_credit_20,
+                              context);
                         } else {
-                          bool noCredit = currentUserCredit < 20;
-                          consentSheet(
+                          Navigator.of(context).pop();
+
+                          usersRef.doc(widget.profileId).update({
+                            "credit_points": FieldValue.increment(-20),
+                          });
+
+                          //##Uncomment the below code to get user id of followers
+                          // var querySnapshots = await followersRef
+                          //     .doc(user.id)
+                          //     .collection('userFollowers')
+                          //     .get();
+                          // for (var doc in querySnapshots.docs) {
+                          //   await doc.reference.update({
+                          //     "userId": doc.id,
+                          //   });
+                          // }
+
+                          Navigator.push(
                             context,
-                            AppLocalizations.of(context)!.followed_consent3,
-                            AppLocalizations.of(context)!.followed_consent4,
-                            () async {
-                              if (noCredit) {
-                                Navigator.of(context).pop();
-                                simpleworldtoast(
-                                    AppLocalizations.of(context)!.error,
-                                    AppLocalizations.of(context)!
-                                        .not_enough_credit_20,
-                                    context);
-                              } else {
-                                Navigator.of(context).pop();
-
-                                usersRef.doc(widget.profileId).update({
-                                  "credit_points": FieldValue.increment(-20),
-                                });
-
-                                //##Uncomment the below code to get user id of followers
-                                // var querySnapshots = await followersRef
-                                //     .doc(user.id)
-                                //     .collection('userFollowers')
-                                //     .get();
-                                // for (var doc in querySnapshots.docs) {
-                                //   await doc.reference.update({
-                                //     "userId": doc.id,
-                                //   });
-                                // }
-
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => followersList(
-                                      userId: user.id,
-                                    ),
-                                  ),
-                                );
-                              }
-                            },
+                            MaterialPageRoute(
+                              builder: (context) => followersList(
+                                userId: user.id,
+                              ),
+                            ),
                           );
                         }
                       },
-                    ),
-                    buildCountColumn(
-                      AppLocalizations.of(context)!.following,
-                      followingCount,
-                      () {
-                        if (isProfileOwner) {
-                          bool noCredit = user.credit_points < 10;
-                          consentSheet(
-                            context,
-                            AppLocalizations.of(context)!.following_consent1,
-                            AppLocalizations.of(context)!.following_consent2,
-                            () async {
-                              if (noCredit) {
-                                Navigator.of(context).pop();
-                                simpleworldtoast(
-                                    AppLocalizations.of(context)!.error,
-                                    AppLocalizations.of(context)!
-                                        .not_enough_credit_10,
-                                    context);
-                              } else {
-                                Navigator.of(context).pop();
-                                usersRef.doc(widget.profileId).update({
-                                  "credit_points": FieldValue.increment(-10),
-                                });
-
-                                //##Uncomment the below code to get user id of following users
-                                // var querySnapshots = await followingRef
-                                //     .doc(user.id)
-                                //     .collection('userFollowing')
-                                //     .get();
-                                // for (var doc in querySnapshots.docs) {
-                                //   await doc.reference.update({
-                                //     "userId": doc.id,
-                                //   });
-                                // }
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => FollowingList(
-                                      userId: user.id,
-                                    ),
-                                  ),
-                                );
-                              }
-                            },
-                          );
+                    );
+                  }
+                },
+              ),
+              buildCountColumn(
+                AppLocalizations.of(context)!.following,
+                followingCount,
+                () {
+                  if (widget.isProfileOwner) {
+                    bool noCredit = user.credit_points < 10;
+                    consentSheet(
+                      context,
+                      AppLocalizations.of(context)!.following_consent1,
+                      AppLocalizations.of(context)!.following_consent2,
+                      () async {
+                        if (noCredit) {
+                          Navigator.of(context).pop();
+                          simpleworldtoast(
+                              AppLocalizations.of(context)!.error,
+                              AppLocalizations.of(context)!
+                                  .not_enough_credit_10,
+                              context);
                         } else {
-                          bool noCredit = currentUserCredit < 20;
-                          consentSheet(
+                          Navigator.of(context).pop();
+                          usersRef.doc(widget.profileId).update({
+                            "credit_points": FieldValue.increment(-10),
+                          });
+
+                          //##Uncomment the below code to get user id of following users
+                          // var querySnapshots = await followingRef
+                          //     .doc(user.id)
+                          //     .collection('userFollowing')
+                          //     .get();
+                          // for (var doc in querySnapshots.docs) {
+                          //   await doc.reference.update({
+                          //     "userId": doc.id,
+                          //   });
+                          // }
+                          Navigator.push(
                             context,
-                            AppLocalizations.of(context)!.following_consent3,
-                            AppLocalizations.of(context)!.following_consent4,
-                            () async {
-                              if (noCredit) {
-                                Navigator.of(context).pop();
-                                simpleworldtoast(
-                                    AppLocalizations.of(context)!.error,
-                                    AppLocalizations.of(context)!
-                                        .not_enough_credit_20,
-                                    context);
-                              } else {
-                                Navigator.of(context).pop();
-
-                                usersRef.doc(widget.profileId).update({
-                                  "credit_points": FieldValue.increment(-20),
-                                  // 'userIsVerified': true,
-                                });
-                                //##Uncomment the below code to get user id of following users
-
-                                // var querySnapshots = await followingRef
-                                //     .doc(user.id)
-                                //     .collection('userFollowing')
-                                //     .get();
-                                // for (var doc in querySnapshots.docs) {
-                                //   await doc.reference.update({
-                                //     "userId": doc.id,
-                                //   });
-                                // }
-
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => FollowingList(
-                                      userId: user.id,
-                                    ),
-                                  ),
-                                );
-                              }
-                            },
+                            MaterialPageRoute(
+                              builder: (context) => FollowingList(
+                                userId: user.id,
+                              ),
+                            ),
                           );
                         }
                       },
-                    ),
-                  ],
-                ),
-              ),
-              const Divider(),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 50),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    buildCountColumn(
-                      "Views",
-                      ppViewCount,
-                      () {
-                        if (isProfileOwner) {
-                          bool noCredit = user.credit_points < 10;
-                          consentSheet(
-                            context,
-                            'Would you like to see users who viewed your Profile?',
-                            'Spent 10 Credits to see users who viewed your Profile',
-                            () {
-                              if (noCredit) {
-                                Navigator.of(context).pop();
-                                simpleworldtoast(
-                                    "Error",
-                                    "Does not have enough credits, please get more then 10 credits",
-                                    context);
-                              } else {
-                                Navigator.of(context).pop();
-                                usersRef.doc(widget.profileId).update({
-                                  "credit_points": FieldValue.increment(-10),
-                                });
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                        UsersViewedMyProfileList(
-                                      userId: user.id,
-                                    ),
-                                  ),
-                                );
-                              }
-                            },
-                          );
+                    );
+                  } else {
+                    bool noCredit = currentUserCredit < 20;
+                    consentSheet(
+                      context,
+                      AppLocalizations.of(context)!.following_consent3,
+                      AppLocalizations.of(context)!.following_consent4,
+                      () async {
+                        if (noCredit) {
+                          Navigator.of(context).pop();
+                          simpleworldtoast(
+                              AppLocalizations.of(context)!.error,
+                              AppLocalizations.of(context)!
+                                  .not_enough_credit_20,
+                              context);
                         } else {
-                          bool noCredit = currentUserCredit < 20;
-                          consentSheet(
+                          Navigator.of(context).pop();
+
+                          usersRef.doc(widget.profileId).update({
+                            "credit_points": FieldValue.increment(-20),
+                            // 'userIsVerified': true,
+                          });
+                          //##Uncomment the below code to get user id of following users
+
+                          // var querySnapshots = await followingRef
+                          //     .doc(user.id)
+                          //     .collection('userFollowing')
+                          //     .get();
+                          // for (var doc in querySnapshots.docs) {
+                          //   await doc.reference.update({
+                          //     "userId": doc.id,
+                          //   });
+                          // }
+
+                          Navigator.push(
                             context,
-                            'Would you like to see users who viewed  this Profile?',
-                            'Spent 20 Credits to see users who viewed this Profile',
-                            () {
-                              if (noCredit) {
-                                Navigator.of(context).pop();
-                                simpleworldtoast(
-                                    "Error",
-                                    "Does not have enough credits, please get more then 20 credits",
-                                    context);
-                              } else {
-                                Navigator.of(context).pop();
-
-                                usersRef.doc(widget.profileId).update({
-                                  "credit_points": FieldValue.increment(-20),
-                                });
-
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                        UsersViewedMyProfileList(
-                                      userId: user.id,
-                                    ),
-                                  ),
-                                );
-                              }
-                            },
+                            MaterialPageRoute(
+                              builder: (context) => FollowingList(
+                                userId: user.id,
+                              ),
+                            ),
                           );
                         }
                       },
-                    ),
-                    buildCountColumn("Likes", likedCount, () {
-                      if (isProfileOwner) {
-                        bool noCredit = user.credit_points < 10;
-                        consentSheet(
-                          context,
-                          'Would you like to see users who liked your Profile?',
-                          'Spent 10 Credits to see users who liked your Profile',
-                          () {
-                            if (noCredit) {
-                              Navigator.of(context).pop();
-                              simpleworldtoast(
-                                  "Error",
-                                  "Does not have enough credits, please get more then 10 credits",
-                                  context);
-                            } else {
-                              Navigator.of(context).pop();
-                              usersRef.doc(widget.profileId).update({
-                                "credit_points": FieldValue.increment(-10),
-                              });
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => UsersLikedMyProfileList(
-                                    userId: user.id,
-                                  ),
-                                ),
-                              );
-                            }
-                          },
-                        );
-                      } else {
-                        bool noCredit = currentUserCredit < 20;
-                        consentSheet(
-                          context,
-                          'Would you like to see users who liked  this Profile?',
-                          'Spent 20 Credits to see users who liked this Profile',
-                          () {
-                            if (noCredit) {
-                              Navigator.of(context).pop();
-                              simpleworldtoast(
-                                  "Error",
-                                  "Does not have enough credits, please get more then 20 credits",
-                                  context);
-                            } else {
-                              Navigator.of(context).pop();
-
-                              usersRef.doc(widget.profileId).update({
-                                "credit_points": FieldValue.increment(-20),
-                              });
-
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => UsersLikedMyProfileList(
-                                    userId: user.id,
-                                  ),
-                                ),
-                              );
-                            }
-                          },
-                        );
-                      }
-                    }),
-                    buildCountColumn("Dislikes", dislikedCount, () {
-                      if (isProfileOwner) {
-                        bool noCredit = user.credit_points < 10;
-                        consentSheet(
-                          context,
-                          'Would you like to see users who Disliked your Profile?',
-                          'Spent 10 Credits to see users who Disliked your Profile',
-                          () {
-                            if (noCredit) {
-                              Navigator.of(context).pop();
-                              simpleworldtoast(
-                                  "Error",
-                                  "Does not have enough credits, please get more then 10 credits",
-                                  context);
-                            } else {
-                              Navigator.of(context).pop();
-                              usersRef.doc(widget.profileId).update({
-                                "credit_points": FieldValue.increment(-10),
-                              });
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      UsersDisLikedMyProfileList(
-                                    userId: user.id,
-                                  ),
-                                ),
-                              );
-                            }
-                          },
-                        );
-                      } else {
-                        bool noCredit = currentUserCredit < 20;
-                        consentSheet(
-                          context,
-                          'Would you like to see users who Disliked  this Profile?',
-                          'Spent 20 Credits to see users who Disliked this Profile',
-                          () {
-                            if (noCredit) {
-                              Navigator.of(context).pop();
-                              simpleworldtoast(
-                                  "Error",
-                                  "Does not have enough credits, please get more then 20 credits",
-                                  context);
-                            } else {
-                              Navigator.of(context).pop();
-
-                              usersRef.doc(widget.profileId).update({
-                                "credit_points": FieldValue.increment(-20),
-                              });
-
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      UsersDisLikedMyProfileList(
-                                    userId: user.id,
-                                  ),
-                                ),
-                              );
-                            }
-                          },
-                        );
-                      }
-                    }),
-                  ],
-                ),
+                    );
+                  }
+                },
               ),
-              const SizedBox(height: 20),
-              const Divider(),
-              PostBox(userId: widget.profileId!),
-              const Divider(),
-              buildProfilePosts()
             ],
-          );
-        },
-      ),
+          ),
+        ),
+        const Divider(),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 50),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              buildCountColumn(
+                "Views",
+                ppViewCount,
+                () {
+                  if (widget.isProfileOwner) {
+                    bool noCredit = user.credit_points < 10;
+                    consentSheet(
+                      context,
+                      'Would you like to see users who viewed your Profile?',
+                      'Spent 10 Credits to see users who viewed your Profile',
+                      () {
+                        if (noCredit) {
+                          Navigator.of(context).pop();
+                          simpleworldtoast(
+                              "Error",
+                              "Does not have enough credits, please get more then 10 credits",
+                              context);
+                        } else {
+                          Navigator.of(context).pop();
+                          usersRef.doc(widget.profileId).update({
+                            "credit_points": FieldValue.increment(-10),
+                          });
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => UsersViewedMyProfileList(
+                                userId: user.id,
+                              ),
+                            ),
+                          );
+                        }
+                      },
+                    );
+                  } else {
+                    bool noCredit = currentUserCredit < 20;
+                    consentSheet(
+                      context,
+                      'Would you like to see users who viewed  this Profile?',
+                      'Spent 20 Credits to see users who viewed this Profile',
+                      () {
+                        if (noCredit) {
+                          Navigator.of(context).pop();
+                          simpleworldtoast(
+                              "Error",
+                              "Does not have enough credits, please get more then 20 credits",
+                              context);
+                        } else {
+                          Navigator.of(context).pop();
+
+                          usersRef.doc(widget.profileId).update({
+                            "credit_points": FieldValue.increment(-20),
+                          });
+
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => UsersViewedMyProfileList(
+                                userId: user.id,
+                              ),
+                            ),
+                          );
+                        }
+                      },
+                    );
+                  }
+                },
+              ),
+              buildCountColumn("Likes", likedCount, () {
+                if (widget.isProfileOwner) {
+                  bool noCredit = user.credit_points < 10;
+                  consentSheet(
+                    context,
+                    'Would you like to see users who liked your Profile?',
+                    'Spent 10 Credits to see users who liked your Profile',
+                    () {
+                      if (noCredit) {
+                        Navigator.of(context).pop();
+                        simpleworldtoast(
+                            "Error",
+                            "Does not have enough credits, please get more then 10 credits",
+                            context);
+                      } else {
+                        Navigator.of(context).pop();
+                        usersRef.doc(widget.profileId).update({
+                          "credit_points": FieldValue.increment(-10),
+                        });
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => UsersLikedMyProfileList(
+                              userId: user.id,
+                            ),
+                          ),
+                        );
+                      }
+                    },
+                  );
+                } else {
+                  bool noCredit = currentUserCredit < 20;
+                  consentSheet(
+                    context,
+                    'Would you like to see users who liked  this Profile?',
+                    'Spent 20 Credits to see users who liked this Profile',
+                    () {
+                      if (noCredit) {
+                        Navigator.of(context).pop();
+                        simpleworldtoast(
+                            "Error",
+                            "Does not have enough credits, please get more then 20 credits",
+                            context);
+                      } else {
+                        Navigator.of(context).pop();
+
+                        usersRef.doc(widget.profileId).update({
+                          "credit_points": FieldValue.increment(-20),
+                        });
+
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => UsersLikedMyProfileList(
+                              userId: user.id,
+                            ),
+                          ),
+                        );
+                      }
+                    },
+                  );
+                }
+              }),
+              buildCountColumn("Dislikes", dislikedCount, () {
+                if (widget.isProfileOwner) {
+                  bool noCredit = user.credit_points < 10;
+                  consentSheet(
+                    context,
+                    'Would you like to see users who Disliked your Profile?',
+                    'Spent 10 Credits to see users who Disliked your Profile',
+                    () {
+                      if (noCredit) {
+                        Navigator.of(context).pop();
+                        simpleworldtoast(
+                            "Error",
+                            "Does not have enough credits, please get more then 10 credits",
+                            context);
+                      } else {
+                        Navigator.of(context).pop();
+                        usersRef.doc(widget.profileId).update({
+                          "credit_points": FieldValue.increment(-10),
+                        });
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => UsersDisLikedMyProfileList(
+                              userId: user.id,
+                            ),
+                          ),
+                        );
+                      }
+                    },
+                  );
+                } else {
+                  bool noCredit = currentUserCredit < 20;
+                  consentSheet(
+                    context,
+                    'Would you like to see users who Disliked  this Profile?',
+                    'Spent 20 Credits to see users who Disliked this Profile',
+                    () {
+                      if (noCredit) {
+                        Navigator.of(context).pop();
+                        simpleworldtoast(
+                            "Error",
+                            "Does not have enough credits, please get more then 20 credits",
+                            context);
+                      } else {
+                        Navigator.of(context).pop();
+
+                        usersRef.doc(widget.profileId).update({
+                          "credit_points": FieldValue.increment(-20),
+                        });
+
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => UsersDisLikedMyProfileList(
+                              userId: user.id,
+                            ),
+                          ),
+                        );
+                      }
+                    },
+                  );
+                }
+              }),
+            ],
+          ),
+        ),
+        const SizedBox(height: 20),
+        const Divider(),
+        PostBox(userId: widget.profileId!),
+        const Divider(),
+        buildProfilePosts()
+      ],
     );
+
+    // return Container(
+    //   color: Theme.of(context).scaffoldBackgroundColor,
+    //   // child: StreamBuilder<GloabalUser?>(
+    //   // future: GloabalUser.fetchUser(widget.profileId),
+    //   child: StreamBuilder<DocumentSnapshot<GloabalUser>>(
+    //     stream: GloabalUser.userDoc(widget.profileId).snapshots(),
+    //     builder: (context, snapshot) {
+    //       log('snapshot.connectionState: ${snapshot.connectionState}');
+    //       if (!snapshot.hasData) {
+    //         return circularProgress();
+    //       }
+    //       final user = snapshot.data?.data();
+    //       final bool isProfileOwner = widget.profileId == widget.profileId;
+    //       return Column(
+    //         mainAxisAlignment: MainAxisAlignment.center,
+    //         crossAxisAlignment: CrossAxisAlignment.center,
+    //         children: <Widget>[
+    //           Stack(children: <Widget>[
+    //             (imageFileCover == null)
+    //                 ? user!.coverUrl.isEmpty
+    //                     ? Image.asset(
+    //                         'assets/images/defaultcover.png',
+    //                         alignment: Alignment.center,
+    //                         width: double.infinity,
+    //                         fit: BoxFit.cover,
+    //                         height: 200,
+    //                       )
+    //                     : SizedBox(
+    //                         height: 200,
+    //                         width: double.infinity,
+    //                         child: CachedNetworkImage(
+    //                           imageUrl: user.coverUrl,
+    //                           fit: BoxFit.cover,
+    //                         ),
+    //                       )
+    //                 : Material(
+    //                     clipBehavior: Clip.hardEdge,
+    //                     child: Image.file(
+    //                       imageFileCover!,
+    //                       width: double.infinity,
+    //                       height: 200.0,
+    //                       fit: BoxFit.cover,
+    //                     ),
+    //                   ),
+    //             isProfileOwner
+    //                 ? Container()
+    //                 : SizedBox(
+    //                     width: double.infinity,
+    //                     height: 200,
+    //                     child: Container(
+    //                       alignment: const Alignment(-0.8, 1.5),
+    //                       child: Stack(
+    //                         children: [
+    //                           isLiked
+    //                               ? Container(
+    //                                   // alignment: Alignment.center,
+    //                                   width: 60,
+    //                                   padding: const EdgeInsets.all(10.0),
+    //                                   margin: const EdgeInsets.all(6.0),
+    //                                   decoration: BoxDecoration(
+    //                                     color: Theme.of(context)
+    //                                         .secondaryHeaderColor,
+    //                                     shape: BoxShape.circle,
+    //                                   ),
+    //                                   child: Image.asset(
+    //                                     'assets/images/likedpp.png',
+    //                                     width: 40,
+    //                                   ),
+    //                                 ).onTap(() {
+    //                                   handleLikeUser();
+    //                                 })
+    //                               : Container(
+    //                                   width: 60,
+    //                                   padding: const EdgeInsets.all(10.0),
+    //                                   margin: const EdgeInsets.all(6.0),
+    //                                   decoration: BoxDecoration(
+    //                                     color: Theme.of(context)
+    //                                         .secondaryHeaderColor,
+    //                                     shape: BoxShape.circle,
+    //                                   ),
+    //                                   child: Image.asset(
+    //                                     'assets/images/likepp.png',
+    //                                     width: 40,
+    //                                   ),
+    //                                 ).onTap(() {
+    //                                   handleLikeUser();
+    //                                 })
+    //                         ],
+    //                       ),
+    //                     ),
+    //                   ),
+    //             SizedBox(
+    //               width: double.infinity,
+    //               height: 200,
+    //               child: Container(
+    //                 alignment: const Alignment(0.0, 2.5),
+    //                 child: Stack(
+    //                   children: [
+    //                     (imageFileAvatar == null)
+    //                         ? ClipRRect(
+    //                             borderRadius: BorderRadius.circular(15.0),
+    //                             child: user!.photoUrl == null ||
+    //                                     user.photoUrl.isEmpty
+    //                                 ? Container(
+    //                                     decoration: BoxDecoration(
+    //                                       color: const Color(0xFF003a54),
+    //                                       borderRadius:
+    //                                           BorderRadius.circular(15.0),
+    //                                     ),
+    //                                     child: Image.asset(
+    //                                       'assets/images/defaultavatar.png',
+    //                                       width: 120,
+    //                                     ),
+    //                                   )
+    //                                 : CachedNetworkImage(
+    //                                     imageUrl: user.photoUrl,
+    //                                     height: 120,
+    //                                     width: 120,
+    //                                     fit: BoxFit.cover,
+    //                                   ),
+    //                           )
+    //                         : Material(
+    //                             borderRadius: const BorderRadius.all(
+    //                                 Radius.circular(15.0)),
+    //                             clipBehavior: Clip.hardEdge,
+    //                             child: Image.file(
+    //                               imageFileAvatar!,
+    //                               width: 120.0,
+    //                               height: 120.0,
+    //                               fit: BoxFit.cover,
+    //                             ),
+    //                           ),
+    //                     isProfileOwner
+    //                         ? SvgPicture.asset(
+    //                             'assets/images/photo.svg',
+    //                             width: 40,
+    //                           ).onTap(() {
+    //                             getavatarImage();
+    //                           })
+    //                         : const Text(''),
+    //                   ],
+    //                 ),
+    //               ),
+    //             ),
+    //             isProfileOwner
+    //                 ? Container()
+    //                 : SizedBox(
+    //                     width: double.infinity,
+    //                     height: 200,
+    //                     child: Container(
+    //                       alignment: const Alignment(0.8, 1.5),
+    //                       child: Stack(
+    //                         children: [
+    //                           isDisliked
+    //                               ? Container(
+    //                                   width: 60,
+    //                                   padding: const EdgeInsets.all(10.0),
+    //                                   margin: const EdgeInsets.all(6.0),
+    //                                   decoration: BoxDecoration(
+    //                                     color: Theme.of(context)
+    //                                         .secondaryHeaderColor,
+    //                                     shape: BoxShape.circle,
+    //                                   ),
+    //                                   child: Image.asset(
+    //                                     'assets/images/dislikedpp.png',
+    //                                     width: 40,
+    //                                   ),
+    //                                 ).onTap(() {
+    //                                   handleDislikeLikeUser();
+    //                                 })
+    //                               : Container(
+    //                                   width: 60,
+    //                                   padding: const EdgeInsets.all(10.0),
+    //                                   margin: const EdgeInsets.all(6.0),
+    //                                   decoration: BoxDecoration(
+    //                                     color: Theme.of(context)
+    //                                         .secondaryHeaderColor,
+    //                                     shape: BoxShape.circle,
+    //                                   ),
+    //                                   child: Image.asset(
+    //                                     'assets/images/dislikepp.png',
+    //                                     width: 40,
+    //                                   ),
+    //                                 ).onTap(() {
+    //                                   handleDislikeLikeUser();
+    //                                 }),
+    //                         ],
+    //                       ),
+    //                     ),
+    //                   ),
+    //             isProfileOwner
+    //                 ? Positioned(
+    //                     bottom: 0,
+    //                     right: 0,
+    //                     child: SvgPicture.asset(
+    //                       'assets/images/photo.svg',
+    //                       width: 40,
+    //                     ).onTap(() {
+    //                       getcoverImage();
+    //                     }))
+    //                 : Container(),
+    //           ]),
+    //           const SizedBox(height: 70),
+    //           Row(
+    //             crossAxisAlignment: CrossAxisAlignment.center,
+    //             mainAxisAlignment: MainAxisAlignment.center,
+    //             children: [
+    //               Text(
+    //                 user!.username.capitalize(),
+    //                 style: Theme.of(context)
+    //                     .textTheme
+    //                     .headline6!
+    //                     .copyWith(fontSize: 16),
+    //               ),
+
+    //               /// Show verified badge
+    //               user.userIsVerified
+    //                   ? Container(
+    //                       margin: const EdgeInsets.only(right: 5),
+    //                       child: Image.asset('assets/images/verified_badge.png',
+    //                           width: 30, height: 30))
+    //                   : const SizedBox(width: 0, height: 0),
+    //             ],
+    //           ),
+    //           const SizedBox(height: 3),
+    //           Text(
+    //             user.bio,
+    //             style: Theme.of(context)
+    //                 .textTheme
+    //                 .headline6!
+    //                 .copyWith(fontSize: 14),
+    //           ),
+    //           const SizedBox(height: 20),
+    //           if (isProfileOwner)
+    //             Row(
+    //               mainAxisSize: MainAxisSize.min,
+    //               children: <Widget>[
+    //                 Text(
+    //                   "${AppLocalizations.of(context)!.you_have} ${user.credit_points} ${AppLocalizations.of(context)!.credits}",
+    //                   style: Theme.of(context)
+    //                       .textTheme
+    //                       .headline6!
+    //                       .copyWith(fontSize: 14),
+    //                 ),
+    //                 Container(
+    //                   margin: const EdgeInsets.only(top: 10.0, left: 10),
+    //                   padding: const EdgeInsets.only(left: 10, right: 10),
+    //                   height: 38,
+    //                   // width: (context.width() - (3 * 16)) * 0.4,
+    //                   // width: double.infinity,
+    //                   decoration: const BoxDecoration(
+    //                     color: Color(0xffE5E6EB),
+    //                     borderRadius: BorderRadius.all(
+    //                       Radius.circular(5.0),
+    //                     ),
+    //                   ),
+    //                   child: Center(
+    //                     child: Text(
+    //                       AppLocalizations.of(context)!.buy_credits,
+    //                       textAlign: TextAlign.left,
+    //                       style: const TextStyle(
+    //                         fontWeight: FontWeight.w700,
+    //                         fontSize: 16,
+    //                         letterSpacing: 0.0,
+    //                         color: Colors.black,
+    //                       ),
+    //                     ),
+    //                   ),
+    //                 ).onTap(() {
+    //                   if (!isWeb) {
+    //                     Navigator.push(
+    //                       context,
+    //                       MaterialPageRoute(
+    //                         builder: (context) => const Upgrade(),
+    //                       ),
+    //                     );
+    //                   } else {
+    //                     final scaffold = ScaffoldMessenger.of(context);
+    //                     scaffold.showSnackBar(
+    //                       SnackBar(
+    //                         content: const Text("NOT SUPPORTED"),
+    //                         action: SnackBarAction(
+    //                             label: 'Ok',
+    //                             onPressed: scaffold.hideCurrentSnackBar),
+    //                       ),
+    //                     );
+    //                   }
+    //                 }),
+    //               ],
+    //             ),
+    //           Row(
+    //             mainAxisSize: MainAxisSize.min,
+    //             children: <Widget>[
+    //               buildProfileButton(),
+    //               const SizedBox(width: 10),
+    //               if (!isProfileOwner)
+    //                 Row(
+    //                   children: [
+    //                     Container(
+    //                       margin: const EdgeInsets.only(top: 10.0),
+    //                       height: 38,
+    //                       width: (context.width() - (3 * 16)) * 0.4,
+    //                       decoration: const BoxDecoration(
+    //                         color: Color(0xffE5E6EB),
+    //                         borderRadius: BorderRadius.all(
+    //                           Radius.circular(5.0),
+    //                         ),
+    //                       ),
+    //                       child: Center(
+    //                         child: Text(
+    //                           AppLocalizations.of(context)!.message,
+    //                           textAlign: TextAlign.left,
+    //                           style: const TextStyle(
+    //                             fontWeight: FontWeight.w700,
+    //                             fontSize: 16,
+    //                             letterSpacing: 0.0,
+    //                             color: Colors.black,
+    //                           ),
+    //                         ),
+    //                       ),
+    //                     ).onTap(() {
+    //                       Navigator.push(
+    //                         context,
+    //                         MaterialPageRoute(
+    //                           builder: (context) => Chat(
+    //                             receiverId: user.id,
+    //                             receiverAvatar: user.photoUrl,
+    //                             receiverName: user.username,
+    //                             key: null,
+    //                           ),
+    //                         ),
+    //                       );
+    //                     }),
+    //                   ],
+    //                 ),
+    //             ],
+    //           ),
+    //           const SizedBox(height: 20),
+    //           const Divider(),
+    //           Padding(
+    //             padding: const EdgeInsets.symmetric(horizontal: 50),
+    //             child: Row(
+    //               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    //               children: <Widget>[
+    //                 buildCountColumn(
+    //                   AppLocalizations.of(context)!.posts,
+    //                   postCount,
+    //                   () => Navigator.push(
+    //                     context,
+    //                     CupertinoPageRoute(
+    //                       builder: (context) => const CommimgSoon(),
+    //                     ),
+    //                   ),
+    //                 ),
+    //                 buildCountColumn(
+    //                   AppLocalizations.of(context)!.followers,
+    //                   followerCount,
+    //                   () {
+    //                     if (isProfileOwner) {
+    //                       bool noCredit = user.credit_points < 10;
+    //                       consentSheet(
+    //                         context,
+    //                         AppLocalizations.of(context)!.followed_consent1,
+    //                         AppLocalizations.of(context)!.followed_consent2,
+    //                         () async {
+    //                           if (noCredit) {
+    //                             Navigator.of(context).pop();
+    //                             simpleworldtoast(
+    //                                 AppLocalizations.of(context)!.error,
+    //                                 AppLocalizations.of(context)!
+    //                                     .not_enough_credit_10,
+    //                                 context);
+    //                           } else {
+    //                             Navigator.of(context).pop();
+    //                             usersRef.doc(widget.profileId).update({
+    //                               "credit_points": FieldValue.increment(-10),
+    //                             });
+
+    //                             //##Uncomment the below code to get user id of followers
+    //                             // var querySnapshots = await followersRef
+    //                             //     .doc(user.id)
+    //                             //     .collection('userFollowers')
+    //                             //     .get();
+    //                             // for (var doc in querySnapshots.docs) {
+    //                             //   await doc.reference.update({
+    //                             //     "userId": doc.id,
+    //                             //   });
+    //                             // }
+
+    //                             Navigator.push(
+    //                               context,
+    //                               MaterialPageRoute(
+    //                                 builder: (context) => followersList(
+    //                                   userId: user.id,
+    //                                 ),
+    //                               ),
+    //                             );
+    //                           }
+    //                         },
+    //                       );
+    //                     } else {
+    //                       bool noCredit = currentUserCredit < 20;
+    //                       consentSheet(
+    //                         context,
+    //                         AppLocalizations.of(context)!.followed_consent3,
+    //                         AppLocalizations.of(context)!.followed_consent4,
+    //                         () async {
+    //                           if (noCredit) {
+    //                             Navigator.of(context).pop();
+    //                             simpleworldtoast(
+    //                                 AppLocalizations.of(context)!.error,
+    //                                 AppLocalizations.of(context)!
+    //                                     .not_enough_credit_20,
+    //                                 context);
+    //                           } else {
+    //                             Navigator.of(context).pop();
+
+    //                             usersRef.doc(widget.profileId).update({
+    //                               "credit_points": FieldValue.increment(-20),
+    //                             });
+
+    //                             //##Uncomment the below code to get user id of followers
+    //                             // var querySnapshots = await followersRef
+    //                             //     .doc(user.id)
+    //                             //     .collection('userFollowers')
+    //                             //     .get();
+    //                             // for (var doc in querySnapshots.docs) {
+    //                             //   await doc.reference.update({
+    //                             //     "userId": doc.id,
+    //                             //   });
+    //                             // }
+
+    //                             Navigator.push(
+    //                               context,
+    //                               MaterialPageRoute(
+    //                                 builder: (context) => followersList(
+    //                                   userId: user.id,
+    //                                 ),
+    //                               ),
+    //                             );
+    //                           }
+    //                         },
+    //                       );
+    //                     }
+    //                   },
+    //                 ),
+    //                 buildCountColumn(
+    //                   AppLocalizations.of(context)!.following,
+    //                   followingCount,
+    //                   () {
+    //                     if (isProfileOwner) {
+    //                       bool noCredit = user.credit_points < 10;
+    //                       consentSheet(
+    //                         context,
+    //                         AppLocalizations.of(context)!.following_consent1,
+    //                         AppLocalizations.of(context)!.following_consent2,
+    //                         () async {
+    //                           if (noCredit) {
+    //                             Navigator.of(context).pop();
+    //                             simpleworldtoast(
+    //                                 AppLocalizations.of(context)!.error,
+    //                                 AppLocalizations.of(context)!
+    //                                     .not_enough_credit_10,
+    //                                 context);
+    //                           } else {
+    //                             Navigator.of(context).pop();
+    //                             usersRef.doc(widget.profileId).update({
+    //                               "credit_points": FieldValue.increment(-10),
+    //                             });
+
+    //                             //##Uncomment the below code to get user id of following users
+    //                             // var querySnapshots = await followingRef
+    //                             //     .doc(user.id)
+    //                             //     .collection('userFollowing')
+    //                             //     .get();
+    //                             // for (var doc in querySnapshots.docs) {
+    //                             //   await doc.reference.update({
+    //                             //     "userId": doc.id,
+    //                             //   });
+    //                             // }
+    //                             Navigator.push(
+    //                               context,
+    //                               MaterialPageRoute(
+    //                                 builder: (context) => FollowingList(
+    //                                   userId: user.id,
+    //                                 ),
+    //                               ),
+    //                             );
+    //                           }
+    //                         },
+    //                       );
+    //                     } else {
+    //                       bool noCredit = currentUserCredit < 20;
+    //                       consentSheet(
+    //                         context,
+    //                         AppLocalizations.of(context)!.following_consent3,
+    //                         AppLocalizations.of(context)!.following_consent4,
+    //                         () async {
+    //                           if (noCredit) {
+    //                             Navigator.of(context).pop();
+    //                             simpleworldtoast(
+    //                                 AppLocalizations.of(context)!.error,
+    //                                 AppLocalizations.of(context)!
+    //                                     .not_enough_credit_20,
+    //                                 context);
+    //                           } else {
+    //                             Navigator.of(context).pop();
+
+    //                             usersRef.doc(widget.profileId).update({
+    //                               "credit_points": FieldValue.increment(-20),
+    //                               // 'userIsVerified': true,
+    //                             });
+    //                             //##Uncomment the below code to get user id of following users
+
+    //                             // var querySnapshots = await followingRef
+    //                             //     .doc(user.id)
+    //                             //     .collection('userFollowing')
+    //                             //     .get();
+    //                             // for (var doc in querySnapshots.docs) {
+    //                             //   await doc.reference.update({
+    //                             //     "userId": doc.id,
+    //                             //   });
+    //                             // }
+
+    //                             Navigator.push(
+    //                               context,
+    //                               MaterialPageRoute(
+    //                                 builder: (context) => FollowingList(
+    //                                   userId: user.id,
+    //                                 ),
+    //                               ),
+    //                             );
+    //                           }
+    //                         },
+    //                       );
+    //                     }
+    //                   },
+    //                 ),
+    //               ],
+    //             ),
+    //           ),
+    //           const Divider(),
+    //           Padding(
+    //             padding: const EdgeInsets.symmetric(horizontal: 50),
+    //             child: Row(
+    //               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    //               children: <Widget>[
+    //                 buildCountColumn(
+    //                   "Views",
+    //                   ppViewCount,
+    //                   () {
+    //                     if (isProfileOwner) {
+    //                       bool noCredit = user.credit_points < 10;
+    //                       consentSheet(
+    //                         context,
+    //                         'Would you like to see users who viewed your Profile?',
+    //                         'Spent 10 Credits to see users who viewed your Profile',
+    //                         () {
+    //                           if (noCredit) {
+    //                             Navigator.of(context).pop();
+    //                             simpleworldtoast(
+    //                                 "Error",
+    //                                 "Does not have enough credits, please get more then 10 credits",
+    //                                 context);
+    //                           } else {
+    //                             Navigator.of(context).pop();
+    //                             usersRef.doc(widget.profileId).update({
+    //                               "credit_points": FieldValue.increment(-10),
+    //                             });
+    //                             Navigator.push(
+    //                               context,
+    //                               MaterialPageRoute(
+    //                                 builder: (context) =>
+    //                                     UsersViewedMyProfileList(
+    //                                   userId: user.id,
+    //                                 ),
+    //                               ),
+    //                             );
+    //                           }
+    //                         },
+    //                       );
+    //                     } else {
+    //                       bool noCredit = currentUserCredit < 20;
+    //                       consentSheet(
+    //                         context,
+    //                         'Would you like to see users who viewed  this Profile?',
+    //                         'Spent 20 Credits to see users who viewed this Profile',
+    //                         () {
+    //                           if (noCredit) {
+    //                             Navigator.of(context).pop();
+    //                             simpleworldtoast(
+    //                                 "Error",
+    //                                 "Does not have enough credits, please get more then 20 credits",
+    //                                 context);
+    //                           } else {
+    //                             Navigator.of(context).pop();
+
+    //                             usersRef.doc(widget.profileId).update({
+    //                               "credit_points": FieldValue.increment(-20),
+    //                             });
+
+    //                             Navigator.push(
+    //                               context,
+    //                               MaterialPageRoute(
+    //                                 builder: (context) =>
+    //                                     UsersViewedMyProfileList(
+    //                                   userId: user.id,
+    //                                 ),
+    //                               ),
+    //                             );
+    //                           }
+    //                         },
+    //                       );
+    //                     }
+    //                   },
+    //                 ),
+    //                 buildCountColumn("Likes", likedCount, () {
+    //                   if (isProfileOwner) {
+    //                     bool noCredit = user.credit_points < 10;
+    //                     consentSheet(
+    //                       context,
+    //                       'Would you like to see users who liked your Profile?',
+    //                       'Spent 10 Credits to see users who liked your Profile',
+    //                       () {
+    //                         if (noCredit) {
+    //                           Navigator.of(context).pop();
+    //                           simpleworldtoast(
+    //                               "Error",
+    //                               "Does not have enough credits, please get more then 10 credits",
+    //                               context);
+    //                         } else {
+    //                           Navigator.of(context).pop();
+    //                           usersRef.doc(widget.profileId).update({
+    //                             "credit_points": FieldValue.increment(-10),
+    //                           });
+    //                           Navigator.push(
+    //                             context,
+    //                             MaterialPageRoute(
+    //                               builder: (context) => UsersLikedMyProfileList(
+    //                                 userId: user.id,
+    //                               ),
+    //                             ),
+    //                           );
+    //                         }
+    //                       },
+    //                     );
+    //                   } else {
+    //                     bool noCredit = currentUserCredit < 20;
+    //                     consentSheet(
+    //                       context,
+    //                       'Would you like to see users who liked  this Profile?',
+    //                       'Spent 20 Credits to see users who liked this Profile',
+    //                       () {
+    //                         if (noCredit) {
+    //                           Navigator.of(context).pop();
+    //                           simpleworldtoast(
+    //                               "Error",
+    //                               "Does not have enough credits, please get more then 20 credits",
+    //                               context);
+    //                         } else {
+    //                           Navigator.of(context).pop();
+
+    //                           usersRef.doc(widget.profileId).update({
+    //                             "credit_points": FieldValue.increment(-20),
+    //                           });
+
+    //                           Navigator.push(
+    //                             context,
+    //                             MaterialPageRoute(
+    //                               builder: (context) => UsersLikedMyProfileList(
+    //                                 userId: user.id,
+    //                               ),
+    //                             ),
+    //                           );
+    //                         }
+    //                       },
+    //                     );
+    //                   }
+    //                 }),
+    //                 buildCountColumn("Dislikes", dislikedCount, () {
+    //                   if (isProfileOwner) {
+    //                     bool noCredit = user.credit_points < 10;
+    //                     consentSheet(
+    //                       context,
+    //                       'Would you like to see users who Disliked your Profile?',
+    //                       'Spent 10 Credits to see users who Disliked your Profile',
+    //                       () {
+    //                         if (noCredit) {
+    //                           Navigator.of(context).pop();
+    //                           simpleworldtoast(
+    //                               "Error",
+    //                               "Does not have enough credits, please get more then 10 credits",
+    //                               context);
+    //                         } else {
+    //                           Navigator.of(context).pop();
+    //                           usersRef.doc(widget.profileId).update({
+    //                             "credit_points": FieldValue.increment(-10),
+    //                           });
+    //                           Navigator.push(
+    //                             context,
+    //                             MaterialPageRoute(
+    //                               builder: (context) =>
+    //                                   UsersDisLikedMyProfileList(
+    //                                 userId: user.id,
+    //                               ),
+    //                             ),
+    //                           );
+    //                         }
+    //                       },
+    //                     );
+    //                   } else {
+    //                     bool noCredit = currentUserCredit < 20;
+    //                     consentSheet(
+    //                       context,
+    //                       'Would you like to see users who Disliked  this Profile?',
+    //                       'Spent 20 Credits to see users who Disliked this Profile',
+    //                       () {
+    //                         if (noCredit) {
+    //                           Navigator.of(context).pop();
+    //                           simpleworldtoast(
+    //                               "Error",
+    //                               "Does not have enough credits, please get more then 20 credits",
+    //                               context);
+    //                         } else {
+    //                           Navigator.of(context).pop();
+
+    //                           usersRef.doc(widget.profileId).update({
+    //                             "credit_points": FieldValue.increment(-20),
+    //                           });
+
+    //                           Navigator.push(
+    //                             context,
+    //                             MaterialPageRoute(
+    //                               builder: (context) =>
+    //                                   UsersDisLikedMyProfileList(
+    //                                 userId: user.id,
+    //                               ),
+    //                             ),
+    //                           );
+    //                         }
+    //                       },
+    //                     );
+    //                   }
+    //                 }),
+    //               ],
+    //             ),
+    //           ),
+    //           const SizedBox(height: 20),
+    //           const Divider(),
+    //           PostBox(userId: widget.profileId!),
+    //           const Divider(),
+    //           buildProfilePosts()
+    //         ],
+    //       );
+    //     },
+    //   ),
+    // );
   }
 
   @override
   Widget build(BuildContext context) {
-    ScrollController scrollController = ScrollController();
-    final bool widthMoreThan_500 = (MediaQuery.of(context).size.width > 500);
-    return Scaffold(
-      backgroundColor: Theme.of(context).backgroundColor,
-      appBar: header(
-        context,
-        titleText: AppLocalizations.of(context)!.profile,
-      ),
-      body: Column(
-        children: [
-          Expanded(
-            child: RawScrollbar(
-              controller: scrollController,
-              interactive: true,
-              thumbVisibility: !kIsWeb && widthMoreThan_500,
-              trackVisibility: !kIsWeb && widthMoreThan_500,
-              radius: const Radius.circular(20),
-              child: SingleChildScrollView(
-                controller: scrollController,
-                physics: const AlwaysScrollableScrollPhysics(),
-                child: buildProfileHeader(),
-              ),
-            ),
-          ),
-          // const AdsWidget(),
-        ],
-      ),
-    );
+    return buildProfileHeader(widget.user);
+    // ScrollController scrollController = ScrollController();
+    // final bool widthMoreThan_500 = (MediaQuery.of(context).size.width > 500);
+    // return Scaffold(
+    //   backgroundColor: Theme.of(context).backgroundColor,
+    //   appBar: header(
+    //     context,
+    //     titleText: AppLocalizations.of(context)!.profile,
+    //   ),
+    //   body: Column(
+    //     children: [
+    //       Expanded(
+    //         child: RawScrollbar(
+    //           controller: scrollController,
+    //           interactive: true,
+    //           thumbVisibility: !kIsWeb && widthMoreThan_500,
+    //           trackVisibility: !kIsWeb && widthMoreThan_500,
+    //           radius: const Radius.circular(20),
+    //           child: SingleChildScrollView(
+    //             controller: scrollController,
+    //             physics: const AlwaysScrollableScrollPhysics(),
+    //             child: buildProfileHeader(),
+    //           ),
+    //         ),
+    //       ),
+    //       // const AdsWidget(),
+    //     ],
+    //   ),
+    // );
   }
 
   buildProfilePosts() {

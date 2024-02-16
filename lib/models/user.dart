@@ -55,10 +55,10 @@ class GloabalUser {
       photoUrl: map['photoUrl'] as String? ?? '',
       displayName: map['displayName'] as String? ?? '',
       bio: map['bio'] as String? ?? '',
-      credit_points: map['credit_points']?? 0,
+      credit_points: map['credit_points'] ?? 0,
       coverUrl: map['coverUrl'] as String? ?? '',
-      userIsVerified: map['userIsVerified']?? false,
-      no_ads: map['no_ads']?? false,
+      userIsVerified: map['userIsVerified'] ?? false,
+      no_ads: map['no_ads'] ?? false,
     );
   }
 
@@ -93,11 +93,12 @@ class GloabalUser {
             fromFirestore: (e, _) => GloabalUser.fromMap(e.data()!),
             toFirestore: (m, _) => m.toMap(),
           );
+
   static DocumentReference<GloabalUser> userDoc([String? id]) =>
-      usersCol.doc(id ?? id);
+      usersCol.doc(id);
 
   static Future<GloabalUser?> fetchUser([String? id]) async {
-    final doc = await userDoc(id ?? id).get();
+    final doc = await userDoc(id).get();
     return doc.data();
   }
 }

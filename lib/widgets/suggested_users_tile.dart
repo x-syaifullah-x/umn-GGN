@@ -67,15 +67,19 @@ class SuggestedUserTileState extends State<SuggestedUserTile> {
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           GestureDetector(
-            onTap: () => Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => Profile(
-                  profileId: userdoc!['id'],
-                  reactions: reaction.reactions,
+            onTap: () {
+              final id = userdoc!['id'];
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => Profile(
+                    profileId: id,
+                    reactions: reaction.reactions,
+                    isProfileOwner: id == currentUserId,
+                  ),
                 ),
-              ),
-            ).then((value) => setState(() {})),
+              ).then((value) => setState(() {}));
+            },
             // showProfile(context, profileId: userdoc!['id']),
             child: Column(
               mainAxisSize: MainAxisSize.min,

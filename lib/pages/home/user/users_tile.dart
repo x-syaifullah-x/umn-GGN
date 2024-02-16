@@ -63,15 +63,19 @@ class UserTileState extends State<UserTile> {
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           GestureDetector(
-            onTap: () => Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => Profile(
-                  profileId: widget.userDoc!['id'],
-                  reactions: reaction.reactions,
+            onTap: () {
+              final id = widget.userDoc!['id'];
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => Profile(
+                    profileId: id,
+                    reactions: reaction.reactions,
+                    isProfileOwner: id == currentUserId,
+                  ),
                 ),
-              ),
-            ).then((value) => setState(() {})),
+              ).then((value) => setState(() {}));
+            },
             // showProfile(context, profileId: userdoc!['id']),
             child: Column(
               mainAxisSize: MainAxisSize.min,

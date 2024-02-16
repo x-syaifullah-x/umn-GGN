@@ -181,6 +181,7 @@ class ActivityFeedState extends State<ActivityFeed> {
                   builder: (context) => Profile(
                     profileId: userID,
                     reactions: reaction.reactions,
+                    isProfileOwner: userID == currentUserId,
                   ),
                 ),
               ).then((value) => setState(() {}));
@@ -231,12 +232,14 @@ class ActivityFeedState extends State<ActivityFeed> {
           ),
           leading: GestureDetector(
             onTap: () {
+              final aa = feedItem['userId'];
               Navigator.push(
                 context,
                 MaterialPageRoute(
                   builder: (context) => Profile(
-                    profileId: feedItem['userId'],
+                    profileId: aa,
                     reactions: reaction.reactions,
+                    isProfileOwner: currentUserId == aa,
                   ),
                 ),
               ).then((value) => setState(() {}));
@@ -349,6 +352,7 @@ showProfile(BuildContext context, {String? profileId}) {
       builder: (context) => Profile(
         profileId: profileId,
         reactions: reaction.reactions,
+        isProfileOwner: profileId == globalID,
       ),
     ),
   );
