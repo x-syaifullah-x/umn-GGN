@@ -150,7 +150,7 @@ class _PostBoxState extends State<PostBox>
   }
 
   createPostInFirestore({List? mediaUrl, String? description, int? type}) {
-    postsRef.doc(globalID).collection("userPosts").doc(postId).set({
+    postsCollection.doc(globalID).collection("userPosts").doc(postId).set({
       "postId": postId,
       "ownerId": globalID,
       "username": globalName,

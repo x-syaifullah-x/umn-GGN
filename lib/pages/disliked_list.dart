@@ -49,7 +49,9 @@ class _UsersDisLikedMyProfileListState extends State<UsersDisLikedMyProfileList>
 
               return LikedUserTile(userdoc);
             },
-            query: dislikedRef.doc(widget.userId).collection('userDislikes'),
+            query: dislikedppCollection
+                .doc(widget.userId)
+                .collection('userDislikes'),
             isLive: true,
           ),
           onRefresh: () async {

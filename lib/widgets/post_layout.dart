@@ -678,7 +678,7 @@ class _PostLayoutState extends State<PostLayout> {
   }
 
   void deleteNestedSubcollections() {
-    Future<QuerySnapshot> photos = postsRef
+    Future<QuerySnapshot> photos = postsCollection
         .doc(ownerId)
         .collection("userPosts")
         .doc(postId)
@@ -686,7 +686,7 @@ class _PostLayoutState extends State<PostLayout> {
         .get();
     photos.then((value) {
       value.docs.forEach((element) {
-        postsRef
+        postsCollection
             .doc(ownerId)
             .collection("userPosts")
             .doc(postId)
@@ -703,7 +703,12 @@ class _PostLayoutState extends State<PostLayout> {
     bool isPdf = type == 'pdf';
     bool isVide = type == 'video';
     bool isPhoto = type == 'photo';
-    postsRef.doc(ownerId).collection('userPosts').doc(postId).get().then((doc) {
+    postsCollection
+        .doc(ownerId)
+        .collection('userPosts')
+        .doc(postId)
+        .get()
+        .then((doc) {
       if (doc.exists) {
         doc.reference.delete();
       }
@@ -720,7 +725,7 @@ class _PostLayoutState extends State<PostLayout> {
 
     // storageRef.child("post_$postId.jpg").delete();
 
-    QuerySnapshot activityFeedSnapshot = await activityFeedRef
+    QuerySnapshot activityFeedSnapshot = await feedCollection
         .doc(ownerId)
         .collection("feedItems")
         .where('postId', isEqualTo: postId)
@@ -732,7 +737,7 @@ class _PostLayoutState extends State<PostLayout> {
     });
 
     QuerySnapshot commentsSnapshot =
-        await commentsRef.doc(postId).collection('comments').get();
+        await commentsCollection.doc(postId).collection('comments').get();
     commentsSnapshot.docs.forEach((doc) {
       if (doc.exists) {
         doc.reference.delete();
@@ -741,7 +746,7 @@ class _PostLayoutState extends State<PostLayout> {
   }
 
   hidePost() async {
-    timelineRef
+    timelineCollection
         .doc(widget.UserId)
         .collection('timelinePosts')
         .doc(postId)
@@ -864,7 +869,7 @@ class _PostLayoutState extends State<PostLayout> {
   }
 
   reportPost() async {
-    reportsRef.doc(postId).set({});
+    reportsCollection.doc(postId).set({});
     simpleworldtoast("", "Post was reported to Admin", context);
   }
 }

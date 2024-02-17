@@ -81,7 +81,7 @@ class _SearchPageState extends State<SearchPage> {
 
   Widget groupsListnew() {
     return StreamBuilder(
-      stream: groupsRef.snapshots(),
+      stream: groupsCollection.snapshots(),
       builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
         if (snapshot.hasData) {
           return SizedBox(

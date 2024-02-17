@@ -32,22 +32,26 @@ import '../../ads/applovin_ad_unit_id.dart';
 import '../../v2/exchange_rate_new/widgets/exchange_rate_new.dart';
 
 final GoogleSignIn googleSignIn = GoogleSignIn();
+
 final Reference storageRef = FirebaseStorage.instance.ref();
-final usersRef = FirebaseFirestore.instance.collection('users');
-final postsRef = FirebaseFirestore.instance.collection('posts');
-final commentsRef = FirebaseFirestore.instance.collection('comments');
-final activityFeedRef = FirebaseFirestore.instance.collection('feed');
-final followersRef = FirebaseFirestore.instance.collection('followers');
-final likedRef = FirebaseFirestore.instance.collection('likedpp');
-final dislikedRef = FirebaseFirestore.instance.collection('dislikedpp');
-final ppviewsRef = FirebaseFirestore.instance.collection('ppviews');
-final followingRef = FirebaseFirestore.instance.collection('following');
-final timelineRef = FirebaseFirestore.instance.collection('timeline');
-final msgRef = FirebaseFirestore.instance.collection('messages');
-final messengerRef = FirebaseFirestore.instance.collection('messenger');
-final groupsRef = FirebaseFirestore.instance.collection('groups');
-final storiesRef = FirebaseFirestore.instance.collection('stories');
-final reportsRef = FirebaseFirestore.instance.collection('reports');
+
+final firestore = FirebaseFirestore.instance;
+final usersCollection = firestore.collection('users');
+final postsCollection = firestore.collection('posts');
+final commentsCollection = firestore.collection('comments');
+final feedCollection = firestore.collection('feed');
+final followersCollection = firestore.collection('followers');
+final likedDppCollection = firestore.collection('likedpp');
+final dislikedppCollection = firestore.collection('dislikedpp');
+final ppviewsCollection = firestore.collection('ppviews');
+final followingCollection = firestore.collection('following');
+final timelineCollection = firestore.collection('timeline');
+final messagesCollection = firestore.collection('messages');
+final messengerCollection = firestore.collection('messenger');
+final groupsCollection = firestore.collection('groups');
+final storiesCollection = firestore.collection('stories');
+final reportsCollection = firestore.collection('reports');
+
 final DateTime timestamp = DateTime.now();
 
 class Home extends StatefulWidget {
@@ -59,10 +63,10 @@ class Home extends StatefulWidget {
   final String? userId;
 
   @override
-  State createState() => HomeState();
+  State<Home> createState() => _HomeState();
 }
 
-class HomeState extends State<Home> with SingleTickerProviderStateMixin {
+class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   final PageController pageController = PageController(initialPage: 0);
@@ -81,7 +85,9 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
     getAllStories();
 
     _tabController = TabController(vsync: this, length: 5);
-    FirebaseMessaging.instance.getInitialMessage().then((message) {});
+    FirebaseMessaging.instance.getInitialMessage().then((message) {
+      log("_HomeState.getInitialMessage(): $message");
+    });
     _tabController.addListener(_handleTabSelection);
   }
 
@@ -113,7 +119,7 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
   getUserData() async {
     User? user = firebaseAuth.currentUser;
     if (user != null) {
-      final peerData = await usersRef.doc(user.uid).get();
+      final peerData = await usersCollection.doc(user.uid).get();
       if (peerData.exists) {
         globalID = user.uid;
         globalName = peerData['username'];
@@ -470,7 +476,7 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
           userId: userId,
           reactions: reaction.reactions,
         ),
-        UsersList(userId: userId),
+        Users(userId: userId),
         Profile(
           profileId: userId,
           reactions: reaction.reactions,
@@ -493,11 +499,11 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
   }
 
   getAllStories() async {
-    await storiesRef.get();
+    await storiesCollection.get();
   }
 
   checkIfFollowing() async {
-    DocumentSnapshot doc = await followersRef
+    DocumentSnapshot doc = await followersCollection
         .doc(globalID)
         .collection('userFollowers')
         .doc(globalID)
@@ -509,7 +515,7 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
 
   getAllUsers() async {
     QuerySnapshot snapshot =
-        await usersRef.orderBy('timestamp', descending: true).get();
+        await usersCollection.orderBy('timestamp', descending: true).get();
     List<GloabalUser> users = snapshot.docs
         .map((doc) => GloabalUser.fromMap(doc.data() as Map<String, dynamic>))
         .toList();

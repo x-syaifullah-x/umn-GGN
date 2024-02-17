@@ -75,7 +75,7 @@ class ReactionButtonAlbumPostsWidgetState
   }
 
   checkIfHappy() async {
-    DocumentSnapshot doc = await postsRef
+    DocumentSnapshot doc = await postsCollection
         .doc(ownerId)
         .collection('userPosts')
         .doc(postId)
@@ -90,7 +90,7 @@ class ReactionButtonAlbumPostsWidgetState
   }
 
   checkIfSad() async {
-    DocumentSnapshot doc = await postsRef
+    DocumentSnapshot doc = await postsCollection
         .doc(ownerId)
         .collection('userPosts')
         .doc(postId)
@@ -105,7 +105,7 @@ class ReactionButtonAlbumPostsWidgetState
   }
 
   checkIfAngry() async {
-    DocumentSnapshot doc = await postsRef
+    DocumentSnapshot doc = await postsCollection
         .doc(ownerId)
         .collection('userPosts')
         .doc(postId)
@@ -120,7 +120,7 @@ class ReactionButtonAlbumPostsWidgetState
   }
 
   checkIfInlove() async {
-    DocumentSnapshot doc = await postsRef
+    DocumentSnapshot doc = await postsCollection
         .doc(ownerId)
         .collection('userPosts')
         .doc(postId)
@@ -135,7 +135,7 @@ class ReactionButtonAlbumPostsWidgetState
   }
 
   checkIfSurprised() async {
-    DocumentSnapshot doc = await postsRef
+    DocumentSnapshot doc = await postsCollection
         .doc(ownerId)
         .collection('userPosts')
         .doc(postId)
@@ -150,7 +150,7 @@ class ReactionButtonAlbumPostsWidgetState
   }
 
   checkIfLike() async {
-    DocumentSnapshot doc = await postsRef
+    DocumentSnapshot doc = await postsCollection
         .doc(ownerId)
         .collection('userPosts')
         .doc(postId)
@@ -167,7 +167,7 @@ class ReactionButtonAlbumPostsWidgetState
   addLikeToActivityFeed() {
     bool isNotPostOwner = userId != ownerId;
     if (isNotPostOwner) {
-      activityFeedRef.doc(ownerId).collection("feedItems").add({
+      feedCollection.doc(ownerId).collection("feedItems").add({
         "type": "like",
         "username": globalName,
         "userId": userId,
@@ -316,7 +316,7 @@ class ReactionButtonAlbumPostsWidgetState
 
   handleLikePost(String value) {
     if (value == 'Happy') {
-      postsRef
+      postsCollection
           .doc(ownerId)
           .collection('userPosts')
           .doc(postId)
@@ -330,7 +330,7 @@ class ReactionButtonAlbumPostsWidgetState
           doc.reference.delete();
         }
       });
-      postsRef
+      postsCollection
           .doc(ownerId)
           .collection('userPosts')
           .doc(postId)
@@ -344,7 +344,7 @@ class ReactionButtonAlbumPostsWidgetState
           doc.reference.delete();
         }
       });
-      postsRef
+      postsCollection
           .doc(ownerId)
           .collection('userPosts')
           .doc(postId)
@@ -358,7 +358,7 @@ class ReactionButtonAlbumPostsWidgetState
           doc.reference.delete();
         }
       });
-      postsRef
+      postsCollection
           .doc(ownerId)
           .collection('userPosts')
           .doc(postId)
@@ -372,7 +372,7 @@ class ReactionButtonAlbumPostsWidgetState
           doc.reference.delete();
         }
       });
-      postsRef
+      postsCollection
           .doc(ownerId)
           .collection('userPosts')
           .doc(postId)
@@ -387,7 +387,7 @@ class ReactionButtonAlbumPostsWidgetState
         }
       });
 
-      postsRef
+      postsCollection
           .doc(ownerId)
           .collection('userPosts')
           .doc(postId)
@@ -398,7 +398,7 @@ class ReactionButtonAlbumPostsWidgetState
           .set({});
       addLikeToActivityFeed();
     } else if (value == 'Sad') {
-      postsRef
+      postsCollection
           .doc(ownerId)
           .collection('userPosts')
           .doc(postId)
@@ -412,7 +412,7 @@ class ReactionButtonAlbumPostsWidgetState
           doc.reference.delete();
         }
       });
-      postsRef
+      postsCollection
           .doc(ownerId)
           .collection('userPosts')
           .doc(postId)
@@ -426,7 +426,7 @@ class ReactionButtonAlbumPostsWidgetState
           doc.reference.delete();
         }
       });
-      postsRef
+      postsCollection
           .doc(ownerId)
           .collection('userPosts')
           .doc(postId)
@@ -440,7 +440,7 @@ class ReactionButtonAlbumPostsWidgetState
           doc.reference.delete();
         }
       });
-      postsRef
+      postsCollection
           .doc(ownerId)
           .collection('userPosts')
           .doc(postId)
@@ -454,7 +454,7 @@ class ReactionButtonAlbumPostsWidgetState
           doc.reference.delete();
         }
       });
-      postsRef
+      postsCollection
           .doc(ownerId)
           .collection('userPosts')
           .doc(postId)
@@ -469,7 +469,7 @@ class ReactionButtonAlbumPostsWidgetState
         }
       });
 
-      postsRef
+      postsCollection
           .doc(ownerId)
           .collection('userPosts')
           .doc(postId)
@@ -480,7 +480,7 @@ class ReactionButtonAlbumPostsWidgetState
           .set({});
       addLikeToActivityFeed();
     } else if (value == 'Angry') {
-      postsRef
+      postsCollection
           .doc(ownerId)
           .collection('userPosts')
           .doc(postId)
@@ -494,7 +494,7 @@ class ReactionButtonAlbumPostsWidgetState
           doc.reference.delete();
         }
       });
-      postsRef
+      postsCollection
           .doc(ownerId)
           .collection('userPosts')
           .doc(postId)
@@ -508,7 +508,7 @@ class ReactionButtonAlbumPostsWidgetState
           doc.reference.delete();
         }
       });
-      postsRef
+      postsCollection
           .doc(ownerId)
           .collection('userPosts')
           .doc(postId)
@@ -522,7 +522,7 @@ class ReactionButtonAlbumPostsWidgetState
           doc.reference.delete();
         }
       });
-      postsRef
+      postsCollection
           .doc(ownerId)
           .collection('userPosts')
           .doc(postId)
@@ -536,7 +536,7 @@ class ReactionButtonAlbumPostsWidgetState
           doc.reference.delete();
         }
       });
-      postsRef
+      postsCollection
           .doc(ownerId)
           .collection('userPosts')
           .doc(postId)
@@ -551,7 +551,7 @@ class ReactionButtonAlbumPostsWidgetState
         }
       });
 
-      postsRef
+      postsCollection
           .doc(ownerId)
           .collection('userPosts')
           .doc(postId)
@@ -562,7 +562,7 @@ class ReactionButtonAlbumPostsWidgetState
           .set({});
       addLikeToActivityFeed();
     } else if (value == 'In love') {
-      postsRef
+      postsCollection
           .doc(ownerId)
           .collection('userPosts')
           .doc(postId)
@@ -576,7 +576,7 @@ class ReactionButtonAlbumPostsWidgetState
           doc.reference.delete();
         }
       });
-      postsRef
+      postsCollection
           .doc(ownerId)
           .collection('userPosts')
           .doc(postId)
@@ -590,7 +590,7 @@ class ReactionButtonAlbumPostsWidgetState
           doc.reference.delete();
         }
       });
-      postsRef
+      postsCollection
           .doc(ownerId)
           .collection('userPosts')
           .doc(postId)
@@ -604,7 +604,7 @@ class ReactionButtonAlbumPostsWidgetState
           doc.reference.delete();
         }
       });
-      postsRef
+      postsCollection
           .doc(ownerId)
           .collection('userPosts')
           .doc(postId)
@@ -618,7 +618,7 @@ class ReactionButtonAlbumPostsWidgetState
           doc.reference.delete();
         }
       });
-      postsRef
+      postsCollection
           .doc(ownerId)
           .collection('userPosts')
           .doc(postId)
@@ -633,7 +633,7 @@ class ReactionButtonAlbumPostsWidgetState
         }
       });
 
-      postsRef
+      postsCollection
           .doc(ownerId)
           .collection('userPosts')
           .doc(postId)
@@ -644,7 +644,7 @@ class ReactionButtonAlbumPostsWidgetState
           .set({});
       addLikeToActivityFeed();
     } else if (value == 'Surprised') {
-      postsRef
+      postsCollection
           .doc(ownerId)
           .collection('userPosts')
           .doc(postId)
@@ -658,7 +658,7 @@ class ReactionButtonAlbumPostsWidgetState
           doc.reference.delete();
         }
       });
-      postsRef
+      postsCollection
           .doc(ownerId)
           .collection('userPosts')
           .doc(postId)
@@ -672,7 +672,7 @@ class ReactionButtonAlbumPostsWidgetState
           doc.reference.delete();
         }
       });
-      postsRef
+      postsCollection
           .doc(ownerId)
           .collection('userPosts')
           .doc(postId)
@@ -686,7 +686,7 @@ class ReactionButtonAlbumPostsWidgetState
           doc.reference.delete();
         }
       });
-      postsRef
+      postsCollection
           .doc(ownerId)
           .collection('userPosts')
           .doc(postId)
@@ -700,7 +700,7 @@ class ReactionButtonAlbumPostsWidgetState
           doc.reference.delete();
         }
       });
-      postsRef
+      postsCollection
           .doc(ownerId)
           .collection('userPosts')
           .doc(postId)
@@ -715,7 +715,7 @@ class ReactionButtonAlbumPostsWidgetState
         }
       });
 
-      postsRef
+      postsCollection
           .doc(ownerId)
           .collection('userPosts')
           .doc(postId)
@@ -726,7 +726,7 @@ class ReactionButtonAlbumPostsWidgetState
           .set({});
       addLikeToActivityFeed();
     } else if (value == 'Like') {
-      postsRef
+      postsCollection
           .doc(ownerId)
           .collection('userPosts')
           .doc(postId)
@@ -740,7 +740,7 @@ class ReactionButtonAlbumPostsWidgetState
           doc.reference.delete();
         }
       });
-      postsRef
+      postsCollection
           .doc(ownerId)
           .collection('userPosts')
           .doc(postId)
@@ -754,7 +754,7 @@ class ReactionButtonAlbumPostsWidgetState
           doc.reference.delete();
         }
       });
-      postsRef
+      postsCollection
           .doc(ownerId)
           .collection('userPosts')
           .doc(postId)
@@ -768,7 +768,7 @@ class ReactionButtonAlbumPostsWidgetState
           doc.reference.delete();
         }
       });
-      postsRef
+      postsCollection
           .doc(ownerId)
           .collection('userPosts')
           .doc(postId)
@@ -782,7 +782,7 @@ class ReactionButtonAlbumPostsWidgetState
           doc.reference.delete();
         }
       });
-      postsRef
+      postsCollection
           .doc(ownerId)
           .collection('userPosts')
           .doc(postId)
@@ -797,7 +797,7 @@ class ReactionButtonAlbumPostsWidgetState
         }
       });
 
-      postsRef
+      postsCollection
           .doc(ownerId)
           .collection('userPosts')
           .doc(postId)

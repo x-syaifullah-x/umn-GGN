@@ -13,7 +13,7 @@ class PostScreenAlbum extends StatelessWidget {
 
   Future<List<AlbumPosts>> getPostList() async {
     try {
-      QuerySnapshot snapshot = await postsRef
+      QuerySnapshot snapshot = await postsCollection
           .doc(userId)
           .collection('userPosts')
           .doc(postId)

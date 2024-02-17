@@ -1,6 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:global_net/v2/news/data/news_api/data/news_api_repository.dart';
-import 'package:global_net/v2/news/news_api/data/news_api_repository.dart';
 
 void main() {
   final repo = NewsApiRepository.instance;

@@ -55,7 +55,7 @@ class ReactionButtonWidgetState extends State<ReactionButtonWidget> {
 
   checkIfHappy() async {
     try {
-      DocumentSnapshot doc = await postsRef
+      DocumentSnapshot doc = await postsCollection
           .doc(widget.ownerId)
           .collection('userPosts')
           .doc(widget.postId)
@@ -70,7 +70,7 @@ class ReactionButtonWidgetState extends State<ReactionButtonWidget> {
 
   checkIfSad() async {
     try {
-      DocumentSnapshot doc = await postsRef
+      DocumentSnapshot doc = await postsCollection
           .doc(widget.ownerId)
           .collection('userPosts')
           .doc(widget.postId)
@@ -85,7 +85,7 @@ class ReactionButtonWidgetState extends State<ReactionButtonWidget> {
 
   checkIfAngry() async {
     try {
-      DocumentSnapshot doc = await postsRef
+      DocumentSnapshot doc = await postsCollection
           .doc(widget.ownerId)
           .collection('userPosts')
           .doc(widget.postId)
@@ -100,7 +100,7 @@ class ReactionButtonWidgetState extends State<ReactionButtonWidget> {
 
   checkIfInlove() async {
     try {
-      DocumentSnapshot doc = await postsRef
+      DocumentSnapshot doc = await postsCollection
           .doc(widget.ownerId)
           .collection('userPosts')
           .doc(widget.postId)
@@ -115,7 +115,7 @@ class ReactionButtonWidgetState extends State<ReactionButtonWidget> {
 
   checkIfSurprised() async {
     try {
-      DocumentSnapshot doc = await postsRef
+      DocumentSnapshot doc = await postsCollection
           .doc(widget.ownerId)
           .collection('userPosts')
           .doc(widget.postId)
@@ -130,7 +130,7 @@ class ReactionButtonWidgetState extends State<ReactionButtonWidget> {
 
   checkIfLike() async {
     try {
-      DocumentSnapshot doc = await postsRef
+      DocumentSnapshot doc = await postsCollection
           .doc(widget.ownerId)
           .collection('userPosts')
           .doc(widget.postId)
@@ -150,7 +150,7 @@ class ReactionButtonWidgetState extends State<ReactionButtonWidget> {
   addLikeToActivityFeed() {
     bool isNotPostOwner = widget.userId != widget.ownerId;
     if (isNotPostOwner) {
-      final aa = activityFeedRef
+      final aa = feedCollection
           .doc(widget.ownerId)
           .collection("feedItems")
           .doc(widget.postId);
@@ -413,7 +413,7 @@ class ReactionButtonWidgetState extends State<ReactionButtonWidget> {
 
   handleLikePost(String value) {
     if (value == 'Happy') {
-      postsRef
+      postsCollection
           .doc(widget.ownerId)
           .collection('userPosts')
           .doc(widget.postId)
@@ -425,7 +425,7 @@ class ReactionButtonWidgetState extends State<ReactionButtonWidget> {
           doc.reference.delete();
         }
       });
-      postsRef
+      postsCollection
           .doc(widget.ownerId)
           .collection('userPosts')
           .doc(widget.postId)
@@ -437,7 +437,7 @@ class ReactionButtonWidgetState extends State<ReactionButtonWidget> {
           doc.reference.delete();
         }
       });
-      postsRef
+      postsCollection
           .doc(widget.ownerId)
           .collection('userPosts')
           .doc(widget.postId)
@@ -449,7 +449,7 @@ class ReactionButtonWidgetState extends State<ReactionButtonWidget> {
           doc.reference.delete();
         }
       });
-      postsRef
+      postsCollection
           .doc(widget.ownerId)
           .collection('userPosts')
           .doc(widget.postId)
@@ -461,7 +461,7 @@ class ReactionButtonWidgetState extends State<ReactionButtonWidget> {
           doc.reference.delete();
         }
       });
-      postsRef
+      postsCollection
           .doc(widget.ownerId)
           .collection('userPosts')
           .doc(widget.postId)
@@ -474,7 +474,7 @@ class ReactionButtonWidgetState extends State<ReactionButtonWidget> {
         }
       });
 
-      postsRef
+      postsCollection
           .doc(widget.ownerId)
           .collection('userPosts')
           .doc(widget.postId)
@@ -483,7 +483,7 @@ class ReactionButtonWidgetState extends State<ReactionButtonWidget> {
           .set({});
       addLikeToActivityFeed();
     } else if (value == 'Sad') {
-      postsRef
+      postsCollection
           .doc(widget.ownerId)
           .collection('userPosts')
           .doc(widget.postId)
@@ -495,7 +495,7 @@ class ReactionButtonWidgetState extends State<ReactionButtonWidget> {
           doc.reference.delete();
         }
       });
-      postsRef
+      postsCollection
           .doc(widget.ownerId)
           .collection('userPosts')
           .doc(widget.postId)
@@ -507,7 +507,7 @@ class ReactionButtonWidgetState extends State<ReactionButtonWidget> {
           doc.reference.delete();
         }
       });
-      postsRef
+      postsCollection
           .doc(widget.ownerId)
           .collection('userPosts')
           .doc(widget.postId)
@@ -519,7 +519,7 @@ class ReactionButtonWidgetState extends State<ReactionButtonWidget> {
           doc.reference.delete();
         }
       });
-      postsRef
+      postsCollection
           .doc(widget.ownerId)
           .collection('userPosts')
           .doc(widget.postId)
@@ -531,7 +531,7 @@ class ReactionButtonWidgetState extends State<ReactionButtonWidget> {
           doc.reference.delete();
         }
       });
-      postsRef
+      postsCollection
           .doc(widget.ownerId)
           .collection('userPosts')
           .doc(widget.postId)
@@ -544,7 +544,7 @@ class ReactionButtonWidgetState extends State<ReactionButtonWidget> {
         }
       });
 
-      postsRef
+      postsCollection
           .doc(widget.ownerId)
           .collection('userPosts')
           .doc(widget.postId)
@@ -553,7 +553,7 @@ class ReactionButtonWidgetState extends State<ReactionButtonWidget> {
           .set({});
       addLikeToActivityFeed();
     } else if (value == 'Angry') {
-      postsRef
+      postsCollection
           .doc(widget.ownerId)
           .collection('userPosts')
           .doc(widget.postId)
@@ -565,7 +565,7 @@ class ReactionButtonWidgetState extends State<ReactionButtonWidget> {
           doc.reference.delete();
         }
       });
-      postsRef
+      postsCollection
           .doc(widget.ownerId)
           .collection('userPosts')
           .doc(widget.postId)
@@ -577,7 +577,7 @@ class ReactionButtonWidgetState extends State<ReactionButtonWidget> {
           doc.reference.delete();
         }
       });
-      postsRef
+      postsCollection
           .doc(widget.ownerId)
           .collection('userPosts')
           .doc(widget.postId)
@@ -589,7 +589,7 @@ class ReactionButtonWidgetState extends State<ReactionButtonWidget> {
           doc.reference.delete();
         }
       });
-      postsRef
+      postsCollection
           .doc(widget.ownerId)
           .collection('userPosts')
           .doc(widget.postId)
@@ -601,7 +601,7 @@ class ReactionButtonWidgetState extends State<ReactionButtonWidget> {
           doc.reference.delete();
         }
       });
-      postsRef
+      postsCollection
           .doc(widget.ownerId)
           .collection('userPosts')
           .doc(widget.postId)
@@ -614,7 +614,7 @@ class ReactionButtonWidgetState extends State<ReactionButtonWidget> {
         }
       });
 
-      postsRef
+      postsCollection
           .doc(widget.ownerId)
           .collection('userPosts')
           .doc(widget.postId)
@@ -623,7 +623,7 @@ class ReactionButtonWidgetState extends State<ReactionButtonWidget> {
           .set({});
       addLikeToActivityFeed();
     } else if (value == 'In love') {
-      postsRef
+      postsCollection
           .doc(widget.ownerId)
           .collection('userPosts')
           .doc(widget.postId)
@@ -635,7 +635,7 @@ class ReactionButtonWidgetState extends State<ReactionButtonWidget> {
           doc.reference.delete();
         }
       });
-      postsRef
+      postsCollection
           .doc(widget.ownerId)
           .collection('userPosts')
           .doc(widget.postId)
@@ -647,7 +647,7 @@ class ReactionButtonWidgetState extends State<ReactionButtonWidget> {
           doc.reference.delete();
         }
       });
-      postsRef
+      postsCollection
           .doc(widget.ownerId)
           .collection('userPosts')
           .doc(widget.postId)
@@ -659,7 +659,7 @@ class ReactionButtonWidgetState extends State<ReactionButtonWidget> {
           doc.reference.delete();
         }
       });
-      postsRef
+      postsCollection
           .doc(widget.ownerId)
           .collection('userPosts')
           .doc(widget.postId)
@@ -671,7 +671,7 @@ class ReactionButtonWidgetState extends State<ReactionButtonWidget> {
           doc.reference.delete();
         }
       });
-      postsRef
+      postsCollection
           .doc(widget.ownerId)
           .collection('userPosts')
           .doc(widget.postId)
@@ -684,7 +684,7 @@ class ReactionButtonWidgetState extends State<ReactionButtonWidget> {
         }
       });
 
-      postsRef
+      postsCollection
           .doc(widget.ownerId)
           .collection('userPosts')
           .doc(widget.postId)
@@ -693,7 +693,7 @@ class ReactionButtonWidgetState extends State<ReactionButtonWidget> {
           .set({});
       addLikeToActivityFeed();
     } else if (value == 'Surprised') {
-      postsRef
+      postsCollection
           .doc(widget.ownerId)
           .collection('userPosts')
           .doc(widget.postId)
@@ -705,7 +705,7 @@ class ReactionButtonWidgetState extends State<ReactionButtonWidget> {
           doc.reference.delete();
         }
       });
-      postsRef
+      postsCollection
           .doc(widget.ownerId)
           .collection('userPosts')
           .doc(widget.postId)
@@ -717,7 +717,7 @@ class ReactionButtonWidgetState extends State<ReactionButtonWidget> {
           doc.reference.delete();
         }
       });
-      postsRef
+      postsCollection
           .doc(widget.ownerId)
           .collection('userPosts')
           .doc(widget.postId)
@@ -729,7 +729,7 @@ class ReactionButtonWidgetState extends State<ReactionButtonWidget> {
           doc.reference.delete();
         }
       });
-      postsRef
+      postsCollection
           .doc(widget.ownerId)
           .collection('userPosts')
           .doc(widget.postId)
@@ -741,7 +741,7 @@ class ReactionButtonWidgetState extends State<ReactionButtonWidget> {
           doc.reference.delete();
         }
       });
-      postsRef
+      postsCollection
           .doc(widget.ownerId)
           .collection('userPosts')
           .doc(widget.postId)
@@ -754,7 +754,7 @@ class ReactionButtonWidgetState extends State<ReactionButtonWidget> {
         }
       });
 
-      postsRef
+      postsCollection
           .doc(widget.ownerId)
           .collection('userPosts')
           .doc(widget.postId)
@@ -763,7 +763,7 @@ class ReactionButtonWidgetState extends State<ReactionButtonWidget> {
           .set({});
       addLikeToActivityFeed();
     } else if (value == 'Like') {
-      postsRef
+      postsCollection
           .doc(widget.ownerId)
           .collection('userPosts')
           .doc(widget.postId)
@@ -775,7 +775,7 @@ class ReactionButtonWidgetState extends State<ReactionButtonWidget> {
           doc.reference.delete();
         }
       });
-      postsRef
+      postsCollection
           .doc(widget.ownerId)
           .collection('userPosts')
           .doc(widget.postId)
@@ -787,7 +787,7 @@ class ReactionButtonWidgetState extends State<ReactionButtonWidget> {
           doc.reference.delete();
         }
       });
-      postsRef
+      postsCollection
           .doc(widget.ownerId)
           .collection('userPosts')
           .doc(widget.postId)
@@ -799,7 +799,7 @@ class ReactionButtonWidgetState extends State<ReactionButtonWidget> {
           doc.reference.delete();
         }
       });
-      postsRef
+      postsCollection
           .doc(widget.ownerId)
           .collection('userPosts')
           .doc(widget.postId)
@@ -811,7 +811,7 @@ class ReactionButtonWidgetState extends State<ReactionButtonWidget> {
           doc.reference.delete();
         }
       });
-      postsRef
+      postsCollection
           .doc(widget.ownerId)
           .collection('userPosts')
           .doc(widget.postId)
@@ -824,7 +824,7 @@ class ReactionButtonWidgetState extends State<ReactionButtonWidget> {
         }
       });
 
-      final doc = postsRef
+      final doc = postsCollection
           .doc(widget.ownerId)
           .collection('userPosts')
           .doc(widget.postId)

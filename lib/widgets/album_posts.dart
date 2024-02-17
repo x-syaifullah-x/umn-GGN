@@ -138,7 +138,7 @@ class _AlbumPostsState extends State<AlbumPosts> {
   }
 
   Stream<QuerySnapshot> requestCount() {
-    return postsRef
+    return postsCollection
         .doc(ownerId)
         .collection('userPosts')
         .doc(postId)
@@ -273,7 +273,7 @@ class _AlbumPostsState extends State<AlbumPosts> {
   }
 
   deletePost() async {
-    postsRef
+    postsCollection
         .doc(ownerId)
         .collection("userPosts")
         .doc(postId)
@@ -288,7 +288,7 @@ class _AlbumPostsState extends State<AlbumPosts> {
 
     FirebaseStorage.instance.refFromURL(mediaUrl!).delete();
 
-    QuerySnapshot activityFeedSnapshot = await activityFeedRef
+    QuerySnapshot activityFeedSnapshot = await feedCollection
         .doc(ownerId)
         .collection("feedItems")
         .where('postId', isEqualTo: postId)

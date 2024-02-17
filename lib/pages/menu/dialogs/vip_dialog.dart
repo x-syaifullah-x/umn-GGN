@@ -34,7 +34,7 @@ class VipDialog extends StatelessWidget {
             "Does not have enough credits, please get more then 1500 credits",
             context);
       } else {
-        usersRef.doc(globalID).update({
+        usersCollection.doc(globalID).update({
           "credit_points": FieldValue.increment(-1500),
           'userIsVerified': true,
         });
@@ -51,7 +51,7 @@ class VipDialog extends StatelessWidget {
             "Does not have enough credits, please get more then 600 credits",
             context);
       } else {
-        usersRef.doc(globalID).update({
+        usersCollection.doc(globalID).update({
           "credit_points": FieldValue.increment(-600),
           'no_ads': true,
         });

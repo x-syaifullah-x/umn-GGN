@@ -31,7 +31,7 @@ class ProfileHeaderState extends State<ProfileHeader> {
   }
 
   Stream<QuerySnapshot> requestCount() {
-    return commentsRef.doc(profileId).collection('comments').snapshots();
+    return commentsCollection.doc(profileId).collection('comments').snapshots();
   }
 
   @override

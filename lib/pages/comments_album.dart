@@ -45,7 +45,7 @@ class CommentsState extends State<AlbumComments> {
 
   getCommentscount() async {
     QuerySnapshot snapshot =
-        await commentsRef.doc(postId).collection('comments').get();
+        await commentsCollection.doc(postId).collection('comments').get();
     setState(() {
       CommentsCount = snapshot.docs.length;
     });
@@ -53,7 +53,7 @@ class CommentsState extends State<AlbumComments> {
 
   buildComments() {
     return StreamBuilder<QuerySnapshot>(
-        stream: commentsRef
+        stream: commentsCollection
             .doc(postId)
             .collection('comments')
             .orderBy("timestamp", descending: false)
@@ -97,7 +97,7 @@ class CommentsState extends State<AlbumComments> {
   }
 
   addComment() {
-    commentsRef.doc(postId).collection("comments").add({
+    commentsCollection.doc(postId).collection("comments").add({
       "username": globalName,
       "comment": commentController.text,
       "timestamp": timestamp,
@@ -106,7 +106,7 @@ class CommentsState extends State<AlbumComments> {
     });
     bool isNotPostOwner = postOwnerId != globalID;
     if (isNotPostOwner) {
-      activityFeedRef.doc(postOwnerId).collection('feedItems').add({
+      feedCollection.doc(postOwnerId).collection('feedItems').add({
         "type": "comment",
         "commentData": commentController.text,
         "timestamp": timestamp,
@@ -192,7 +192,7 @@ class CommentsState extends State<AlbumComments> {
     );
   }
 
-  static final commentsCol = commentsRef.withConverter<Comment>(
+  static final commentsCol = commentsCollection.withConverter<Comment>(
     fromFirestore: (m, _) => Comment.fromJson(m.data()!),
     toFirestore: (m, _) => m.toJson(),
   );

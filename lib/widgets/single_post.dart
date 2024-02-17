@@ -273,7 +273,12 @@ class _SinglePostState extends State<SinglePost> {
   }
 
   deletePost() async {
-    postsRef.doc(ownerId).collection('userPosts').doc(postId).get().then((doc) {
+    postsCollection
+        .doc(ownerId)
+        .collection('userPosts')
+        .doc(postId)
+        .get()
+        .then((doc) {
       if (doc.exists) {
         doc.reference.delete();
       }
@@ -281,7 +286,7 @@ class _SinglePostState extends State<SinglePost> {
 
     storageRef.child("post_$postId.jpg").delete();
 
-    QuerySnapshot activityFeedSnapshot = await activityFeedRef
+    QuerySnapshot activityFeedSnapshot = await feedCollection
         .doc(ownerId)
         .collection("feedItems")
         .where('postId', isEqualTo: postId)
@@ -293,7 +298,7 @@ class _SinglePostState extends State<SinglePost> {
     });
 
     QuerySnapshot commentsSnapshot =
-        await commentsRef.doc(postId).collection('comments').get();
+        await commentsCollection.doc(postId).collection('comments').get();
     commentsSnapshot.docs.forEach((doc) {
       if (doc.exists) {
         doc.reference.delete();

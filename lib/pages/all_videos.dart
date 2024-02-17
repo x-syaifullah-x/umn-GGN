@@ -98,7 +98,7 @@ class _AllVideosState extends State<AllVideos> {
             reactions: reactions,
           );
         },
-        query: timelineRef
+        query: timelineCollection
             .doc(widget.UserId)
             .collection('timelinePosts')
             .where('type', isEqualTo: 'video')

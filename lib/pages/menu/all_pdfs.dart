@@ -109,7 +109,7 @@ class _AllPdfsState extends State<AllPdfs> {
             reactions: reactions,
           );
         },
-        query: timelineRef
+        query: timelineCollection
             .doc(widget.UserId)
             .collection('timelinePosts')
             .where('type', isEqualTo: 'pdf')

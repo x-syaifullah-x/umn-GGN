@@ -70,7 +70,7 @@ class ReactionsCountState extends State<ReactionsCount> {
 
   Widget likeCount() {
     return StreamBuilder<QuerySnapshot>(
-        stream: postsRef
+        stream: postsCollection
             .doc(ownerId)
             .collection('userPosts')
             .doc(postId)
@@ -107,7 +107,7 @@ class ReactionsCountState extends State<ReactionsCount> {
 
   Widget happyCount() {
     return StreamBuilder<QuerySnapshot>(
-        stream: postsRef
+        stream: postsCollection
             .doc(ownerId)
             .collection('userPosts')
             .doc(postId)
@@ -144,7 +144,7 @@ class ReactionsCountState extends State<ReactionsCount> {
 
   Widget sadCount() {
     return StreamBuilder<QuerySnapshot>(
-        stream: postsRef
+        stream: postsCollection
             .doc(ownerId)
             .collection('userPosts')
             .doc(postId)
@@ -181,7 +181,7 @@ class ReactionsCountState extends State<ReactionsCount> {
 
   Widget angryCount() {
     return StreamBuilder<QuerySnapshot>(
-        stream: postsRef
+        stream: postsCollection
             .doc(ownerId)
             .collection('userPosts')
             .doc(postId)
@@ -218,7 +218,7 @@ class ReactionsCountState extends State<ReactionsCount> {
 
   Widget loveCount() {
     return StreamBuilder<QuerySnapshot>(
-        stream: postsRef
+        stream: postsCollection
             .doc(ownerId)
             .collection('userPosts')
             .doc(postId)
@@ -255,7 +255,7 @@ class ReactionsCountState extends State<ReactionsCount> {
 
   Widget suprisedCount() {
     return StreamBuilder<QuerySnapshot>(
-        stream: postsRef
+        stream: postsCollection
             .doc(ownerId)
             .collection('userPosts')
             .doc(postId)

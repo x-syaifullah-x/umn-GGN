@@ -36,7 +36,7 @@ class LikedUserTileState extends State<LikedUserTile> {
   }
 
   checkIfFollowing() async {
-    DocumentSnapshot doc = await followersRef
+    DocumentSnapshot doc = await followersCollection
         .doc(userdoc!['userId'])
         .collection('userFollowers')
         .doc(globalID)
@@ -280,7 +280,7 @@ class LikedUserTileState extends State<LikedUserTile> {
     setState(() {
       isFollowing = false;
     });
-    followersRef
+    followersCollection
         .doc(userdoc!['id'])
         .collection('userFollowers')
         .doc(currentUserId)
@@ -290,7 +290,7 @@ class LikedUserTileState extends State<LikedUserTile> {
         doc.reference.delete();
       }
     });
-    followingRef
+    followingCollection
         .doc(currentUserId)
         .collection('userFollowing')
         .doc(userdoc!['id'])
@@ -300,7 +300,7 @@ class LikedUserTileState extends State<LikedUserTile> {
         doc.reference.delete();
       }
     });
-    activityFeedRef
+    feedCollection
         .doc(userdoc!['id'])
         .collection('feedItems')
         .doc(currentUserId)
@@ -316,17 +316,17 @@ class LikedUserTileState extends State<LikedUserTile> {
     setState(() {
       isFollowing = true;
     });
-    followersRef
+    followersCollection
         .doc(userdoc!['id'])
         .collection('userFollowers')
         .doc(currentUserId)
         .set({});
-    followingRef
+    followingCollection
         .doc(currentUserId)
         .collection('userFollowing')
         .doc(userdoc!['id'])
         .set({});
-    activityFeedRef
+    feedCollection
         .doc(userdoc!['id'])
         .collection('feedItems')
         .doc(currentUserId)

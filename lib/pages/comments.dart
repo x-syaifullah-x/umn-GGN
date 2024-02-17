@@ -31,7 +31,7 @@ class Comments extends StatefulWidget {
   }
 
   Future<List<Comment>> getAllcoments() async =>
-      commentsRef.get().then((result) {
+      commentsCollection.get().then((result) {
         List<Comment> comments = [];
         for (DocumentSnapshot comment in result.docs) {
           comments.add(Comment.fromDocument(comment));
@@ -62,7 +62,7 @@ class CommentsState extends State<Comments> {
 
   buildComments() {
     return StreamBuilder<QuerySnapshot>(
-        stream: postsRef
+        stream: postsCollection
             .doc(globalID)
             .collection('userPosts')
             .doc(postId)
@@ -110,7 +110,7 @@ class CommentsState extends State<Comments> {
   }
 
   addComment() {
-    postsRef
+    postsCollection
         .doc(globalID)
         .collection('userPosts')
         .doc(postId)
@@ -126,7 +126,7 @@ class CommentsState extends State<Comments> {
     });
     bool isNotPostOwner = postOwnerId != globalID;
     if (isNotPostOwner) {
-      activityFeedRef.doc(postOwnerId).collection('feedItems').add({
+      feedCollection.doc(postOwnerId).collection('feedItems').add({
         "type": "comment",
         "commentData": commentController.text,
         "timestamp": timestamp,
@@ -211,7 +211,7 @@ class CommentsState extends State<Comments> {
     );
   }
 
-  static final commentsCol = commentsRef.withConverter<Comment>(
+  static final commentsCol = commentsCollection.withConverter<Comment>(
     fromFirestore: (m, _) => Comment.fromJson(m.data()!),
     toFirestore: (m, _) => m.toJson(),
   );

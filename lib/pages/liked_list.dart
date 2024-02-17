@@ -49,7 +49,8 @@ class _UsersLikedMyProfileListState extends State<UsersLikedMyProfileList>
 
               return LikedUserTile(userdoc);
             },
-            query: likedRef.doc(widget.userId).collection('userlikes'),
+            query:
+                likedDppCollection.doc(widget.userId).collection('userlikes'),
             isLive: true,
           ),
           onRefresh: () async {

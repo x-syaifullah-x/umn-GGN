@@ -43,7 +43,7 @@ class _DiscoverState extends State<Discover> {
 
   Widget storyList(String userData) {
     return StreamBuilder(
-      stream: timelineRef
+      stream: timelineCollection
           .doc(widget.UserId)
           .collection('timelinePosts')
           .where('type', isEqualTo: 'photo')

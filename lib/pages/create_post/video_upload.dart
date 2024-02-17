@@ -94,7 +94,7 @@ class _UploadState extends State<VideoUpload>
 
   createPostInFirestore(
       {String? videoUrl, String? location, String? description, int? type}) {
-    postsRef.doc(globalID).collection("userPosts").doc(postId).set({
+    postsCollection.doc(globalID).collection("userPosts").doc(postId).set({
       "postId": postId,
       "ownerId": globalID,
       "username": globalName,

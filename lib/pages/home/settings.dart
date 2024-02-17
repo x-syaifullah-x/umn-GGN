@@ -58,7 +58,8 @@ class SettingsState extends State<SettingsPage> {
     setState(() {
       isLoading = true;
     });
-    DocumentSnapshot doc = await usersRef.doc(widget.currentUserId).get();
+    DocumentSnapshot doc =
+        await usersCollection.doc(widget.currentUserId).get();
     user = GloabalUser.fromDocument(doc);
     setState(() {
       isLoading = false;
@@ -232,11 +233,16 @@ class SettingsState extends State<SettingsPage> {
                                 ),
                               ),
                             ).onTap(() {
-                              Navigator.push(
-                                  context,
-                                  CupertinoPageRoute(
-                                    builder: (context) => UsersList(),
-                                  ));
+                              final userId = widget.currentUserId;
+                              if (userId != null) {
+                                Navigator.push(
+                                    context,
+                                    CupertinoPageRoute(
+                                      builder: (context) => Users(
+                                        userId: userId,
+                                      ),
+                                    ));
+                              }
                             }),
                           ),
                           Expanded(

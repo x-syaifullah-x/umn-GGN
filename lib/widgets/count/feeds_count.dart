@@ -38,7 +38,7 @@ class FeedsCountState extends State<FeedsCount> {
   }
 
   Stream<QuerySnapshot> requestCount() {
-    return activityFeedRef
+    return feedCollection
         .doc(userId)
         .collection('feedItems')
         .where('isSeen', isEqualTo: false)

@@ -79,7 +79,7 @@ class _PdfUploadState extends State<PdfUpload>
       String? pdfsize,
       String? description,
       int? type}) {
-    postsRef.doc(globalID).collection("userPosts").doc(postId).set({
+    postsCollection.doc(globalID).collection("userPosts").doc(postId).set({
       "postId": postId,
       "ownerId": globalID,
       "username": globalName,

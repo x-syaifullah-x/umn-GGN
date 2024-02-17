@@ -84,7 +84,7 @@ class _GroupChatListState extends State<GroupChatList> {
     data,
   ) {
     return StreamBuilder(
-      stream: groupsRef
+      stream: groupsCollection
           .where('members', arrayContains: globalID! + '_' + globalName!)
           .snapshots(),
       builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {

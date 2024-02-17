@@ -1,13 +1,11 @@
-import 'dart:async';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:global_net/pages/auth/add_credit_to_account.dart';
 import 'package:global_net/pages/home/home.dart';
 import 'package:global_net/pages/user_to_follow.dart';
 import 'package:global_net/widgets/bezier_container.dart';
 import 'package:global_net/widgets/progress.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:nb_utils/nb_utils.dart';
 
 class CreateAccount extends StatefulWidget {
@@ -33,6 +31,12 @@ class CreateAccountState extends State<CreateAccount> {
   void initState() {
     super.initState();
     getCredit(widget.userId);
+  }
+
+  @override
+  void dispose() {
+    nameController.dispose();
+    super.dispose();
   }
 
   @override
@@ -83,7 +87,7 @@ class CreateAccountState extends State<CreateAccount> {
   }
 
   getCredit(String? userId) async {
-    usersRef
+    usersCollection
         .doc(userId)
         .get()
         .then(
@@ -98,33 +102,53 @@ class CreateAccountState extends State<CreateAccount> {
     final form = _formkey.currentState!;
 
     if (form.validate()) {
-      usersRef.doc(userId).update({
+      usersCollection.doc(userId).update({
         "username": nameController.text,
       });
       form.save();
       SnackBar snackbar = SnackBar(content: Text("Welcome $username!"));
       ScaffoldMessenger.of(context).showSnackBar(snackbar);
-      Timer(const Duration(seconds: 2), () {
-        //   Navigator.pop(context, username);
-        if (credits == 0) {
-          Navigator.of(context).pushReplacement(
-            CupertinoPageRoute(
-              builder: (context) => AddCreditToAccount(
-                userId: userId,
-              ),
+
+      if (credits == 0) {
+        Navigator.of(context).pushReplacement(
+          CupertinoPageRoute(
+            builder: (context) => AddCreditToAccount(
+              userId: userId,
             ),
-          );
-        } else {
-          Navigator.push(
-            context,
-            CupertinoPageRoute(
-              builder: (context) => UsersToFollowList(
-                userId: userId,
-              ),
+          ),
+        );
+      } else {
+        Navigator.push(
+          context,
+          CupertinoPageRoute(
+            builder: (context) => UsersToFollowList(
+              userId: userId,
             ),
-          );
-        }
-      });
+          ),
+        );
+      }
+
+      // Timer(const Duration(seconds: 2), () {
+      //   //   Navigator.pop(context, username);
+      //   if (credits == 0) {
+      //     Navigator.of(context).pushReplacement(
+      //       CupertinoPageRoute(
+      //         builder: (context) => AddCreditToAccount(
+      //           userId: userId,
+      //         ),
+      //       ),
+      //     );
+      //   } else {
+      //     Navigator.push(
+      //       context,
+      //       CupertinoPageRoute(
+      //         builder: (context) => UsersToFollowList(
+      //           userId: userId,
+      //         ),
+      //       ),
+      //     );
+      //   }
+      // });
     }
   }
 

@@ -49,7 +49,7 @@ class _UsersViewedMyProfileListState extends State<UsersViewedMyProfileList>
 
               return VisitedUsersTile(userdoc);
             },
-            query: ppviewsRef
+            query: ppviewsCollection
                 .doc(widget.userId)
                 .collection('userviews')
                 .orderBy('timestamp', descending: true),

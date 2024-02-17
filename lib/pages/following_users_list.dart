@@ -34,8 +34,10 @@ class _FollowingListState extends State<FollowingList>
   bool get wantKeepAlive => true;
 
   getfollowingusers() async {
-    var querySnapshots =
-        await followingRef.doc(widget.userId).collection('userFollowing').get();
+    var querySnapshots = await followingCollection
+        .doc(widget.userId)
+        .collection('userFollowing')
+        .get();
     for (var doc in querySnapshots.docs) {
       await doc.reference.update({
         "userId": doc.id,
@@ -61,7 +63,9 @@ class _FollowingListState extends State<FollowingList>
 
               return FollowersTile(userdoc);
             },
-            query: followingRef.doc(widget.userId).collection('userFollowing'),
+            query: followingCollection
+                .doc(widget.userId)
+                .collection('userFollowing'),
             isLive: true,
           ),
           onRefresh: () async {

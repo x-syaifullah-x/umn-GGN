@@ -70,7 +70,7 @@ class _SuggestedUsersListState extends State<SuggestedUsersList>
             }
             return SuggestedUserTile(userdoc);
           },
-          query: usersRef.orderBy('timestamp', descending: true),
+          query: usersCollection.orderBy('timestamp', descending: true),
           isLive: true,
         ),
       ),

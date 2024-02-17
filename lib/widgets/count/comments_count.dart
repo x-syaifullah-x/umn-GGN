@@ -34,7 +34,7 @@ class CommentsState extends State<CommentsCount> {
   }
 
   Stream<QuerySnapshot> requestCount() {
-    return commentsRef.doc(postId).collection('comments').snapshots();
+    return commentsCollection.doc(postId).collection('comments').snapshots();
   }
 
   @override

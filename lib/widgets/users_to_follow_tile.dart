@@ -49,7 +49,7 @@ class UserToFollowTileState extends State<UserToFollowTile> {
   }
 
   checkIfFollowing() async {
-    DocumentSnapshot doc = await followersRef
+    DocumentSnapshot doc = await followersCollection
         .doc(user.id)
         .collection('userFollowers')
         .doc(globalID)
@@ -182,7 +182,7 @@ class UserToFollowTileState extends State<UserToFollowTile> {
     setState(() {
       isFollowing = false;
     });
-    followersRef
+    followersCollection
         .doc(user.id)
         .collection('userFollowers')
         .doc(currentUserId)
@@ -192,7 +192,7 @@ class UserToFollowTileState extends State<UserToFollowTile> {
         doc.reference.delete();
       }
     });
-    followingRef
+    followingCollection
         .doc(currentUserId)
         .collection('userFollowing')
         .doc(user.id)
@@ -202,7 +202,7 @@ class UserToFollowTileState extends State<UserToFollowTile> {
         doc.reference.delete();
       }
     });
-    activityFeedRef
+    feedCollection
         .doc(user.id)
         .collection('feedItems')
         .doc(currentUserId)
@@ -247,23 +247,19 @@ class UserToFollowTileState extends State<UserToFollowTile> {
     setState(() {
       isFollowing = true;
     });
-    followersRef
+    followersCollection
         .doc(user.id)
         .collection('userFollowers')
         .doc(currentUserId)
         .set({'userId': currentUserId});
     ;
-    followingRef
+    followingCollection
         .doc(currentUserId)
         .collection('userFollowing')
         .doc(user.id)
         .set({'userId': user.id});
     ;
-    activityFeedRef
-        .doc(user.id)
-        .collection('feedItems')
-        .doc(currentUserId)
-        .set({
+    feedCollection.doc(user.id).collection('feedItems').doc(currentUserId).set({
       "type": "follow",
       "ownerId": user.id,
       "username": globalName,

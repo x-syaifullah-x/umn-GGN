@@ -65,7 +65,7 @@ class _GetAvatarState extends State<GetAvatar> {
     imageFileAvatarUrl = downloadUrl;
     setState(() {
       isLoading = false;
-      usersRef
+      usersCollection
           .doc(widget.currentUserId)
           .update({"photoUrl": imageFileAvatarUrl});
 

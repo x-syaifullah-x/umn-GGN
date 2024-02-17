@@ -47,7 +47,7 @@ class Comment {
       };
 
   Future<List<Comment>> getAllcoments() async =>
-      commentsRef.get().then((result) {
+      commentsCollection.get().then((result) {
         List<Comment> comments = [];
         for (DocumentSnapshot comment in result.docs) {
           comments.add(Comment.fromDocument(comment));

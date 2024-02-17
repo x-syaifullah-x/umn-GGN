@@ -161,7 +161,7 @@ class LoginPageState extends State<LoginPage> {
     try {
       User? user = _auth.currentUser;
       if (user != null) {
-        final userData = await usersRef.doc(user.uid).get();
+        final userData = await usersCollection.doc(user.uid).get();
         if (userData.exists) {
           setState(() {
             globalID = user.uid;
@@ -280,7 +280,7 @@ class LoginPageState extends State<LoginPage> {
             "BIxps5Is9CmqlWy6PpPjZXiM0hTlCcnFIcFtQwos8yvFoumKit1TUpZqpkaU13KEh0n9M5pXGF8W33b1S-TFnZw";
         String? token = await FirebaseMessaging.instance
             .getToken(vapidKey: (kIsWeb ? vApiKey : null));
-        await usersRef.doc(userId).update({
+        await usersCollection.doc(userId).update({
           "androidNotificationToken": token,
         });
       } catch (e) {
@@ -294,7 +294,7 @@ class LoginPageState extends State<LoginPage> {
       //   });
       // }).catchError(onError);
 
-      usersRef.doc(userId).get().then((peerData) {
+      usersCollection.doc(userId).get().then((peerData) {
         if (peerData.exists) {
           setState(() {
             globalID = userId;
@@ -443,7 +443,7 @@ class LoginPageState extends State<LoginPage> {
   // }
 
   checkappleUserExists(userId, email, name) async {
-    usersRef.doc(userId).get().then((peerData) {
+    usersCollection.doc(userId).get().then((peerData) {
       if (peerData.exists) {
         _dataEntry(userId, email);
       } else {
@@ -453,10 +453,10 @@ class LoginPageState extends State<LoginPage> {
   }
 
   createappleUserInFirestore(userId, email, name) async {
-    DocumentSnapshot doc = await usersRef.doc(userId).get();
+    DocumentSnapshot doc = await usersCollection.doc(userId).get();
 
     if (!doc.exists) {
-      usersRef.doc(userId).set({
+      usersCollection.doc(userId).set({
         "id": userId,
         "username": '',
         "photoUrl": '',
@@ -471,13 +471,13 @@ class LoginPageState extends State<LoginPage> {
         "credit_points": 0,
         "no_ads": false,
       });
-      await followersRef
+      await followersCollection
           .doc(userId)
           .collection('userFollowers')
           .doc(userId)
           .set({'userId': userId});
 
-      doc = await usersRef.doc(userId).get();
+      doc = await usersCollection.doc(userId).get();
     }
 
     currentUser = GloabalUser.fromDocument(doc);
@@ -549,7 +549,7 @@ class LoginPageState extends State<LoginPage> {
   }
 
   checkUserExists(userId, email, name, image) async {
-    usersRef.doc(userId).get().then((peerData) {
+    usersCollection.doc(userId).get().then((peerData) {
       if (peerData.exists) {
         _dataEntry(userId, email);
       } else {
@@ -559,9 +559,9 @@ class LoginPageState extends State<LoginPage> {
   }
 
   createUserInFirestore(userId, email, name, image) async {
-    DocumentSnapshot doc = await usersRef.doc(userId).get();
+    DocumentSnapshot doc = await usersCollection.doc(userId).get();
     if (!doc.exists) {
-      usersRef.doc(userId).set({
+      usersCollection.doc(userId).set({
         "id": userId,
         "username": '',
         "photoUrl": image,
@@ -576,13 +576,13 @@ class LoginPageState extends State<LoginPage> {
         "credit_points": 0,
         "no_ads": false,
       });
-      await followersRef
+      await followersCollection
           .doc(userId)
           .collection('userFollowers')
           .doc(userId)
           .set({'userId': userId});
 
-      doc = await usersRef.doc(userId).get();
+      doc = await usersCollection.doc(userId).get();
     }
 
     currentUser = GloabalUser.fromDocument(doc);
@@ -614,7 +614,7 @@ class LoginPageState extends State<LoginPage> {
       try {
         final token = await _firebaseMessaging.getToken();
         print("Firebase Messaging Token: $token\n");
-        usersRef.doc(userId).update({"androidNotificationToken": token});
+        usersCollection.doc(userId).update({"androidNotificationToken": token});
       } catch (e) {
         log(e);
       }

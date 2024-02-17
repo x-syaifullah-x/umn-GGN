@@ -1,52 +1,31 @@
 import 'package:applovin_max/applovin_max.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:global_net/pages/home/home.dart';
+import 'package:global_net/pages/home/user/user.dart';
+import 'package:global_net/widgets/header.dart';
 import 'package:paginate_firestore/bloc/pagination_listeners.dart';
 import 'package:paginate_firestore/paginate_firestore.dart';
-import 'package:global_net/pages/home/home.dart';
-import 'package:global_net/widgets/header.dart';
-import 'package:global_net/widgets/simple_world_widgets.dart';
-import 'package:global_net/pages/home/user/users_tile.dart';
 
 import '../../../ads/applovin_ad_unit_id.dart';
 
-class UsersList extends StatefulWidget {
-  final String? userId;
+class Users extends StatefulWidget {
+  final String userId;
 
-  const UsersList({
+  const Users({
     Key? key,
-    this.userId,
+    required this.userId,
   }) : super(key: key);
 
   @override
-  UsersListState createState() => UsersListState();
+  State<Users> createState() => _Users();
 }
 
-class UsersListState extends State<UsersList>
-    with AutomaticKeepAliveClientMixin<UsersList> {
-  bool isFollowing = false;
-  bool isLoading = false;
-  final String? currentUserId = globalID;
-
-  @override
-  void initState() {
-    super.initState();
-
-    _checkIfFollowing();
-  }
-
-  _checkIfFollowing() async {
-    DocumentSnapshot doc = await followersRef
-        .doc(widget.userId)
-        .collection('userFollowers')
-        .doc(currentUserId)
-        .get();
-    setState(() {
-      isFollowing = doc.exists;
-    });
-  }
+class _Users extends State<Users> with AutomaticKeepAliveClientMixin<Users> {
+  final PaginateRefreshedChangeListener refreshChangeListener =
+      PaginateRefreshedChangeListener();
+  final ScrollController scrollController = ScrollController();
 
   @override
   bool get wantKeepAlive => true;
@@ -54,10 +33,6 @@ class UsersListState extends State<UsersList>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    PaginateRefreshedChangeListener refreshChangeListener =
-        PaginateRefreshedChangeListener();
-
-    ScrollController scrollController = ScrollController();
     final bool widthMoreThan_500 = (MediaQuery.of(context).size.width > 500);
     return Scaffold(
       appBar: header(
@@ -78,13 +53,18 @@ class UsersListState extends State<UsersList>
                   child: PaginateFirestore(
                     scrollController: scrollController,
                     shrinkWrap: true,
-                    itemBuilderType: PaginateBuilderType.gridView,
-                    itemBuilder: (context, documentSnapshot, index) {
-                      final userDoc = documentSnapshot[index].data() as Map?;
-                      return UserTile(userDoc);
-                    },
-                    query: usersRef.orderBy('timestamp', descending: true),
                     isLive: true,
+                    itemBuilderType: PaginateBuilderType.gridView,
+                    query:
+                        usersCollection.orderBy('timestamp', descending: true),
+                    itemBuilder: (context, documentSnapshot, index) {
+                      final userDoc = documentSnapshot[index].data()
+                          as Map<String, dynamic>;
+                      return User(
+                        currentUserId: widget.userId,
+                        userId: userDoc['id'],
+                      );
+                    },
                   ),
                   onRefresh: () async {
                     refreshChangeListener.refreshed = true;

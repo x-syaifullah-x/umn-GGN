@@ -31,7 +31,7 @@ class MessagesState extends State<MessagesCount> {
 
   Stream<QuerySnapshot> requestCount() {
     String currentUserId = widget.currentUserId!;
-    return messengerRef
+    return messengerCollection
         .doc(currentUserId)
         .collection(currentUserId)
         .snapshots();

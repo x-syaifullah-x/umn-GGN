@@ -51,7 +51,7 @@ class MessengerState extends State<Messenger> {
 
   Widget chatListToMessage(String userData) {
     return StreamBuilder(
-      stream: messengerRef
+      stream: messengerCollection
           .doc(userData)
           .collection(userData)
           .orderBy("timestamp", descending: true)

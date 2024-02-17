@@ -36,7 +36,7 @@ class VisitedUsersTileState extends State<VisitedUsersTile> {
   }
 
   checkIfFollowing() async {
-    DocumentSnapshot doc = await followersRef
+    DocumentSnapshot doc = await followersCollection
         .doc(userdoc!['userId'])
         .collection('userFollowers')
         .doc(globalID)
@@ -321,7 +321,7 @@ class VisitedUsersTileState extends State<VisitedUsersTile> {
     setState(() {
       isFollowing = false;
     });
-    followersRef
+    followersCollection
         .doc(userdoc!['id'])
         .collection('userFollowers')
         .doc(currentUserId)
@@ -331,7 +331,7 @@ class VisitedUsersTileState extends State<VisitedUsersTile> {
         doc.reference.delete();
       }
     });
-    followingRef
+    followingCollection
         .doc(currentUserId)
         .collection('userFollowing')
         .doc(userdoc!['id'])
@@ -341,7 +341,7 @@ class VisitedUsersTileState extends State<VisitedUsersTile> {
         doc.reference.delete();
       }
     });
-    activityFeedRef
+    feedCollection
         .doc(userdoc!['id'])
         .collection('feedItems')
         .doc(currentUserId)
@@ -357,17 +357,17 @@ class VisitedUsersTileState extends State<VisitedUsersTile> {
     setState(() {
       isFollowing = true;
     });
-    followersRef
+    followersCollection
         .doc(userdoc!['id'])
         .collection('userFollowers')
         .doc(currentUserId)
         .set({});
-    followingRef
+    followingCollection
         .doc(currentUserId)
         .collection('userFollowing')
         .doc(userdoc!['id'])
         .set({});
-    activityFeedRef
+    feedCollection
         .doc(userdoc!['id'])
         .collection('feedItems')
         .doc(currentUserId)

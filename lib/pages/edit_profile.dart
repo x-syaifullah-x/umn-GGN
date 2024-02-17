@@ -51,7 +51,8 @@ class _EditProfileState extends State<EditProfile> {
     setState(() {
       isLoading = true;
     });
-    DocumentSnapshot doc = await usersRef.doc(widget.currentUserId).get();
+    DocumentSnapshot doc =
+        await usersCollection.doc(widget.currentUserId).get();
     user = GloabalUser.fromDocument(doc);
     displayNameController.text = globalDisplayName!;
     bioController.text = globalBio!;
@@ -157,7 +158,7 @@ class _EditProfileState extends State<EditProfile> {
     });
 
     if (_displayNameValid && _bioValid) {
-      usersRef.doc(widget.currentUserId).update({
+      usersCollection.doc(widget.currentUserId).update({
         "displayName": displayNameController.text,
         "bio": bioController.text,
         "country": countryController.text
@@ -206,7 +207,7 @@ class _EditProfileState extends State<EditProfile> {
     imageFileAvatarUrl = downloadUrl;
     setState(() {
       isLoading = false;
-      usersRef
+      usersCollection
           .doc(widget.currentUserId)
           .update({"photoUrl": imageFileAvatarUrl});
 
@@ -242,7 +243,7 @@ class _EditProfileState extends State<EditProfile> {
     imageFileCoverUrl = downloadUrl;
     setState(() {
       isLoading = false;
-      usersRef
+      usersCollection
           .doc(widget.currentUserId)
           .update({"coverUrl": imageFileCoverUrl});
 

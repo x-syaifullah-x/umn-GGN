@@ -34,8 +34,10 @@ class _followersListState extends State<followersList>
   }
 
   getfollowers() async {
-    var querySnapshots =
-        await followersRef.doc(widget.userId).collection('userFollowers').get();
+    var querySnapshots = await followersCollection
+        .doc(widget.userId)
+        .collection('userFollowers')
+        .get();
     for (var doc in querySnapshots.docs) {
       await doc.reference.update({
         "userId": doc.id,
@@ -63,7 +65,9 @@ class _followersListState extends State<followersList>
 
               return FollowersTile(userdoc);
             },
-            query: followersRef.doc(widget.userId).collection('userFollowers'),
+            query: followersCollection
+                .doc(widget.userId)
+                .collection('userFollowers'),
             isLive: true,
           ),
           onRefresh: () async {

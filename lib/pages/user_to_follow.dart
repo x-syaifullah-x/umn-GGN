@@ -35,7 +35,7 @@ class UsersListState extends State<UsersToFollowList>
   }
 
   checkIfFollowing() async {
-    DocumentSnapshot doc = await followersRef
+    DocumentSnapshot doc = await followersCollection
         .doc(widget.userId)
         .collection('userFollowers')
         .doc(widget.userId)
@@ -47,7 +47,7 @@ class UsersListState extends State<UsersToFollowList>
 
   getAllUsers() async {
     QuerySnapshot snapshot =
-        await usersRef.orderBy('timestamp', descending: true).get();
+        await usersCollection.orderBy('timestamp', descending: true).get();
     List<GloabalUser> users =
         snapshot.docs.map((doc) => GloabalUser.fromDocument(doc)).toList();
     setState(() {

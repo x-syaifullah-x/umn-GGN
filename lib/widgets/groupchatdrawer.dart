@@ -53,10 +53,10 @@ class _DrawerMenuState extends State<DrawerMenu> {
 
   void deleteNestedSubcollections() {
     Future<QuerySnapshot> photos =
-        groupsRef.doc(groupId).collection("messages").get();
+        groupsCollection.doc(groupId).collection("messages").get();
     photos.then((value) {
       value.docs.forEach((element) {
-        groupsRef
+        groupsCollection
             .doc(groupId)
             .collection("messages")
             .doc(element.id)
@@ -66,9 +66,9 @@ class _DrawerMenuState extends State<DrawerMenu> {
     });
   }
 
-  DocumentReference userDocRef = usersRef.doc(globalID);
+  DocumentReference userDocRef = usersCollection.doc(globalID);
   deleteGroup() async {
-    groupsRef.doc(groupId).get().then((doc) {
+    groupsCollection.doc(groupId).get().then((doc) {
       if (doc.exists) {
         doc.reference.delete();
       }
@@ -136,7 +136,7 @@ class _DrawerMenuState extends State<DrawerMenu> {
   }
 
   leaveGroup() async {
-    await groupsRef.doc(groupId).update({
+    await groupsCollection.doc(groupId).update({
       'members': FieldValue.arrayRemove([globalID! + '_' + globalName!])
     });
     await userDocRef.update({
@@ -170,7 +170,7 @@ class _DrawerMenuState extends State<DrawerMenu> {
     imageFileCoverUrl = downloadUrl;
     setState(() {
       isLoading = false;
-      groupsRef.doc(groupId).update({"groupIcon": imageFileCoverUrl});
+      groupsCollection.doc(groupId).update({"groupIcon": imageFileCoverUrl});
 
       SnackBar snackbar = const SnackBar(content: Text("Group Icon updated!"));
       ScaffoldMessenger.of(context).showSnackBar(snackbar);

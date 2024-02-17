@@ -26,7 +26,7 @@ class _SearchState extends State<Search>
 
   handleSearch(String query) {
     Future<QuerySnapshot> users =
-        usersRef.where("username", isGreaterThanOrEqualTo: query).get();
+        usersCollection.where("username", isGreaterThanOrEqualTo: query).get();
     setState(() {
       searchResultsFuture = users;
     });
@@ -86,7 +86,7 @@ class _SearchState extends State<Search>
       isLoading = true;
     });
     QuerySnapshot snapshot =
-        await usersRef.orderBy('timestamp', descending: true).get();
+        await usersCollection.orderBy('timestamp', descending: true).get();
     setState(() {
       isLoading = false;
       usersCount = snapshot.docs.length;

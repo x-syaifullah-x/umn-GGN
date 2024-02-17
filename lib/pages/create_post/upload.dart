@@ -83,7 +83,7 @@ class _UploadState extends State<Upload>
         val = it / _imageFileList.length;
       });
 
-      var photoId = postsRef
+      var photoId = postsCollection
           .doc(globalID)
           .collection('userPosts')
           .doc(postId)
@@ -92,7 +92,7 @@ class _UploadState extends State<Upload>
           .id
           .toString();
       return await storageSnap.ref.getDownloadURL().then((value) {
-        postsRef
+        postsCollection
             .doc(globalID)
             .collection("userPosts")
             .doc(postId)
@@ -118,7 +118,7 @@ class _UploadState extends State<Upload>
   }
 
   createPostInFirestore({List? mediaUrls, String? description, int? type}) {
-    postsRef.doc(globalID).collection("userPosts").doc(postId).set({
+    postsCollection.doc(globalID).collection("userPosts").doc(postId).set({
       "postId": postId,
       "ownerId": globalID,
       "username": globalName,
@@ -139,7 +139,7 @@ class _UploadState extends State<Upload>
     String? description,
     int? type,
   }) {
-    postsRef
+    postsCollection
         .doc(globalID)
         .collection("userPosts")
         .doc(postId)

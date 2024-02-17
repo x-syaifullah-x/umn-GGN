@@ -295,16 +295,17 @@ class SignUpPageState extends State<SignUpPage> {
   }
 
   Future<bool> usernameCheck(String username) async {
-    final result = await usersRef.where('username', isEqualTo: username).get();
+    final result =
+        await usersCollection.where('username', isEqualTo: username).get();
     return result.docs.isEmpty;
   }
 
   createUserInFirestore(userId, email) async {
     User? user = firebaseAuth.currentUser;
-    DocumentSnapshot doc = await usersRef.doc(user!.uid).get();
+    DocumentSnapshot doc = await usersCollection.doc(user!.uid).get();
 
     if (!doc.exists) {
-      usersRef.doc(userId).set({
+      usersCollection.doc(userId).set({
         "id": userId,
         "username": nameController.text,
         "photoUrl": '',
@@ -319,13 +320,13 @@ class SignUpPageState extends State<SignUpPage> {
         "credit_points": 0,
         "no_ads": false,
       });
-      await followersRef
+      await followersCollection
           .doc(userId)
           .collection('userFollowers')
           .doc(userId)
           .set({'userId': userId});
 
-      doc = await usersRef.doc(userId).get();
+      doc = await usersCollection.doc(userId).get();
     }
 
     currentUser = GloabalUser.fromDocument(doc);
@@ -354,7 +355,7 @@ class SignUpPageState extends State<SignUpPage> {
         .then((value) {
       _firebaseMessaging.getToken().then((token) {
         // print("Firebase Messaging Token: $token\n");
-        usersRef.doc(userId).update({"androidNotificationToken": token});
+        usersCollection.doc(userId).update({"androidNotificationToken": token});
       });
     });
 

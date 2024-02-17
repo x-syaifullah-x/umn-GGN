@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:global_net/pages/home/home.dart';
@@ -8,7 +9,9 @@ import 'package:global_net/widgets/progress.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:nb_utils/nb_utils.dart';
 
-class AddCreditToAccount extends StatefulWidget {
+const int creditForNewUser = 500;
+
+class AddCreditToAccount extends StatelessWidget {
   final String? userId;
 
   const AddCreditToAccount({
@@ -17,103 +20,68 @@ class AddCreditToAccount extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  AddCreditToAccountState createState() => AddCreditToAccountState();
-}
-
-class AddCreditToAccountState extends State<AddCreditToAccount> {
-  final formkey = GlobalKey<FormState>();
-  String? username;
-  int credit = 5;
-  final TextEditingController nameController = TextEditingController();
-  bool isLoading = true;
-
-  @override
-  void initState() {
-    super.initState();
-    _addCredit();
-  }
-
-  _addCredit() async {
-    usersRef.doc(widget.userId).update({
-      "credit_points": credit,
-    }).then((value) => {
-          usersRef.doc(widget.userId).get().then(
-                (value) => setState(() {
-                  setState(() {
-                    username = value["username"];
-                    isLoading = false;
-                  });
-                }),
-              )
-        });
-  }
-
-  @override
   Widget build(BuildContext context) {
-    final height = MediaQuery.of(context).size.height;
-    return Scaffold(
-      body: SizedBox(
-        height: height,
-        child: Stack(
-          children: <Widget>[
-            Positioned(
-              top: -height * .15,
-              right: -MediaQuery.of(context).size.width * .4,
-              child: const BezierContainer(),
-            ),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    SizedBox(height: height * .25),
-                    _title(username),
-                    Text(
-                      'You have received $credit credit points \n  as a welcome gift',
-                      style: TextStyle(
-                        color: Colors.grey[600],
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: 20),
-                    SizedBox(
-                      child: Image.asset(
-                        'assets/images/getcredit.png',
-                        width: context.width(),
-                        height: context.height() * 0.5,
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-                    _submitButton(),
-                  ],
+    return FutureBuilder<DocumentSnapshot<Map<String, dynamic>>>(
+      future: usersCollection.doc(userId).update({
+        "credit_points": creditForNewUser,
+      }).then((value) => usersCollection.doc(userId).get()),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return circularProgress();
+        }
+
+        final height = MediaQuery.of(context).size.height;
+        String username = snapshot.data?['username'];
+        return Scaffold(
+          body: SizedBox(
+            height: height,
+            child: Stack(
+              children: <Widget>[
+                Positioned(
+                  top: -height * .15,
+                  right: -MediaQuery.of(context).size.width * .4,
+                  child: const BezierContainer(),
                 ),
-              ),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        SizedBox(height: height * .25),
+                        _title(context, username),
+                        Text(
+                          'You have received $creditForNewUser credit points \n  as a welcome gift',
+                          style: TextStyle(
+                            color: Colors.grey[600],
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                        const SizedBox(height: 20),
+                        SizedBox(
+                          child: Image.asset(
+                            'assets/images/getcredit.png',
+                            width: context.width(),
+                            height: context.height() * 0.5,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+                        _submitButton(context),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
             ),
-            isLoading ? Center(child: circularProgress()) : Container(),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 
-  submit() {
-    Timer(const Duration(seconds: 0), () {
-      Navigator.pop(context);
-      Navigator.push(
-        context,
-        CupertinoPageRoute(
-          builder: (context) => Home(
-            userId: widget.userId,
-          ),
-        ),
-      );
-    });
-  }
-
-  Widget _title(String? username) {
+  Widget _title(BuildContext context, String? username) {
     return RichText(
       textAlign: TextAlign.center,
       text: TextSpan(
@@ -128,7 +96,7 @@ class AddCreditToAccountState extends State<AddCreditToAccount> {
     );
   }
 
-  Widget _submitButton() {
+  Widget _submitButton(BuildContext context) {
     return Container(
       width: MediaQuery.of(context).size.width,
       padding: const EdgeInsets.symmetric(vertical: 15),
@@ -149,38 +117,21 @@ class AddCreditToAccountState extends State<AddCreditToAccount> {
         ),
       ),
     ).onTap(() {
-      submit();
+      _submit(context);
     });
   }
 
-  // Widget _emailPasswordWidget() {
-  //   return Column(
-  //     children: <Widget>[
-  //       Form(
-  //         autovalidateMode: AutovalidateMode.always,
-  //         key: _formkey,
-  //         child: TextFormField(
-  //           controller: nameController,
-  //           validator: (val) {
-  //             if (val!.trim().length < 3 || val.isEmpty) {
-  //               return "Username too short";
-  //             } else if (val.trim().length > 12) {
-  //               return "Username too long";
-  //             } else {
-  //               return null;
-  //             }
-  //           },
-  //           onSaved: (val) => username = val,
-  //           decoration: InputDecoration(
-  //               border: InputBorder.none,
-  //               fillColor: Theme.of(context).inputDecorationTheme.fillColor,
-  //               filled: true,
-  //               labelText: "Username",
-  //               labelStyle: const TextStyle(fontSize: 15.0),
-  //               hintText: "Must be at least 3 characters"),
-  //         ),
-  //       ),
-  //     ],
-  //   );
-  // }
+  void _submit(BuildContext context) {
+    Timer(const Duration(seconds: 0), () {
+      Navigator.pop(context);
+      Navigator.push(
+        context,
+        CupertinoPageRoute(
+          builder: (context) => Home(
+            userId: userId,
+          ),
+        ),
+      );
+    });
+  }
 }

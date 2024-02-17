@@ -159,7 +159,7 @@ class _AddPostState extends State<AddPost>
   }
 
   createPostInFirestore({List? mediaUrl, String? description, int? type}) {
-    postsRef.doc(widget.userId).collection("userPosts").doc(postId).set({
+    postsCollection.doc(widget.userId).collection("userPosts").doc(postId).set({
       "postId": postId,
       "ownerId": widget.userId,
       "username": globalName,

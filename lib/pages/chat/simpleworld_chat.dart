@@ -124,14 +124,14 @@ class ChatScreenState extends State<ChatScreen> {
   }
 
   removeBadge() async {
-    await messengerRef
+    await messengerCollection
         .doc(currentUserId)
         .collection(currentUserId!)
         .doc(receiverId)
         .get()
         .then((doc) async {
       if (doc.exists) {
-        await messengerRef
+        await messengerCollection
             .doc(currentUserId)
             .collection(currentUserId!)
             .doc(receiverId)
@@ -147,7 +147,7 @@ class ChatScreenState extends State<ChatScreen> {
       chatId = '$receiverId-$currentUserId';
     }
 
-    usersRef.doc(currentUserId).update({'chattingWith': receiverId});
+    usersCollection.doc(currentUserId).update({'chattingWith': receiverId});
     setState(() {});
   }
 
@@ -345,7 +345,7 @@ class ChatScreenState extends State<ChatScreen> {
       child: chatId == ""
           ? Center(child: circularProgress())
           : StreamBuilder<QuerySnapshot>(
-              stream: msgRef
+              stream: messagesCollection
                   .doc(chatId)
                   .collection(chatId!)
                   .orderBy("timestamp", descending: true)
@@ -735,7 +735,7 @@ class ChatScreenState extends State<ChatScreen> {
     int badgeCount = 0;
     if (contentMsg != "") {
       textEditingController.clear();
-      var docRef = msgRef
+      var docRef = messagesCollection
           .doc(chatId)
           .collection(chatId!)
           .doc(DateTime.now().millisecondsSinceEpoch.toString());
@@ -748,7 +748,7 @@ class ChatScreenState extends State<ChatScreen> {
           "type": type,
         });
       }).then((onValue) async {
-        await messengerRef
+        await messengerCollection
             .doc(currentUserId)
             .collection(currentUserId!)
             .doc(receiverId)
@@ -763,7 +763,7 @@ class ChatScreenState extends State<ChatScreen> {
         });
       }).then((onValue) async {
         try {
-          await messengerRef
+          await messengerCollection
               .doc(receiverId)
               .collection(receiverId)
               .doc(currentUserId)
@@ -772,7 +772,7 @@ class ChatScreenState extends State<ChatScreen> {
             debugPrint("doc[\"badge\"]: ${doc["badge"]}");
             if (doc["badge"] != null) {
               badgeCount = int.parse(doc["badge"]);
-              await messengerRef
+              await messengerCollection
                   .doc(receiverId)
                   .collection(receiverId)
                   .doc(currentUserId)
@@ -785,7 +785,7 @@ class ChatScreenState extends State<ChatScreen> {
                 'profileImage': currentUserPhoto,
                 'type': type
               }).then((onValue) {
-                activityFeedRef.doc(receiverId).collection('feedItems').add({
+                feedCollection.doc(receiverId).collection('feedItems').add({
                   "type": "message",
                   "contentMessage": contentMsg,
                   "timestamp": timestamp,
@@ -800,7 +800,7 @@ class ChatScreenState extends State<ChatScreen> {
             }
           });
         } catch (e) {
-          await messengerRef
+          await messengerCollection
               .doc(receiverId)
               .collection(receiverId)
               .doc(currentUserId)
@@ -813,7 +813,7 @@ class ChatScreenState extends State<ChatScreen> {
             'profileImage': currentUserPhoto,
             'type': type
           }).then((onValue) {
-            activityFeedRef.doc(receiverId).collection('feedItems').add({
+            feedCollection.doc(receiverId).collection('feedItems').add({
               "type": "message",
               "contentMessage": contentMsg,
               "timestamp": timestamp,
@@ -837,8 +837,8 @@ class ChatScreenState extends State<ChatScreen> {
     } else {
       Fluttertoast.showToast(msg: "Empty Message. can not be send");
     }
-    var user = await usersRef.doc(receiverId).get();
-    var current = await usersRef.doc(currentUserId).get();
+    var user = await usersCollection.doc(receiverId).get();
+    var current = await usersCollection.doc(currentUserId).get();
 
     //currentUserId
     print(user.data()!["androidNotificationToken"]);

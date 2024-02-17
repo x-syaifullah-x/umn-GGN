@@ -71,7 +71,7 @@ class ActivityFeedState extends State<ActivityFeed> {
       return child;
     }
     return StreamBuilder(
-      stream: activityFeedRef
+      stream: feedCollection
           .doc(userData)
           .collection('feedItems')
           .orderBy('timestamp', descending: true)
@@ -151,7 +151,7 @@ class ActivityFeedState extends State<ActivityFeed> {
 
   _updateFeed() async {
     QuerySnapshot activityFeedSnapshot =
-        await activityFeedRef.doc(currentUserId).collection("feedItems").get();
+        await feedCollection.doc(currentUserId).collection("feedItems").get();
     for (var doc in activityFeedSnapshot.docs) {
       if (doc.exists) {
         doc.reference.update({

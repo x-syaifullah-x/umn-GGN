@@ -30,6 +30,9 @@ import 'package:global_net/widgets/progress.dart';
 import 'package:global_net/widgets/simple_world_widgets.dart';
 import 'package:global_net/widgets/single_post.dart';
 
+import '../user/user.dart';
+import '../user/users.dart';
+
 class Profile extends StatelessWidget {
   final String? profileId;
   final List<Reaction<String>> reactions;
@@ -120,11 +123,9 @@ class _ProfileState extends State<Profile2> {
   bool isLoading = false;
   int currentUserCredit = 0;
   int postCount = 0;
-  int followerCount = 0;
   int likedCount = 0;
   int dislikedCount = 0;
   int ppViewCount = 0;
-  int followingCount = 0;
   final ImagePicker _picker = ImagePicker();
   File? storyFile;
   File? imageFileAvatar;
@@ -139,8 +140,6 @@ class _ProfileState extends State<Profile2> {
   void initState() {
     super.initState();
     getProfilePosts();
-    _getFollowers();
-    _getFollowing();
     _checkIfFollowing();
     flickMultiManager = FlickMultiManager();
     _checkIfLiked();
@@ -153,7 +152,7 @@ class _ProfileState extends State<Profile2> {
   }
 
   _checkIfFollowing() async {
-    DocumentSnapshot doc = await followersRef
+    DocumentSnapshot doc = await followersCollection
         .doc(widget.profileId)
         .collection('userFollowers')
         .doc(widget.profileId)
@@ -164,7 +163,7 @@ class _ProfileState extends State<Profile2> {
   }
 
   _checkIfLiked() async {
-    DocumentSnapshot doc = await likedRef
+    DocumentSnapshot doc = await likedDppCollection
         .doc(widget.profileId)
         .collection('userlikes')
         .doc(widget.profileId)
@@ -175,7 +174,7 @@ class _ProfileState extends State<Profile2> {
   }
 
   _checkIfDislikedLiked() async {
-    DocumentSnapshot doc = await dislikedRef
+    DocumentSnapshot doc = await dislikedppCollection
         .doc(widget.profileId)
         .collection('userDislikes')
         .doc(widget.profileId)
@@ -186,15 +185,17 @@ class _ProfileState extends State<Profile2> {
   }
 
   _getLikedUsers() async {
-    QuerySnapshot snapshot =
-        await likedRef.doc(widget.profileId).collection('userlikes').get();
+    QuerySnapshot snapshot = await likedDppCollection
+        .doc(widget.profileId)
+        .collection('userlikes')
+        .get();
     setState(() {
       likedCount = snapshot.docs.length;
     });
   }
 
   _getDisLikedUsers() async {
-    QuerySnapshot snapshot = await dislikedRef
+    QuerySnapshot snapshot = await dislikedppCollection
         .doc(widget.profileId)
         .collection('userDislikes')
         .get();
@@ -204,30 +205,12 @@ class _ProfileState extends State<Profile2> {
   }
 
   _getPpViewUsers() async {
-    QuerySnapshot snapshot =
-        await ppviewsRef.doc(widget.profileId).collection('userviews').get();
+    QuerySnapshot snapshot = await ppviewsCollection
+        .doc(widget.profileId)
+        .collection('userviews')
+        .get();
     setState(() {
       ppViewCount = snapshot.docs.length;
-    });
-  }
-
-  _getFollowers() async {
-    QuerySnapshot snapshot = await followersRef
-        .doc(widget.profileId)
-        .collection('userFollowers')
-        .get();
-    setState(() {
-      followerCount = snapshot.docs.length;
-    });
-  }
-
-  _getFollowing() async {
-    QuerySnapshot snapshot = await followingRef
-        .doc(widget.profileId)
-        .collection('userFollowing')
-        .get();
-    setState(() {
-      followingCount = snapshot.docs.length;
     });
   }
 
@@ -235,7 +218,7 @@ class _ProfileState extends State<Profile2> {
     setState(() {
       isLoading = true;
     });
-    QuerySnapshot snapshot = await postsRef
+    QuerySnapshot snapshot = await postsCollection
         .doc(widget.profileId)
         .collection('userPosts')
         .orderBy('timestamp', descending: true)
@@ -248,7 +231,7 @@ class _ProfileState extends State<Profile2> {
   }
 
   _getCurrentUserCredits() async {
-    usersRef.doc(widget.profileId).get().then(
+    usersCollection.doc(widget.profileId).get().then(
           (value) => setState(() {
             currentUserCredit = value["credit_points"];
           }),
@@ -259,7 +242,11 @@ class _ProfileState extends State<Profile2> {
     bool isProfileOwner = widget.profileId == widget.profileId;
     isProfileOwner
         ? Container()
-        : ppviewsRef.doc(widget.profileId).collection('userviews').doc().set({
+        : ppviewsCollection
+            .doc(widget.profileId)
+            .collection('userviews')
+            .doc()
+            .set({
             'userId': widget.profileId,
             'timestamp': DateTime.now().millisecondsSinceEpoch.toString(),
           });
@@ -284,7 +271,7 @@ class _ProfileState extends State<Profile2> {
     }
   }
 
-  buildCountColumn(String label, int count, Function() onTap) {
+  Widget buildCountColumn(String label, int count, Function() onTap) {
     double maxWidth = MediaQuery.of(context).size.width *
         (isWeb || (MediaQuery.of(context).size.width > 600) ? 0.11 : 0.2);
     return Card(
@@ -447,7 +434,7 @@ class _ProfileState extends State<Profile2> {
     setState(() {
       isFollowing = false;
     });
-    followersRef
+    followersCollection
         .doc(widget.profileId)
         .collection('userFollowers')
         .doc(widget.profileId)
@@ -457,7 +444,7 @@ class _ProfileState extends State<Profile2> {
         doc.reference.delete();
       }
     });
-    followingRef
+    followingCollection
         .doc(widget.profileId)
         .collection('userFollowing')
         .doc(widget.profileId)
@@ -467,7 +454,7 @@ class _ProfileState extends State<Profile2> {
         doc.reference.delete();
       }
     });
-    activityFeedRef
+    feedCollection
         .doc(widget.profileId)
         .collection('feedItems')
         .doc(widget.profileId)
@@ -483,17 +470,17 @@ class _ProfileState extends State<Profile2> {
     setState(() {
       isFollowing = true;
     });
-    followersRef
+    followersCollection
         .doc(widget.profileId)
         .collection('userFollowers')
         .doc(widget.profileId)
         .set({'userId': widget.profileId});
-    followingRef
+    followingCollection
         .doc(widget.profileId)
         .collection('userFollowing')
         .doc(widget.profileId)
         .set({'userId': widget.profileId});
-    activityFeedRef
+    feedCollection
         .doc(widget.profileId)
         .collection('feedItems')
         .doc(widget.profileId)
@@ -514,7 +501,7 @@ class _ProfileState extends State<Profile2> {
         isLiked = false;
         likedCount--;
       });
-      likedRef
+      likedDppCollection
           .doc(widget.profileId)
           .collection('userlikes')
           .doc(widget.profileId)
@@ -525,13 +512,13 @@ class _ProfileState extends State<Profile2> {
           isDisliked = false;
           dislikedCount--;
         });
-        dislikedRef
+        dislikedppCollection
             .doc(widget.profileId)
             .collection('userDislikes')
             .doc(widget.profileId)
             .delete();
       }
-      likedRef
+      likedDppCollection
           .doc(widget.profileId)
           .collection('userlikes')
           .doc(widget.profileId)
@@ -550,7 +537,7 @@ class _ProfileState extends State<Profile2> {
         isDisliked = false;
         dislikedCount--;
       });
-      dislikedRef
+      dislikedppCollection
           .doc(widget.profileId)
           .collection('userDislikes')
           .doc(widget.profileId)
@@ -561,13 +548,13 @@ class _ProfileState extends State<Profile2> {
           isLiked = false;
           likedCount--;
         });
-        likedRef
+        likedDppCollection
             .doc(widget.profileId)
             .collection('userlikes')
             .doc(widget.profileId)
             .delete();
       }
-      dislikedRef
+      dislikedppCollection
           .doc(widget.profileId)
           .collection('userDislikes')
           .doc(widget.profileId)
@@ -606,7 +593,9 @@ class _ProfileState extends State<Profile2> {
     imageFileAvatarUrl = downloadUrl;
     setState(() {
       isLoading = false;
-      usersRef.doc(widget.profileId).update({"photoUrl": imageFileAvatarUrl});
+      usersCollection
+          .doc(widget.profileId)
+          .update({"photoUrl": imageFileAvatarUrl});
 
       SnackBar snackbar =
           const SnackBar(content: Text("Profile Photo updated!"));
@@ -640,7 +629,9 @@ class _ProfileState extends State<Profile2> {
     imageFileCoverUrl = downloadUrl;
     setState(() {
       isLoading = false;
-      usersRef.doc(widget.profileId).update({"coverUrl": imageFileCoverUrl});
+      usersCollection
+          .doc(widget.profileId)
+          .update({"coverUrl": imageFileCoverUrl});
 
       SnackBar snackbar = const SnackBar(content: Text("Cover Photo updated!"));
       ScaffoldMessenger.of(context).showSnackBar(snackbar);
@@ -1057,188 +1048,224 @@ class _ProfileState extends State<Profile2> {
                   ),
                 ),
               ),
-              buildCountColumn(
-                AppLocalizations.of(context)!.followers,
-                followerCount,
-                () {
-                  if (widget.isProfileOwner) {
-                    bool noCredit = user.credit_points < 10;
-                    consentSheet(
-                      context,
-                      AppLocalizations.of(context)!.followed_consent1,
-                      AppLocalizations.of(context)!.followed_consent2,
-                      () async {
-                        if (noCredit) {
-                          Navigator.of(context).pop();
-                          simpleworldtoast(
-                              AppLocalizations.of(context)!.error,
-                              AppLocalizations.of(context)!
-                                  .not_enough_credit_10,
-                              context);
-                        } else {
-                          Navigator.of(context).pop();
-                          usersRef.doc(widget.profileId).update({
-                            "credit_points": FieldValue.increment(-10),
-                          });
+              StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
+                stream: followersCollection
+                    .doc(widget.profileId)
+                    .collection('userFollowers')
+                    .snapshots(),
+                builder: (context, snapshot) {
+                  int followerCount = 0;
+                  snapshot.data?.docs?.forEach((e) {
+                    try {
+                      if (e[User.fieldValue] == true) {
+                        followerCount += 1;
+                      }
+                    } catch (e) {
+                      log(e);
+                    }
+                  });
+                  return buildCountColumn(
+                    AppLocalizations.of(context)!.followers,
+                    followerCount,
+                    () {
+                      if (widget.isProfileOwner) {
+                        bool noCredit = user.credit_points < 10;
+                        consentSheet(
+                          context,
+                          AppLocalizations.of(context)!.followed_consent1,
+                          AppLocalizations.of(context)!.followed_consent2,
+                          () async {
+                            if (noCredit) {
+                              Navigator.of(context).pop();
+                              simpleworldtoast(
+                                  AppLocalizations.of(context)!.error,
+                                  AppLocalizations.of(context)!
+                                      .not_enough_credit_10,
+                                  context);
+                            } else {
+                              Navigator.of(context).pop();
+                              usersCollection.doc(widget.profileId).update({
+                                "credit_points": FieldValue.increment(-10),
+                              });
 
-                          //##Uncomment the below code to get user id of followers
-                          // var querySnapshots = await followersRef
-                          //     .doc(user.id)
-                          //     .collection('userFollowers')
-                          //     .get();
-                          // for (var doc in querySnapshots.docs) {
-                          //   await doc.reference.update({
-                          //     "userId": doc.id,
-                          //   });
-                          // }
+                              //##Uncomment the below code to get user id of followers
+                              // var querySnapshots = await followersRef
+                              //     .doc(user.id)
+                              //     .collection('userFollowers')
+                              //     .get();
+                              // for (var doc in querySnapshots.docs) {
+                              //   await doc.reference.update({
+                              //     "userId": doc.id,
+                              //   });
+                              // }
 
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => followersList(
-                                userId: user.id,
-                              ),
-                            ),
-                          );
-                        }
-                      },
-                    );
-                  } else {
-                    bool noCredit = currentUserCredit < 20;
-                    consentSheet(
-                      context,
-                      AppLocalizations.of(context)!.followed_consent3,
-                      AppLocalizations.of(context)!.followed_consent4,
-                      () async {
-                        if (noCredit) {
-                          Navigator.of(context).pop();
-                          simpleworldtoast(
-                              AppLocalizations.of(context)!.error,
-                              AppLocalizations.of(context)!
-                                  .not_enough_credit_20,
-                              context);
-                        } else {
-                          Navigator.of(context).pop();
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => followersList(
+                                    userId: user.id,
+                                  ),
+                                ),
+                              );
+                            }
+                          },
+                        );
+                      } else {
+                        bool noCredit = currentUserCredit < 20;
+                        consentSheet(
+                          context,
+                          AppLocalizations.of(context)!.followed_consent3,
+                          AppLocalizations.of(context)!.followed_consent4,
+                          () async {
+                            if (noCredit) {
+                              Navigator.of(context).pop();
+                              simpleworldtoast(
+                                  AppLocalizations.of(context)!.error,
+                                  AppLocalizations.of(context)!
+                                      .not_enough_credit_20,
+                                  context);
+                            } else {
+                              Navigator.of(context).pop();
 
-                          usersRef.doc(widget.profileId).update({
-                            "credit_points": FieldValue.increment(-20),
-                          });
+                              usersCollection.doc(widget.profileId).update({
+                                "credit_points": FieldValue.increment(-20),
+                              });
 
-                          //##Uncomment the below code to get user id of followers
-                          // var querySnapshots = await followersRef
-                          //     .doc(user.id)
-                          //     .collection('userFollowers')
-                          //     .get();
-                          // for (var doc in querySnapshots.docs) {
-                          //   await doc.reference.update({
-                          //     "userId": doc.id,
-                          //   });
-                          // }
+                              //##Uncomment the below code to get user id of followers
+                              // var querySnapshots = await followersRef
+                              //     .doc(user.id)
+                              //     .collection('userFollowers')
+                              //     .get();
+                              // for (var doc in querySnapshots.docs) {
+                              //   await doc.reference.update({
+                              //     "userId": doc.id,
+                              //   });
+                              // }
 
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => followersList(
-                                userId: user.id,
-                              ),
-                            ),
-                          );
-                        }
-                      },
-                    );
-                  }
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => followersList(
+                                    userId: user.id,
+                                  ),
+                                ),
+                              );
+                            }
+                          },
+                        );
+                      }
+                    },
+                  );
                 },
               ),
-              buildCountColumn(
-                AppLocalizations.of(context)!.following,
-                followingCount,
-                () {
-                  if (widget.isProfileOwner) {
-                    bool noCredit = user.credit_points < 10;
-                    consentSheet(
-                      context,
-                      AppLocalizations.of(context)!.following_consent1,
-                      AppLocalizations.of(context)!.following_consent2,
-                      () async {
-                        if (noCredit) {
-                          Navigator.of(context).pop();
-                          simpleworldtoast(
-                              AppLocalizations.of(context)!.error,
-                              AppLocalizations.of(context)!
-                                  .not_enough_credit_10,
-                              context);
-                        } else {
-                          Navigator.of(context).pop();
-                          usersRef.doc(widget.profileId).update({
-                            "credit_points": FieldValue.increment(-10),
-                          });
+              StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
+                stream: followingCollection
+                    .doc(widget.profileId)
+                    .collection('userFollowing')
+                    .snapshots(),
+                builder: (context, snapshot) {
+                  int count = 0;
+                  snapshot.data?.docs?.forEach((e) {
+                    try {
+                      if (e[User.fieldValue] == true) {
+                        count += 1;
+                      }
+                    } catch (e) {
+                      log(e);
+                    }
+                  });
+                  return buildCountColumn(
+                    AppLocalizations.of(context)!.following,
+                    count,
+                    () {
+                      if (widget.isProfileOwner) {
+                        bool noCredit = user.credit_points < 10;
+                        consentSheet(
+                          context,
+                          AppLocalizations.of(context)!.following_consent1,
+                          AppLocalizations.of(context)!.following_consent2,
+                          () async {
+                            if (noCredit) {
+                              Navigator.of(context).pop();
+                              simpleworldtoast(
+                                  AppLocalizations.of(context)!.error,
+                                  AppLocalizations.of(context)!
+                                      .not_enough_credit_10,
+                                  context);
+                            } else {
+                              Navigator.of(context).pop();
+                              usersCollection.doc(widget.profileId).update({
+                                "credit_points": FieldValue.increment(-10),
+                              });
 
-                          //##Uncomment the below code to get user id of following users
-                          // var querySnapshots = await followingRef
-                          //     .doc(user.id)
-                          //     .collection('userFollowing')
-                          //     .get();
-                          // for (var doc in querySnapshots.docs) {
-                          //   await doc.reference.update({
-                          //     "userId": doc.id,
-                          //   });
-                          // }
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => FollowingList(
-                                userId: user.id,
-                              ),
-                            ),
-                          );
-                        }
-                      },
-                    );
-                  } else {
-                    bool noCredit = currentUserCredit < 20;
-                    consentSheet(
-                      context,
-                      AppLocalizations.of(context)!.following_consent3,
-                      AppLocalizations.of(context)!.following_consent4,
-                      () async {
-                        if (noCredit) {
-                          Navigator.of(context).pop();
-                          simpleworldtoast(
-                              AppLocalizations.of(context)!.error,
-                              AppLocalizations.of(context)!
-                                  .not_enough_credit_20,
-                              context);
-                        } else {
-                          Navigator.of(context).pop();
+                              //##Uncomment the below code to get user id of following users
+                              // var querySnapshots = await followingRef
+                              //     .doc(user.id)
+                              //     .collection('userFollowing')
+                              //     .get();
+                              // for (var doc in querySnapshots.docs) {
+                              //   await doc.reference.update({
+                              //     "userId": doc.id,
+                              //   });
+                              // }
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => FollowingList(
+                                    userId: user.id,
+                                  ),
+                                ),
+                              );
+                            }
+                          },
+                        );
+                      } else {
+                        bool noCredit = currentUserCredit < 20;
+                        consentSheet(
+                          context,
+                          AppLocalizations.of(context)!.following_consent3,
+                          AppLocalizations.of(context)!.following_consent4,
+                          () async {
+                            if (noCredit) {
+                              Navigator.of(context).pop();
+                              simpleworldtoast(
+                                  AppLocalizations.of(context)!.error,
+                                  AppLocalizations.of(context)!
+                                      .not_enough_credit_20,
+                                  context);
+                            } else {
+                              Navigator.of(context).pop();
 
-                          usersRef.doc(widget.profileId).update({
-                            "credit_points": FieldValue.increment(-20),
-                            // 'userIsVerified': true,
-                          });
-                          //##Uncomment the below code to get user id of following users
+                              usersCollection.doc(widget.profileId).update({
+                                "credit_points": FieldValue.increment(-20),
+                                // 'userIsVerified': true,
+                              });
+                              //##Uncomment the below code to get user id of following users
 
-                          // var querySnapshots = await followingRef
-                          //     .doc(user.id)
-                          //     .collection('userFollowing')
-                          //     .get();
-                          // for (var doc in querySnapshots.docs) {
-                          //   await doc.reference.update({
-                          //     "userId": doc.id,
-                          //   });
-                          // }
+                              // var querySnapshots = await followingRef
+                              //     .doc(user.id)
+                              //     .collection('userFollowing')
+                              //     .get();
+                              // for (var doc in querySnapshots.docs) {
+                              //   await doc.reference.update({
+                              //     "userId": doc.id,
+                              //   });
+                              // }
 
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => FollowingList(
-                                userId: user.id,
-                              ),
-                            ),
-                          );
-                        }
-                      },
-                    );
-                  }
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => FollowingList(
+                                    userId: user.id,
+                                  ),
+                                ),
+                              );
+                            }
+                          },
+                        );
+                      }
+                    },
+                  );
                 },
               ),
             ],
@@ -1269,7 +1296,7 @@ class _ProfileState extends State<Profile2> {
                               context);
                         } else {
                           Navigator.of(context).pop();
-                          usersRef.doc(widget.profileId).update({
+                          usersCollection.doc(widget.profileId).update({
                             "credit_points": FieldValue.increment(-10),
                           });
                           Navigator.push(
@@ -1299,7 +1326,7 @@ class _ProfileState extends State<Profile2> {
                         } else {
                           Navigator.of(context).pop();
 
-                          usersRef.doc(widget.profileId).update({
+                          usersCollection.doc(widget.profileId).update({
                             "credit_points": FieldValue.increment(-20),
                           });
 
@@ -1333,7 +1360,7 @@ class _ProfileState extends State<Profile2> {
                             context);
                       } else {
                         Navigator.of(context).pop();
-                        usersRef.doc(widget.profileId).update({
+                        usersCollection.doc(widget.profileId).update({
                           "credit_points": FieldValue.increment(-10),
                         });
                         Navigator.push(
@@ -1363,7 +1390,7 @@ class _ProfileState extends State<Profile2> {
                       } else {
                         Navigator.of(context).pop();
 
-                        usersRef.doc(widget.profileId).update({
+                        usersCollection.doc(widget.profileId).update({
                           "credit_points": FieldValue.increment(-20),
                         });
 
@@ -1396,7 +1423,7 @@ class _ProfileState extends State<Profile2> {
                             context);
                       } else {
                         Navigator.of(context).pop();
-                        usersRef.doc(widget.profileId).update({
+                        usersCollection.doc(widget.profileId).update({
                           "credit_points": FieldValue.increment(-10),
                         });
                         Navigator.push(
@@ -1426,7 +1453,7 @@ class _ProfileState extends State<Profile2> {
                       } else {
                         Navigator.of(context).pop();
 
-                        usersRef.doc(widget.profileId).update({
+                        usersCollection.doc(widget.profileId).update({
                           "credit_points": FieldValue.increment(-20),
                         });
 
@@ -2216,34 +2243,6 @@ class _ProfileState extends State<Profile2> {
   @override
   Widget build(BuildContext context) {
     return buildProfileHeader(widget.user);
-    // ScrollController scrollController = ScrollController();
-    // final bool widthMoreThan_500 = (MediaQuery.of(context).size.width > 500);
-    // return Scaffold(
-    //   backgroundColor: Theme.of(context).backgroundColor,
-    //   appBar: header(
-    //     context,
-    //     titleText: AppLocalizations.of(context)!.profile,
-    //   ),
-    //   body: Column(
-    //     children: [
-    //       Expanded(
-    //         child: RawScrollbar(
-    //           controller: scrollController,
-    //           interactive: true,
-    //           thumbVisibility: !kIsWeb && widthMoreThan_500,
-    //           trackVisibility: !kIsWeb && widthMoreThan_500,
-    //           radius: const Radius.circular(20),
-    //           child: SingleChildScrollView(
-    //             controller: scrollController,
-    //             physics: const AlwaysScrollableScrollPhysics(),
-    //             child: buildProfileHeader(),
-    //           ),
-    //         ),
-    //       ),
-    //       // const AdsWidget(),
-    //     ],
-    //   ),
-    // );
   }
 
   buildProfilePosts() {

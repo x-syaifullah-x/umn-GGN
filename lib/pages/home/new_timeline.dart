@@ -186,7 +186,7 @@ class NewTimelineState extends State<NewTimeline> {
               );
             }
           },
-          query: timelineRef
+          query: timelineCollection
               .doc(userData)
               .collection('timelinePosts')
               .orderBy('timestamp', descending: true),
@@ -832,7 +832,7 @@ class NewTimelineState extends State<NewTimeline> {
   }
 
   void deleteNestedSubcollections(post) {
-    Future<QuerySnapshot> photos = postsRef
+    Future<QuerySnapshot> photos = postsCollection
         .doc(post['ownerId'])
         .collection("userPosts")
         .doc(post['postId'])
@@ -840,7 +840,7 @@ class NewTimelineState extends State<NewTimeline> {
         .get();
     photos.then((value) {
       value.docs.forEach((element) {
-        postsRef
+        postsCollection
             .doc(post['ownerId'])
             .collection("userPosts")
             .doc(post['postId'])
@@ -857,7 +857,7 @@ class NewTimelineState extends State<NewTimeline> {
     bool isPdf = post['type'] == 'pdf';
     bool isVide = post['type'] == 'video';
     bool isPhoto = post['type'] == 'photo';
-    postsRef
+    postsCollection
         .doc(post['ownerId'])
         .collection('userPosts')
         .doc(post['postId'])
@@ -877,7 +877,7 @@ class NewTimelineState extends State<NewTimeline> {
       FirebaseStorage.instance.refFromURL(post['mediaUrl']!).delete();
     }
 
-    QuerySnapshot activityFeedSnapshot = await activityFeedRef
+    QuerySnapshot activityFeedSnapshot = await feedCollection
         .doc(post['ownerId'])
         .collection("feedItems")
         .where('postId', isEqualTo: post['postId'])
@@ -888,8 +888,10 @@ class NewTimelineState extends State<NewTimeline> {
       }
     });
 
-    QuerySnapshot commentsSnapshot =
-        await commentsRef.doc(post['postId']).collection('comments').get();
+    QuerySnapshot commentsSnapshot = await commentsCollection
+        .doc(post['postId'])
+        .collection('comments')
+        .get();
     commentsSnapshot.docs.forEach((doc) {
       if (doc.exists) {
         doc.reference.delete();
@@ -898,7 +900,7 @@ class NewTimelineState extends State<NewTimeline> {
   }
 
   void hidePost(post) async {
-    timelineRef
+    timelineCollection
         .doc(widget.userId)
         .collection('timelinePosts')
         .doc(post['postId'])
@@ -1017,7 +1019,7 @@ class NewTimelineState extends State<NewTimeline> {
   }
 
   void reportPost(post) async {
-    reportsRef.doc(post['postId']).set({});
+    reportsCollection.doc(post['postId']).set({});
     simpleworldtoast("", "Post was reported to Admin", context);
   }
 }
