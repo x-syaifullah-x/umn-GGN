@@ -482,7 +482,9 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
           reactions: reaction.reactions,
           isProfileOwner: true,
         ),
-        const ActivityFeed(),
+        ActivityFeed(
+          userId: userId,
+        ),
         SettingsPage(currentUserId: userId),
       ],
     );

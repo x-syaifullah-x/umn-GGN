@@ -42,6 +42,7 @@ import 'package:visibility_detector/visibility_detector.dart';
 import 'package:applovin_max/applovin_max.dart';
 
 import '../../ads/applovin_ad_unit_id.dart';
+import '../comments_album.dart';
 
 class NewTimeline extends StatefulWidget {
   final String? userId;
@@ -619,8 +620,9 @@ class NewTimelineState extends State<NewTimeline> {
               Row(
                 children: [
                   GestureDetector(
-                    onTap: () => showCommentsforalbum(
+                    onTap: () => _showCommentsforalbum(
                       context,
+                      userId: widget.userId,
                       postId: postId,
                       ownerId: ownerId,
                       // mediaUrl: post['mediaUrl'][0],
@@ -667,8 +669,9 @@ class NewTimelineState extends State<NewTimeline> {
               Row(
                 children: [
                   GestureDetector(
-                    onTap: () => showCommentsforalbum(
+                    onTap: () => _showCommentsforalbum(
                       context,
+                      userId: widget.userId,
                       postId: postId,
                       ownerId: ownerId,
                       // mediaUrl: post['mediaUrl'][0],
@@ -722,6 +725,23 @@ class NewTimelineState extends State<NewTimeline> {
         ],
       ),
     );
+  }
+
+  _showCommentsforalbum(
+    BuildContext context, {
+    String? userId,
+    String? postId,
+    String? ownerId,
+    String? mediaUrl,
+  }) {
+    Navigator.push(context, MaterialPageRoute(builder: (context) {
+      return AlbumComments(
+        userId: userId,
+        postId: postId,
+        postOwnerId: ownerId,
+        postMediaUrl: mediaUrl,
+      );
+    }));
   }
 
   void reportSheet(BuildContext context, post) {

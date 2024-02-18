@@ -18,21 +18,24 @@ import 'package:timeago/timeago.dart' as time_ago;
 import '../../ads/applovin_ad_unit_id.dart';
 
 class ActivityFeed extends StatefulWidget {
-  const ActivityFeed({Key? key}) : super(key: key);
+  final String? userId;
+
+  const ActivityFeed({
+    Key? key,
+    this.userId,
+  }) : super(key: key);
 
   @override
   ActivityFeedState createState() => ActivityFeedState();
 }
 
 class ActivityFeedState extends State<ActivityFeed> {
-  final String? currentUserId = globalID;
-
   List<ActivityFeedItem> feedItem = [];
 
   @override
   void initState() {
     super.initState();
-    _updateFeed();
+    _updateFeed(widget.userId);
   }
 
   @override
@@ -53,7 +56,7 @@ class ActivityFeedState extends State<ActivityFeed> {
                 top: 15,
               ),
               child: Container(
-                child: _activityFeedList(currentUserId),
+                child: _activityFeedList(widget.userId),
               ),
             ),
           ],
@@ -74,7 +77,7 @@ class ActivityFeedState extends State<ActivityFeed> {
       stream: feedCollection
           .doc(userData)
           .collection('feedItems')
-          .orderBy('timestamp', descending: true)
+          .orderBy('createAt', descending: true)
           .limit(50)
           .snapshots(),
       builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
@@ -101,7 +104,11 @@ class ActivityFeedState extends State<ActivityFeed> {
                       itemBuilder: (context, int index) {
                         QueryDocumentSnapshot<Object?> feedItem =
                             data.docs[index];
-                        return _buildItem(context, feedItem);
+                        return _buildItem(
+                          context: context,
+                          feedItem: feedItem,
+                          currentUserId: widget.userId,
+                        );
                       },
                       separatorBuilder: (context, index) {
                         return const Divider();
@@ -149,7 +156,7 @@ class ActivityFeedState extends State<ActivityFeed> {
     );
   }
 
-  _updateFeed() async {
+  _updateFeed(String? currentUserId) async {
     QuerySnapshot activityFeedSnapshot =
         await feedCollection.doc(currentUserId).collection("feedItems").get();
     for (var doc in activityFeedSnapshot.docs) {
@@ -161,8 +168,11 @@ class ActivityFeedState extends State<ActivityFeed> {
     }
   }
 
-  Widget _buildItem(
-      BuildContext context, QueryDocumentSnapshot<Object?> feedItem) {
+  Widget _buildItem({
+    String? currentUserId,
+    required BuildContext context,
+    required QueryDocumentSnapshot<Object?> feedItem,
+  }) {
     return Padding(
         padding: const EdgeInsets.only(bottom: 5.0),
         child: ListTile(
@@ -224,7 +234,11 @@ class ActivityFeedState extends State<ActivityFeed> {
             ),
           ),
           subtitle: Text(
-            time_ago.format(feedItem['timestamp'].toDate()),
+            time_ago.format(
+              DateTime.fromMillisecondsSinceEpoch(
+                feedItem['createAt'],
+              ),
+            ),
             style: TextStyle(
               color: Colors.grey[600],
               fontSize: 12.0,
@@ -331,18 +345,18 @@ class ActivityFeedItem extends StatelessWidget {
     this.timestamp,
   }) : super(key: key);
 
-  factory ActivityFeedItem.fromDocument(DocumentSnapshot doc) {
-    return ActivityFeedItem(
-      username: doc['username'],
-      userId: doc['userId'],
-      type: doc['type'],
-      postId: doc['postId'],
-      userProfileImg: doc['userProfileImg'],
-      commentData: doc['commentData'],
-      timestamp: doc['timestamp'],
-      mediaUrl: doc['mediaUrl'],
-    );
-  }
+  // factory ActivityFeedItem.fromDocument(DocumentSnapshot doc) {
+  //   return ActivityFeedItem(
+  //     username: doc['username'],
+  //     userId: doc['userId'],
+  //     type: doc['type'],
+  //     postId: doc['postId'],
+  //     userProfileImg: doc['userProfileImg'],
+  //     commentData: doc['commentData'],
+  //     timestamp: doc['timestamp'],
+  //     mediaUrl: doc['mediaUrl'],
+  //   );
+  // }
 }
 
 showProfile(BuildContext context, {String? profileId}) {

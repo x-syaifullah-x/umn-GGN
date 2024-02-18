@@ -691,8 +691,12 @@ class _SinglePostState extends State<SinglePost> {
   }
 }
 
-showCommentsforalbum(BuildContext context,
-    {String? postId, String? ownerId, String? mediaUrl}) {
+showCommentsforalbum(
+  BuildContext context, {
+  String? postId,
+  String? ownerId,
+  String? mediaUrl,
+}) {
   Navigator.push(context, MaterialPageRoute(builder: (context) {
     return AlbumComments(
       postId: postId,

@@ -6,57 +6,48 @@ import 'package:global_net/widgets/_build_list.dart';
 import 'package:global_net/widgets/header.dart';
 import 'package:global_net/widgets/progress.dart';
 import 'package:global_net/widgets/simple_world_widgets.dart';
+import 'package:nb_utils/nb_utils.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
 class AlbumComments extends StatefulWidget {
+  final String? userId;
   final String? postId;
   final String? postOwnerId;
   final String? postMediaUrl;
 
   const AlbumComments({
     Key? key,
+    this.userId,
     this.postId,
     this.postOwnerId,
     this.postMediaUrl,
   }) : super(key: key);
 
   @override
-  // ignore: no_logic_in_create_state
-  CommentsState createState() => CommentsState(
-        postId: postId,
-        postOwnerId: postOwnerId,
-        postMediaUrl: postMediaUrl,
-      );
+  State<AlbumComments> createState() => _CommentsState();
 }
 
-class CommentsState extends State<AlbumComments> {
+class _CommentsState extends State<AlbumComments> {
   TextEditingController commentController = TextEditingController();
   List<Comment> comments = [];
-  final String? postId;
-  final String? postOwnerId;
-  final String? postMediaUrl;
-  int CommentsCount = 0;
 
-  CommentsState({
-    this.postId,
-    this.postOwnerId,
-    this.postMediaUrl,
-  });
-
-  getCommentscount() async {
-    QuerySnapshot snapshot =
-        await commentsCollection.doc(postId).collection('comments').get();
-    setState(() {
-      CommentsCount = snapshot.docs.length;
-    });
-  }
+  // int commentsCount = 0;
+  // getCommentscount() async {
+  //   QuerySnapshot snapshot = await commentsCollection
+  //       .doc(widget.postId)
+  //       .collection('comments')
+  //       .get();
+  //   setState(() {
+  //     commentsCount = snapshot.docs.length;
+  //   });
+  // }
 
   buildComments() {
     return StreamBuilder<QuerySnapshot>(
         stream: commentsCollection
-            .doc(postId)
+            .doc(widget.postId)
             .collection('comments')
-            .orderBy("timestamp", descending: false)
+            .orderBy("createAt", descending: false)
             .snapshots(),
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
@@ -65,30 +56,85 @@ class CommentsState extends State<AlbumComments> {
             );
           } else {
             return ListView(
+              padding: const EdgeInsets.all(16),
               children: snapshot.data!.docs.map((doc) {
-                return ListTile(
-                  title: Text(doc['comment']),
-                  leading: doc['avatarUrl'].isNotEmpty
-                      ? ClipRRect(
-                          borderRadius: BorderRadius.circular(15.0),
-                          child: CachedNetworkImage(
-                            imageUrl: doc['avatarUrl'],
-                            height: 40,
-                            width: 40,
-                            fit: BoxFit.cover,
-                          ),
-                        )
-                      : Container(
-                          decoration: BoxDecoration(
-                            color: const Color(0xFF003a54),
+                return Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    doc['avatarUrl'].isNotEmpty
+                        ? ClipRRect(
                             borderRadius: BorderRadius.circular(15.0),
+                            child: CachedNetworkImage(
+                              imageUrl: doc['avatarUrl'],
+                              height: 40,
+                              width: 40,
+                              fit: BoxFit.cover,
+                            ),
+                          )
+                        : Container(
+                            decoration: BoxDecoration(
+                              color: const Color(0xFF003a54),
+                              borderRadius: BorderRadius.circular(15.0),
+                            ),
+                            child: Image.asset(
+                              'assets/images/defaultavatar.png',
+                              width: 40,
+                            ),
                           ),
-                          child: Image.asset(
-                            'assets/images/defaultavatar.png',
-                            width: 40,
+                    const SizedBox(
+                      width: 8,
+                    ),
+                    Expanded(
+                      child: Container(
+                        margin: const EdgeInsets.only(bottom: 8),
+                        padding: const EdgeInsets.only(
+                          left: 10,
+                          right: 10,
+                          top: 4,
+                          bottom: 8,
+                        ),
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.grey),
+                          borderRadius: const BorderRadius.all(
+                            Radius.circular(8),
                           ),
                         ),
-                  subtitle: Text(timeago.format(doc['timestamp'].toDate())),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              doc['username'],
+                              style: const TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 8,
+                            ),
+                            Text(
+                              doc['comment'],
+                              style: const TextStyle(
+                                fontSize: 16,
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 4,
+                            ),
+                            Text(
+                              _getDateFromMilliseconds(doc['createAt']),
+                              style: const TextStyle(
+                                fontSize: 10,
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 4,
+                            ),
+                          ],
+                        ),
+                      ),
+                    )
+                  ],
                 );
               }).toList(),
             );
@@ -96,29 +142,39 @@ class CommentsState extends State<AlbumComments> {
         });
   }
 
-  addComment() {
-    commentsCollection.doc(postId).collection("comments").add({
-      "username": globalName,
-      "comment": commentController.text,
-      "timestamp": timestamp,
-      "avatarUrl": globalImage,
-      "userId": globalID,
-    });
-    bool isNotPostOwner = postOwnerId != globalID;
-    if (isNotPostOwner) {
-      feedCollection.doc(postOwnerId).collection('feedItems').add({
-        "type": "comment",
-        "commentData": commentController.text,
-        "timestamp": timestamp,
-        "postId": postId,
-        "userId": globalID,
-        "username": globalName,
-        "userProfileImg": globalImage,
-        "mediaUrl": postMediaUrl,
-        "isSeen": false,
-      });
+  _getDateFromMilliseconds(int milliseconds) {
+    try {
+      final a = DateTime.fromMillisecondsSinceEpoch(milliseconds);
+      return timeago.format(a);
+    } catch (e) {
+      return timeago.format(DateTime.now());
     }
-    commentController.clear();
+  }
+
+  _addComment({
+    required String? postOwnerId,
+    required String? postId,
+    required String? postMediaUrl,
+  }) {
+    String? userId = widget.userId ?? globalID;
+    DateTime date = DateTime.now();
+    usersCollection.doc(userId).get().then((value) {
+      final data = value.data();
+      String username = data?['username'];
+      String userId = data?['id'];
+      String photoUrl = data?['photoUrl'];
+      commentsCollection.doc(postId).collection("comments").add({
+        "postOwnerId": postOwnerId,
+        "username": username,
+        "comment": commentController.text,
+        "createAt": date.millisecondsSinceEpoch,
+        "avatarUrl": photoUrl,
+        "mediaUrl": postMediaUrl,
+        "userId": userId,
+      }).then((value) {
+        commentController.clear();
+      });
+    });
   }
 
   final ButtonStyle outlineButtonStyle = OutlinedButton.styleFrom(
@@ -166,7 +222,11 @@ class CommentsState extends State<AlbumComments> {
               textInputAction: TextInputAction.send,
               onFieldSubmitted: (message) {
                 if (commentController.text != '') {
-                  addComment();
+                  _addComment(
+                    postOwnerId: widget.postOwnerId,
+                    postId: widget.postId,
+                    postMediaUrl: widget.postMediaUrl,
+                  );
                 } else {
                   simpleworldtoast("", "Please Enter a comment", context);
                 }
@@ -180,7 +240,11 @@ class CommentsState extends State<AlbumComments> {
               alignment: Alignment.center,
               onPressed: (() {
                 if (commentController.text != '') {
-                  addComment();
+                  _addComment(
+                    postOwnerId: widget.postOwnerId,
+                    postId: widget.postId,
+                    postMediaUrl: widget.postMediaUrl,
+                  );
                 } else {
                   simpleworldtoast("", "Please Enter a comment", context);
                 }
@@ -192,27 +256,28 @@ class CommentsState extends State<AlbumComments> {
     );
   }
 
-  static final commentsCol = commentsCollection.withConverter<Comment>(
-    fromFirestore: (m, _) => Comment.fromJson(m.data()!),
-    toFirestore: (m, _) => m.toJson(),
-  );
-  static DocumentReference<Comment> commentDoc(String? commentID) =>
-      commentsCol.doc(commentID);
+  // static final commentsCol = commentsCollection.withConverter<Comment>(
+  //   fromFirestore: (m, _) => Comment.fromJson(m.data()!),
+  //   toFirestore: (m, _) => m.toJson(),
+  // );
 
-  static Stream<List<Comment>> commentsStream(String postId, int offset) {
-    return commentsCol
-        .where('postId', isEqualTo: postId)
-        .orderBy('timestamp', descending: true)
-        .limit(offset)
-        .snapshots()
-        .map(
-          (s) => [for (final d in s.docs) d.data()],
-        );
-  }
+  // static DocumentReference<Comment> commentDoc(String? commentID) =>
+  //     commentsCol.doc(commentID);
 
-  static Stream<Comment> singleCommentStream(String id) {
-    return commentDoc(id).snapshots().map(
-          (s) => s.data()!,
-        );
-  }
+  // static Stream<List<Comment>> commentsStream(String postId, int offset) {
+  //   return commentsCol
+  //       .where('postId', isEqualTo: postId)
+  //       .orderBy('createAt', descending: true)
+  //       .limit(offset)
+  //       .snapshots()
+  //       .map(
+  //         (s) => [for (final d in s.docs) d.data()],
+  //       );
+  // }
+
+  // static Stream<Comment> singleCommentStream(String id) {
+  //   return commentDoc(id).snapshots().map(
+  //         (s) => s.data()!,
+  //       );
+  // }
 }
