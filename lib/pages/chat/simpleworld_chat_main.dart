@@ -1,11 +1,11 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:global_net/pages/chat/GroupChatlist.dart';
+import 'package:global_net/pages/chat/group_chat_list.dart';
 import 'package:global_net/pages/menu/all_stories.dart';
 import 'package:global_net/pages/chat/simpleworld_messenger.dart';
 
 class SimpleWorldChat extends StatefulWidget {
-  final String? userId;
+  final String userId;
 
   const SimpleWorldChat({Key? key, required this.userId}) : super(key: key);
 

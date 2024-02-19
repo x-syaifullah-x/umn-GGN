@@ -7,30 +7,22 @@ import 'package:global_net/pages/home/home.dart';
 import 'package:global_net/widgets/_build_list.dart';
 
 class FeedsCount extends StatefulWidget {
-  final String? userId;
+  final String userId;
   final TabController? tabController;
 
   const FeedsCount({
     Key? key,
-    this.userId,
+    required this.userId,
     this.tabController,
   }) : super(key: key);
 
   @override
-  // ignore: no_logic_in_create_state
-  FeedsCountState createState() => FeedsCountState(
-        userId: userId,
-      );
+  State<FeedsCount> createState() => _FeedsCountState();
 }
 
-class FeedsCountState extends State<FeedsCount> {
+class _FeedsCountState extends State<FeedsCount> {
   TextEditingController commentController = TextEditingController();
   List<Comment> comments = [];
-  final String? userId;
-
-  FeedsCountState({
-    this.userId,
-  });
 
   @override
   void initState() {
@@ -39,7 +31,7 @@ class FeedsCountState extends State<FeedsCount> {
 
   Stream<QuerySnapshot> requestCount() {
     return feedCollection
-        .doc(userId)
+        .doc(widget.userId)
         .collection('feedItems')
         .where('isSeen', isEqualTo: false)
         .snapshots();

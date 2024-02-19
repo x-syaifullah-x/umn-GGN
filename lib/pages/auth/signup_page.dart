@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:global_net/models/user.dart';
@@ -350,12 +351,32 @@ class SignUpPageState extends State<SignUpPage> {
 
   configurePushNotifications(userId) async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
-    preferences.setString(SharedPreferencesKey.userId, userId).then((value) {
-      _firebaseMessaging.getToken().then((token) {
-        // print("Firebase Messaging Token: $token\n");
-        usersCollection.doc(userId).update({"androidNotificationToken": token});
-      });
+
+    preferences
+        .setString(SharedPreferencesKey.userId, userId)
+        .then((value) async {
+      try {
+        String vApiKey =
+            "BIxps5Is9CmqlWy6PpPjZXiM0hTlCcnFIcFtQwos8yvFoumKit1TUpZqpkaU13KEh0n9M5pXGF8W33b1S-TFnZw";
+        String? token = await FirebaseMessaging.instance
+            .getToken(vapidKey: (kIsWeb ? vApiKey : null));
+        log("tokenNotification: $token");
+        await usersCollection.doc(userId).update({
+          // "androidNotificationToken": token,
+          "tokenNotification": token,
+        });
+      } catch (e) {
+        log(e);
+      }
     });
+
+    // preferences.setString(SharedPreferencesKey.userId, userId).then((value) {
+    //   _firebaseMessaging.getToken().then((token) {
+    //     // print("Firebase Messaging Token: $token\n");
+    //     // usersCollection.doc(userId).update({"androidNotificationToken": token});
+    //     usersCollection.doc(userId).update({"tokenNotification": token});
+    //   });
+    // });
 
     FirebaseMessaging.onMessage.listen((message) async {
       final String recipientId = userId;

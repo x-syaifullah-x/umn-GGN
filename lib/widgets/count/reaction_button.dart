@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_reaction_button/flutter_reaction_button.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:global_net/data/reaction_data.dart';
 import 'package:global_net/pages/home/home.dart';
 import 'package:global_net/widgets/_build_list.dart';
 import 'package:global_net/widgets/simple_world_widgets.dart';
@@ -29,10 +28,10 @@ class ReactionButtonWidget extends StatefulWidget {
   final Color? color;
 
   @override
-  ReactionButtonWidgetState createState() => ReactionButtonWidgetState();
+  State<ReactionButtonWidget> createState() => _ReactionButtonWidgetState();
 }
 
-class ReactionButtonWidgetState extends State<ReactionButtonWidget> {
+class _ReactionButtonWidgetState extends State<ReactionButtonWidget> {
   TextEditingController commentController = TextEditingController();
   List<Comment> comments = [];
   bool isHappy = false;
@@ -65,7 +64,9 @@ class ReactionButtonWidgetState extends State<ReactionButtonWidget> {
       setState(() {
         isHappy = doc.exists;
       });
-    } catch (e) {}
+    } catch (e) {
+      log("$e");
+    }
   }
 
   checkIfSad() async {
@@ -125,7 +126,9 @@ class ReactionButtonWidgetState extends State<ReactionButtonWidget> {
       setState(() {
         isSurprised = doc.exists;
       });
-    } catch (e) {}
+    } catch (e) {
+      log('$e');
+    }
   }
 
   checkIfLike() async {
@@ -142,18 +145,20 @@ class ReactionButtonWidgetState extends State<ReactionButtonWidget> {
           isLike = doc.exists;
         });
       } catch (e) {
-        print(e);
+        log('$e');
       }
-    } catch (e) {}
+    } catch (e) {
+      log('$e');
+    }
   }
 
-  addLikeToActivityFeed() {
+  addLikeToActivityFeed(DateTime dateTime) {
     bool isNotPostOwner = widget.userId != widget.ownerId;
     if (isNotPostOwner) {
       final aa = feedCollection
           .doc(widget.ownerId)
           .collection("feedItems")
-          .doc(widget.postId);
+          .doc("${widget.postId}-${widget.userId}");
 
       aa.get().then((value) {
         if (!value.exists) {
@@ -164,7 +169,7 @@ class ReactionButtonWidgetState extends State<ReactionButtonWidget> {
             "userProfileImg": globalImage,
             "postId": widget.postId,
             "mediaUrl": widget.mediaUrl,
-            "timestamp": timestamp,
+            "createAt": dateTime.millisecondsSinceEpoch,
             "isSeen": false,
           });
         }
@@ -190,7 +195,7 @@ class ReactionButtonWidgetState extends State<ReactionButtonWidget> {
       return FittedBox(
         child: ReactionButtonToggle<String>(
           onReactionChanged: (String? value, bool isChecked) {
-            print('Selected value: $value, isChecked: $isChecked');
+            log('Selected value: $value, isChecked: $isChecked');
             handleLikePost('$value');
           },
           reactions: widget.reactions,
@@ -202,7 +207,7 @@ class ReactionButtonWidgetState extends State<ReactionButtonWidget> {
       return FittedBox(
         child: ReactionButtonToggle<String>(
           onReactionChanged: (String? value, bool isChecked) {
-            print('Selected value: $value, isChecked: $isChecked');
+            log('Selected value: $value, isChecked: $isChecked');
             handleLikePost('$value');
           },
           reactions: widget.reactions,
@@ -214,7 +219,7 @@ class ReactionButtonWidgetState extends State<ReactionButtonWidget> {
       return FittedBox(
         child: ReactionButtonToggle<String>(
           onReactionChanged: (String? value, bool isChecked) {
-            print('Selected value: $value, isChecked: $isChecked');
+            log('Selected value: $value, isChecked: $isChecked');
             handleLikePost('$value');
           },
           reactions: widget.reactions,
@@ -226,7 +231,7 @@ class ReactionButtonWidgetState extends State<ReactionButtonWidget> {
       return FittedBox(
         child: ReactionButtonToggle<String>(
           onReactionChanged: (String? value, bool isChecked) {
-            print('Selected value: $value, isChecked: $isChecked');
+            log('Selected value: $value, isChecked: $isChecked');
             handleLikePost('$value');
           },
           reactions: widget.reactions,
@@ -238,7 +243,7 @@ class ReactionButtonWidgetState extends State<ReactionButtonWidget> {
       return FittedBox(
         child: ReactionButtonToggle<String>(
           onReactionChanged: (String? value, bool isChecked) {
-            print('Selected value: $value, isChecked: $isChecked');
+            log('Selected value: $value, isChecked: $isChecked');
             handleLikePost('$value');
           },
           reactions: widget.reactions,
@@ -285,7 +290,7 @@ class ReactionButtonWidgetState extends State<ReactionButtonWidget> {
   //         FittedBox(
   //           child: ReactionButtonToggle<String>(
   //             onReactionChanged: (String? value, bool isChecked) {
-  //               print('Selected value: $value, isChecked: $isChecked');
+  //               log('Selected value: $value, isChecked: $isChecked');
   //               handleLikePost('$value');
   //             },
   //             reactions: widget.reactions,
@@ -301,7 +306,7 @@ class ReactionButtonWidgetState extends State<ReactionButtonWidget> {
   //         FittedBox(
   //           child: ReactionButtonToggle<String>(
   //             onReactionChanged: (String? value, bool isChecked) {
-  //               print('Selected value: $value, isChecked: $isChecked');
+  //               log('Selected value: $value, isChecked: $isChecked');
   //               handleLikePost('$value');
   //             },
   //             reactions: widget.reactions,
@@ -317,7 +322,7 @@ class ReactionButtonWidgetState extends State<ReactionButtonWidget> {
   //         FittedBox(
   //           child: ReactionButtonToggle<String>(
   //             onReactionChanged: (String? value, bool isChecked) {
-  //               print('Selected value: $value, isChecked: $isChecked');
+  //               log('Selected value: $value, isChecked: $isChecked');
   //               handleLikePost('$value');
   //             },
   //             reactions: widget.reactions,
@@ -333,7 +338,7 @@ class ReactionButtonWidgetState extends State<ReactionButtonWidget> {
   //         FittedBox(
   //           child: ReactionButtonToggle<String>(
   //             onReactionChanged: (String? value, bool isChecked) {
-  //               print('Selected value: $value, isChecked: $isChecked');
+  //               log('Selected value: $value, isChecked: $isChecked');
   //               handleLikePost('$value');
   //             },
   //             reactions: widget.reactions,
@@ -349,7 +354,7 @@ class ReactionButtonWidgetState extends State<ReactionButtonWidget> {
   //         FittedBox(
   //           child: ReactionButtonToggle<String>(
   //             onReactionChanged: (String? value, bool isChecked) {
-  //               print('Selected value: $value, isChecked: $isChecked');
+  //               log('Selected value: $value, isChecked: $isChecked');
   //               handleLikePost('$value');
   //             },
   //             reactions: widget.reactions,
@@ -365,7 +370,7 @@ class ReactionButtonWidgetState extends State<ReactionButtonWidget> {
   //         FittedBox(
   //           child: ReactionButtonToggle<String>(
   //             onReactionChanged: (String? value, bool isChecked) {
-  //               print('Selected value: $value, isChecked: $isChecked');
+  //               log('Selected value: $value, isChecked: $isChecked');
   //               handleLikePost('$value');
   //             },
   //             reactions: widget.reactions,
@@ -382,7 +387,7 @@ class ReactionButtonWidgetState extends State<ReactionButtonWidget> {
   //       FittedBox(
   //         child: ReactionButtonToggle<String>(
   //           onReactionChanged: (String? value, bool isChecked) {
-  //             print('Selected value: $value, isChecked: $isChecked');
+  //             log('Selected value: $value, isChecked: $isChecked');
   //             handleLikePost('$value');
   //           },
   //           reactions: widget.reactions,
@@ -412,6 +417,7 @@ class ReactionButtonWidgetState extends State<ReactionButtonWidget> {
   // }
 
   handleLikePost(String value) {
+    DateTime dateTime = DateTime.now();
     if (value == 'Happy') {
       postsCollection
           .doc(widget.ownerId)
@@ -481,7 +487,7 @@ class ReactionButtonWidgetState extends State<ReactionButtonWidget> {
           .collection('happy')
           .doc(widget.userId)
           .set({});
-      addLikeToActivityFeed();
+      addLikeToActivityFeed(dateTime);
     } else if (value == 'Sad') {
       postsCollection
           .doc(widget.ownerId)
@@ -551,7 +557,7 @@ class ReactionButtonWidgetState extends State<ReactionButtonWidget> {
           .collection('sad')
           .doc(widget.userId)
           .set({});
-      addLikeToActivityFeed();
+      addLikeToActivityFeed(dateTime);
     } else if (value == 'Angry') {
       postsCollection
           .doc(widget.ownerId)
@@ -621,7 +627,7 @@ class ReactionButtonWidgetState extends State<ReactionButtonWidget> {
           .collection('angry')
           .doc(widget.userId)
           .set({});
-      addLikeToActivityFeed();
+      addLikeToActivityFeed(dateTime);
     } else if (value == 'In love') {
       postsCollection
           .doc(widget.ownerId)
@@ -691,7 +697,7 @@ class ReactionButtonWidgetState extends State<ReactionButtonWidget> {
           .collection('inlove')
           .doc(widget.userId)
           .set({});
-      addLikeToActivityFeed();
+      addLikeToActivityFeed(dateTime);
     } else if (value == 'Surprised') {
       postsCollection
           .doc(widget.ownerId)
@@ -761,7 +767,7 @@ class ReactionButtonWidgetState extends State<ReactionButtonWidget> {
           .collection('surprised')
           .doc(widget.userId)
           .set({});
-      addLikeToActivityFeed();
+      addLikeToActivityFeed(dateTime);
     } else if (value == 'Like') {
       postsCollection
           .doc(widget.ownerId)
@@ -833,14 +839,14 @@ class ReactionButtonWidgetState extends State<ReactionButtonWidget> {
       doc.get().then((value) {
         if (!value.exists) {
           doc.set({
-            "createAt": DateTime.now().millisecondsSinceEpoch,
+            "createAt": dateTime,
           }).then((value) {
             setState(() {
               isLike = true;
             });
           });
         }
-        addLikeToActivityFeed();
+        addLikeToActivityFeed(dateTime);
       });
     }
   }

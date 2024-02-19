@@ -9,7 +9,7 @@ import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:link_preview_generator/link_preview_generator.dart';
-import 'package:share/share.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:global_net/data/reaction_data.dart';
 import 'package:global_net/models/user.dart';
 import 'package:global_net/pages/home/activity_feed.dart';

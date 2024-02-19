@@ -1,5 +1,7 @@
 import 'package:adaptive_theme/adaptive_theme.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -267,10 +269,21 @@ class AppState extends State<App> with WidgetsBindingObserver {
       return const WalkThroughScreen();
     }
 
-    String? userId = prefs.getString(SharedPreferencesKey.userId);
+    final String? userId = prefs.getString(SharedPreferencesKey.userId);
+
     if (userId != null) {
-      globalUserId = userId;
-      return Home(userId: userId);
+      return FutureBuilder<DocumentSnapshot<Map<String, dynamic>>>(
+        future: usersCollection.doc(userId).get(),
+        builder: (context, snapshot) {
+          final data = snapshot.data;
+          final userData = data?.data();
+          if (userData == null) {
+            return const CupertinoActivityIndicator();
+          }
+          setGlobalField(id: userId, data: userData);
+          return Home(userId: userId);
+        },
+      );
     }
 
     return const LoginPage();

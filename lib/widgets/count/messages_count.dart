@@ -10,11 +10,11 @@ import 'package:global_net/widgets/circle_button.dart';
 import 'package:badges/badges.dart' as badges;
 
 class MessagesCount extends StatefulWidget {
-  final String? currentUserId;
+  final String currentUserId;
 
   const MessagesCount({
     Key? key,
-    this.currentUserId,
+    required this.currentUserId,
   }) : super(key: key);
 
   @override
@@ -30,7 +30,7 @@ class MessagesState extends State<MessagesCount> {
   }
 
   Stream<QuerySnapshot> requestCount() {
-    String currentUserId = widget.currentUserId!;
+    String currentUserId = widget.currentUserId;
     return messengerCollection
         .doc(currentUserId)
         .collection(currentUserId)

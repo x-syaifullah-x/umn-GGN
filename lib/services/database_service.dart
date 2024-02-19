@@ -3,7 +3,10 @@ import 'package:global_net/widgets/simple_world_widgets.dart';
 
 class DatabaseService {
   final String? uid;
-  DatabaseService({this.uid});
+
+  DatabaseService({
+    this.uid,
+  });
 
   // Collection reference
   final CollectionReference userCollection =
@@ -35,7 +38,7 @@ class DatabaseService {
     });
 
     await groupDocRef.update({
-      'members': FieldValue.arrayUnion([globalUserId! + '_' + userName!]),
+      'members': FieldValue.arrayUnion(['${globalUserId}_${userName!}']),
       'groupId': groupDocRef.id
     });
 

@@ -8,11 +8,14 @@ import 'package:global_net/widgets/group_tile.dart';
 import 'package:global_net/widgets/simple_world_widgets.dart';
 
 class GroupChatList extends StatefulWidget {
-  final String? userId;
-  const GroupChatList({Key? key, this.userId}) : super(key: key);
+  final String userId;
+  const GroupChatList({
+    Key? key,
+    required this.userId,
+  }) : super(key: key);
 
   @override
-  _GroupChatListState createState() => _GroupChatListState();
+  State<GroupChatList> createState() => _GroupChatListState();
 }
 
 class _GroupChatListState extends State<GroupChatList> {
@@ -20,7 +23,6 @@ class _GroupChatListState extends State<GroupChatList> {
   final String _userName = globalName!;
   Stream? _groups;
 
-  // initState
   @override
   void initState() {
     super.initState();
@@ -64,7 +66,7 @@ class _GroupChatListState extends State<GroupChatList> {
         if (snapshot.hasData) {
           if (snapshot.data != null) {
             if (snapshot.data['groups'].length != 0) {
-              return groupsListnew(
+              return _groupsListnew(
                 snapshot.data['groups'],
               );
             } else {
@@ -80,19 +82,17 @@ class _GroupChatListState extends State<GroupChatList> {
     );
   }
 
-  Widget groupsListnew(
-    data,
-  ) {
+  Widget _groupsListnew(data) {
     return StreamBuilder(
       stream: groupsCollection
-          .where('members', arrayContains: globalUserId! + '_' + globalName!)
+          .where('members', arrayContains: '${globalUserId}_${globalName!}')
           .snapshots(),
       builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
         if (snapshot.hasData) {
           return SizedBox(
               height: MediaQuery.of(context).size.height,
               width: MediaQuery.of(context).size.width,
-              child: snapshot.data!.docs.length > 0
+              child: snapshot.data!.docs.isNotEmpty
                   ? ListView.separated(
                       padding: const EdgeInsets.all(8),
                       shrinkWrap: true,

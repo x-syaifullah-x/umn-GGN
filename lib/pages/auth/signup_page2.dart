@@ -60,7 +60,7 @@ class _GetAvatarState extends State<GetAvatar> {
   }
 
   Future uploadAvatar(imageFileAvatar) async {
-    String mFileName = globalUserId!;
+    String mFileName = widget.currentUserId;
     Reference storageReference =
         FirebaseStorage.instance.ref().child("avatar_$mFileName.jpg");
     UploadTask storageUploadTask = storageReference.putFile(imageFileAvatar!);

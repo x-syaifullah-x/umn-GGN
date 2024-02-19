@@ -13,6 +13,16 @@ String? globalCover = '';
 String globalCredits = '';
 String? globalDisplayName = '';
 
+void setGlobalField({required String id, data}) {
+  globalUserId = id;
+  globalName = data['username'];
+  globalImage = data['photoUrl'];
+  globalBio = data['bio'];
+  globalCover = data['coverUrl'];
+  globalDisplayName = data['displayName'];
+  globalCredits = '${data['credit_points']}';
+}
+
 Widget commonCachedNetworkImage(String? url,
     {double? height,
     double? width,

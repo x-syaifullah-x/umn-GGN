@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:global_net/v2/news/presentation/app_web_view.dart';
 import 'package:global_net/v2/news/presentation/widgets/related.dart';
 import 'package:intl/intl.dart';
-import 'package:share/share.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../data/bing_news/data/response/bing_news_response.dart';

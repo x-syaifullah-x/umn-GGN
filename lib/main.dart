@@ -19,20 +19,21 @@ Future<void> main() async {
   final savedThemeMode = await AdaptiveTheme.getThemeMode();
 
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  bool useEmulator = kDebugMode;
-  if (useEmulator) {
-    const host = 'localhost';
+  bool isUseEmulator = kDebugMode;
+  if (isUseEmulator) {
+    const host = '192.168.43.89';
     FirebaseAuth.instance.useAuthEmulator(host, 9099);
     FirebaseFirestore.instance.useFirestoreEmulator(host, 8080);
     FirebaseStorage.instance.useStorageEmulator(host, 9199);
   }
 
   if (!kIsWeb) {
-    // MobileAds.instance.initialize();
     Map? sdkConfiguration = await AppLovinMAX.initialize(
       AppLovin.sdkKey,
     );
     log(sdkConfiguration);
+
+    // MobileAds.instance.initialize();
     // if (!kReleaseMode) {
     //   MobileAds.instance.updateRequestConfiguration(
     //     RequestConfiguration(

@@ -32,9 +32,12 @@ import 'package:global_net/widgets/progress.dart';
 import 'package:global_net/widgets/simple_world_widgets.dart';
 
 class SettingsPage extends StatefulWidget {
-  final String? currentUserId;
+  final String currentUserId;
 
-  const SettingsPage({Key? key, this.currentUserId}) : super(key: key);
+  const SettingsPage({
+    Key? key,
+    required this.currentUserId,
+  }) : super(key: key);
 
   @override
   SettingsState createState() => SettingsState();

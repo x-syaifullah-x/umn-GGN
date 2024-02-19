@@ -26,12 +26,6 @@ class GloabalUser {
     required this.userIsVerified,
   });
 
-  /// Set Active VIP Subscription ID
-  // void setActiveVipId(String subscriptionId) {
-  //   this.activeVipId = subscriptionId;
-  //   notifyListeners();
-  // }
-
   factory GloabalUser.fromDocument(DocumentSnapshot doc) {
     return GloabalUser(
       id: doc['id'],

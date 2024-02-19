@@ -14,7 +14,7 @@ class AllStories extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _UsersListState createState() => _UsersListState();
+  State<AllStories> createState() => _UsersListState();
 }
 
 class _UsersListState extends State<AllStories>
@@ -22,11 +22,6 @@ class _UsersListState extends State<AllStories>
   bool isLoading = false;
   final String? currentUserId = globalUserId;
   static String collectionDbName = 'stories';
-
-  @override
-  void initState() {
-    super.initState();
-  }
 
   @override
   bool get wantKeepAlive => true;

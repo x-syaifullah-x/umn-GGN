@@ -56,7 +56,9 @@ class LoginPageState extends State<LoginPage> {
   void initState() {
     super.initState();
     _getUserData();
-    FirebaseMessaging.instance.getInitialMessage().then((message) {});
+    FirebaseMessaging.instance.getInitialMessage().then((message) {
+      log(message);
+    });
   }
 
   @override
@@ -164,13 +166,7 @@ class LoginPageState extends State<LoginPage> {
         final userData = await usersCollection.doc(user.uid).get();
         if (userData.exists) {
           setState(() {
-            globalUserId = user.uid;
-            globalName = userData['username'];
-            globalImage = userData['photoUrl'];
-            globalBio = userData['bio'];
-            globalCover = userData['coverUrl'];
-            globalDisplayName = userData['displayName'];
-            globalCredits = userData['credit_points'];
+            setGlobalField(id: user.uid, data: userData);
           });
         }
       }
@@ -179,8 +175,11 @@ class LoginPageState extends State<LoginPage> {
     }
   }
 
-  Widget _entryField(String title, TextEditingController controller,
-      {bool isPassword = false}) {
+  Widget _entryField(
+    String title,
+    TextEditingController controller, {
+    bool isPassword = false,
+  }) {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 10),
       child: Column(
@@ -231,7 +230,6 @@ class LoginPageState extends State<LoginPage> {
           passwordNode.unfocus();
           isLoading = true;
         });
-
         _signInWithEmailAndPassword();
       } else {
         setState(() {
@@ -280,12 +278,15 @@ class LoginPageState extends State<LoginPage> {
             "BIxps5Is9CmqlWy6PpPjZXiM0hTlCcnFIcFtQwos8yvFoumKit1TUpZqpkaU13KEh0n9M5pXGF8W33b1S-TFnZw";
         String? token = await FirebaseMessaging.instance
             .getToken(vapidKey: (kIsWeb ? vApiKey : null));
+        log("tokenNotification: $token");
         await usersCollection.doc(userId).update({
-          "androidNotificationToken": token,
+          // "androidNotificationToken": token,
+          "tokenNotification": token,
         });
       } catch (e) {
         log(e);
       }
+
       // FirebaseMessaging.instance.getToken().then((token) {
       //   usersRef.doc(userId).update({
       //     "androidNotificationToken": token,
@@ -612,13 +613,30 @@ class LoginPageState extends State<LoginPage> {
         .setString(SharedPreferencesKey.userId, userId)
         .then((value) async {
       try {
-        final token = await _firebaseMessaging.getToken();
-        print("Firebase Messaging Token: $token\n");
-        usersCollection.doc(userId).update({"androidNotificationToken": token});
+        String vApiKey =
+            "BIxps5Is9CmqlWy6PpPjZXiM0hTlCcnFIcFtQwos8yvFoumKit1TUpZqpkaU13KEh0n9M5pXGF8W33b1S-TFnZw";
+        String? token = await FirebaseMessaging.instance
+            .getToken(vapidKey: (kIsWeb ? vApiKey : null));
+        log("tokenNotification: $token");
+        await usersCollection.doc(userId).update({
+          // "androidNotificationToken": token,
+          "tokenNotification": token,
+        });
       } catch (e) {
         log(e);
       }
     });
+    // preferences
+    //     .setString(SharedPreferencesKey.userId, userId)
+    //     .then((value) async {
+    //   try {
+    //     final token = await _firebaseMessaging.getToken();
+    //     print("Firebase Messaging Token: $token\n");
+    //     usersCollection.doc(userId).update({"androidNotificationToken": token});
+    //   } catch (e) {
+    //     log(e);
+    //   }
+    // });
 
     FirebaseMessaging.onMessage.listen(
       (message) async {

@@ -1,25 +1,17 @@
+import 'package:applovin_max/applovin_max.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:flutter_reaction_button/flutter_reaction_button.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:link_preview_generator/link_preview_generator.dart';
-import 'package:nb_utils/nb_utils.dart';
-import 'package:paginate_firestore/bloc/pagination_listeners.dart';
-import 'package:paginate_firestore/paginate_firestore.dart';
-import 'package:share/share.dart';
 import 'package:global_net/data/reaction_data.dart';
 import 'package:global_net/models/user.dart';
-import 'package:global_net/pages/home/activity_feed.dart';
-import 'package:global_net/pages/auth/login_page.dart';
 import 'package:global_net/pages/create_post/post_box.dart';
+import 'package:global_net/pages/home/activity_feed.dart';
 import 'package:global_net/pages/home/home.dart';
 import 'package:global_net/pages/post_screen.dart';
 import 'package:global_net/pages/post_screen_album.dart';
@@ -29,17 +21,20 @@ import 'package:global_net/widgets/album_posts.dart';
 import 'package:global_net/widgets/count/comments_count.dart';
 import 'package:global_net/widgets/count/reaction_button.dart';
 import 'package:global_net/widgets/count/reactions_count.dart';
-import 'package:global_net/ads/inline_adaptive_ads.dart';
 import 'package:global_net/widgets/multi_manager/flick_multi_manager.dart';
 import 'package:global_net/widgets/multi_manager/flick_multi_player.dart';
 import 'package:global_net/widgets/photo_grid.dart';
 import 'package:global_net/widgets/progress.dart';
 import 'package:global_net/widgets/simple_world_widgets.dart';
-import 'package:global_net/widgets/single_post.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:link_preview_generator/link_preview_generator.dart';
+import 'package:nb_utils/nb_utils.dart';
+import 'package:paginate_firestore/bloc/pagination_listeners.dart';
+import 'package:paginate_firestore/paginate_firestore.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:string_validator/string_validator.dart';
 import 'package:timeago/timeago.dart';
 import 'package:visibility_detector/visibility_detector.dart';
-import 'package:applovin_max/applovin_max.dart';
 
 import '../../ads/applovin_ad_unit_id.dart';
 import '../comments_album.dart';
@@ -620,7 +615,7 @@ class NewTimelineState extends State<NewTimeline> {
               Row(
                 children: [
                   GestureDetector(
-                    onTap: () => _showCommentsforalbum(
+                    onTap: () => _showCommentsforAlbum(
                       context,
                       userId: widget.userId,
                       postId: postId,
@@ -669,7 +664,7 @@ class NewTimelineState extends State<NewTimeline> {
               Row(
                 children: [
                   GestureDetector(
-                    onTap: () => _showCommentsforalbum(
+                    onTap: () => _showCommentsforAlbum(
                       context,
                       userId: widget.userId,
                       postId: postId,
@@ -727,7 +722,7 @@ class NewTimelineState extends State<NewTimeline> {
     );
   }
 
-  _showCommentsforalbum(
+  _showCommentsforAlbum(
     BuildContext context, {
     String? userId,
     String? postId,
@@ -933,6 +928,7 @@ class NewTimelineState extends State<NewTimeline> {
   }
 
   void _onShare(post, BuildContext context) async {
+    print(post);
     bool hasdesc = post['description']?.isNotEmpty == true;
     bool isPdf = post['type'] == 'pdf';
     bool isVide = post['type'] == 'video';
@@ -941,22 +937,30 @@ class NewTimelineState extends State<NewTimeline> {
     final RenderBox box = context.findRenderObject() as RenderBox;
 
     if (isPhoto) {
-      await Share.share(post['mediaUrl'][0],
-          subject: post['description'],
-          sharePositionOrigin: box.localToGlobal(Offset.zero) & box.size);
+      await Share.share(
+        post['mediaUrl'][0],
+        subject: post['description'],
+        sharePositionOrigin: box.localToGlobal(Offset.zero) & box.size,
+      );
     } else if (isPdf) {
       // _downloadFile(post['pdfUrl'.);
-      await Share.share(post['pdfUrl'],
-          subject: post['description'],
-          sharePositionOrigin: box.localToGlobal(Offset.zero) & box.size);
+      await Share.share(
+        post['pdfUrl'],
+        subject: post['description'],
+        sharePositionOrigin: box.localToGlobal(Offset.zero) & box.size,
+      );
     } else if (isVide) {
-      await Share.share(post['videoUrl'],
-          subject: post['description'],
-          sharePositionOrigin: box.localToGlobal(Offset.zero) & box.size);
+      await Share.share(
+        post['videoUrl'],
+        subject: post['description'],
+        sharePositionOrigin: box.localToGlobal(Offset.zero) & box.size,
+      );
     } else {
-      await Share.share(post['description']!,
-          subject: post['description'],
-          sharePositionOrigin: box.localToGlobal(Offset.zero) & box.size);
+      await Share.share(
+        post['description']!,
+        subject: post['description'],
+        sharePositionOrigin: box.localToGlobal(Offset.zero) & box.size,
+      );
     }
   }
 
