@@ -66,7 +66,7 @@ class _DrawerMenuState extends State<DrawerMenu> {
     });
   }
 
-  DocumentReference userDocRef = usersCollection.doc(globalID);
+  DocumentReference userDocRef = usersCollection.doc(globalUserId);
   deleteGroup() async {
     groupsCollection.doc(groupId).get().then((doc) {
       if (doc.exists) {
@@ -137,7 +137,7 @@ class _DrawerMenuState extends State<DrawerMenu> {
 
   leaveGroup() async {
     await groupsCollection.doc(groupId).update({
-      'members': FieldValue.arrayRemove([globalID! + '_' + globalName!])
+      'members': FieldValue.arrayRemove([globalUserId! + '_' + globalName!])
     });
     await userDocRef.update({
       'groups': FieldValue.arrayRemove([groupId + '_' + groupName])

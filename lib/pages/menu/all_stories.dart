@@ -20,7 +20,7 @@ class AllStories extends StatefulWidget {
 class _UsersListState extends State<AllStories>
     with AutomaticKeepAliveClientMixin<AllStories> {
   bool isLoading = false;
-  final String? currentUserId = globalID;
+  final String? currentUserId = globalUserId;
   static String collectionDbName = 'stories';
 
   @override

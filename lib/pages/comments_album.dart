@@ -156,7 +156,7 @@ class _CommentsState extends State<AlbumComments> {
     required String? postId,
     required String? postMediaUrl,
   }) {
-    String? userId = widget.userId ?? globalID;
+    String? userId = widget.userId ?? globalUserId;
     DateTime date = DateTime.now();
     usersCollection.doc(userId).get().then((value) {
       final data = value.data();

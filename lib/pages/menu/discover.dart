@@ -24,7 +24,7 @@ class Discover extends StatefulWidget {
 }
 
 class _DiscoverState extends State<Discover> {
-  final String? currentUserId = globalID;
+  final String? currentUserId = globalUserId;
   bool isFollowing = false;
 
   @override

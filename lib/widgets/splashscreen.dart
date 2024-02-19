@@ -7,16 +7,16 @@ import 'package:global_net/gen/assets.gen.dart';
 class SplashScreen extends StatefulWidget {
   static const route = "/";
 
-  const SplashScreen({Key? key}) : super(key: key);
+  const SplashScreen({
+    Key? key,
+  }) : super(key: key);
 
   @override
-  SplashScreenState createState() => SplashScreenState();
+  State<SplashScreen> createState() => _SplashScreenState();
 }
 
-class SplashScreenState extends State<SplashScreen>
+class _SplashScreenState extends State<SplashScreen>
     with SingleTickerProviderStateMixin {
-  var _visible = true;
-
   late AnimationController _animationController;
   late Animation<double> _animation;
 
@@ -24,22 +24,25 @@ class SplashScreenState extends State<SplashScreen>
   void initState() {
     super.initState();
 
-    _animationController =
-        AnimationController(vsync: this, duration: const Duration(seconds: 2));
-    _animation =
-        CurvedAnimation(parent: _animationController, curve: Curves.easeOut);
+    _animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 2),
+    );
+
+    _animation = CurvedAnimation(
+      parent: _animationController,
+      curve: Curves.easeOut,
+    );
 
     _animation.addListener(() => setState(() {}));
     _animationController.forward();
     if (mounted) {
-      setState(() {
-        _visible = !_visible;
-      });
-      startTime();
+      setState(() {});
+      _startTime();
     }
   }
 
-  startTime() async => Timer(
+  void _startTime() async => Timer(
         const Duration(seconds: 1),
         () => Navigator.of(context).pushReplacementNamed(App.route),
       );
@@ -55,7 +58,7 @@ class SplashScreenState extends State<SplashScreen>
           height: height,
           width: double.infinity,
           child: Image.asset(
-            Assets.images.splash1.path, 
+            Assets.images.splash1.path,
             fit: BoxFit.contain,
           ),
         ),

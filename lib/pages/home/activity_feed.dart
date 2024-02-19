@@ -366,7 +366,7 @@ showProfile(BuildContext context, {String? profileId}) {
       builder: (context) => Profile(
         profileId: profileId,
         reactions: reaction.reactions,
-        isProfileOwner: profileId == globalID,
+        isProfileOwner: profileId == globalUserId,
       ),
     ),
   );

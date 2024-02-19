@@ -12,11 +12,11 @@ import 'package:nb_utils/nb_utils.dart';
 const int creditForNewUser = 500;
 
 class AddCreditToAccount extends StatelessWidget {
-  final String? userId;
+  final String userId;
 
   const AddCreditToAccount({
     Key? key,
-    this.userId,
+    required this.userId,
   }) : super(key: key);
 
   @override
@@ -68,7 +68,7 @@ class AddCreditToAccount extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(height: 20),
-                        _submitButton(context),
+                        _submitButton(context: context, userId: userId),
                       ],
                     ),
                   ),
@@ -96,7 +96,10 @@ class AddCreditToAccount extends StatelessWidget {
     );
   }
 
-  Widget _submitButton(BuildContext context) {
+  Widget _submitButton({
+    required BuildContext context,
+    required String userId,
+  }) {
     return Container(
       width: MediaQuery.of(context).size.width,
       padding: const EdgeInsets.symmetric(vertical: 15),
@@ -117,11 +120,14 @@ class AddCreditToAccount extends StatelessWidget {
         ),
       ),
     ).onTap(() {
-      _submit(context);
+      _submit(context: context, userId: userId);
     });
   }
 
-  void _submit(BuildContext context) {
+  void _submit({
+    required BuildContext context,
+    required String userId,
+  }) {
     Timer(const Duration(seconds: 0), () {
       Navigator.pop(context);
       Navigator.push(

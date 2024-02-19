@@ -344,7 +344,7 @@ class MyAppState extends State<Upgrade> {
       setState(() {
         _purchasePending = false;
         // _consumables = consumables;
-        usersCollection.doc(globalID).update({
+        usersCollection.doc(globalUserId).update({
           "credit_points": FieldValue.increment(1500),
           'userIsVerified': true,
         });

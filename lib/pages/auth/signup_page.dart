@@ -332,7 +332,7 @@ class SignUpPageState extends State<SignUpPage> {
     currentUser = GloabalUser.fromDocument(doc);
 
     setState(() {
-      globalID = userId;
+      globalUserId = userId;
       _isLoading = false;
       isAuth = true;
     });
@@ -350,9 +350,7 @@ class SignUpPageState extends State<SignUpPage> {
 
   configurePushNotifications(userId) async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
-    preferences
-        .setString(SharedPreferencesKey.loggedInUserData, userId)
-        .then((value) {
+    preferences.setString(SharedPreferencesKey.userId, userId).then((value) {
       _firebaseMessaging.getToken().then((token) {
         // print("Firebase Messaging Token: $token\n");
         usersCollection.doc(userId).update({"androidNotificationToken": token});

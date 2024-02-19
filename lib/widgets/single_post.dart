@@ -123,7 +123,7 @@ class SinglePost extends StatefulWidget {
 }
 
 class _SinglePostState extends State<SinglePost> {
-  final String? currentUserId = globalID;
+  final String? currentUserId = globalUserId;
   final String? postId;
   final String? ownerId;
   final String? username;

@@ -36,24 +36,28 @@ class WalkThroughScreenState extends State<WalkThroughScreen> {
 
   @override
   void setState(fn) {
-    if (mounted) super.setState(fn);
+    if (mounted) {
+      super.setState(fn);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: NotificationListener(
-          onNotification: ((notification) {
-            return true;
-          }),
-          child: SafeArea(child: _body(context)),
-        ),
-      );
+      body: NotificationListener(
+        onNotification: ((notification) {
+          return true;
+        }),
+        child: SafeArea(child: _body(context)),
+      ),
+    );
   }
 
   Widget _body(BuildContext context) {
     final double width = MediaQuery.of(context).size.width;
-    final double a = (width > 750 )? (width / 5): 0;
+    final double a = (width > 750) ? (width / 5) : 0;
+    final bool isLastPage = currentPage == pages.length - 1;
+
     return Stack(
       children: [
         PageView(
@@ -120,13 +124,7 @@ class WalkThroughScreenState extends State<WalkThroughScreen> {
               AppButton(
                 color: Theme.of(context).primaryColor,
                 onTap: () async {
-                  if (currentPage != 3) {
-                    pageController!.animateToPage(
-                      ++currentPage,
-                      duration: const Duration(milliseconds: 250),
-                      curve: Curves.bounceInOut,
-                    );
-                  } else {
+                  if (isLastPage) {
                     Navigator.pop(context);
                     Navigator.push(
                       context,
@@ -134,17 +132,23 @@ class WalkThroughScreenState extends State<WalkThroughScreen> {
                         builder: (context) => const LoginPage(),
                       ),
                     );
+                  } else {
+                    pageController?.animateToPage(
+                      ++currentPage,
+                      duration: const Duration(milliseconds: 250),
+                      curve: Curves.bounceInOut,
+                    );
                   }
                 },
-                child: currentPage != 3
-                    ? const Icon(
+                child: isLastPage
+                    ? Text(
+                        'Get Started',
+                        style: boldTextStyle(color: white),
+                      )
+                    : const Icon(
                         Icons.navigate_next,
                         color: white,
                         size: 30,
-                      )
-                    : Text(
-                        'Get Started',
-                        style: boldTextStyle(color: white),
                       ),
               ),
             ],

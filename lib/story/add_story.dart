@@ -109,7 +109,7 @@ class AddStoryState extends State<AddStory>
 
   createPostInFirestore(
       {String? stories, String? storymediaUrl, String? storydescription}) {
-    storiesCollection.doc(globalID).get().then(
+    storiesCollection.doc(globalUserId).get().then(
           (docSnapshot) async => {
             yourItemList.add({
               "filetype": 'image',
@@ -118,7 +118,7 @@ class AddStoryState extends State<AddStory>
             }),
             if (docSnapshot.exists)
               {
-                await storiesCollection.doc(globalID).update(
+                await storiesCollection.doc(globalUserId).update(
                   {
                     "previewImage": storymediaUrl,
                     "photoUrl": globalImage,
@@ -128,9 +128,9 @@ class AddStoryState extends State<AddStory>
               }
             else
               {
-                storiesCollection.doc(globalID).set({
+                storiesCollection.doc(globalUserId).set({
                   "storyId": storyId,
-                  "storyownerId": globalID,
+                  "storyownerId": globalUserId,
                   "username": {"en": globalName},
                   "previewImage": storymediaUrl,
                   "photoUrl": globalImage,

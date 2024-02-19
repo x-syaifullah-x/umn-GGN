@@ -94,9 +94,9 @@ class _UploadState extends State<VideoUpload>
 
   createPostInFirestore(
       {String? videoUrl, String? location, String? description, int? type}) {
-    postsCollection.doc(globalID).collection("userPosts").doc(postId).set({
+    postsCollection.doc(globalUserId).collection("userPosts").doc(postId).set({
       "postId": postId,
-      "ownerId": globalID,
+      "ownerId": globalUserId,
       "username": globalName,
       "mediaUrl": [],
       "description": description,
@@ -128,7 +128,7 @@ class _UploadState extends State<VideoUpload>
         Navigator.of(context).pushReplacement(
           CupertinoPageRoute(
               builder: (context) => Home(
-                    userId: globalID,
+                    userId: globalUserId,
                   )),
         );
       });

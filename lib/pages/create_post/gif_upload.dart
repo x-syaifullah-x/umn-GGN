@@ -18,23 +18,25 @@ import 'package:uuid/uuid.dart';
 import 'package:video_compress/video_compress.dart';
 import 'package:video_player/video_player.dart';
 
-class gifUpload extends StatefulWidget {
+class UploadGIF extends StatefulWidget {
   final GloabalUser? currentUser;
-  GiphyGif file;
-  String gifpath;
+  final GiphyGif file;
+  final String gifpath;
 
-  gifUpload(
-      {this.currentUser,
-      required this.file,
-      required this.gifpath,
-      String? location});
+  const UploadGIF({
+    Key? key,
+    this.currentUser,
+    required this.file,
+    required this.gifpath,
+    String? location,
+  }) : super(key: key);
 
   @override
-  _UploadState createState() => _UploadState();
+  State<UploadGIF> createState() => _UploadState();
 }
 
-class _UploadState extends State<gifUpload>
-    with AutomaticKeepAliveClientMixin<gifUpload> {
+class _UploadState extends State<UploadGIF>
+    with AutomaticKeepAliveClientMixin<UploadGIF> {
   Color? mainColor = Colors.deepPurple[400];
   TextEditingController captionController = TextEditingController();
   late VideoPlayerController _controller;
@@ -98,9 +100,9 @@ class _UploadState extends State<gifUpload>
 
   createPostInFirestore(
       {String? videoUrl, String? location, String? description, int? type}) {
-    postsCollection.doc(globalID).collection("userPosts").doc(postId).set({
+    postsCollection.doc(globalUserId).collection("userPosts").doc(postId).set({
       "postId": postId,
-      "ownerId": globalID,
+      "ownerId": globalUserId,
       "username": globalName,
       "mediaUrl": [],
       "description": description,
@@ -132,7 +134,7 @@ class _UploadState extends State<gifUpload>
         Navigator.of(context).pushReplacement(
           CupertinoPageRoute(
               builder: (context) => Home(
-                    userId: globalID,
+                    userId: globalUserId,
                   )),
         );
       });

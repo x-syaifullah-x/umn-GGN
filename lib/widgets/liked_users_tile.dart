@@ -26,7 +26,7 @@ class LikedUserTileState extends State<LikedUserTile> {
   Map<dynamic, dynamic>? userdoc;
   LikedUserTileState(this.userdoc);
 
-  final String? currentUserId = globalID;
+  final String? currentUserId = globalUserId;
   bool isFollowing = false;
 
   @override
@@ -39,7 +39,7 @@ class LikedUserTileState extends State<LikedUserTile> {
     DocumentSnapshot doc = await followersCollection
         .doc(userdoc!['userId'])
         .collection('userFollowers')
-        .doc(globalID)
+        .doc(globalUserId)
         .get();
     setState(() {
       isFollowing = doc.exists;

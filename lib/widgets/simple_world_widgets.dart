@@ -3,8 +3,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:nb_utils/nb_utils.dart';
 
-SharedPreferences? preferences;
-String? globalID = '';
+String globalUserId = '';
 String? globalName = '';
 String? globalImage = '';
 String? globalToken = '';
@@ -178,7 +177,7 @@ class CustomtextField extends StatefulWidget {
   });
 
   @override
-  _CustomtextFieldState createState() => _CustomtextFieldState();
+  State<CustomtextField> createState() => _CustomtextFieldState();
 }
 
 class _CustomtextFieldState extends State<CustomtextField> {
@@ -255,8 +254,11 @@ class _CustomtextFieldState extends State<CustomtextField> {
 //   }
 // }
 
-simpleAlertBox(
-    {required BuildContext context, Widget? title, Widget? content}) {
+simpleAlertBox({
+  required BuildContext context,
+  Widget? title,
+  Widget? content,
+}) {
   return showDialog(
     context: context,
     builder: (context) {

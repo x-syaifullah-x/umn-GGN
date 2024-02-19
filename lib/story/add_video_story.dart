@@ -80,7 +80,7 @@ class _UploadState extends State<CreateVideoStory>
   List yourItemList = [];
   createPostInFirestore(
       {String? stories, String? storymediaUrl, String? storydescription}) {
-    storiesCollection.doc(globalID).get().then(
+    storiesCollection.doc(globalUserId).get().then(
           (docSnapshot) async => {
             yourItemList.add({
               "filetype": 'video',
@@ -89,7 +89,7 @@ class _UploadState extends State<CreateVideoStory>
             }),
             if (docSnapshot.exists)
               {
-                await storiesCollection.doc(globalID).update(
+                await storiesCollection.doc(globalUserId).update(
                   {
                     "photoUrl": globalImage,
                     "stories": FieldValue.arrayUnion(yourItemList),
@@ -98,9 +98,9 @@ class _UploadState extends State<CreateVideoStory>
               }
             else
               {
-                storiesCollection.doc(globalID).set({
+                storiesCollection.doc(globalUserId).set({
                   "storyId": storyId,
-                  "storyownerId": globalID,
+                  "storyownerId": globalUserId,
                   "username": {"en": globalName},
                   "previewImage": globalImage,
                   "photoUrl": globalImage,

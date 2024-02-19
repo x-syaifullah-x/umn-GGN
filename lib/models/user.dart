@@ -7,10 +7,10 @@ class GloabalUser {
   final String photoUrl;
   final String displayName;
   final String bio;
-  final int credit_points;
+  final int creditPoints;
   final String coverUrl;
   final bool userIsVerified;
-  final bool no_ads;
+  final bool noAds;
   String activeVipId = '';
 
   GloabalUser({
@@ -20,8 +20,8 @@ class GloabalUser {
     required this.photoUrl,
     required this.displayName,
     required this.bio,
-    required this.credit_points,
-    required this.no_ads,
+    required this.creditPoints,
+    required this.noAds,
     required this.coverUrl,
     required this.userIsVerified,
   });
@@ -40,10 +40,10 @@ class GloabalUser {
       photoUrl: doc['photoUrl'],
       displayName: doc['displayName'],
       bio: doc['bio'],
-      credit_points: 100,
+      creditPoints: 100,
       coverUrl: doc['coverUrl'],
       userIsVerified: false,
-      no_ads: false,
+      noAds: false,
     );
   }
 
@@ -55,10 +55,10 @@ class GloabalUser {
       photoUrl: map['photoUrl'] as String? ?? '',
       displayName: map['displayName'] as String? ?? '',
       bio: map['bio'] as String? ?? '',
-      credit_points: map['credit_points'] ?? 0,
+      creditPoints: map['credit_points'] ?? 0,
       coverUrl: map['coverUrl'] as String? ?? '',
       userIsVerified: map['userIsVerified'] ?? false,
-      no_ads: map['no_ads'] ?? false,
+      noAds: map['no_ads'] ?? false,
     );
   }
 
@@ -70,11 +70,11 @@ class GloabalUser {
       'photoUrl': photoUrl,
       'displayName': displayName,
       'bio': bio,
-      'credit_points': credit_points,
+      'credit_points': creditPoints,
       'searchIndexes': searchIndexes,
       'coverUrl': coverUrl,
       'userIsVerified': userIsVerified,
-      'no_ads': no_ads,
+      'no_ads': noAds,
     };
   }
 

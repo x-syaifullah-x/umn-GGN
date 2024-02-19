@@ -72,7 +72,7 @@ class _SearchPageState extends State<SearchPage> {
 
   _joinValueInGroup(
       String userName, String groupId, String groupName, String admin) async {
-    bool value = await DatabaseService(uid: globalID)
+    bool value = await DatabaseService(uid: globalUserId)
         .isUserJoined(groupId, groupName, userName);
     setState(() {
       _isJoined = value;
@@ -181,7 +181,7 @@ class _SearchPageState extends State<SearchPage> {
       subtitle: Text("Admin: $admin"),
       trailing: InkWell(
         onTap: () async {
-          await DatabaseService(uid: globalID)
+          await DatabaseService(uid: globalUserId)
               .togglingGroupJoin(groupId, groupName, userName);
           if (_isJoined) {
             setState(() {
@@ -270,10 +270,10 @@ class _SearchPageState extends State<SearchPage> {
       title:
           Text(groupName, style: const TextStyle(fontWeight: FontWeight.bold)),
       subtitle: Text("Admin: $admin"),
-      trailing: members.contains((globalID! + '_' + globalName!))
+      trailing: members.contains((globalUserId! + '_' + globalName!))
           ? InkWell(
               onTap: () async {
-                await DatabaseService(uid: globalID)
+                await DatabaseService(uid: globalUserId)
                     .togglingGroupJoin(groupId, groupName, userName);
 
                 setState(() {
@@ -293,7 +293,7 @@ class _SearchPageState extends State<SearchPage> {
               ))
           : InkWell(
               onTap: () async {
-                await DatabaseService(uid: globalID)
+                await DatabaseService(uid: globalUserId)
                     .togglingGroupJoin(groupId, groupName, userName);
                 setState(() {
                   _isJoined = !_isJoined;

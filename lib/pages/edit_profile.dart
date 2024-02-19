@@ -199,7 +199,7 @@ class _EditProfileState extends State<EditProfile> {
   }
 
   Future uploadAvatar(imageFileAvatar) async {
-    String? mFileName = globalID;
+    String? mFileName = globalUserId;
     Reference storageReference =
         FirebaseStorage.instance.ref().child("avatar_$mFileName.jpg");
     UploadTask storageUploadTask = storageReference.putFile(imageFileAvatar!);
@@ -235,7 +235,7 @@ class _EditProfileState extends State<EditProfile> {
   }
 
   Future uploadCover(imageFileCover) async {
-    String? mFileName = globalID;
+    String? mFileName = globalUserId;
     Reference storageReference =
         FirebaseStorage.instance.ref().child("cover_$mFileName.jpg");
     UploadTask storageUploadTask = storageReference.putFile(imageFileCover!);

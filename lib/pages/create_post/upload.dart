@@ -84,7 +84,7 @@ class _UploadState extends State<Upload>
       });
 
       var photoId = postsCollection
-          .doc(globalID)
+          .doc(globalUserId)
           .collection('userPosts')
           .doc(postId)
           .collection("albumposts")
@@ -93,7 +93,7 @@ class _UploadState extends State<Upload>
           .toString();
       return await storageSnap.ref.getDownloadURL().then((value) {
         postsCollection
-            .doc(globalID)
+            .doc(globalUserId)
             .collection("userPosts")
             .doc(postId)
             .collection("albumposts")
@@ -101,7 +101,7 @@ class _UploadState extends State<Upload>
             .set({
           'mediaUrl': value,
           "postId": postId,
-          "ownerId": globalID,
+          "ownerId": globalUserId,
           "username": globalName,
           "location": widget.location,
           "description": '',
@@ -118,9 +118,9 @@ class _UploadState extends State<Upload>
   }
 
   createPostInFirestore({List? mediaUrls, String? description, int? type}) {
-    postsCollection.doc(globalID).collection("userPosts").doc(postId).set({
+    postsCollection.doc(globalUserId).collection("userPosts").doc(postId).set({
       "postId": postId,
-      "ownerId": globalID,
+      "ownerId": globalUserId,
       "username": globalName,
       "mediaUrl": mediaUrls,
       "description": description,
@@ -140,14 +140,14 @@ class _UploadState extends State<Upload>
     int? type,
   }) {
     postsCollection
-        .doc(globalID)
+        .doc(globalUserId)
         .collection("userPosts")
         .doc(postId)
         .collection("albumposts")
         .doc(photoId)
         .set({
       "postId": postId,
-      "ownerId": globalID,
+      "ownerId": globalUserId,
       "username": globalName,
       "mediaUrl": '',
       "description": description,
@@ -184,7 +184,7 @@ class _UploadState extends State<Upload>
         Navigator.of(context).pushReplacement(
           CupertinoPageRoute(
               builder: (context) => Home(
-                    userId: globalID,
+                    userId: globalUserId,
                   )),
         );
       });

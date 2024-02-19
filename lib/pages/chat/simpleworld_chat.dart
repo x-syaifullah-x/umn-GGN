@@ -77,7 +77,7 @@ class ChatScreen extends StatefulWidget {
 }
 
 class ChatScreenState extends State<ChatScreen> {
-  final String? currentUserId = globalID;
+  final String? currentUserId = globalUserId;
   final String? currentUserName = globalDisplayName;
   final String? currentUserPhoto = globalImage;
 

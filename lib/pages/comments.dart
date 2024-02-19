@@ -63,7 +63,7 @@ class CommentsState extends State<Comments> {
   buildComments() {
     return StreamBuilder<QuerySnapshot>(
         stream: postsCollection
-            .doc(globalID)
+            .doc(globalUserId)
             .collection('userPosts')
             .doc(postId)
             .collection("albumposts")
@@ -111,7 +111,7 @@ class CommentsState extends State<Comments> {
 
   addComment() {
     postsCollection
-        .doc(globalID)
+        .doc(globalUserId)
         .collection('userPosts')
         .doc(postId)
         .collection("albumposts")
@@ -122,16 +122,16 @@ class CommentsState extends State<Comments> {
       "comment": commentController.text,
       "timestamp": timestamp,
       "avatarUrl": globalImage,
-      "userId": globalID,
+      "userId": globalUserId,
     });
-    bool isNotPostOwner = postOwnerId != globalID;
+    bool isNotPostOwner = postOwnerId != globalUserId;
     if (isNotPostOwner) {
       feedCollection.doc(postOwnerId).collection('feedItems').add({
         "type": "comment",
         "commentData": commentController.text,
         "timestamp": timestamp,
         "postId": postId,
-        "userId": globalID,
+        "userId": globalUserId,
         "username": globalName,
         "userProfileImg": globalImage,
         "mediaUrl": postMediaUrl,

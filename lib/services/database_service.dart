@@ -35,11 +35,11 @@ class DatabaseService {
     });
 
     await groupDocRef.update({
-      'members': FieldValue.arrayUnion([globalID! + '_' + userName!]),
+      'members': FieldValue.arrayUnion([globalUserId! + '_' + userName!]),
       'groupId': groupDocRef.id
     });
 
-    DocumentReference userDocRef = userCollection.doc(globalID);
+    DocumentReference userDocRef = userCollection.doc(globalUserId);
     return await userDocRef.update({
       'groups': FieldValue.arrayUnion([groupDocRef.id + '_' + groupName])
     });

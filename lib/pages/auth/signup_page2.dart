@@ -16,12 +16,15 @@ import 'package:global_net/widgets/bezier_container.dart';
 import 'package:global_net/widgets/simple_world_widgets.dart';
 
 class GetAvatar extends StatefulWidget {
-  final String? currentUserId;
+  final String currentUserId;
 
-  const GetAvatar({Key? key, this.currentUserId}) : super(key: key);
+  const GetAvatar({
+    Key? key,
+    required this.currentUserId,
+  }) : super(key: key);
 
   @override
-  _GetAvatarState createState() => _GetAvatarState();
+  State<GetAvatar> createState() => _GetAvatarState();
 }
 
 class _GetAvatarState extends State<GetAvatar> {
@@ -57,7 +60,7 @@ class _GetAvatarState extends State<GetAvatar> {
   }
 
   Future uploadAvatar(imageFileAvatar) async {
-    String mFileName = globalID!;
+    String mFileName = globalUserId!;
     Reference storageReference =
         FirebaseStorage.instance.ref().child("avatar_$mFileName.jpg");
     UploadTask storageUploadTask = storageReference.putFile(imageFileAvatar!);

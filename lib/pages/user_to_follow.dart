@@ -2,18 +2,20 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:global_net/models/user.dart';
 import 'package:global_net/pages/home/home.dart';
 import 'package:global_net/widgets/progress.dart';
-import 'package:global_net/widgets/simple_world_widgets.dart';
 import 'package:global_net/widgets/users_to_follow_tile.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class UsersToFollowList extends StatefulWidget {
-  final String? userId;
+  final String userId;
 
-  const UsersToFollowList({Key? key, this.userId}) : super(key: key);
+  const UsersToFollowList({
+    Key? key,
+    required this.userId,
+  }) : super(key: key);
 
   @override
   UsersListState createState() => UsersListState();

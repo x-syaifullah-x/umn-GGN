@@ -164,7 +164,7 @@ class LoginPageState extends State<LoginPage> {
         final userData = await usersCollection.doc(user.uid).get();
         if (userData.exists) {
           setState(() {
-            globalID = user.uid;
+            globalUserId = user.uid;
             globalName = userData['username'];
             globalImage = userData['photoUrl'];
             globalBio = userData['bio'];
@@ -273,7 +273,7 @@ class LoginPageState extends State<LoginPage> {
     SharedPreferences preferences = await SharedPreferences.getInstance();
 
     preferences
-        .setString(SharedPreferencesKey.loggedInUserData, userId)
+        .setString(SharedPreferencesKey.userId, userId)
         .then((value) async {
       try {
         String vApiKey =
@@ -297,7 +297,7 @@ class LoginPageState extends State<LoginPage> {
       usersCollection.doc(userId).get().then((peerData) {
         if (peerData.exists) {
           setState(() {
-            globalID = userId;
+            globalUserId = userId;
             isLoading = false;
           });
           if (peerData['username'].length > 0) {
@@ -483,7 +483,7 @@ class LoginPageState extends State<LoginPage> {
     currentUser = GloabalUser.fromDocument(doc);
 
     setState(() {
-      globalID = userId;
+      globalUserId = userId;
       isLoading = false;
       isAuth = true;
     });
@@ -588,7 +588,7 @@ class LoginPageState extends State<LoginPage> {
     currentUser = GloabalUser.fromDocument(doc);
 
     setState(() {
-      globalID = userId;
+      globalUserId = userId;
       isLoading = false;
       isAuth = true;
     });
@@ -609,7 +609,7 @@ class LoginPageState extends State<LoginPage> {
     SharedPreferences preferences = await SharedPreferences.getInstance();
 
     preferences
-        .setString(SharedPreferencesKey.loggedInUserData, userId)
+        .setString(SharedPreferencesKey.userId, userId)
         .then((value) async {
       try {
         final token = await _firebaseMessaging.getToken();

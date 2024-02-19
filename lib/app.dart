@@ -19,12 +19,12 @@ import 'package:global_net/share_preference/preferences_key.dart';
 import 'package:global_net/widgets/simple_world_widgets.dart';
 
 class App extends StatefulWidget {
+  static const route = '/App';
+
   const App(this.prefs, this.savedThemeMode, {Key? key}) : super(key: key);
 
   final SharedPreferences prefs;
   final AdaptiveThemeMode? savedThemeMode;
-
-  static const route = '/App';
 
   @override
   AppState createState() => AppState();
@@ -42,8 +42,8 @@ class AppState extends State<App> with WidgetsBindingObserver {
   }
 
   Future<void> _configNotification() async {
-    final FirebaseMessaging fcmMessaging = FirebaseMessaging.instance;
-    await fcmMessaging.requestPermission(
+    FirebaseMessaging firebaseMessaging = FirebaseMessaging.instance;
+    await firebaseMessaging.requestPermission(
       sound: true,
       alert: true,
       announcement: true,
@@ -53,7 +53,7 @@ class AppState extends State<App> with WidgetsBindingObserver {
       badge: true,
     );
 
-    fcmMessaging.getInitialMessage().then((RemoteMessage? message) {
+    firebaseMessaging.getInitialMessage().then((RemoteMessage? message) {
       if (message != null) {
         if (defaultTargetPlatform == TargetPlatform.iOS) {
           showLocalNotificationIOS(message);
@@ -74,10 +74,8 @@ class AppState extends State<App> with WidgetsBindingObserver {
     });
 
     FirebaseMessaging.onMessageOpenedApp.listen((event) async {
-      print('+++ onMessageOpenedApp +++ : ' + event.toString());
+      log('+++ onMessageOpenedApp +++ : $event');
     });
-
-    /// init local notification
 
     final NotificationAppLaunchDetails? notificationAppLaunchDetail =
         await notificationsPlugin.getNotificationAppLaunchDetails();
@@ -150,7 +148,7 @@ class AppState extends State<App> with WidgetsBindingObserver {
   }
 
   Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-    debugPrint('++++ MESSAGE RECEIVED IN BACKGROUND  +++');
+    log('++++ MESSAGE RECEIVED IN BACKGROUND  +++');
   }
 
   @override
@@ -247,7 +245,7 @@ class AppState extends State<App> with WidgetsBindingObserver {
               theme: theme,
               darkTheme: darkTheme,
               debugShowCheckedModeBanner: false,
-              home: _handleCurrentScreen(preferences),
+              home: _getScreen(preferences),
               locale: provider.locale,
               supportedLocales: L10n.alls,
               localizationsDelegates: const [
@@ -261,21 +259,20 @@ class AppState extends State<App> with WidgetsBindingObserver {
         });
   }
 
-  Widget _handleCurrentScreen(SharedPreferences prefs) {
-    String? data = prefs.getString(SharedPreferencesKey.loggedInUserData);
-    preferences = prefs;
-    bool seen = (prefs.getBool(SharedPreferencesKey.isUserLoggedIn) ?? false);
-    if (seen == false && data == null) {
-      prefs.setBool('seen', true);
+  Widget _getScreen(SharedPreferences prefs) {
+    bool isSeenWalkthrough =
+        prefs.getBool(SharedPreferencesKey.isSeenWalkthrough) ?? false;
+    if (!isSeenWalkthrough) {
+      prefs.setBool(SharedPreferencesKey.isSeenWalkthrough, true);
       return const WalkThroughScreen();
-    } else {
-      if (seen == true && data == null) {
-        return const LoginPage();
-      } else {
-        return Home(
-          userId: data,
-        );
-      }
     }
+
+    String? userId = prefs.getString(SharedPreferencesKey.userId);
+    if (userId != null) {
+      globalUserId = userId;
+      return Home(userId: userId);
+    }
+
+    return const LoginPage();
   }
 }

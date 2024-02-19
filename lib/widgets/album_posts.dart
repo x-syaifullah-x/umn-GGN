@@ -100,7 +100,7 @@ class AlbumPosts extends StatefulWidget {
 }
 
 class _AlbumPostsState extends State<AlbumPosts> {
-  final String? currentUserId = globalID;
+  final String? currentUserId = globalUserId;
   final String? postId;
   final String? ownerId;
   final String? username;

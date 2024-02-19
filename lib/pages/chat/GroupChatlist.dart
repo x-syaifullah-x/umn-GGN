@@ -85,7 +85,7 @@ class _GroupChatListState extends State<GroupChatList> {
   ) {
     return StreamBuilder(
       stream: groupsCollection
-          .where('members', arrayContains: globalID! + '_' + globalName!)
+          .where('members', arrayContains: globalUserId! + '_' + globalName!)
           .snapshots(),
       builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
         if (snapshot.hasData) {
@@ -133,7 +133,7 @@ class _GroupChatListState extends State<GroupChatList> {
 
   // functions
   _getUserAuthAndJoinedGroups() async {
-    DatabaseService(uid: globalID).getUserGroups().then((snapshots) {
+    DatabaseService(uid: globalUserId).getUserGroups().then((snapshots) {
       setState(() {
         _groups = snapshots;
       });

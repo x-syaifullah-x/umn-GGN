@@ -79,9 +79,9 @@ class _PdfUploadState extends State<PdfUpload>
       String? pdfsize,
       String? description,
       int? type}) {
-    postsCollection.doc(globalID).collection("userPosts").doc(postId).set({
+    postsCollection.doc(globalUserId).collection("userPosts").doc(postId).set({
       "postId": postId,
-      "ownerId": globalID,
+      "ownerId": globalUserId,
       "username": globalName,
       "mediaUrl": [],
       "description": description,
@@ -116,7 +116,7 @@ class _PdfUploadState extends State<PdfUpload>
         Navigator.of(context).pushReplacement(
           CupertinoPageRoute(
               builder: (context) => Home(
-                    userId: globalID,
+                    userId: globalUserId,
                   )),
         );
       });

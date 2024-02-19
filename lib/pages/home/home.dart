@@ -55,12 +55,12 @@ final reportsCollection = firestore.collection('reports');
 final DateTime timestamp = DateTime.now();
 
 class Home extends StatefulWidget {
+  final String userId;
+
   const Home({
     Key? key,
-    this.userId,
+    required this.userId,
   }) : super(key: key);
-
-  final String? userId;
 
   @override
   State<Home> createState() => _HomeState();
@@ -93,10 +93,9 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    final String? userId = widget.userId;
-    if (userId == null || userId.isEmpty) {
-      throw Exception("need user id");
-    }
+    log("home.dart => userId: ${widget.userId}");
+
+    final String userId = widget.userId;
     return FutureBuilder(
       future: getUserData(),
       builder: (context, snapshot) {
@@ -121,7 +120,6 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     if (user != null) {
       final peerData = await usersCollection.doc(user.uid).get();
       if (peerData.exists) {
-        globalID = user.uid;
         globalName = peerData['username'];
         globalImage = peerData['photoUrl'];
         globalBio = peerData['bio'];
@@ -502,17 +500,6 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
 
   getAllStories() async {
     await storiesCollection.get();
-  }
-
-  checkIfFollowing() async {
-    DocumentSnapshot doc = await followersCollection
-        .doc(globalID)
-        .collection('userFollowers')
-        .doc(globalID)
-        .get();
-    setState(() {
-      isFollowing = doc.exists;
-    });
   }
 
   getAllUsers() async {

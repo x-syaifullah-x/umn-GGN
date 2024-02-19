@@ -24,7 +24,7 @@ class _UsersLikedMyProfileListState extends State<UsersLikedMyProfileList>
   String userOrientation = "grid";
   bool isFollowing = false;
   bool isLoading = false;
-  final String? currentUserId = globalID;
+  final String? currentUserId = globalUserId;
 
   @override
   void initState() {

@@ -26,7 +26,7 @@ class SuggestedUserTileState extends State<SuggestedUserTile> {
   Map<dynamic, dynamic>? userdoc;
   SuggestedUserTileState(this.userdoc);
 
-  final String? currentUserId = globalID;
+  final String? currentUserId = globalUserId;
   bool isFollowing = false;
 
   @override
@@ -39,7 +39,7 @@ class SuggestedUserTileState extends State<SuggestedUserTile> {
     DocumentSnapshot doc = await followersCollection
         .doc(userdoc!['id'])
         .collection('userFollowers')
-        .doc(globalID)
+        .doc(globalUserId)
         .get();
     setState(() {
       isFollowing = doc.exists;

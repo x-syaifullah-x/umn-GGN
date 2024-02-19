@@ -276,7 +276,7 @@ class SettingsState extends State<SettingsPage> {
                                   context,
                                   CupertinoPageRoute(
                                     builder: (context) => EditProfile(
-                                      currentUserId: globalID,
+                                      currentUserId: globalUserId,
                                     ),
                                   ));
                             }),
@@ -319,7 +319,7 @@ class SettingsState extends State<SettingsPage> {
                                   context,
                                   CupertinoPageRoute(
                                     builder: (context) =>
-                                        Discover(UserId: globalID),
+                                        Discover(UserId: globalUserId),
                                   ));
                             }),
                           ),
@@ -395,7 +395,7 @@ class SettingsState extends State<SettingsPage> {
                                   context,
                                   CupertinoPageRoute(
                                     builder: (context) => AllVideos(
-                                      UserId: globalID,
+                                      UserId: globalUserId,
                                       reactions: Reaction.reactions,
                                     ),
                                   ));
@@ -431,7 +431,7 @@ class SettingsState extends State<SettingsPage> {
                                   context,
                                   CupertinoPageRoute(
                                     builder: (context) => AllPdfs(
-                                      UserId: globalID,
+                                      UserId: globalUserId,
                                       reactions: Reaction.reactions,
                                     ),
                                   ));
@@ -534,10 +534,10 @@ class SettingsState extends State<SettingsPage> {
                           showDialog(
                               context: context,
                               builder: (context) => VipDialog(
-                                    credits: user.credit_points,
+                                    credits: user.creditPoints,
                                     photourl: user.photoUrl,
                                     userIsVerified: user.userIsVerified,
-                                    no_ads: user.no_ads,
+                                    no_ads: user.noAds,
                                   ));
                         },
                         icon: const Icon(Icons.star),
@@ -613,7 +613,7 @@ class SettingsState extends State<SettingsPage> {
                             SharedPreferences preferences =
                                 await SharedPreferences.getInstance();
                             preferences
-                                .remove(SharedPreferencesKey.loggedInUserData)
+                                .remove(SharedPreferencesKey.userId)
                                 .then((_) async {
                               Navigator.push(
                                 context,
@@ -655,7 +655,7 @@ class SettingsState extends State<SettingsPage> {
                           SharedPreferences preferences =
                               await SharedPreferences.getInstance();
                           preferences
-                              .remove(SharedPreferencesKey.loggedInUserData)
+                              .remove(SharedPreferencesKey.userId)
                               .then((_) async {
                             Navigator.push(
                               context,

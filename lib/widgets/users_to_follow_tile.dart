@@ -23,7 +23,7 @@ class UserToFollowTileState extends State<UserToFollowTile> {
 
   UserToFollowTileState(this.user);
 
-  final String? currentUserId = globalID;
+  final String? currentUserId = globalUserId;
   bool isFollowing = false;
   final kInnerDecoration = BoxDecoration(
     color: Colors.white,
@@ -52,7 +52,7 @@ class UserToFollowTileState extends State<UserToFollowTile> {
     DocumentSnapshot doc = await followersCollection
         .doc(user.id)
         .collection('userFollowers')
-        .doc(globalID)
+        .doc(globalUserId)
         .get();
     setState(() {
       isFollowing = doc.exists;
@@ -102,7 +102,7 @@ class UserToFollowTileState extends State<UserToFollowTile> {
           child: Column(
             children: <Widget>[
               GestureDetector(
-                onTap: () => showProfile(context, profileId: globalID),
+                onTap: () => showProfile(context, profileId: globalUserId),
                 child: ListTile(
                     leading: user.photoUrl.isNotEmpty
                         ? CircleAvatar(

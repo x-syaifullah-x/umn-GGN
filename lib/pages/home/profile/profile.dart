@@ -933,7 +933,7 @@ class _ProfileState extends State<Profile2> {
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               Text(
-                "${AppLocalizations.of(context)!.you_have} ${user.credit_points} ${AppLocalizations.of(context)!.credits}",
+                "${AppLocalizations.of(context)!.you_have} ${user.creditPoints} ${AppLocalizations.of(context)!.credits}",
                 style: Theme.of(context)
                     .textTheme
                     .headline6!
@@ -1069,7 +1069,7 @@ class _ProfileState extends State<Profile2> {
                     followerCount,
                     () {
                       if (widget.isProfileOwner) {
-                        bool noCredit = user.credit_points < 10;
+                        bool noCredit = user.creditPoints < 10;
                         consentSheet(
                           context,
                           AppLocalizations.of(context)!.followed_consent1,
@@ -1179,7 +1179,7 @@ class _ProfileState extends State<Profile2> {
                     count,
                     () {
                       if (widget.isProfileOwner) {
-                        bool noCredit = user.credit_points < 10;
+                        bool noCredit = user.creditPoints < 10;
                         consentSheet(
                           context,
                           AppLocalizations.of(context)!.following_consent1,
@@ -1282,7 +1282,7 @@ class _ProfileState extends State<Profile2> {
                 ppViewCount,
                 () {
                   if (widget.isProfileOwner) {
-                    bool noCredit = user.credit_points < 10;
+                    bool noCredit = user.creditPoints < 10;
                     consentSheet(
                       context,
                       'Would you like to see users who viewed your Profile?',
@@ -1346,7 +1346,7 @@ class _ProfileState extends State<Profile2> {
               ),
               buildCountColumn("Likes", likedCount, () {
                 if (widget.isProfileOwner) {
-                  bool noCredit = user.credit_points < 10;
+                  bool noCredit = user.creditPoints < 10;
                   consentSheet(
                     context,
                     'Would you like to see users who liked your Profile?',
@@ -1409,7 +1409,7 @@ class _ProfileState extends State<Profile2> {
               }),
               buildCountColumn("Dislikes", dislikedCount, () {
                 if (widget.isProfileOwner) {
-                  bool noCredit = user.credit_points < 10;
+                  bool noCredit = user.creditPoints < 10;
                   consentSheet(
                     context,
                     'Would you like to see users who Disliked your Profile?',

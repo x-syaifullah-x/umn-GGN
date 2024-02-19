@@ -175,7 +175,7 @@ class _AddPostState extends State<AddPost>
     });
   }
 
-  handleSubmitontext(String userID) async {
+  Future _handleSubmitontext(String userId) async {
     createPostInFirestore(mediaUrl: [], description: captionController.text);
     captionController.clear();
 
@@ -186,7 +186,7 @@ class _AddPostState extends State<AddPost>
         Navigator.of(context).pushReplacement(
           CupertinoPageRoute(
             builder: (context) => Home(
-              userId: userID,
+              userId: userId,
             ),
           ),
         );
@@ -240,7 +240,7 @@ class _AddPostState extends State<AddPost>
               setState(() {
                 isLoading = true;
               });
-              handleSubmitontext(widget.userId);
+              _handleSubmitontext(widget.userId);
             } else {
               simpleworldtoast("Error", "Write something", context);
             }
