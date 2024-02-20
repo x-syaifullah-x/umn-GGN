@@ -1,8 +1,5 @@
 # flutter pub get
-# flutter pub run flutter_launcher_icons -f <your config file name here>
-
-dev_dependencies:
-  flutter_launcher_icons: "0.11.0"
+# flutter pub run flutter_launcher_icons -f flutter_launcher_icons.yaml
 
 # flutter pub run flutter_launcher_icons
 flutter_icons:
