@@ -262,7 +262,7 @@ class AppState extends State<App> with WidgetsBindingObserver {
   }
 
   Widget _getScreen(SharedPreferences prefs) {
-    bool isSeenWalkthrough =
+    final bool isSeenWalkthrough =
         prefs.getBool(SharedPreferencesKey.isSeenWalkthrough) ?? false;
     if (!isSeenWalkthrough) {
       prefs.setBool(SharedPreferencesKey.isSeenWalkthrough, true);
@@ -272,20 +272,8 @@ class AppState extends State<App> with WidgetsBindingObserver {
     final String? userId = prefs.getString(SharedPreferencesKey.userId);
 
     if (userId != null) {
-      return FutureBuilder<DocumentSnapshot<Map<String, dynamic>>>(
-        future: usersCollection.doc(userId).get(),
-        builder: (context, snapshot) {
-          final data = snapshot.data;
-          final userData = data?.data();
-          if (userData == null) {
-            return const CupertinoActivityIndicator();
-          }
-          setGlobalField(id: userId, data: userData);
-          return Home(userId: userId);
-        },
-      );
+      return Home(userId: userId);
     }
-
     return const LoginPage();
   }
 }

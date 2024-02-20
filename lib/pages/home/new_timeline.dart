@@ -37,15 +37,16 @@ import 'package:timeago/timeago.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
 import '../../ads/applovin_ad_unit_id.dart';
+import '../../data/user.dart';
 import '../comments_album.dart';
 
 class NewTimeline extends StatefulWidget {
-  final String userId;
+  final User user;
   final List<Reaction<String>> reactions;
 
   const NewTimeline({
     Key? key,
-    required this.userId,
+    required this.user,
     required this.reactions,
   }) : super(key: key);
 
@@ -72,7 +73,7 @@ class NewTimelineState extends State<NewTimeline> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).backgroundColor,
-      body: followersPostList(context, widget.userId!),
+      body: _followersPostList(context, widget.user),
     );
   }
 
@@ -82,7 +83,7 @@ class NewTimelineState extends State<NewTimeline> {
     super.dispose();
   }
 
-  Widget followersPostList(BuildContext c, String userData) {
+  Widget _followersPostList(BuildContext c, User user) {
     PaginateRefreshedChangeListener refreshChangeListener =
         PaginateRefreshedChangeListener();
     ScrollController scrollController = ScrollController();
@@ -101,10 +102,12 @@ class NewTimelineState extends State<NewTimeline> {
             padding: EdgeInsets.zero,
             child: Column(
               children: [
-                PostBox(userId: userData),
-                const SizedBox(
+                PostBox(user: user),
+                SizedBox(
                   height: 210,
-                  child: StoryList(),
+                  child: StoryList(
+                    user: user,
+                  ),
                 ),
                 SvgPicture.asset(
                   'assets/images/no_content.svg',
@@ -127,10 +130,10 @@ class NewTimelineState extends State<NewTimeline> {
           header: SliverToBoxAdapter(
             child: Column(
               children: [
-                PostBox(userId: userData),
-                const SizedBox(
+                PostBox(user: user),
+                SizedBox(
                   height: 210,
-                  child: StoryList(),
+                  child: StoryList(user: user),
                 ),
               ],
             ),
@@ -145,7 +148,7 @@ class NewTimelineState extends State<NewTimeline> {
                     height: 370,
                     color: Colors.yellow,
                     child: SuggestedUsersList(
-                      userId: userData,
+                      userId: user.id,
                       scrollController: scrollController,
                     ),
                   ),
@@ -183,7 +186,7 @@ class NewTimelineState extends State<NewTimeline> {
             }
           },
           query: timelineCollection
-              .doc(userData)
+              .doc(user.id)
               .collection('timelinePosts')
               .orderBy('timestamp', descending: true),
           isLive: true,
@@ -233,12 +236,12 @@ class NewTimelineState extends State<NewTimeline> {
                   )
                 ],
               ).onTap(() {
-                showProfile(context, profileId: user.id);
+                showProfile(context, userId: user.id);
               }),
               const SizedBox(width: 12),
               Expanded(
                 child: GestureDetector(
-                  onTap: () => showProfile(context, profileId: user.id),
+                  onTap: () => showProfile(context, userId: user.id),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -616,7 +619,7 @@ class NewTimelineState extends State<NewTimeline> {
                   GestureDetector(
                     onTap: () => _showCommentsforAlbum(
                       context,
-                      userId: widget.userId,
+                      userId: widget.user.id,
                       postId: postId,
                       ownerId: ownerId,
                       // mediaUrl: post['mediaUrl'][0],
@@ -652,7 +655,7 @@ class NewTimelineState extends State<NewTimeline> {
                   ReactionButtonWidget(
                     postId: postId,
                     ownerId: ownerId,
-                    userId: widget.userId,
+                    userId: widget.user.id,
                     reactions: reactions,
                     mediaUrl: isPhoto ? post['mediaUrl'][0] : null,
                     color: color,
@@ -665,7 +668,7 @@ class NewTimelineState extends State<NewTimeline> {
                   GestureDetector(
                     onTap: () => _showCommentsforAlbum(
                       context,
-                      userId: widget.userId,
+                      userId: widget.user.id,
                       postId: postId,
                       ownerId: ownerId,
                       // mediaUrl: post['mediaUrl'][0],
@@ -778,7 +781,7 @@ class NewTimelineState extends State<NewTimeline> {
               const SizedBox(
                 height: 10,
               ),
-              post['ownerId'] == widget.userId
+              post['ownerId'] == widget.user
                   ? ListTile(
                       onTap: () {
                         Navigator.pop(context);
@@ -791,7 +794,7 @@ class NewTimelineState extends State<NewTimeline> {
                       ),
                     )
                   : Container(),
-              post['ownerId'] != widget.userId
+              post['ownerId'] != widget.user
                   ? ListTile(
                       onTap: () {
                         Navigator.pop(context);
@@ -804,7 +807,7 @@ class NewTimelineState extends State<NewTimeline> {
                       ),
                     )
                   : Container(),
-              post['ownerId'] != widget.userId
+              post['ownerId'] != widget.user
                   ? ListTile(
                       onTap: () {
                         Navigator.pop(context);
@@ -817,7 +820,7 @@ class NewTimelineState extends State<NewTimeline> {
                       ),
                     )
                   : Container(),
-              post['ownerId'] != widget.userId
+              post['ownerId'] != widget.user
                   ? ListTile(
                       onTap: () {
                         Navigator.pop(context);
@@ -829,7 +832,7 @@ class NewTimelineState extends State<NewTimeline> {
                       ),
                     )
                   : Container(),
-              post['ownerId'] != widget.userId
+              post['ownerId'] != widget.user
                   ? ListTile(
                       onTap: () {
                         Navigator.pop(context);
@@ -918,7 +921,7 @@ class NewTimelineState extends State<NewTimeline> {
 
   void hidePost(post) async {
     timelineCollection
-        .doc(widget.userId)
+        .doc(widget.user.id)
         .collection('timelinePosts')
         .doc(post['postId'])
         .get()
@@ -930,7 +933,6 @@ class NewTimelineState extends State<NewTimeline> {
   }
 
   void _onShare(post, BuildContext context) async {
-    print(post);
     bool hasdesc = post['description']?.isNotEmpty == true;
     bool isPdf = post['type'] == 'pdf';
     bool isVide = post['type'] == 'video';

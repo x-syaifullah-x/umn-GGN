@@ -63,7 +63,7 @@ class _Users extends State<Users> with AutomaticKeepAliveClientMixin<Users> {
                       final userDoc = documentSnapshot[index].data()
                           as Map<String, dynamic>;
                       log('${userDoc.length}');
-                      return User(
+                      return UserWidget(
                         currentUserId: widget.userId,
                         userId: userDoc['id'],
                       );

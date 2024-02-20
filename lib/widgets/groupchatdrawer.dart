@@ -235,13 +235,12 @@ class _DrawerMenuState extends State<DrawerMenu> {
                               )
                             ],
                           ).onTap(() {
-                            showProfile(context, profileId: userId);
+                            showProfile(context, userId: userId);
                           }),
                           const SizedBox(width: 12),
                           Expanded(
                             child: GestureDetector(
-                              onTap: () =>
-                                  showProfile(context, profileId: userId),
+                              onTap: () => showProfile(context, userId: userId),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [

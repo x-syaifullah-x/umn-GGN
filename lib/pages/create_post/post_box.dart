@@ -2,30 +2,29 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:nb_utils/nb_utils.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:global_net/data/user.dart';
 import 'package:global_net/models/user.dart';
 import 'package:global_net/pages/create_post/add_post.dart';
-import 'package:global_net/pages/home/home.dart';
-import 'package:global_net/pages/auth/login_page.dart';
 import 'package:global_net/pages/create_post/pdf_upload.dart';
 import 'package:global_net/pages/create_post/upload.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:global_net/pages/create_post/video_upload.dart';
+import 'package:global_net/pages/home/home.dart';
 import 'package:global_net/widgets/simple_world_widgets.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:nb_utils/nb_utils.dart';
 import 'package:uuid/uuid.dart';
 import 'package:video_compress/video_compress.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class PostBox extends StatefulWidget {
-  final GloabalUser? currentUser;
-  final String userId;
+  final User user;
 
   const PostBox({
     Key? key,
-    this.currentUser,
-    required this.userId,
+    required this.user,
   }) : super(key: key);
 
   @override
@@ -55,13 +54,20 @@ class _PostBoxState extends State<PostBox>
       setState(() async {
         _imageFileList = pickedFileList;
         if (pickedFileList != null) {
-          await navigator.push(MaterialPageRoute(
-              builder: (context) => Upload(
-                    currentUser: currentUser,
-                    imageFileList: _imageFileList,
-                  )));
+          final userDoc = await usersCollection.doc(widget.user.id).get();
+          final data = userDoc.data();
+          if (data != null) {
+            await navigator.push(
+              MaterialPageRoute(
+                builder: (context) => Upload(
+                  currentUser: GloabalUser.fromMap(data),
+                  imageFileList: _imageFileList,
+                ),
+              ),
+            );
+          }
         } else {
-          // print('No image selected.');
+          log('No image selected.');
         }
       });
     }
@@ -96,13 +102,21 @@ class _PostBoxState extends State<PostBox>
             simpleworldtoast("", "File Size is larger then 5mb", context);
             return;
           }
-          await navigator.push(MaterialPageRoute(
-              builder: (context) => VideoUpload(
-                  currentUser: currentUser,
-                  file: newvediofile!,
-                  videopath: pickedFile.path)));
+
+          final userDoc = await usersCollection.doc(widget.user.id).get();
+          final data = userDoc.data();
+          if (data != null) {
+            await navigator.push(
+              MaterialPageRoute(
+                builder: (context) => VideoUpload(
+                    currentUser: GloabalUser.fromMap(data),
+                    file: newvediofile!,
+                    videopath: pickedFile.path),
+              ),
+            );
+          }
         } else {
-          // print('No image selected.');
+          log('No image selected.');
         }
       });
     }
@@ -132,17 +146,21 @@ class _PostBoxState extends State<PostBox>
           simpleworldtoast("", "File Size is larger then 5mb", context);
           return;
         }
-        await navigator.push(
-          MaterialPageRoute(
-            builder: (context) => PdfUpload(
-              currentUser: currentUser,
-              file: pdffile!,
-              pdfpath: path,
-              pdfname: fileName,
-              pdfsize: pdfsize,
+        final userDoc = await usersCollection.doc(widget.user.id).get();
+        final data = userDoc.data();
+        if (data != null) {
+          await navigator.push(
+            MaterialPageRoute(
+              builder: (context) => PdfUpload(
+                currentUser: GloabalUser.fromMap(data),
+                file: pdffile!,
+                pdfpath: path,
+                pdfname: fileName,
+                pdfsize: pdfsize,
+              ),
             ),
-          ),
-        );
+          );
+        }
       } else {
         // print('No image selected.');
       }
@@ -178,7 +196,7 @@ class _PostBoxState extends State<PostBox>
     }
   }
 
-  buildPostBox() {
+  Widget _buildPostBox() {
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 0.0),
       elevation: 0.0,
@@ -193,7 +211,7 @@ class _PostBoxState extends State<PostBox>
               children: [
                 ClipRRect(
                   borderRadius: BorderRadius.circular(15.0),
-                  child: globalImage == null || globalImage!.isEmpty
+                  child: widget.user.photoUrl.isEmpty
                       ? Container(
                           decoration: BoxDecoration(
                             color: const Color(0xFF003a54),
@@ -205,11 +223,28 @@ class _PostBoxState extends State<PostBox>
                           ),
                         )
                       : CachedNetworkImage(
-                          imageUrl: globalImage!,
+                          imageUrl: widget.user.photoUrl,
                           height: 50.0,
                           width: 50.0,
                           fit: BoxFit.cover,
                         ),
+                  // child: globalImage == null || globalImage!.isEmpty
+                  //     ? Container(
+                  //         decoration: BoxDecoration(
+                  //           color: const Color(0xFF003a54),
+                  //           borderRadius: BorderRadius.circular(15.0),
+                  //         ),
+                  //         child: Image.asset(
+                  //           'assets/images/defaultavatar.png',
+                  //           width: 50,
+                  //         ),
+                  //       )
+                  //     : CachedNetworkImage(
+                  //         imageUrl: globalImage!,
+                  //         height: 50.0,
+                  //         width: 50.0,
+                  //         fit: BoxFit.cover,
+                  //       ),
                 ),
                 const SizedBox(width: 8.0),
                 Expanded(
@@ -237,7 +272,7 @@ class _PostBoxState extends State<PostBox>
                       context,
                       MaterialPageRoute(
                         builder: (context) => AddPost(
-                          userId: widget.userId,
+                          userId: widget.user.id,
                         ),
                       ),
                     );
@@ -303,6 +338,6 @@ class _PostBoxState extends State<PostBox>
   Widget build(BuildContext context) {
     super.build(context);
 
-    return buildPostBox();
+    return _buildPostBox();
   }
 }

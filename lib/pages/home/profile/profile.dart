@@ -30,8 +30,8 @@ import 'package:global_net/widgets/progress.dart';
 import 'package:global_net/widgets/simple_world_widgets.dart';
 import 'package:global_net/widgets/single_post.dart';
 
+import '../../../data/user.dart';
 import '../user/user.dart';
-import '../user/users.dart';
 
 class Profile extends StatelessWidget {
   final String? profileId;
@@ -1057,7 +1057,7 @@ class _ProfileState extends State<Profile2> {
                   int followerCount = 0;
                   snapshot.data?.docs?.forEach((e) {
                     try {
-                      if (e[User.fieldValue] == true) {
+                      if (e[UserWidget.fieldValue] == true) {
                         followerCount += 1;
                       }
                     } catch (e) {
@@ -1167,7 +1167,7 @@ class _ProfileState extends State<Profile2> {
                   int count = 0;
                   snapshot.data?.docs?.forEach((e) {
                     try {
-                      if (e[User.fieldValue] == true) {
+                      if (e[UserWidget.fieldValue] == true) {
                         count += 1;
                       }
                     } catch (e) {
@@ -1475,7 +1475,14 @@ class _ProfileState extends State<Profile2> {
         ),
         const SizedBox(height: 20),
         const Divider(),
-        PostBox(userId: widget.profileId!),
+        FutureBuilder<DocumentSnapshot<Map<String, dynamic>>>(
+          future: usersCollection.doc(widget.profileId).get(),
+          builder: (context, snapshot) {
+            final data = snapshot.data?.data();
+            final user = User.fromJson(data);
+            return PostBox(user: user);
+          },
+        ),
         const Divider(),
         buildProfilePosts()
       ],

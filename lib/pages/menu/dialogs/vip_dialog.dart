@@ -12,17 +12,17 @@ class VipDialog extends StatelessWidget {
   final bool userIsVerified;
   final bool no_ads;
 
-  const VipDialog(
-      {Key? key,
-      required this.photourl,
-      required this.credits,
-      required this.userIsVerified,
-      required this.no_ads})
-      : super(key: key);
+  const VipDialog({
+    Key? key,
+    required this.photourl,
+    required this.credits,
+    required this.userIsVerified,
+    required this.no_ads,
+  }) : super(key: key);
   @override
   Widget build(BuildContext context) {
     getVerifiedBadge() {
-      bool noCredit = credits < 1500;
+      bool noCredit = credits.toInt() < 1500;
       if (noCredit) {
         simpleworldtoast(
             "Error",
@@ -39,7 +39,7 @@ class VipDialog extends StatelessWidget {
     }
 
     getNoAds() {
-      bool noCredit = credits < 600;
+      bool noCredit = credits.toInt() < 600;
       if (noCredit) {
         simpleworldtoast(
             "Error",

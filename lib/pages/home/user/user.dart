@@ -12,7 +12,7 @@ import 'package:global_net/widgets/progress.dart';
 import 'package:global_net/widgets/simple_world_widgets.dart';
 import 'package:nb_utils/nb_utils.dart';
 
-class User extends StatelessWidget {
+class UserWidget extends StatelessWidget {
   static const fieldUserId = "userId";
   static const fieldCreateAt = "createAt";
   static const fieldUpdateAt = "updateAt";
@@ -22,7 +22,7 @@ class User extends StatelessWidget {
   final String currentUserId;
   final String userId;
 
-  const User({
+  const UserWidget({
     Key? key,
     required this.currentUserId,
     required this.userId,

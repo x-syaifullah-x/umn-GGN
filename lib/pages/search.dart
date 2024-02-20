@@ -171,7 +171,7 @@ class UserResult extends StatelessWidget {
       child: Column(
         children: <Widget>[
           GestureDetector(
-            onTap: () => showProfile(context, profileId: user.id),
+            onTap: () => showProfile(context, userId: user.id),
             child: ListTile(
               leading: user.photoUrl.isNotEmpty
                   ? ClipRRect(

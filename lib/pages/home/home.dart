@@ -4,10 +4,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:global_net/data/reaction_data.dart' as reaction;
+import 'package:global_net/data/user.dart' as data;
 import 'package:global_net/models/user.dart';
 import 'package:global_net/pages/home/activity_feed.dart';
 import 'package:global_net/pages/home/business_structure/business_structure.dart';
@@ -71,7 +73,8 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
 
   final PageController pageController = PageController(initialPage: 0);
   int pageIndex = 0;
-  late TabController _tabController;
+  late final TabController _tabController =
+      TabController(vsync: this, length: 5);
   final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
   var currentUser = FirebaseAuth.instance.currentUser;
   bool isFollowing = false;
@@ -84,7 +87,6 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     getAllUsers();
     getAllStories();
 
-    _tabController = TabController(vsync: this, length: 5);
     FirebaseMessaging.instance.getInitialMessage().then((message) {
       log("_HomeState.getInitialMessage(): $message");
     });
@@ -92,19 +94,36 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   }
 
   @override
+  void dispose() {
+    pageController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final String userId = widget.userId;
-    return NotificationListener(
-      child: AnimatedTheme(
-        duration: const Duration(milliseconds: 300),
-        data: Theme.of(context),
-        child: Scaffold(
-          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-          key: _scaffoldKey,
-          appBar: _appBar(context, userId),
-          body: _body(context, userId, _tabController),
-        ),
-      ),
+    return StreamBuilder<DocumentSnapshot<Map<String, dynamic>>>(
+      stream: usersCollection.doc(userId).snapshots(),
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) {
+          return const CupertinoActivityIndicator();
+        }
+        final dataUser = snapshot.data?.data();
+        setGlobalField(id: userId, data: dataUser);
+        final user = data.User.fromJson(dataUser);
+        return NotificationListener(
+          child: AnimatedTheme(
+            duration: const Duration(milliseconds: 300),
+            data: Theme.of(context),
+            child: Scaffold(
+              backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+              key: _scaffoldKey,
+              appBar: _appBar(context, user.id),
+              body: _body(context, user, _tabController),
+            ),
+          ),
+        );
+      },
     );
   }
 
@@ -224,7 +243,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
 
   Widget _body(
     BuildContext context,
-    String userId,
+    data.User user,
     TabController tabController,
   ) {
     final Size size = MediaQuery.of(context).size;
@@ -275,7 +294,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
           width: widthContentCenter,
           height: double.infinity,
           child: Column(children: [
-            Expanded(child: _tabBarView(tabController, userId)),
+            Expanded(child: _tabBarView(tabController, user)),
             // HomeAds(tabController: tabController)
           ]),
         ),
@@ -444,32 +463,26 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     );
   }
 
-  Widget _tabBarView(TabController tabController, String userId) {
+  Widget _tabBarView(TabController tabController, data.User user) {
     return TabBarView(
       controller: tabController,
       children: [
         NewTimeline(
-          userId: userId,
+          user: user,
           reactions: reaction.reactions,
         ),
-        Users(userId: userId),
+        Users(userId: user.id),
         Profile(
-          profileId: userId,
+          profileId: user.id,
           reactions: reaction.reactions,
           isProfileOwner: true,
         ),
         ActivityFeed(
-          userId: userId,
+          userId: user.id,
         ),
-        SettingsPage(currentUserId: userId),
+        SettingsPage(user: user),
       ],
     );
-  }
-
-  @override
-  void dispose() {
-    pageController.dispose();
-    super.dispose();
   }
 
   void _handleTabSelection() {

@@ -366,14 +366,14 @@ class ActivityFeedItem extends StatelessWidget {
   // }
 }
 
-showProfile(BuildContext context, {String? profileId}) {
+showProfile(BuildContext context, {String? userId}) {
   Navigator.push(
     context,
     MaterialPageRoute(
       builder: (context) => Profile(
-        profileId: profileId,
+        profileId: userId,
         reactions: reaction.reactions,
-        isProfileOwner: profileId == globalUserId,
+        isProfileOwner: userId == globalUserId,
       ),
     ),
   );

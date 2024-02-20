@@ -203,7 +203,7 @@ class _SinglePostState extends State<SinglePost> {
               const SizedBox(width: 12),
               Expanded(
                 child: GestureDetector(
-                  onTap: () => showProfile(context, profileId: user.id),
+                  onTap: () => showProfile(context, userId: user.id),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [

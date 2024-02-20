@@ -1,5 +1,3 @@
-// ignore_for_file: avoid_print
-
 import 'dart:async';
 import 'dart:io';
 
@@ -24,12 +22,10 @@ import 'package:uuid/uuid.dart';
 import 'package:video_compress/video_compress.dart';
 
 class AddPost extends StatefulWidget {
-  final GloabalUser? currentUser;
   final String userId;
 
   const AddPost({
     Key? key,
-    this.currentUser,
     required this.userId,
   }) : super(key: key);
 
@@ -60,22 +56,26 @@ class _AddPostState extends State<AddPost>
     final navigator = Navigator.of(context);
 
     final pickedFileList = await _picker.pickMultiImage(imageQuality: 50);
-
-    if (mounted) {
-      setState(() async {
-        _imageFileList = pickedFileList;
-        if (pickedFileList != null) {
-          await navigator.push(
-            MaterialPageRoute(
-              builder: (context) => Upload(
-                currentUser: currentUser,
-                imageFileList: _imageFileList,
-                location: _currentAddress,
+    final userDoc = await usersCollection.doc(widget.userId).get();
+    final data = userDoc.data();
+    if (data != null) {
+      final GloabalUser gUser = GloabalUser.fromMap(data);
+      if (mounted) {
+        setState(() async {
+          _imageFileList = pickedFileList;
+          if (pickedFileList != null) {
+            await navigator.push(
+              MaterialPageRoute(
+                builder: (context) => Upload(
+                  currentUser: gUser,
+                  imageFileList: _imageFileList,
+                  location: _currentAddress,
+                ),
               ),
-            ),
-          );
-        } else {}
-      });
+            );
+          } else {}
+        });
+      }
     }
   }
 
@@ -88,7 +88,6 @@ class _AddPostState extends State<AddPost>
         vediofile = vediofile;
         if (pickedFile != null) {
           vediofile = File(pickedFile.path);
-          print(vediofile);
           await VideoCompress.setLogLevel(0);
           final MediaInfo? info = await VideoCompress.compressVideo(
             vediofile!.path,
@@ -96,7 +95,6 @@ class _AddPostState extends State<AddPost>
             deleteOrigin: false,
             includeAudio: true,
           );
-          print(info!.path);
           if (info != null) {
             setState(() {
               newvediofile = File(info.path!);
@@ -108,11 +106,18 @@ class _AddPostState extends State<AddPost>
             simpleworldtoast("", "File Size is larger then 5mb", context);
             return;
           }
-          await navigator.push(MaterialPageRoute(
-              builder: (context) => VideoUpload(
-                  currentUser: currentUser,
-                  file: newvediofile!,
-                  videopath: pickedFile.path)));
+          final userDoc = await usersCollection.doc(widget.userId).get();
+          final data = userDoc.data();
+          if (data != null) {
+            await navigator.push(
+              MaterialPageRoute(
+                builder: (context) => VideoUpload(
+                    currentUser: GloabalUser.fromMap(data),
+                    file: newvediofile!,
+                    videopath: pickedFile.path),
+              ),
+            );
+          }
         } else {
           // print('No image selected.');
         }
@@ -144,14 +149,22 @@ class _AddPostState extends State<AddPost>
           simpleworldtoast("", "File Size is larger then 5mb", context);
           return;
         }
-        await navigator.push(MaterialPageRoute(
-            builder: (context) => PdfUpload(
-                  currentUser: currentUser,
-                  file: pdffile!,
-                  pdfpath: path,
-                  pdfname: fileName,
-                  pdfsize: pdfsize,
-                )));
+
+        final userDoc = await usersCollection.doc(widget.userId).get();
+        final data = userDoc.data();
+        if (data != null) {
+          await navigator.push(
+            MaterialPageRoute(
+              builder: (context) => PdfUpload(
+                currentUser: GloabalUser.fromMap(data),
+                file: pdffile!,
+                pdfpath: path,
+                pdfname: fileName,
+                pdfsize: pdfsize,
+              ),
+            ),
+          );
+        }
       } else {
         // print('No image selected.');
       }

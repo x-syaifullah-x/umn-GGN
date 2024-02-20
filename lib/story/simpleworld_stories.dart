@@ -3,11 +3,12 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:global_net/pages/home/home.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:global_net/config/palette.dart';
 import 'package:global_net/story/add_story.dart';
-import 'package:global_net/widgets/simple_world_widgets.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../data/user.dart';
 import 'models/stories.dart';
 import 'models/stories_list_with_pressed.dart';
 import 'components//stories_list_skeleton.dart';
@@ -50,41 +51,45 @@ class SimpleWorldStories extends StatefulWidget {
   final ProgressPosition progressPosition;
   final bool repeat;
   final bool inline;
+  final User user;
 
-  SimpleWorldStories(
-      {required this.collectionDbName,
-      this.lastIconHighlight = false,
-      this.lastIconHighlightColor = Colors.deepOrange,
-      this.lastIconHighlightRadius = const Radius.circular(15.0),
-      this.iconWidth,
-      this.iconHeight,
-      this.showTitleOnIcon = true,
-      this.iconTextStyle,
-      this.iconBoxDecoration,
-      this.iconImageBorderRadius,
-      this.textInIconPadding =
-          const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 8.0),
-      this.captionTextStyle = const TextStyle(
-        fontSize: 15,
-        color: Colors.white,
-      ),
-      this.captionMargin = const EdgeInsets.only(
-        bottom: 24,
-      ),
-      this.captionPadding = const EdgeInsets.symmetric(
-        horizontal: 24,
-        vertical: 8,
-      ),
-      this.imageStoryDuration = 5,
-      this.backgroundColorBetweenStories = Colors.black,
-      this.closeButtonIcon,
-      this.closeButtonBackgroundColor,
-      this.sortingOrderDesc = true,
-      this.backFromStories,
-      this.progressPosition = ProgressPosition.top,
-      this.repeat = true,
-      this.inline = false,
-      this.languageCode = 'en'});
+  const SimpleWorldStories({
+    Key? key,
+    required this.user,
+    required this.collectionDbName,
+    this.lastIconHighlight = false,
+    this.lastIconHighlightColor = Colors.deepOrange,
+    this.lastIconHighlightRadius = const Radius.circular(15.0),
+    this.iconWidth,
+    this.iconHeight,
+    this.showTitleOnIcon = true,
+    this.iconTextStyle,
+    this.iconBoxDecoration,
+    this.iconImageBorderRadius,
+    this.textInIconPadding =
+        const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 8.0),
+    this.captionTextStyle = const TextStyle(
+      fontSize: 15,
+      color: Colors.white,
+    ),
+    this.captionMargin = const EdgeInsets.only(
+      bottom: 24,
+    ),
+    this.captionPadding = const EdgeInsets.symmetric(
+      horizontal: 24,
+      vertical: 8,
+    ),
+    this.imageStoryDuration = 5,
+    this.backgroundColorBetweenStories = Colors.black,
+    this.closeButtonIcon,
+    this.closeButtonBackgroundColor,
+    this.sortingOrderDesc = true,
+    this.backFromStories,
+    this.progressPosition = ProgressPosition.top,
+    this.repeat = true,
+    this.inline = false,
+    this.languageCode = 'en',
+  }) : super(key: key);
 
   @override
   State createState() => _SimpleWorldStoriesStoriesState();
@@ -93,15 +98,9 @@ class SimpleWorldStories extends StatefulWidget {
 class _SimpleWorldStoriesStoriesState extends State<SimpleWorldStories> {
   late StoriesData _storiesData;
   final _firestore = FirebaseFirestore.instance;
-  bool _backStateAdditional = false;
   final ImagePicker _picker = ImagePicker();
   File? file;
   bool isLoading = false;
-
-  @override
-  void dispose() {
-    super.dispose();
-  }
 
   @override
   void initState() {
@@ -135,6 +134,7 @@ class _SimpleWorldStoriesStoriesState extends State<SimpleWorldStories> {
   }
 
   Widget addstorybutton() {
+    final user = widget.user;
     return Padding(
       padding:
           const EdgeInsets.only(left: 4.0, top: 8.0, bottom: 8.0, right: 4.0),
@@ -142,23 +142,38 @@ class _SimpleWorldStoriesStoriesState extends State<SimpleWorldStories> {
         alignment: Alignment.topLeft,
         children: [
           ClipRRect(
-            borderRadius: BorderRadius.circular(12.0),
-            child: (globalImage != "")
-                ? CachedNetworkImage(
-                    imageUrl: globalImage!,
-                    height: double.infinity,
-                    width: 100.0,
-                    fit: BoxFit.cover,
-                  )
-                : Container(
-                    height: double.infinity,
-                    color: const Color(0xFF003a54),
-                    child: Image.asset(
-                      'assets/images/defaultavatar.png',
-                      width: 100,
-                    ),
-                  ),
-          ),
+              borderRadius: BorderRadius.circular(12.0),
+              child: user.photoUrl.isNotEmpty
+                  ? CachedNetworkImage(
+                      imageUrl: user.photoUrl,
+                      height: double.infinity,
+                      width: 100.0,
+                      fit: BoxFit.cover,
+                    )
+                  : Container(
+                      height: double.infinity,
+                      color: const Color(0xFF003a54),
+                      child: Image.asset(
+                        'assets/images/defaultavatar.png',
+                        width: 100,
+                      ),
+                    )
+              // child: (globalImage != "")
+              //     ? CachedNetworkImage(
+              //         imageUrl: globalImage!,
+              //         height: double.infinity,
+              //         width: 100.0,
+              //         fit: BoxFit.cover,
+              //       )
+              //     : Container(
+              //         height: double.infinity,
+              //         color: const Color(0xFF003a54),
+              //         child: Image.asset(
+              //           'assets/images/defaultavatar.png',
+              //           width: 100,
+              //         ),
+              //       ),
+              ),
           GestureDetector(
             child: Container(
               height: double.infinity,
@@ -360,7 +375,6 @@ class _SimpleWorldStoriesStoriesState extends State<SimpleWorldStories> {
                           ),
                         ),
                         onTap: () async {
-                          _backStateAdditional = true;
                           Navigator.push(
                             context,
                             NoAnimationMaterialPageRoute(
@@ -469,7 +483,6 @@ class _SimpleWorldStoriesStoriesState extends State<SimpleWorldStories> {
                       ]),
                     ),
                     onTap: () async {
-                      _backStateAdditional = true;
                       Navigator.push(
                         context,
                         NoAnimationMaterialPageRoute(

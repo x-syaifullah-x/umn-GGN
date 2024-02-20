@@ -192,12 +192,12 @@ class _PostLayoutState extends State<PostLayout> {
                   )
                 ],
               ).onTap(() {
-                showProfile(context, profileId: user.id);
+                showProfile(context, userId: user.id);
               }),
               const SizedBox(width: 12),
               Expanded(
                 child: GestureDetector(
-                  onTap: () => showProfile(context, profileId: user.id),
+                  onTap: () => showProfile(context, userId: user.id),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [

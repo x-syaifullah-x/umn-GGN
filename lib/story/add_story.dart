@@ -6,17 +6,16 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:iconly/iconly.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:nb_utils/nb_utils.dart';
-import 'package:global_net/pages/auth/login_page.dart';
+import 'package:global_net/models/user.dart';
 import 'package:global_net/pages/home/home.dart';
 import 'package:global_net/story/add_image_story.dart';
 import 'package:global_net/story/add_video_story.dart';
 import 'package:global_net/widgets/progress.dart';
 import 'package:global_net/widgets/simple_world_widgets.dart';
+import 'package:iconly/iconly.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:nb_utils/nb_utils.dart';
 import 'package:uuid/uuid.dart';
 import 'package:video_compress/video_compress.dart';
 
@@ -82,12 +81,20 @@ class AddStoryState extends State<AddStory>
             simpleworldtoast("", "File Size is larger then 5mb", context);
             return;
           }
-          navigator.pop();
-          await navigator.push(MaterialPageRoute(
-              builder: (context) => CreateVideoStory(
-                  currentUser: currentUser,
-                  file: videoFile!,
-                  videopath: pickedFile.path)));
+
+          final userDoc = await usersCollection.doc(globalUserId).get();
+          final data = userDoc.data();
+          if (data != null) {
+            navigator.pop();
+            await navigator.push(
+              MaterialPageRoute(
+                builder: (context) => CreateVideoStory(
+                    currentUser: GloabalUser.fromMap(data),
+                    file: videoFile!,
+                    videopath: pickedFile.path),
+              ),
+            );
+          }
         } else {
           // print('No image selected.');
         }

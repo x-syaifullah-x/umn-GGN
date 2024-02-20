@@ -330,8 +330,6 @@ class SignUpPageState extends State<SignUpPage> {
       doc = await usersCollection.doc(userId).get();
     }
 
-    currentUser = GloabalUser.fromDocument(doc);
-
     setState(() {
       globalUserId = userId;
       _isLoading = false;
@@ -356,8 +354,6 @@ class SignUpPageState extends State<SignUpPage> {
         .setString(SharedPreferencesKey.userId, userId)
         .then((value) async {
       try {
-        String vApiKey =
-            "BIxps5Is9CmqlWy6PpPjZXiM0hTlCcnFIcFtQwos8yvFoumKit1TUpZqpkaU13KEh0n9M5pXGF8W33b1S-TFnZw";
         String? token = await FirebaseMessaging.instance
             .getToken(vapidKey: (kIsWeb ? vApiKey : null));
         log("tokenNotification: $token");

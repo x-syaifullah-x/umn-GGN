@@ -1,9 +1,5 @@
-import 'dart:convert';
-import 'dart:math';
-
 import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:crypto/crypto.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
@@ -13,7 +9,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_signin_button/button_list.dart';
 import 'package:flutter_signin_button/button_view.dart';
 import 'package:global_net/ads/login_ads.dart';
-import 'package:global_net/models/user.dart';
+import 'package:global_net/data/user.dart' as data;
 import 'package:global_net/pages/auth/add_credit_to_account.dart';
 import 'package:global_net/pages/auth/create_account.dart';
 import 'package:global_net/pages/auth/forgotpass.dart';
@@ -31,31 +27,31 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../menu/terms_and_conditions.dart';
 
-GloabalUser? currentUser;
+const String vApiKey =
+    "BIxps5Is9CmqlWy6PpPjZXiM0hTlCcnFIcFtQwos8yvFoumKit1TUpZqpkaU13KEh0n9M5pXGF8W33b1S-TFnZw";
 
 class LoginPage extends StatefulWidget {
-  const LoginPage({Key? key, this.title}) : super(key: key);
-
-  final String? title;
+  const LoginPage({
+    Key? key,
+  }) : super(key: key);
 
   @override
-  LoginPageState createState() => LoginPageState();
+  State<LoginPage> createState() => _LoginPageState();
 }
 
-class LoginPageState extends State<LoginPage> {
-  bool isLoading = false;
-  TextEditingController emailController = TextEditingController();
-  TextEditingController passwordController = TextEditingController();
+class _LoginPageState extends State<LoginPage> {
+  bool _isLoading = false;
+
+  final TextEditingController _emailController = TextEditingController();
+  final _emailNode = FocusNode();
+  final TextEditingController _passwordController = TextEditingController();
+  final _passwordNode = FocusNode();
+
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  final emailNode = FocusNode();
-  final passwordNode = FocusNode();
-  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
-  bool isAuth = false;
 
   @override
   void initState() {
     super.initState();
-    _getUserData();
     FirebaseMessaging.instance.getInitialMessage().then((message) {
       log(message);
     });
@@ -124,7 +120,7 @@ class LoginPageState extends State<LoginPage> {
                       const SizedBox(height: 50),
                       _emailPasswordWidget(),
                       const SizedBox(height: 20),
-                      _submitButton(),
+                      _loginButton(),
                       _forgotPassword(),
                       _divider(),
                       SignInButton(
@@ -148,7 +144,7 @@ class LoginPageState extends State<LoginPage> {
               //   padding: EdgeInsets.only(left: a, right: a),
               //   child: ,
               // ),
-              isLoading == true
+              _isLoading == true
                   ? Center(child: circularProgress())
                   : Container(),
             ],
@@ -157,22 +153,6 @@ class LoginPageState extends State<LoginPage> {
         ],
       ),
     );
-  }
-
-  _getUserData() async {
-    try {
-      User? user = _auth.currentUser;
-      if (user != null) {
-        final userData = await usersCollection.doc(user.uid).get();
-        if (userData.exists) {
-          setState(() {
-            setGlobalField(id: user.uid, data: userData);
-          });
-        }
-      }
-    } catch (e) {
-      log(e);
-    }
   }
 
   Widget _entryField(
@@ -193,18 +173,20 @@ class LoginPageState extends State<LoginPage> {
             height: 10,
           ),
           TextField(
-              controller: controller,
-              obscureText: isPassword,
-              decoration: InputDecoration(
-                  border: InputBorder.none,
-                  fillColor: Theme.of(context).inputDecorationTheme.fillColor,
-                  filled: true))
+            controller: controller,
+            obscureText: isPassword,
+            decoration: InputDecoration(
+              border: InputBorder.none,
+              fillColor: Theme.of(context).inputDecorationTheme.fillColor,
+              filled: true,
+            ),
+          )
         ],
       ),
     );
   }
 
-  Widget _submitButton() {
+  Widget _loginButton() {
     return Container(
       width: MediaQuery.of(context).size.width,
       padding: const EdgeInsets.symmetric(vertical: 15),
@@ -224,17 +206,17 @@ class LoginPageState extends State<LoginPage> {
         style: const TextStyle(fontSize: 20, color: Colors.white),
       ),
     ).onTap(() {
-      if (emailController.text != '' && passwordController.text != '') {
+      if (_emailController.text != '' && _passwordController.text != '') {
         setState(() {
-          emailNode.unfocus();
-          passwordNode.unfocus();
-          isLoading = true;
+          _emailNode.unfocus();
+          _passwordNode.unfocus();
+          _isLoading = true;
         });
         _signInWithEmailAndPassword();
       } else {
         setState(() {
-          emailNode.unfocus();
-          passwordNode.unfocus();
+          _emailNode.unfocus();
+          _passwordNode.unfocus();
         });
         simpleworldtoast("Error", "Email and password is required", context);
       }
@@ -244,66 +226,43 @@ class LoginPageState extends State<LoginPage> {
   Future<void> _signInWithEmailAndPassword() async {
     try {
       setState(() {
-        isLoading = true;
+        _isLoading = true;
       });
       final UserCredential userCredential =
           await _auth.signInWithEmailAndPassword(
-        email: emailController.text.trim(),
-        password: passwordController.text,
+        email: _emailController.text.trim(),
+        password: _passwordController.text,
       );
       final User? user = userCredential.user;
       if (user != null) {
         _dataEntry(user.uid, user.email!);
       } else {
         setState(() {
-          isLoading = false;
+          _isLoading = false;
         });
       }
     } catch (e) {
       setState(() {
-        isLoading = false;
+        _isLoading = false;
       });
       simpleworldtoast("Error", "Please try again", context);
     }
   }
 
   void _dataEntry(String userId, String email) async {
-    SharedPreferences preferences = await SharedPreferences.getInstance();
-
-    preferences
-        .setString(SharedPreferencesKey.userId, userId)
-        .then((value) async {
-      try {
-        String vApiKey =
-            "BIxps5Is9CmqlWy6PpPjZXiM0hTlCcnFIcFtQwos8yvFoumKit1TUpZqpkaU13KEh0n9M5pXGF8W33b1S-TFnZw";
-        String? token = await FirebaseMessaging.instance
-            .getToken(vapidKey: (kIsWeb ? vApiKey : null));
-        log("tokenNotification: $token");
-        await usersCollection.doc(userId).update({
-          // "androidNotificationToken": token,
-          "tokenNotification": token,
-        });
-      } catch (e) {
-        log(e);
-      }
-
-      // FirebaseMessaging.instance.getToken().then((token) {
-      //   usersRef.doc(userId).update({
-      //     "androidNotificationToken": token,
-      //   }).then((value) {
-
-      //   });
-      // }).catchError(onError);
-
-      usersCollection.doc(userId).get().then((peerData) {
-        if (peerData.exists) {
+    _saveUserIdToLocal(userId: userId).then((value) async {
+      final userDocRef = usersCollection.doc(userId);
+      await _setTokenNotification(docRef: userDocRef);
+      userDocRef.get().then((userDoc) {
+        if (userDoc.exists) {
           setState(() {
             globalUserId = userId;
-            isLoading = false;
+            _isLoading = false;
           });
-          if (peerData['username'].length > 0) {
-            if (peerData.data()!.containsKey('credit_points')) {
-              if (peerData['credit_points'] == 0) {
+
+          if (userDoc[data.User.fieldNameUsername].length > 0) {
+            if (userDoc.data()!.containsKey(data.User.fieldNameCreditPoints)) {
+              if ('${userDoc[data.User.fieldNameCreditPoints]}' == '0') {
                 Navigator.of(context).pushReplacement(
                   CupertinoPageRoute(
                     builder: (context) => AddCreditToAccount(
@@ -337,25 +296,48 @@ class LoginPageState extends State<LoginPage> {
           }
         } else {
           setState(() {
-            isLoading = false;
+            _isLoading = false;
           });
-          simpleworldtoast("Error",
-              'Failed to sign in with Google, please try again:', context);
+          simpleworldtoast(
+            "Error",
+            'Failed to sign in with Google, please try again:',
+            context,
+          );
         }
       });
-      FirebaseMessaging.onMessage.listen((message) async {
-        final String recipientId = userId;
-        final String body = message.notification?.body ?? '';
-        if (recipientId == userId) {
-          SnackBar snackbar = SnackBar(
-              content: Text(
-            body,
-            overflow: TextOverflow.ellipsis,
-          ));
-          ScaffoldMessenger.of(context).showSnackBar(snackbar);
-        }
-      });
+      // FirebaseMessaging.onMessage.listen((message) async {
+      //   final String recipientId = userId;
+      //   final String body = message.notification?.body ?? '';
+      //   if (recipientId == userId) {
+      //     SnackBar snackbar = SnackBar(
+      //         content: Text(
+      //       body,
+      //       overflow: TextOverflow.ellipsis,
+      //     ));
+      //     ScaffoldMessenger.of(context).showSnackBar(snackbar);
+      //   }
+      // });
     });
+  }
+
+  Future<bool> _saveUserIdToLocal({required String userId}) async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    return preferences.setString(SharedPreferencesKey.userId, userId);
+  }
+
+  Future _setTokenNotification({
+    required DocumentReference docRef,
+  }) async {
+    try {
+      String? token = await FirebaseMessaging.instance
+          .getToken(vapidKey: (kIsWeb ? vApiKey : null));
+      log("tokenNotification: $token");
+      docRef.update({
+        data.User.fieldNameTokenNotfaction: token,
+      });
+    } catch (e) {
+      log(e);
+    }
   }
 
   Widget _divider() {
@@ -393,126 +375,63 @@ class LoginPageState extends State<LoginPage> {
     );
   }
 
-  // Widget _googleButton() {
-  //   return Container(
-  //     height: 50,
-  //     margin: const EdgeInsets.symmetric(vertical: 20),
-  //     decoration: const BoxDecoration(
-  //       borderRadius: BorderRadius.all(Radius.circular(10)),
-  //     ),
-  //     child: Row(
-  //       children: <Widget>[
-  //         Expanded(
-  //           flex: 1,
-  //           child: Container(
-  //             decoration: const BoxDecoration(
-  //               color: Color(0xff1959a9),
-  //               borderRadius: BorderRadius.only(
-  //                   bottomLeft: Radius.circular(5),
-  //                   topLeft: Radius.circular(5)),
-  //             ),
-  //             alignment: Alignment.center,
-  //             child: const Text('G',
-  //                 style: TextStyle(
-  //                     color: Colors.white,
-  //                     fontSize: 25,
-  //                     fontWeight: FontWeight.w400)),
-  //           ),
-  //         ),
-  //         Expanded(
-  //           flex: 5,
-  //           child: Container(
-  //             decoration: const BoxDecoration(
-  //               color: Colors.red,
-  //               borderRadius: BorderRadius.only(
-  //                   bottomRight: Radius.circular(5),
-  //                   topRight: Radius.circular(5)),
-  //             ),
-  //             alignment: Alignment.center,
-  //             child: const Text('Log in with Google',
-  //                 style: TextStyle(
-  //                     color: Colors.white,
-  //                     fontSize: 18,
-  //                     fontWeight: FontWeight.w400)),
-  //           ),
-  //         ),
-  //       ],
-  //     ),
-  //   ).onTap(() {
-  //     _signInWithGoogle();
+  // Future _createAppleUser(
+  //   String userId,
+  //   String email,
+  //   String name,
+  // ) async {
+  //   DocumentReference docRef = usersCollection.doc(userId);
+  //   DocumentSnapshot doc = await docRef.get();
+
+  //   if (!doc.exists) {
+  //     final DateTime date = DateTime.now();
+  //     final dataUser = data.User(
+  //       id: userId,
+  //       username: '',
+  //       photoUrl: '',
+  //       email: email,
+  //       displayName: name,
+  //       bio: '',
+  //       coverUrl: '',
+  //       groups: [],
+  //       loginType: 'ios',
+  //       timestamp: date.millisecondsSinceEpoch,
+  //       userIsVerified: false,
+  //       creditPoints: "0",
+  //       noAds: false,
+  //       tokenNotfaction: '',
+  //     );
+  //     await usersCollection.doc(dataUser.id).set(dataUser.toJson());
+  //     await followersCollection
+  //         .doc(dataUser.id)
+  //         .collection('userFollowers')
+  //         .doc(dataUser.id)
+  //         .set({'userId': dataUser.id});
+
+  //     doc = await usersCollection.doc(dataUser.id).get();
+  //   }
+
+  //   setState(() {
+  //     globalUserId = userId;
+  //     _isLoading = false;
   //   });
-  // }
 
-  checkappleUserExists(userId, email, name) async {
-    usersCollection.doc(userId).get().then((peerData) {
-      if (peerData.exists) {
-        _dataEntry(userId, email);
-      } else {
-        createappleUserInFirestore(userId, email, name);
-      }
-    });
-  }
+  //   _saveUserIdToLocal(userId: userId);
+  //   _saveTokenNotification(docRef: docRef);
 
-  createappleUserInFirestore(userId, email, name) async {
-    DocumentSnapshot doc = await usersCollection.doc(userId).get();
-
-    if (!doc.exists) {
-      usersCollection.doc(userId).set({
-        "id": userId,
-        "username": '',
-        "photoUrl": '',
-        "email": email,
-        "displayName": name,
-        "bio": "",
-        "coverUrl": "",
-        "groups": [],
-        "loginType": 'ios',
-        "timestamp": timestamp,
-        "userIsVerified": false,
-        "credit_points": 0,
-        "no_ads": false,
-      });
-      await followersCollection
-          .doc(userId)
-          .collection('userFollowers')
-          .doc(userId)
-          .set({'userId': userId});
-
-      doc = await usersCollection.doc(userId).get();
-    }
-
-    currentUser = GloabalUser.fromDocument(doc);
-
-    setState(() {
-      globalUserId = userId;
-      isLoading = false;
-      isAuth = true;
-    });
-
-    configurePushNotifications(userId);
-    if (isAuth = true) {
-      Navigator.of(context).pushReplacement(
-        CupertinoPageRoute(builder: (context) => const CreateAccount()),
-      );
-    }
-  }
-
-  // Widget _iosButton() {
-  //   return Padding(
-  //     padding: const EdgeInsets.all(6.0),
-  //     child: Column(
-  //       mainAxisAlignment: MainAxisAlignment.center,
-  //       children: [],
-  //     ),
-  //   );
+  //   if (mounted) {
+  //     Navigator.of(context).pushReplacement(
+  //       CupertinoPageRoute(builder: (context) => const CreateAccount()),
+  //     );
+  //   }
   // }
 
   Future<void> _signInWithGoogle() async {
     try {
       setState(() {
-        emailNode.unfocus();
-        passwordNode.unfocus();
-        isLoading = true;
+        _emailNode.unfocus();
+        _passwordNode.unfocus();
+        _isLoading = true;
       });
       UserCredential userCredential;
 
@@ -532,7 +451,7 @@ class LoginPageState extends State<LoginPage> {
 
       final user = userCredential.user;
 
-      if (user!.uid != null) {
+      if (user != null) {
         checkUserExists(
           user.uid,
           user.email,
@@ -542,60 +461,71 @@ class LoginPageState extends State<LoginPage> {
       }
     } catch (e) {
       setState(() {
-        isLoading = false;
+        _isLoading = false;
       });
-      print(e);
+      log(e);
       simpleworldtoast("Error", 'Failed to sign in with Google', context);
     }
   }
 
-  checkUserExists(userId, email, name, image) async {
-    usersCollection.doc(userId).get().then((peerData) {
-      if (peerData.exists) {
+  checkUserExists(userId, email, name, photoUrl) async {
+    usersCollection.doc(userId).get().then((docRef) {
+      if (docRef.exists) {
         _dataEntry(userId, email);
       } else {
-        createUserInFirestore(userId, email, name, image);
+        _createUserInFirestore(
+          userId: userId,
+          email: email,
+          name: name,
+          photoUrl: photoUrl,
+        );
       }
     });
   }
 
-  createUserInFirestore(userId, email, name, image) async {
-    DocumentSnapshot doc = await usersCollection.doc(userId).get();
+  Future _createUserInFirestore({
+    required String userId,
+    required String email,
+    required String name,
+    required String photoUrl,
+  }) async {
+    DocumentReference docRef = usersCollection.doc(userId);
+    DocumentSnapshot doc = await docRef.get();
     if (!doc.exists) {
-      usersCollection.doc(userId).set({
-        "id": userId,
-        "username": '',
-        "photoUrl": image,
-        "email": email,
-        "displayName": name,
-        "bio": "",
-        "coverUrl": "",
-        "groups": [],
-        "loginType": 'google',
-        "timestamp": timestamp,
-        "userIsVerified": false,
-        "credit_points": 0,
-        "no_ads": false,
-      });
+      final DateTime date = DateTime.now();
+      final dataUser = data.User(
+        id: userId,
+        username: '',
+        photoUrl: photoUrl,
+        email: email,
+        displayName: name,
+        bio: '',
+        coverUrl: '',
+        groups: [],
+        loginType: 'google',
+        timestamp: date.millisecondsSinceEpoch,
+        userIsVerified: false,
+        creditPoints: 0,
+        noAds: false,
+        tokenNotfaction: '',
+      );
+      await usersCollection.doc(dataUser.id).set(dataUser.toJson());
       await followersCollection
           .doc(userId)
           .collection('userFollowers')
           .doc(userId)
           .set({'userId': userId});
-
       doc = await usersCollection.doc(userId).get();
     }
 
-    currentUser = GloabalUser.fromDocument(doc);
-
     setState(() {
       globalUserId = userId;
-      isLoading = false;
-      isAuth = true;
+      _isLoading = false;
     });
 
-    configurePushNotifications(userId);
-    if (isAuth = true) {
+    _saveUserIdToLocal(userId: userId);
+    _setTokenNotification(docRef: docRef);
+    if (mounted) {
       Navigator.of(context).pushReplacement(
         CupertinoPageRoute(
           builder: (context) => CreateAccount(
@@ -604,56 +534,6 @@ class LoginPageState extends State<LoginPage> {
         ),
       );
     }
-  }
-
-  configurePushNotifications(userId) async {
-    SharedPreferences preferences = await SharedPreferences.getInstance();
-
-    preferences
-        .setString(SharedPreferencesKey.userId, userId)
-        .then((value) async {
-      try {
-        String vApiKey =
-            "BIxps5Is9CmqlWy6PpPjZXiM0hTlCcnFIcFtQwos8yvFoumKit1TUpZqpkaU13KEh0n9M5pXGF8W33b1S-TFnZw";
-        String? token = await FirebaseMessaging.instance
-            .getToken(vapidKey: (kIsWeb ? vApiKey : null));
-        log("tokenNotification: $token");
-        await usersCollection.doc(userId).update({
-          // "androidNotificationToken": token,
-          "tokenNotification": token,
-        });
-      } catch (e) {
-        log(e);
-      }
-    });
-    // preferences
-    //     .setString(SharedPreferencesKey.userId, userId)
-    //     .then((value) async {
-    //   try {
-    //     final token = await _firebaseMessaging.getToken();
-    //     print("Firebase Messaging Token: $token\n");
-    //     usersCollection.doc(userId).update({"androidNotificationToken": token});
-    //   } catch (e) {
-    //     log(e);
-    //   }
-    // });
-
-    FirebaseMessaging.onMessage.listen(
-      (message) async {
-        final String recipientId = userId;
-        final String body = message.notification?.body ?? '';
-
-        if (recipientId == userId) {
-          print("Notification shown!");
-          SnackBar snackBar = SnackBar(
-              content: Text(
-            body,
-            overflow: TextOverflow.ellipsis,
-          ));
-          ScaffoldMessenger.of(context).showSnackBar(snackBar);
-        }
-      },
-    );
   }
 
   Widget _createAccount() {
@@ -750,8 +630,8 @@ class LoginPageState extends State<LoginPage> {
   Widget _emailPasswordWidget() {
     return Column(
       children: <Widget>[
-        _entryField(AppLocalizations.of(context)!.email_id, emailController),
-        _entryField(AppLocalizations.of(context)!.password, passwordController,
+        _entryField(AppLocalizations.of(context)!.email_id, _emailController),
+        _entryField(AppLocalizations.of(context)!.password, _passwordController,
             isPassword: true),
       ],
     );
@@ -765,8 +645,8 @@ class LoginPageState extends State<LoginPage> {
         child: InkWell(
           onTap: () {
             setState(() {
-              emailNode.unfocus();
-              passwordNode.unfocus();
+              _emailNode.unfocus();
+              _passwordNode.unfocus();
             });
             Navigator.push(
               context,
@@ -786,31 +666,30 @@ class LoginPageState extends State<LoginPage> {
 
   /// Generates a cryptographically secure random nonce, to be included in a
   /// credential request.
-  String generateNonce([int length = 32]) {
-    const charset =
-        '0123456789ABCDEFGHIJKLMNOPQRSTUVXYZabcdefghijklmnopqrstuvwxyz-._';
-    final random = Random.secure();
-    return List.generate(length, (_) => charset[random.nextInt(charset.length)])
-        .join();
-  }
+  // String _generateNonce([int length = 32]) {
+  //   const charset =
+  //       '0123456789ABCDEFGHIJKLMNOPQRSTUVXYZabcdefghijklmnopqrstuvwxyz-._';
+  //   final random = Random.secure();
+  //   return List.generate(length, (_) => charset[random.nextInt(charset.length)])
+  //       .join();
+  // }
 
   /// Returns the sha256 hash of [input] in hex notation.
-  String sha256ofString(String input) {
-    final bytes = utf8.encode(input);
-    final digest = sha256.convert(bytes);
-    return digest.toString();
-  }
+  // String _sha256ofString(String input) {
+  //   final bytes = utf8.encode(input);
+  //   final digest = sha256.convert(bytes);
+  //   return digest.toString();
+  // }
 
-  Future<UserCredential> signInWithApple() async {
-    final rawNonce = generateNonce();
-    final nonce = sha256ofString(rawNonce);
-    UserCredential userCredential;
+  // Future<UserCredential> signInWithApple() async {
+  //   final rawNonce = generateNonce();
+  //   final nonce = _sha256ofString(rawNonce);
+  //   UserCredential userCredential;
 
-    setState(() {
-      isLoading = false;
-    });
-    print(e);
-    return simpleworldtoast(
-        "Error", 'Failed to sign in with Apple ID', context);
-  }
+  //   setState(() {
+  //     _isLoading = false;
+  //   });
+  //   return simpleworldtoast(
+  //       "Error", 'Failed to sign in with Apple ID', context);
+  // }
 }

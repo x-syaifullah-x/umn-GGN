@@ -68,7 +68,7 @@ class UserToFollowTileState extends State<UserToFollowTile> {
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           GestureDetector(
-            onTap: () => showProfile(context, profileId: user.id),
+            onTap: () => showProfile(context, userId: user.id),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -102,7 +102,7 @@ class UserToFollowTileState extends State<UserToFollowTile> {
           child: Column(
             children: <Widget>[
               GestureDetector(
-                onTap: () => showProfile(context, profileId: globalUserId),
+                onTap: () => showProfile(context, userId: globalUserId),
                 child: ListTile(
                     leading: user.photoUrl.isNotEmpty
                         ? CircleAvatar(
