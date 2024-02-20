@@ -28,8 +28,11 @@ class AlbumComments extends StatefulWidget {
 }
 
 class _CommentsState extends State<AlbumComments> {
-  TextEditingController commentController = TextEditingController();
-  List<Comment> comments = [];
+  final TextEditingController _commentController = TextEditingController();
+  final _commentFocusNode = FocusNode();
+  final List<Comment> comments = [];
+  final ScrollController _scrollController = ScrollController();
+  final bool _isReverse = false;
 
   // int commentsCount = 0;
   // getCommentscount() async {
@@ -47,7 +50,7 @@ class _CommentsState extends State<AlbumComments> {
         stream: commentsCollection
             .doc(widget.postId)
             .collection('comments')
-            .orderBy("createAt", descending: false)
+            .orderBy("createAt", descending: _isReverse)
             .snapshots(),
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
@@ -55,9 +58,16 @@ class _CommentsState extends State<AlbumComments> {
               child: circularProgress(),
             );
           } else {
-            return ListView(
-              padding: const EdgeInsets.all(16),
-              children: snapshot.data!.docs.map((doc) {
+            final docs = snapshot.data?.docs;
+            if (docs == null) {
+              return Container();
+            }
+            return ListView.builder(
+              reverse: _isReverse,
+              controller: _scrollController,
+              itemCount: docs.length,
+              itemBuilder: (context, index) {
+                final doc = docs[index];
                 return Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -127,16 +137,13 @@ class _CommentsState extends State<AlbumComments> {
                                 fontSize: 10,
                               ),
                             ),
-                            const SizedBox(
-                              height: 4,
-                            ),
                           ],
                         ),
                       ),
                     )
                   ],
                 );
-              }).toList(),
+              },
             );
           }
         });
@@ -166,13 +173,23 @@ class _CommentsState extends State<AlbumComments> {
       commentsCollection.doc(postId).collection("comments").add({
         "postOwnerId": postOwnerId,
         "username": username,
-        "comment": commentController.text,
+        "comment": _commentController.text,
         "createAt": date.millisecondsSinceEpoch,
         "avatarUrl": photoUrl,
         "mediaUrl": postMediaUrl,
         "userId": userId,
       }).then((value) {
-        commentController.clear();
+        double maxScrollExtent = _scrollController.position.maxScrollExtent;
+        if (_scrollController.offset == 0.0) {
+          maxScrollExtent += 100;
+        }
+        _scrollController.animateTo(
+          _isReverse ? 0.0 : maxScrollExtent,
+          curve: Curves.easeOut,
+          duration: const Duration(milliseconds: 300),
+        );
+        _commentFocusNode.requestFocus();
+        _commentController.clear();
       });
     });
   }
@@ -221,7 +238,7 @@ class _CommentsState extends State<AlbumComments> {
               ),
               textInputAction: TextInputAction.send,
               onFieldSubmitted: (message) {
-                if (commentController.text != '') {
+                if (_commentController.text != '') {
                   _addComment(
                     postOwnerId: widget.postOwnerId,
                     postId: widget.postId,
@@ -231,7 +248,8 @@ class _CommentsState extends State<AlbumComments> {
                   simpleworldtoast("", "Please Enter a comment", context);
                 }
               },
-              controller: commentController,
+              focusNode: _commentFocusNode,
+              controller: _commentController,
               textCapitalization: TextCapitalization.sentences,
             ),
             trailing: IconButton(
@@ -239,7 +257,7 @@ class _CommentsState extends State<AlbumComments> {
                   size: 20, color: Theme.of(context).iconTheme.color),
               alignment: Alignment.center,
               onPressed: (() {
-                if (commentController.text != '') {
+                if (_commentController.text != '') {
                   _addComment(
                     postOwnerId: widget.postOwnerId,
                     postId: widget.postId,
