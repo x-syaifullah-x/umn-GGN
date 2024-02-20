@@ -31,6 +31,8 @@ import 'package:string_validator/string_validator.dart';
 import 'package:timeago/timeago.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
+import '../pages/comments_album.dart';
+
 class PostLayout extends StatefulWidget {
   // ignore: non_constant_identifier_names
   final String? UserId;
@@ -561,6 +563,25 @@ class _PostLayoutState extends State<PostLayout> {
     return Container();
   }
 
+  void _showCommentsforalbum(
+    BuildContext context, {
+    String? postId,
+    String? ownerId,
+  }) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) {
+          return AlbumComments(
+            userId: globalUserId,
+            postId: postId,
+            postOwnerId: ownerId,
+          );
+        },
+      ),
+    );
+  }
+
   Widget buildPostFooter() {
     return Container(
       padding: const EdgeInsets.all(8.0),
@@ -576,7 +597,7 @@ class _PostLayoutState extends State<PostLayout> {
               Row(
                 children: <Widget>[
                   GestureDetector(
-                      onTap: () => showCommentsforalbum(
+                      onTap: () => _showCommentsforalbum(
                             context,
                             postId: postId,
                             ownerId: ownerId,
@@ -621,7 +642,7 @@ class _PostLayoutState extends State<PostLayout> {
               Row(
                 children: <Widget>[
                   GestureDetector(
-                      onTap: () => showCommentsforalbum(
+                      onTap: () => _showCommentsforalbum(
                             context,
                             postId: postId,
                             ownerId: ownerId,

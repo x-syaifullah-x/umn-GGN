@@ -9,6 +9,7 @@ import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:link_preview_generator/link_preview_generator.dart';
+import 'package:nb_utils/nb_utils.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:global_net/data/reaction_data.dart';
 import 'package:global_net/models/user.dart';
@@ -108,7 +109,7 @@ class SinglePost extends StatefulWidget {
   }
 
   @override
-  _SinglePostState createState() => _SinglePostState(
+  State<SinglePost> createState() => _SinglePostState(
       postId: this.postId,
       ownerId: this.ownerId,
       username: this.username,
@@ -317,10 +318,10 @@ class _SinglePostState extends State<SinglePost> {
           RegExp(r'(?:(?:https?|ftp):\/\/)?[\w/\-?=%.]+\.[\w/\-?=%.]+');
       Iterable<RegExpMatch> matches = urlRegExp.allMatches(textData);
 
-      matches.forEach((match) {
-        print(textData.substring(match.start, match.end));
+      for (var match in matches) {
+        log(textData.substring(match.start, match.end));
         textData = textData.substring(match.start, match.end);
-      });
+      }
       return textData;
     }
 
@@ -401,7 +402,7 @@ class _SinglePostState extends State<SinglePost> {
               alignment: Alignment.center,
               children: <Widget>[
                 Center(
-                    child: Container(
+                    child: SizedBox(
                   width: double.infinity,
                   height: MediaQuery.of(context).size.height * 0.5,
                   child: PhotoGrid(
@@ -564,7 +565,7 @@ class _SinglePostState extends State<SinglePost> {
               Row(
                 children: <Widget>[
                   GestureDetector(
-                      onTap: () => showCommentsforalbum(
+                      onTap: () => _showCommentsforalbum(
                             context,
                             postId: postId,
                             ownerId: ownerId,
@@ -609,7 +610,7 @@ class _SinglePostState extends State<SinglePost> {
               Row(
                 children: <Widget>[
                   GestureDetector(
-                      onTap: () => showCommentsforalbum(
+                      onTap: () => _showCommentsforalbum(
                             context,
                             postId: postId,
                             ownerId: ownerId,
@@ -689,19 +690,23 @@ class _SinglePostState extends State<SinglePost> {
       ],
     );
   }
-}
 
-showCommentsforalbum(
-  BuildContext context, {
-  String? postId,
-  String? ownerId,
-  String? mediaUrl,
-}) {
-  Navigator.push(context, MaterialPageRoute(builder: (context) {
-    return AlbumComments(
-      postId: postId,
-      postOwnerId: ownerId,
-      postMediaUrl: mediaUrl,
+  void _showCommentsforalbum(
+    BuildContext context, {
+    String? postId,
+    String? ownerId,
+  }) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) {
+          return AlbumComments(
+            userId: globalUserId,
+            postId: postId,
+            postOwnerId: ownerId,
+          );
+        },
+      ),
     );
-  }));
+  }
 }

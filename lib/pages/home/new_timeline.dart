@@ -40,12 +40,12 @@ import '../../ads/applovin_ad_unit_id.dart';
 import '../comments_album.dart';
 
 class NewTimeline extends StatefulWidget {
-  final String? userId;
+  final String userId;
   final List<Reaction<String>> reactions;
 
   const NewTimeline({
     Key? key,
-    this.userId,
+    required this.userId,
     required this.reactions,
   }) : super(key: key);
 
@@ -595,8 +595,7 @@ class NewTimelineState extends State<NewTimeline> {
   }
 
   Widget buildPostFooter(post) {
-    // Color? color = Theme.of(context).iconTheme.color;
-    Color? color;
+    Color? color = Theme.of(context).iconTheme.color;
     bool isPhoto = post['type'] == 'photo';
     final postId = post['postId'];
     final ownerId = post['ownerId'];
@@ -724,19 +723,22 @@ class NewTimelineState extends State<NewTimeline> {
 
   _showCommentsforAlbum(
     BuildContext context, {
-    String? userId,
+    required String userId,
     String? postId,
     String? ownerId,
-    String? mediaUrl,
   }) {
-    Navigator.push(context, MaterialPageRoute(builder: (context) {
-      return AlbumComments(
-        userId: userId,
-        postId: postId,
-        postOwnerId: ownerId,
-        postMediaUrl: mediaUrl,
-      );
-    }));
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) {
+          return AlbumComments(
+            userId: userId,
+            postId: postId,
+            postOwnerId: ownerId,
+          );
+        },
+      ),
+    );
   }
 
   void reportSheet(BuildContext context, post) {

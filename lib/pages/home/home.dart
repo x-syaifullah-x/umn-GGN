@@ -93,41 +93,19 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    log("home.dart => userId: ${widget.userId}");
-
     final String userId = widget.userId;
-    return FutureBuilder(
-      future: getUserData(),
-      builder: (context, snapshot) {
-        return NotificationListener(
-          child: AnimatedTheme(
-            duration: const Duration(milliseconds: 300),
-            data: Theme.of(context),
-            child: Scaffold(
-              backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-              key: _scaffoldKey,
-              appBar: _appBar(context, userId),
-              body: _body(context, userId, _tabController),
-            ),
-          ),
-        );
-      },
+    return NotificationListener(
+      child: AnimatedTheme(
+        duration: const Duration(milliseconds: 300),
+        data: Theme.of(context),
+        child: Scaffold(
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+          key: _scaffoldKey,
+          appBar: _appBar(context, userId),
+          body: _body(context, userId, _tabController),
+        ),
+      ),
     );
-  }
-
-  getUserData() async {
-    User? user = firebaseAuth.currentUser;
-    if (user != null) {
-      final peerData = await usersCollection.doc(user.uid).get();
-      if (peerData.exists) {
-        globalName = peerData['username'];
-        globalImage = peerData['photoUrl'];
-        globalBio = peerData['bio'];
-        globalCover = peerData['coverUrl'];
-        globalDisplayName = peerData['displayName'];
-        globalCredits = 0.0.toString();
-      }
-    }
   }
 
   PreferredSizeWidget _appBar(BuildContext context, String userId) {

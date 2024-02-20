@@ -6,21 +6,18 @@ import 'package:global_net/widgets/_build_list.dart';
 import 'package:global_net/widgets/header.dart';
 import 'package:global_net/widgets/progress.dart';
 import 'package:global_net/widgets/simple_world_widgets.dart';
-import 'package:nb_utils/nb_utils.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
 class AlbumComments extends StatefulWidget {
-  final String? userId;
+  final String userId;
   final String? postId;
   final String? postOwnerId;
-  final String? postMediaUrl;
 
   const AlbumComments({
     Key? key,
-    this.userId,
+    required this.userId,
     this.postId,
     this.postOwnerId,
-    this.postMediaUrl,
   }) : super(key: key);
 
   @override
@@ -34,18 +31,130 @@ class _CommentsState extends State<AlbumComments> {
   final ScrollController _scrollController = ScrollController();
   final bool _isReverse = false;
 
-  // int commentsCount = 0;
-  // getCommentscount() async {
-  //   QuerySnapshot snapshot = await commentsCollection
-  //       .doc(widget.postId)
-  //       .collection('comments')
-  //       .get();
-  //   setState(() {
-  //     commentsCount = snapshot.docs.length;
-  //   });
-  // }
+  _getDateFromMilliseconds(int milliseconds) {
+    try {
+      final a = DateTime.fromMillisecondsSinceEpoch(milliseconds);
+      return timeago.format(a);
+    } catch (e) {
+      return timeago.format(DateTime.now());
+    }
+  }
 
-  buildComments() {
+  final ButtonStyle outlineButtonStyle = OutlinedButton.styleFrom(
+    primary: Colors.black87,
+    minimumSize: const Size(88, 36),
+    padding: const EdgeInsets.symmetric(horizontal: 16),
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.all(Radius.circular(2)),
+    ),
+  );
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: header(context, titleText: "Comments"),
+      body: Column(
+        children: <Widget>[
+          Expanded(child: _buildComments()),
+          // const Divider(),
+          ListTile(
+            title: TextFormField(
+              style: Theme.of(context).textTheme.bodyText2,
+              decoration: InputDecoration(
+                hintText: "Type here",
+                hintStyle: Theme.of(context).textTheme.bodyText2,
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: const BorderRadius.all(
+                    Radius.circular(40),
+                  ),
+                  borderSide: BorderSide(
+                      color: Theme.of(context).shadowColor, width: 0),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: const BorderRadius.all(
+                    Radius.circular(40),
+                  ),
+                  borderSide: BorderSide(
+                      color: Theme.of(context).shadowColor, width: 0),
+                ),
+                isDense: true,
+                contentPadding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
+                filled: true,
+                fillColor: Theme.of(context).canvasColor,
+              ),
+              textInputAction: TextInputAction.send,
+              onFieldSubmitted: (message) {
+                if (_commentController.text != '') {
+                  _addComment(
+                    userId: widget.userId,
+                    postOwnerId: widget.postOwnerId,
+                    postId: widget.postId,
+                  );
+                } else {
+                  simpleworldtoast("", "Please Enter a comment", context);
+                }
+              },
+              focusNode: _commentFocusNode,
+              controller: _commentController,
+              textCapitalization: TextCapitalization.sentences,
+            ),
+            trailing: IconButton(
+              icon: Icon(Icons.send,
+                  size: 20, color: Theme.of(context).iconTheme.color),
+              alignment: Alignment.center,
+              onPressed: (() {
+                if (_commentController.text != '') {
+                  _addComment(
+                    userId: widget.userId,
+                    postOwnerId: widget.postOwnerId,
+                    postId: widget.postId,
+                  );
+                } else {
+                  simpleworldtoast("", "Please Enter a comment", context);
+                }
+              }),
+            ),
+          )
+        ],
+      ),
+    );
+  }
+
+  void _addComment({
+    required String userId,
+    required String? postOwnerId,
+    required String? postId,
+  }) {
+    DateTime date = DateTime.now();
+    usersCollection.doc(userId).get().then((value) {
+      final data = value.data();
+      String username = data?['username'];
+      String userId = data?['id'];
+      String photoUrl = data?['photoUrl'];
+      commentsCollection.doc(postId).collection("comments").add({
+        "postOwnerId": postOwnerId,
+        "username": username,
+        "comment": _commentController.text,
+        "createAt": date.millisecondsSinceEpoch,
+        "avatarUrl": photoUrl,
+        "userId": userId,
+      }).then((value) {
+        double maxScrollExtent = _scrollController.position.maxScrollExtent;
+        if (_scrollController.offset == 0.0) {
+          maxScrollExtent += 100;
+        }
+        _scrollController.animateTo(
+          _isReverse ? 0.0 : maxScrollExtent,
+          curve: Curves.easeOut,
+          duration: const Duration(milliseconds: 300),
+        );
+        _commentFocusNode.requestFocus();
+        _commentController.clear();
+      });
+    });
+  }
+
+  Widget _buildComments() {
     return StreamBuilder<QuerySnapshot>(
         stream: commentsCollection
             .doc(widget.postId)
@@ -63,6 +172,7 @@ class _CommentsState extends State<AlbumComments> {
               return Container();
             }
             return ListView.builder(
+              padding: const EdgeInsets.only(left: 12, right: 12),
               reverse: _isReverse,
               controller: _scrollController,
               itemCount: docs.length,
@@ -147,131 +257,6 @@ class _CommentsState extends State<AlbumComments> {
             );
           }
         });
-  }
-
-  _getDateFromMilliseconds(int milliseconds) {
-    try {
-      final a = DateTime.fromMillisecondsSinceEpoch(milliseconds);
-      return timeago.format(a);
-    } catch (e) {
-      return timeago.format(DateTime.now());
-    }
-  }
-
-  _addComment({
-    required String? postOwnerId,
-    required String? postId,
-    required String? postMediaUrl,
-  }) {
-    String? userId = widget.userId ?? globalUserId;
-    DateTime date = DateTime.now();
-    usersCollection.doc(userId).get().then((value) {
-      final data = value.data();
-      String username = data?['username'];
-      String userId = data?['id'];
-      String photoUrl = data?['photoUrl'];
-      commentsCollection.doc(postId).collection("comments").add({
-        "postOwnerId": postOwnerId,
-        "username": username,
-        "comment": _commentController.text,
-        "createAt": date.millisecondsSinceEpoch,
-        "avatarUrl": photoUrl,
-        "mediaUrl": postMediaUrl,
-        "userId": userId,
-      }).then((value) {
-        double maxScrollExtent = _scrollController.position.maxScrollExtent;
-        if (_scrollController.offset == 0.0) {
-          maxScrollExtent += 100;
-        }
-        _scrollController.animateTo(
-          _isReverse ? 0.0 : maxScrollExtent,
-          curve: Curves.easeOut,
-          duration: const Duration(milliseconds: 300),
-        );
-        _commentFocusNode.requestFocus();
-        _commentController.clear();
-      });
-    });
-  }
-
-  final ButtonStyle outlineButtonStyle = OutlinedButton.styleFrom(
-    primary: Colors.black87,
-    minimumSize: const Size(88, 36),
-    padding: const EdgeInsets.symmetric(horizontal: 16),
-    shape: const RoundedRectangleBorder(
-      borderRadius: BorderRadius.all(Radius.circular(2)),
-    ),
-  );
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: header(context, titleText: "Comments"),
-      body: Column(
-        children: <Widget>[
-          Expanded(child: buildComments()),
-          // const Divider(),
-          ListTile(
-            title: TextFormField(
-              style: Theme.of(context).textTheme.bodyText2,
-              decoration: InputDecoration(
-                hintText: "Type here",
-                hintStyle: Theme.of(context).textTheme.bodyText2,
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: const BorderRadius.all(
-                    Radius.circular(40),
-                  ),
-                  borderSide: BorderSide(
-                      color: Theme.of(context).shadowColor, width: 0),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: const BorderRadius.all(
-                    Radius.circular(40),
-                  ),
-                  borderSide: BorderSide(
-                      color: Theme.of(context).shadowColor, width: 0),
-                ),
-                isDense: true,
-                contentPadding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
-                filled: true,
-                fillColor: Theme.of(context).canvasColor,
-              ),
-              textInputAction: TextInputAction.send,
-              onFieldSubmitted: (message) {
-                if (_commentController.text != '') {
-                  _addComment(
-                    postOwnerId: widget.postOwnerId,
-                    postId: widget.postId,
-                    postMediaUrl: widget.postMediaUrl,
-                  );
-                } else {
-                  simpleworldtoast("", "Please Enter a comment", context);
-                }
-              },
-              focusNode: _commentFocusNode,
-              controller: _commentController,
-              textCapitalization: TextCapitalization.sentences,
-            ),
-            trailing: IconButton(
-              icon: Icon(Icons.send,
-                  size: 20, color: Theme.of(context).iconTheme.color),
-              alignment: Alignment.center,
-              onPressed: (() {
-                if (_commentController.text != '') {
-                  _addComment(
-                    postOwnerId: widget.postOwnerId,
-                    postId: widget.postId,
-                    postMediaUrl: widget.postMediaUrl,
-                  );
-                } else {
-                  simpleworldtoast("", "Please Enter a comment", context);
-                }
-              }),
-            ),
-          )
-        ],
-      ),
-    );
   }
 
   // static final commentsCol = commentsCollection.withConverter<Comment>(
