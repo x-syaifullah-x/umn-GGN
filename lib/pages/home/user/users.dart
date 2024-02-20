@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:applovin_max/applovin_max.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -60,6 +62,7 @@ class _Users extends State<Users> with AutomaticKeepAliveClientMixin<Users> {
                     itemBuilder: (context, documentSnapshot, index) {
                       final userDoc = documentSnapshot[index].data()
                           as Map<String, dynamic>;
+                      log('${userDoc.length}');
                       return User(
                         currentUserId: widget.userId,
                         userId: userDoc['id'],

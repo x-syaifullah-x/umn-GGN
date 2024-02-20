@@ -29,8 +29,12 @@ class ActivityFeed extends StatefulWidget {
   ActivityFeedState createState() => ActivityFeedState();
 }
 
-class ActivityFeedState extends State<ActivityFeed> {
+class ActivityFeedState extends State<ActivityFeed>
+    with AutomaticKeepAliveClientMixin<ActivityFeed> {
   List<ActivityFeedItem> feedItem = [];
+
+  @override
+  bool get wantKeepAlive => true;
 
   @override
   void initState() {
@@ -40,6 +44,7 @@ class ActivityFeedState extends State<ActivityFeed> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: header(
@@ -66,6 +71,8 @@ class ActivityFeedState extends State<ActivityFeed> {
   }
 
   Widget _activityFeedList(String? userData) {
+    final ScrollController scrollController = ScrollController();
+
     Widget child = const Center(
       child: Text("Currently you don't have any messages"),
     );
@@ -73,6 +80,7 @@ class ActivityFeedState extends State<ActivityFeed> {
     if (userData?.isEmpty == true) {
       return child;
     }
+
     return StreamBuilder(
       stream: feedCollection
           .doc(userData)
@@ -84,7 +92,6 @@ class ActivityFeedState extends State<ActivityFeed> {
         if (snapshot.hasData) {
           QuerySnapshot<Object?>? data = snapshot.data;
           if (data != null && data.docs.isNotEmpty) {
-            ScrollController scrollController = ScrollController();
             final bool widthMoreThan_500 =
                 (MediaQuery.of(context).size.width > 500);
             child = Stack(

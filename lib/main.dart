@@ -19,7 +19,7 @@ Future<void> main() async {
   final savedThemeMode = await AdaptiveTheme.getThemeMode();
 
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  bool isUseEmulator = kDebugMode;
+  bool isUseEmulator = true;
   if (isUseEmulator) {
     const host = '192.168.43.89';
     FirebaseAuth.instance.useAuthEmulator(host, 9099);
