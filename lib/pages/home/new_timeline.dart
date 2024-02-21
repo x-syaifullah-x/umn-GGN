@@ -200,14 +200,14 @@ class NewTimelineState extends State<NewTimeline> {
 
   Widget buildPostHeader(post) {
     bool hasLocation = post['location']?.isNotEmpty == true;
-    return FutureBuilder<GloabalUser?>(
-      future: GloabalUser.fetchUser(post['ownerId']),
+    final id = post['ownerId'];
+    return StreamBuilder<DocumentSnapshot<Map<String, dynamic>>>(
+      stream: usersCollection.doc(id).snapshots(),
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
           return circularProgress();
         }
-        final user = snapshot.data;
-
+        final user = User.fromJson(snapshot.data?.data());
         return Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
           child: Row(
@@ -216,7 +216,7 @@ class NewTimelineState extends State<NewTimeline> {
                 children: [
                   ClipRRect(
                     borderRadius: BorderRadius.circular(15.0),
-                    child: user!.photoUrl == null || user.photoUrl.isEmpty
+                    child: user.photoUrl.isEmpty
                         ? Container(
                             decoration: BoxDecoration(
                               color: const Color(0xFF003a54),
@@ -274,14 +274,26 @@ class NewTimelineState extends State<NewTimeline> {
                                 overflow: TextOverflow.ellipsis,
                               ),
                             ),
+                          if (user.userIsVerified)
+                            Container(
+                              margin: const EdgeInsets.only(left: 4),
+                              child: Image.asset(
+                                'assets/images/verified_badge.png',
+                                width: 25,
+                                height: 25,
+                              ),
+                            )
                         ],
                       ),
                       Text(
                         format(
-                            DateTime.fromMillisecondsSinceEpoch(int.parse(
+                          DateTime.fromMillisecondsSinceEpoch(
+                            int.parse(
                               post['timestamp'],
-                            )),
-                            locale: 'en_short'),
+                            ),
+                          ),
+                          locale: 'en_short',
+                        ),
                         style: Theme.of(context).textTheme.caption!.copyWith(
                               fontSize: 12.0,
                             ),

@@ -142,13 +142,11 @@ class _SettingsState extends State<SettingsPage> {
               // ),
               onPressed: () {
                 showDialog(
-                    context: context,
-                    builder: (context) => VipDialog(
-                          credits: user.creditPoints,
-                          photourl: user.photoUrl,
-                          userIsVerified: user.userIsVerified,
-                          no_ads: user.noAds,
-                        ));
+                  context: context,
+                  builder: (context) => VipDialog(
+                    user: user,
+                  ),
+                );
               },
               icon: const Icon(Icons.star),
               label: const Text('Store'),

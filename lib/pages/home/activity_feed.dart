@@ -18,11 +18,11 @@ import 'package:timeago/timeago.dart' as time_ago;
 import '../../ads/applovin_ad_unit_id.dart';
 
 class ActivityFeed extends StatefulWidget {
-  final String? userId;
+  final String userId;
 
   const ActivityFeed({
     Key? key,
-    this.userId,
+    required this.userId,
   }) : super(key: key);
 
   @override
@@ -163,9 +163,12 @@ class ActivityFeedState extends State<ActivityFeed>
     );
   }
 
-  _updateFeed(String? currentUserId) async {
-    QuerySnapshot activityFeedSnapshot =
-        await feedCollection.doc(currentUserId).collection("feedItems").get();
+  Future _updateFeed(String userId) async {
+    QuerySnapshot activityFeedSnapshot = await feedCollection
+        .doc(userId)
+        .collection("feedItems")
+        .where("isSeen", isEqualTo: false)
+        .get();
     for (var doc in activityFeedSnapshot.docs) {
       if (doc.exists) {
         doc.reference.update({

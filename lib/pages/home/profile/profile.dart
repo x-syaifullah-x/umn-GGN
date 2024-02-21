@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_reaction_button/flutter_reaction_button.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:global_net/pages/menu/dialogs/vip_dialog.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:nb_utils/nb_utils.dart';
 import 'package:global_net/models/user.dart';
@@ -71,13 +72,13 @@ class Profile extends StatelessWidget {
                   color: Theme.of(context).scaffoldBackgroundColor,
                   // child: StreamBuilder<GloabalUser?>(
                   // future: GloabalUser.fetchUser(widget.profileId),
-                  child: StreamBuilder<DocumentSnapshot<GloabalUser>>(
-                    stream: GloabalUser.userDoc(profileId).snapshots(),
+                  child: StreamBuilder<DocumentSnapshot<Map<String, dynamic>>>(
+                    stream: usersCollection.doc(profileId).snapshots(),
                     builder: (context, snapshot) {
-                      final user = snapshot.data?.data();
-                      if (user == null) {
+                      if (!snapshot.hasData) {
                         return circularProgress();
                       }
+                      final user = User.fromJson(snapshot.data?.data());
                       return Profile2(
                         profileId: profileId,
                         reactions: reactions,
@@ -101,7 +102,7 @@ class Profile2 extends StatefulWidget {
   final String? profileId;
   final List<Reaction<String>> reactions;
   final bool isProfileOwner;
-  final GloabalUser? user;
+  final User user;
 
   const Profile2({
     Key? key,
@@ -718,7 +719,7 @@ class _ProfileState extends State<Profile2> {
     );
   }
 
-  Widget buildProfileHeader(GloabalUser? user) {
+  Widget buildProfileHeader(User user) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -916,9 +917,13 @@ class _ProfileState extends State<Profile2> {
             /// Show verified badge
             user.userIsVerified
                 ? Container(
-                    margin: const EdgeInsets.only(right: 5),
-                    child: Image.asset('assets/images/verified_badge.png',
-                        width: 30, height: 30))
+                    margin: const EdgeInsets.only(left: 4),
+                    child: Image.asset(
+                      'assets/images/verified_badge.png',
+                      width: 25,
+                      height: 25,
+                    ),
+                  )
                 : const SizedBox(width: 0, height: 0),
           ],
         ),
@@ -964,23 +969,27 @@ class _ProfileState extends State<Profile2> {
                   ),
                 ),
               ).onTap(() {
-                if (!isWeb) {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const Upgrade(),
-                    ),
-                  );
-                } else {
-                  final scaffold = ScaffoldMessenger.of(context);
-                  scaffold.showSnackBar(
-                    SnackBar(
-                      content: const Text("NOT SUPPORTED"),
-                      action: SnackBarAction(
-                          label: 'Ok', onPressed: scaffold.hideCurrentSnackBar),
-                    ),
-                  );
-                }
+                showDialog(
+                  context: context,
+                  builder: (context) => VipDialog(user: user),
+                );
+                // if (!isWeb) {
+                //   Navigator.push(
+                //     context,
+                //     MaterialPageRoute(
+                //       builder: (context) => const Upgrade(),
+                //     ),
+                //   );
+                // } else {
+                //   final scaffold = ScaffoldMessenger.of(context);
+                //   scaffold.showSnackBar(
+                //     SnackBar(
+                //       content: const Text("NOT SUPPORTED"),
+                //       action: SnackBarAction(
+                //           label: 'Ok', onPressed: scaffold.hideCurrentSnackBar),
+                //     ),
+                //   );
+                // }
               }),
             ],
           ),
