@@ -314,14 +314,16 @@ class _SinglePostState extends State<SinglePost> {
     bool isPhoto = type == 'photo';
     bool isText = type == 'text';
     String convertStringToLink(String textData) {
-      final urlRegExp =
-          RegExp(r'(?:(?:https?|ftp):\/\/)?[\w/\-?=%.]+\.[\w/\-?=%.]+');
-      Iterable<RegExpMatch> matches = urlRegExp.allMatches(textData);
+      try {
+        final urlRegExp =
+            RegExp(r'(?:(?:https?|ftp):\/\/)?[\w/\-?=%.]+\.[\w/\-?=%.]+');
+        Iterable<RegExpMatch> matches = urlRegExp.allMatches(textData);
 
-      for (var match in matches) {
-        log(textData.substring(match.start, match.end));
-        textData = textData.substring(match.start, match.end);
-      }
+        for (var match in matches) {
+          log(textData.substring(match.start, match.end));
+          textData = textData.substring(match.start, match.end);
+        }
+      } catch (e) {}
       return textData;
     }
 
@@ -500,6 +502,10 @@ class _SinglePostState extends State<SinglePost> {
                     ? Container(
                         margin: const EdgeInsets.all(5.0),
                         child: LinkPreviewGenerator(
+                          errorImage: "assets/images/can_not_read.gif",
+                          // errorWidget: SvgPicture.asset(
+                          //   "assets/images/can_not_read.gif",
+                          // ),
                           bodyMaxLines: 3,
                           borderRadius: 0,
                           link: convertStringToLink(description!),

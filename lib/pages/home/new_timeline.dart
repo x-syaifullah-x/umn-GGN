@@ -62,6 +62,10 @@ class NewTimelineState extends State<NewTimeline> {
 
   dynamic reportPostData;
 
+  final PaginateRefreshedChangeListener refreshChangeListener =
+      PaginateRefreshedChangeListener();
+  final ScrollController scrollController = ScrollController();
+
   @override
   void initState() {
     super.initState();
@@ -84,9 +88,6 @@ class NewTimelineState extends State<NewTimeline> {
   }
 
   Widget _followersPostList(BuildContext c, User user) {
-    PaginateRefreshedChangeListener refreshChangeListener =
-        PaginateRefreshedChangeListener();
-    ScrollController scrollController = ScrollController();
     final bool widthMoreThan_500 = (MediaQuery.of(c).size.width > 500);
     return RawScrollbar(
       controller: scrollController,
@@ -330,12 +331,19 @@ class NewTimelineState extends State<NewTimeline> {
     bool isPhoto = post['type'] == 'photo';
     bool isText = post['type'] == 'text';
     String convertStringToLink(String textData) {
-      final urlRegExp =
-          RegExp(r'(?:(?:https?|ftp):\/\/)?[\w/\-?=%.]+\.[\w/\-?=%.]+');
-      Iterable<RegExpMatch> matches = urlRegExp.allMatches(textData);
+      final urlRegExp = RegExp(
+        r'(?:(?:https?|ftp):\/\/)?[\w/\-?=%.]+\.[\w/\-?=%.]+',
+        unicode: true,
+      );
+      final aa = textData.replaceAll("@", "");
+      Iterable<RegExpMatch> matches = urlRegExp.allMatches(aa);
 
       for (var match in matches) {
-        textData = textData.substring(match.start, match.end);
+        try {
+          textData = aa.substring(match.start, match.end);
+        } catch (e) {
+          log(e);
+        }
       }
       return textData;
     }

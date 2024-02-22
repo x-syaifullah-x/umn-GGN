@@ -436,7 +436,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                   return;
                 }
                 if (AppLocalizations.of(context)!.media == item) {
-                  const url = 'https://www.douyin.com';
+                  const url = 'https://v.douyin.com/iN4PtPCE';
                   if (kIsWeb) {
                     launchUrl(Uri.parse(url));
                   } else {
