@@ -502,10 +502,6 @@ class _SinglePostState extends State<SinglePost> {
                     ? Container(
                         margin: const EdgeInsets.all(5.0),
                         child: LinkPreviewGenerator(
-                          errorImage: "assets/images/can_not_read.gif",
-                          // errorWidget: SvgPicture.asset(
-                          //   "assets/images/can_not_read.gif",
-                          // ),
                           bodyMaxLines: 3,
                           borderRadius: 0,
                           link: convertStringToLink(description!),

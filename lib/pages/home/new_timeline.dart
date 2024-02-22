@@ -540,10 +540,14 @@ class NewTimelineState extends State<NewTimeline> {
       if (hasDesc) {
         return GestureDetector(
           onTap: () => Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => PostScreen(
-                      postId: post['postId'], userId: post['ownerId']))),
+            context,
+            MaterialPageRoute(
+              builder: (context) => PostScreen(
+                postId: post['postId'],
+                userId: post['ownerId'],
+              ),
+            ),
+          ),
           child: Column(
             children: [
               Container(
@@ -801,7 +805,7 @@ class NewTimelineState extends State<NewTimeline> {
               const SizedBox(
                 height: 10,
               ),
-              post['ownerId'] == widget.user
+              post['ownerId'] == widget.user.id
                   ? ListTile(
                       onTap: () {
                         Navigator.pop(context);
@@ -814,7 +818,7 @@ class NewTimelineState extends State<NewTimeline> {
                       ),
                     )
                   : Container(),
-              post['ownerId'] != widget.user
+              post['ownerId'] != widget.user.id
                   ? ListTile(
                       onTap: () {
                         Navigator.pop(context);
@@ -827,7 +831,7 @@ class NewTimelineState extends State<NewTimeline> {
                       ),
                     )
                   : Container(),
-              post['ownerId'] != widget.user
+              post['ownerId'] != widget.user.id
                   ? ListTile(
                       onTap: () {
                         Navigator.pop(context);
@@ -840,7 +844,7 @@ class NewTimelineState extends State<NewTimeline> {
                       ),
                     )
                   : Container(),
-              post['ownerId'] != widget.user
+              post['ownerId'] != widget.user.id
                   ? ListTile(
                       onTap: () {
                         Navigator.pop(context);
@@ -852,7 +856,7 @@ class NewTimelineState extends State<NewTimeline> {
                       ),
                     )
                   : Container(),
-              post['ownerId'] != widget.user
+              post['ownerId'] != widget.user.id
                   ? ListTile(
                       onTap: () {
                         Navigator.pop(context);
