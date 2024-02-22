@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:global_net/config/palette.dart';
 import 'package:global_net/data/reaction_data.dart' as reaction;
+import 'package:global_net/data/user.dart';
 import 'package:global_net/pages/home/home.dart';
 import 'package:global_net/pages/home/profile/profile.dart';
 import 'package:global_net/pages/post_screen.dart';
@@ -179,7 +180,7 @@ class ActivityFeedState extends State<ActivityFeed>
   }
 
   Widget _buildItem({
-    String? currentUserId,
+    required String currentUserId,
     required BuildContext context,
     required QueryDocumentSnapshot<Object?> feedItem,
   }) {
@@ -195,16 +196,18 @@ class ActivityFeedState extends State<ActivityFeed>
               } else {
                 userID = feedItem['userId'];
               }
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => Profile(
-                    profileId: userID,
-                    reactions: reaction.reactions,
-                    isProfileOwner: userID == currentUserId,
+              usersCollection.doc(userID).get().then((value) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => Profile(
+                      user: User.fromJson(value.data()),
+                      reactions: reaction.reactions,
+                      ownerId: currentUserId,
+                    ),
                   ),
-                ),
-              ).then((value) => setState(() {}));
+                ).then((value) => setState(() {}));
+              });
             },
             child: RichText(
               overflow: TextOverflow.ellipsis,
@@ -257,16 +260,18 @@ class ActivityFeedState extends State<ActivityFeed>
           leading: GestureDetector(
             onTap: () {
               final aa = feedItem['userId'];
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => Profile(
-                    profileId: aa,
-                    reactions: reaction.reactions,
-                    isProfileOwner: currentUserId == aa,
+              usersCollection.doc(aa).get().then((value) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => Profile(
+                      user: User.fromJson(value.data()),
+                      reactions: reaction.reactions,
+                      ownerId: currentUserId,
+                    ),
                   ),
-                ),
-              ).then((value) => setState(() {}));
+                ).then((value) => setState(() {}));
+              });
             },
             child: ClipRRect(
               borderRadius: BorderRadius.circular(15.0),
@@ -369,15 +374,17 @@ class ActivityFeedItem extends StatelessWidget {
   // }
 }
 
-showProfile(BuildContext context, {String? userId}) {
-  Navigator.push(
-    context,
-    MaterialPageRoute(
-      builder: (context) => Profile(
-        profileId: userId,
-        reactions: reaction.reactions,
-        isProfileOwner: userId == globalUserId,
+showProfile(BuildContext context, {required String userId}) async {
+  usersCollection.doc(userId).get().then((value) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => Profile(
+          user: User.fromJson(value.data()),
+          reactions: reaction.reactions,
+          ownerId: globalUserId,
+        ),
       ),
-    ),
-  );
+    );
+  });
 }

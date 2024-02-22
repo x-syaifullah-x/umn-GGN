@@ -13,6 +13,8 @@ import 'package:global_net/widgets/simple_world_widgets.dart';
 import 'package:global_net/data/reaction_data.dart' as Reaction;
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+import '../data/user.dart';
+
 class VisitedUsersTile extends StatefulWidget {
   Map<dynamic, dynamic>? userdoc;
 
@@ -26,7 +28,7 @@ class VisitedUsersTileState extends State<VisitedUsersTile> {
   Map<dynamic, dynamic>? userdoc;
   VisitedUsersTileState(this.userdoc);
 
-  final String? currentUserId = globalUserId;
+  final String currentUserId = globalUserId;
   bool isFollowing = false;
 
   @override
@@ -55,16 +57,18 @@ class VisitedUsersTileState extends State<VisitedUsersTile> {
         GestureDetector(
           onTap: () {
             final id = userdoc!['id'];
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => Profile(
-                  profileId: id,
-                  reactions: Reaction.reactions,
-                  isProfileOwner: id == currentUserId,
+            usersCollection.doc(id).get().then((value) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => Profile(
+                    user: User.fromJson(value.data()),
+                    reactions: Reaction.reactions,
+                    ownerId: currentUserId,
+                  ),
                 ),
-              ),
-            ).then((value) => setState(() {}));
+              ).then((value) => setState(() {}));
+            });
           },
           // showProfile(context, profileId: userdoc!['id']),
           child: buildUsers(),

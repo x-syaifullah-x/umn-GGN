@@ -33,20 +33,20 @@ import '../../../data/user.dart';
 import '../user/user.dart';
 
 class Profile extends StatelessWidget {
-  final String? profileId;
+  final User user;
   final List<Reaction<String>> reactions;
-  final bool isProfileOwner;
+  final String ownerId;
 
   const Profile({
     Key? key,
-    required this.profileId,
+    required this.user,
     required this.reactions,
-    required this.isProfileOwner,
+    required this.ownerId,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    ScrollController scrollController = ScrollController();
+    final ScrollController scrollController = ScrollController();
     final bool widthMoreThan_500 = (MediaQuery.of(context).size.width > 500);
     return Scaffold(
       backgroundColor: Theme.of(context).backgroundColor,
@@ -69,21 +69,11 @@ class Profile extends StatelessWidget {
                 child: Container(
                   color: Theme.of(context).scaffoldBackgroundColor,
                   // child: StreamBuilder<GloabalUser?>(
-                  // future: GloabalUser.fetchUser(widget.profileId),
-                  child: StreamBuilder<DocumentSnapshot<Map<String, dynamic>>>(
-                    stream: usersCollection.doc(profileId).snapshots(),
-                    builder: (context, snapshot) {
-                      if (!snapshot.hasData) {
-                        return circularProgress();
-                      }
-                      final user = User.fromJson(snapshot.data?.data());
-                      return Profile2(
-                        profileId: profileId,
-                        reactions: reactions,
-                        isProfileOwner: isProfileOwner,
-                        user: user,
-                      );
-                    },
+                  // future: GloabalUser.fetchUser(widget.user.id),
+                  child: Profile2(
+                    reactions: reactions,
+                    ownerId: ownerId,
+                    user: user,
                   ),
                 ),
               ),
@@ -97,16 +87,14 @@ class Profile extends StatelessWidget {
 }
 
 class Profile2 extends StatefulWidget {
-  final String? profileId;
   final List<Reaction<String>> reactions;
-  final bool isProfileOwner;
+  final String ownerId;
   final User user;
 
   const Profile2({
     Key? key,
-    required this.profileId,
     required this.reactions,
-    required this.isProfileOwner,
+    required this.ownerId,
     required this.user,
   }) : super(key: key);
 
@@ -116,15 +104,9 @@ class Profile2 extends StatefulWidget {
 
 class _ProfileState extends State<Profile2> {
   String postOrientation = "list";
-  bool isFollowing = false;
-  bool isLiked = false;
-  bool isDisliked = false;
   bool isLoading = false;
   int currentUserCredit = 0;
   int postCount = 0;
-  int likedCount = 0;
-  int dislikedCount = 0;
-  int ppViewCount = 0;
   final ImagePicker _picker = ImagePicker();
   File? storyFile;
   File? imageFileAvatar;
@@ -139,78 +121,9 @@ class _ProfileState extends State<Profile2> {
   void initState() {
     super.initState();
     getProfilePosts();
-    _checkIfFollowing();
     flickMultiManager = FlickMultiManager();
-    _checkIfLiked();
-    _checkIfDislikedLiked();
-    _getLikedUsers();
     _getCurrentUserCredits();
-    _getDisLikedUsers();
     _viewMyProfile();
-    _getPpViewUsers();
-  }
-
-  _checkIfFollowing() async {
-    DocumentSnapshot doc = await followersCollection
-        .doc(widget.profileId)
-        .collection('userFollowers')
-        .doc(widget.profileId)
-        .get();
-    setState(() {
-      isFollowing = doc.exists;
-    });
-  }
-
-  _checkIfLiked() async {
-    DocumentSnapshot doc = await likedDppCollection
-        .doc(widget.profileId)
-        .collection('userlikes')
-        .doc(widget.profileId)
-        .get();
-    setState(() {
-      isLiked = doc.exists;
-    });
-  }
-
-  _checkIfDislikedLiked() async {
-    DocumentSnapshot doc = await dislikedppCollection
-        .doc(widget.profileId)
-        .collection('userDislikes')
-        .doc(widget.profileId)
-        .get();
-    setState(() {
-      isDisliked = doc.exists;
-    });
-  }
-
-  _getLikedUsers() async {
-    QuerySnapshot snapshot = await likedDppCollection
-        .doc(widget.profileId)
-        .collection('userlikes')
-        .get();
-    setState(() {
-      likedCount = snapshot.docs.length;
-    });
-  }
-
-  _getDisLikedUsers() async {
-    QuerySnapshot snapshot = await dislikedppCollection
-        .doc(widget.profileId)
-        .collection('userDislikes')
-        .get();
-    setState(() {
-      dislikedCount = snapshot.docs.length;
-    });
-  }
-
-  _getPpViewUsers() async {
-    QuerySnapshot snapshot = await ppviewsCollection
-        .doc(widget.profileId)
-        .collection('userviews')
-        .get();
-    setState(() {
-      ppViewCount = snapshot.docs.length;
-    });
   }
 
   getProfilePosts() async {
@@ -218,7 +131,7 @@ class _ProfileState extends State<Profile2> {
       isLoading = true;
     });
     QuerySnapshot snapshot = await postsCollection
-        .doc(widget.profileId)
+        .doc(widget.user.id)
         .collection('userPosts')
         .orderBy('timestamp', descending: true)
         .get();
@@ -230,7 +143,7 @@ class _ProfileState extends State<Profile2> {
   }
 
   _getCurrentUserCredits() async {
-    usersCollection.doc(widget.profileId).get().then(
+    usersCollection.doc(widget.user.id).get().then(
           (value) => setState(() {
             currentUserCredit = value["credit_points"];
           }),
@@ -238,13 +151,13 @@ class _ProfileState extends State<Profile2> {
   }
 
   _viewMyProfile() {
-    if (widget.isProfileOwner) {
+    if (widget.user.id != widget.ownerId) {
       ppviewsCollection
-          .doc(widget.profileId)
+          .doc(widget.user.id)
           .collection('userviews')
-          .doc()
+          .doc(widget.ownerId)
           .set({
-        'userId': widget.profileId,
+        'userId': widget.ownerId,
         'timestamp': DateTime.now().millisecondsSinceEpoch.toString(),
       });
     }
@@ -303,19 +216,21 @@ class _ProfileState extends State<Profile2> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => EditProfile(currentUserId: widget.profileId),
+        builder: (context) => EditProfile(currentUserId: widget.user.id),
       ),
     );
   }
 
-  buildProfileButton() {
+  Widget _buildProfileButton() {
     double maxWidth;
     if (isWeb || (MediaQuery.of(context).size.width > 600)) {
       maxWidth = MediaQuery.of(context).size.width * 0.22;
     } else {
       maxWidth = MediaQuery.of(context).size.width * 0.4;
     }
-    if (widget.isProfileOwner) {
+
+    final bool isOwner = widget.ownerId == widget.user.id;
+    if (isOwner) {
       return Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -372,199 +287,230 @@ class _ProfileState extends State<Profile2> {
           })
         ],
       );
-    } else if (isFollowing) {
-      return Container(
-        margin: const EdgeInsets.only(top: 10.0),
-        height: 38,
-        width: (context.width() - (3 * 16)) * 0.4,
-        decoration: BoxDecoration(
-          color: Colors.redAccent[700],
-          borderRadius: const BorderRadius.all(
-            Radius.circular(5.0),
-          ),
-        ),
-        child: Center(
-          child: Text(
-            AppLocalizations.of(context)!.unfollow,
-            textAlign: TextAlign.left,
-            style: const TextStyle(
-              fontWeight: FontWeight.w700,
-              fontSize: 16,
-              letterSpacing: 0.0,
-              color: Colors.white,
+    } else {
+      final collection = followingCollection
+          .doc(widget.ownerId)
+          .collection("userFollowing")
+          .doc(widget.user.id);
+      return StreamBuilder<DocumentSnapshot<Map<String, dynamic>>>(
+        stream: collection.snapshots(),
+        builder: (context, snapshot) {
+          final bool isFollowing = snapshot.data?.data()?['value'] ?? false;
+          return Container(
+            margin: const EdgeInsets.only(top: 10.0),
+            height: 38,
+            width: (context.width() - (3 * 16)) * 0.4,
+            decoration: BoxDecoration(
+              color: isFollowing ? Colors.redAccent[700] : Colors.blue[700],
+              borderRadius: const BorderRadius.all(
+                Radius.circular(5.0),
+              ),
             ),
-          ),
-        ),
-      ).onTap(() {
-        handleUnfollowUser();
-      });
-    } else if (!isFollowing) {
-      return Container(
-        margin: const EdgeInsets.only(top: 10.0),
-        height: 38,
-        width: (context.width() - (3 * 16)) * 0.4,
-        decoration: BoxDecoration(
-          color: Colors.blue[700],
-          borderRadius: const BorderRadius.all(
-            Radius.circular(5.0),
-          ),
-        ),
-        child: Center(
-          child: Text(
-            AppLocalizations.of(context)!.follow,
-            textAlign: TextAlign.left,
-            style: const TextStyle(
-              fontWeight: FontWeight.w700,
-              fontSize: 16,
-              letterSpacing: 0.0,
-              color: Colors.white,
+            child: Center(
+              child: Text(
+                isFollowing
+                    ? AppLocalizations.of(context)!.unfollow
+                    : AppLocalizations.of(context)!.follow,
+                textAlign: TextAlign.left,
+                style: const TextStyle(
+                  fontWeight: FontWeight.w700,
+                  fontSize: 16,
+                  letterSpacing: 0.0,
+                  color: Colors.white,
+                ),
+              ),
             ),
-          ),
-        ),
-      ).onTap(() {
-        handleFollowUser();
-      });
+          ).onTap(() {
+            final milliseconds = DateTime.now().millisecondsSinceEpoch;
+            if (isFollowing) {
+              collection.update({
+                'updateAt': milliseconds,
+                'value': false,
+              });
+            } else {
+              collection.get().then((value) {
+                if (value.exists) {
+                  collection.update({
+                    'updateAt': milliseconds,
+                    'userId': widget.ownerId,
+                    'value': true,
+                  });
+                } else {
+                  collection.set({
+                    'createAt': milliseconds,
+                    'updateAt': milliseconds,
+                    'userId': widget.ownerId,
+                    'value': true,
+                  });
+                }
+              });
+            }
+          });
+        },
+      );
+      // if (isFollowing) {
+      //   return Container(
+      //     margin: const EdgeInsets.only(top: 10.0),
+      //     height: 38,
+      //     width: (context.width() - (3 * 16)) * 0.4,
+      //     decoration: BoxDecoration(
+      //       color: Colors.redAccent[700],
+      //       borderRadius: const BorderRadius.all(
+      //         Radius.circular(5.0),
+      //       ),
+      //     ),
+      //     child: Center(
+      //       child: Text(
+      //         AppLocalizations.of(context)!.unfollow,
+      //         textAlign: TextAlign.left,
+      //         style: const TextStyle(
+      //           fontWeight: FontWeight.w700,
+      //           fontSize: 16,
+      //           letterSpacing: 0.0,
+      //           color: Colors.white,
+      //         ),
+      //       ),
+      //     ),
+      //   ).onTap(() {
+      //     // handleUnfollowUser();
+      //   });
+      // } else if (!isFollowing) {
+      //   return Container(
+      //     margin: const EdgeInsets.only(top: 10.0),
+      //     height: 38,
+      //     width: (context.width() - (3 * 16)) * 0.4,
+      //     decoration: BoxDecoration(
+      //       color: Colors.blue[700],
+      //       borderRadius: const BorderRadius.all(
+      //         Radius.circular(5.0),
+      //       ),
+      //     ),
+      //     child: Center(
+      //       child: Text(
+      //         AppLocalizations.of(context)!.follow,
+      //         textAlign: TextAlign.left,
+      //         style: const TextStyle(
+      //           fontWeight: FontWeight.w700,
+      //           fontSize: 16,
+      //           letterSpacing: 0.0,
+      //           color: Colors.white,
+      //         ),
+      //       ),
+      //     ),
+      //   ).onTap(() {
+      //     // handleFollowUser();
+      //   });
     }
   }
 
-  handleUnfollowUser() {
-    setState(() {
-      isFollowing = false;
-    });
-    followersCollection
-        .doc(widget.profileId)
-        .collection('userFollowers')
-        .doc(widget.profileId)
-        .get()
-        .then((doc) {
-      if (doc.exists) {
-        doc.reference.delete();
-      }
-    });
-    followingCollection
-        .doc(widget.profileId)
-        .collection('userFollowing')
-        .doc(widget.profileId)
-        .get()
-        .then((doc) {
-      if (doc.exists) {
-        doc.reference.delete();
-      }
-    });
-    feedCollection
-        .doc(widget.profileId)
-        .collection('feedItems')
-        .doc(widget.profileId)
-        .get()
-        .then((doc) {
-      if (doc.exists) {
-        doc.reference.delete();
-      }
-    });
-  }
+  // handleUnfollowUser() {
+  //   setState(() {
+  //     isFollowing = false;
+  //   });
+  //   followersCollection
+  //       .doc(widget.user.id)
+  //       .collection('userFollowers')
+  //       .doc(widget.user.id)
+  //       .get()
+  //       .then((doc) {
+  //     if (doc.exists) {
+  //       doc.reference.delete();
+  //     }
+  //   });
+  //   followingCollection
+  //       .doc(widget.user.id)
+  //       .collection('userFollowing')
+  //       .doc(widget.user.id)
+  //       .get()
+  //       .then((doc) {
+  //     if (doc.exists) {
+  //       doc.reference.delete();
+  //     }
+  //   });
+  //   feedCollection
+  //       .doc(widget.user.id)
+  //       .collection('feedItems')
+  //       .doc(widget.user.id)
+  //       .get()
+  //       .then((doc) {
+  //     if (doc.exists) {
+  //       doc.reference.delete();
+  //     }
+  //   });
+  // }
 
-  handleFollowUser() {
-    setState(() {
-      isFollowing = true;
-    });
-    followersCollection
-        .doc(widget.profileId)
-        .collection('userFollowers')
-        .doc(widget.profileId)
-        .set({'userId': widget.profileId});
-    followingCollection
-        .doc(widget.profileId)
-        .collection('userFollowing')
-        .doc(widget.profileId)
-        .set({'userId': widget.profileId});
-    feedCollection
-        .doc(widget.profileId)
-        .collection('feedItems')
-        .doc(widget.profileId)
-        .set({
-      "type": "follow",
-      "ownerId": widget.profileId,
-      "username": globalName,
-      "userId": widget.profileId,
-      "userProfileImg": globalImage,
-      "timestamp": timestamp,
-      "isSeen": false,
-    });
-  }
+  // handleFollowUser() {
+  //   setState(() {
+  //     isFollowing = true;
+  //   });
+  //   followersCollection
+  //       .doc(widget.user.id)
+  //       .collection('userFollowers')
+  //       .doc(widget.user.id)
+  //       .set({'userId': widget.user.id});
+  //   followingCollection
+  //       .doc(widget.user.id)
+  //       .collection('userFollowing')
+  //       .doc(widget.user.id)
+  //       .set({'userId': widget.user.id});
+  //   feedCollection
+  //       .doc(widget.user.id)
+  //       .collection('feedItems')
+  //       .doc(widget.user.id)
+  //       .set({
+  //     "type": "follow",
+  //     "ownerId": widget.user.id,
+  //     "username": globalName,
+  //     "userId": widget.user.id,
+  //     "userProfileImg": globalImage,
+  //     "timestamp": timestamp,
+  //     "isSeen": false,
+  //   });
+  // }
 
-  handleLikeUser() {
-    if (isLiked) {
-      setState(() {
-        isLiked = false;
-        likedCount--;
-      });
+  void _onClickButtonLike(bool value) {
+    if (value) {
       likedDppCollection
-          .doc(widget.profileId)
+          .doc(widget.user.id)
           .collection('userlikes')
-          .doc(widget.profileId)
+          .doc(widget.ownerId)
+          .set({'userId': widget.ownerId});
+      dislikedppCollection
+          .doc(widget.user.id)
+          .collection('userDislikes')
+          .doc(widget.ownerId)
           .delete();
     } else {
-      if (isDisliked) {
-        setState(() {
-          isDisliked = false;
-          dislikedCount--;
-        });
-        dislikedppCollection
-            .doc(widget.profileId)
-            .collection('userDislikes')
-            .doc(widget.profileId)
-            .delete();
-      }
       likedDppCollection
-          .doc(widget.profileId)
+          .doc(widget.user.id)
           .collection('userlikes')
-          .doc(widget.profileId)
-          .set({'userId': widget.profileId});
-      setState(() {
-        isDisliked = false;
-        isLiked = true;
-        likedCount++;
-      });
+          .doc(widget.ownerId)
+          .delete();
     }
   }
 
-  handleDislikeLikeUser() {
-    if (isDisliked) {
-      setState(() {
-        isDisliked = false;
-        dislikedCount--;
-      });
+  void _onClickButtonDislike(bool value) {
+    if (value) {
       dislikedppCollection
-          .doc(widget.profileId)
+          .doc(widget.user.id)
           .collection('userDislikes')
-          .doc(widget.profileId)
+          .doc(widget.ownerId)
+          .set({'userId': widget.ownerId});
+      likedDppCollection
+          .doc(widget.user.id)
+          .collection('userlikes')
+          .doc(widget.ownerId)
           .delete();
     } else {
-      if (isLiked) {
-        setState(() {
-          isLiked = false;
-          likedCount--;
-        });
-        likedDppCollection
-            .doc(widget.profileId)
-            .collection('userlikes')
-            .doc(widget.profileId)
-            .delete();
-      }
       dislikedppCollection
-          .doc(widget.profileId)
+          .doc(widget.user.id)
           .collection('userDislikes')
-          .doc(widget.profileId)
-          .set({'userId': widget.profileId});
-      setState(() {
-        isDisliked = true;
-        isLiked = false;
-        dislikedCount++;
-      });
+          .doc(widget.ownerId)
+          .delete();
     }
   }
 
-  Future getavatarImage() async {
+  Future getAvatarImage() async {
     final newImageFile =
         await _picker.pickImage(source: ImageSource.gallery, imageQuality: 50);
 
@@ -582,7 +528,7 @@ class _ProfileState extends State<Profile2> {
   }
 
   Future uploadAvatar(imageFileAvatar) async {
-    String mFileName = widget.profileId!;
+    String mFileName = widget.user.id!;
     Reference storageReference =
         FirebaseStorage.instance.ref().child("avatar_$mFileName.jpg");
     UploadTask storageUploadTask = storageReference.putFile(imageFileAvatar!);
@@ -591,7 +537,7 @@ class _ProfileState extends State<Profile2> {
     setState(() {
       isLoading = false;
       usersCollection
-          .doc(widget.profileId)
+          .doc(widget.user.id)
           .update({"photoUrl": imageFileAvatarUrl});
 
       SnackBar snackbar =
@@ -618,7 +564,7 @@ class _ProfileState extends State<Profile2> {
   }
 
   Future uploadCover(imageFileCover) async {
-    String mFileName = widget.profileId!;
+    String mFileName = widget.user.id!;
     Reference storageReference =
         FirebaseStorage.instance.ref().child("cover_$mFileName.jpg");
     UploadTask storageUploadTask = storageReference.putFile(imageFileCover!);
@@ -627,7 +573,7 @@ class _ProfileState extends State<Profile2> {
     setState(() {
       isLoading = false;
       usersCollection
-          .doc(widget.profileId)
+          .doc(widget.user.id)
           .update({"coverUrl": imageFileCoverUrl});
 
       SnackBar snackbar = const SnackBar(content: Text("Cover Photo updated!"));
@@ -716,189 +662,181 @@ class _ProfileState extends State<Profile2> {
   }
 
   Widget buildProfileHeader(User user) {
+    final bool isOwner = widget.ownerId == widget.user.id;
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: <Widget>[
-        Stack(children: <Widget>[
-          (imageFileCover == null)
-              ? user!.coverUrl.isEmpty
-                  ? Image.asset(
-                      'assets/images/defaultcover.png',
-                      alignment: Alignment.center,
-                      width: double.infinity,
-                      fit: BoxFit.cover,
-                      height: 200,
-                    )
-                  : SizedBox(
-                      height: 200,
-                      width: double.infinity,
-                      child: CachedNetworkImage(
-                        imageUrl: user.coverUrl,
+        Stack(
+          children: <Widget>[
+            (imageFileCover == null)
+                ? user.coverUrl.isEmpty
+                    ? Image.asset(
+                        'assets/images/defaultcover.png',
+                        alignment: Alignment.center,
+                        width: double.infinity,
                         fit: BoxFit.cover,
-                      ),
-                    )
-              : Material(
-                  clipBehavior: Clip.hardEdge,
-                  child: Image.file(
-                    imageFileCover!,
-                    width: double.infinity,
-                    height: 200.0,
-                    fit: BoxFit.cover,
-                  ),
-                ),
-          widget.isProfileOwner
-              ? Container()
-              : SizedBox(
-                  width: double.infinity,
-                  height: 200,
-                  child: Container(
-                    alignment: const Alignment(-0.8, 1.5),
-                    child: Stack(
-                      children: [
-                        isLiked
-                            ? Container(
-                                // alignment: Alignment.center,
-                                width: 60,
-                                padding: const EdgeInsets.all(10.0),
-                                margin: const EdgeInsets.all(6.0),
-                                decoration: BoxDecoration(
-                                  color: Theme.of(context).secondaryHeaderColor,
-                                  shape: BoxShape.circle,
-                                ),
-                                child: Image.asset(
-                                  'assets/images/likedpp.png',
-                                  width: 40,
-                                ),
-                              ).onTap(() {
-                                handleLikeUser();
-                              })
-                            : Container(
-                                width: 60,
-                                padding: const EdgeInsets.all(10.0),
-                                margin: const EdgeInsets.all(6.0),
-                                decoration: BoxDecoration(
-                                  color: Theme.of(context).secondaryHeaderColor,
-                                  shape: BoxShape.circle,
-                                ),
-                                child: Image.asset(
-                                  'assets/images/likepp.png',
-                                  width: 40,
-                                ),
-                              ).onTap(() {
-                                handleLikeUser();
-                              })
-                      ],
+                        height: 200,
+                      )
+                    : SizedBox(
+                        height: 200,
+                        width: double.infinity,
+                        child: CachedNetworkImage(
+                          imageUrl: user.coverUrl,
+                          fit: BoxFit.cover,
+                        ),
+                      )
+                : Material(
+                    clipBehavior: Clip.hardEdge,
+                    child: Image.file(
+                      imageFileCover!,
+                      width: double.infinity,
+                      height: 200.0,
+                      fit: BoxFit.cover,
                     ),
                   ),
-                ),
-          SizedBox(
-            width: double.infinity,
-            height: 200,
-            child: Container(
-              alignment: const Alignment(0.0, 2.5),
-              child: Stack(
-                children: [
-                  (imageFileAvatar == null)
-                      ? ClipRRect(
-                          borderRadius: BorderRadius.circular(15.0),
-                          child: user!.photoUrl == null || user.photoUrl.isEmpty
-                              ? Container(
-                                  decoration: BoxDecoration(
-                                    color: const Color(0xFF003a54),
-                                    borderRadius: BorderRadius.circular(15.0),
-                                  ),
-                                  child: Image.asset(
-                                    'assets/images/defaultavatar.png',
+            if (!isOwner)
+              StreamBuilder<DocumentSnapshot<Map<String, dynamic>>>(
+                stream: likedDppCollection
+                    .doc(widget.user.id)
+                    .collection('userlikes')
+                    .doc(widget.ownerId)
+                    .snapshots(),
+                builder: (context, snapshot) {
+                  final isLike = snapshot.data?.exists == true;
+                  return SizedBox(
+                    width: double.infinity,
+                    height: 200,
+                    child: Container(
+                      alignment: const Alignment(-0.8, 1.5),
+                      child: Stack(
+                        children: [
+                          Container(
+                            width: 60,
+                            padding: const EdgeInsets.all(10.0),
+                            margin: const EdgeInsets.all(6.0),
+                            decoration: BoxDecoration(
+                              color: Theme.of(context).secondaryHeaderColor,
+                              shape: BoxShape.circle,
+                            ),
+                            child: Image.asset(
+                              isLike
+                                  ? 'assets/images/likedpp.png'
+                                  : 'assets/images/likepp.png',
+                              width: 40,
+                            ),
+                          ).onTap(() {
+                            _onClickButtonLike(!isLike);
+                          }),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              ),
+            SizedBox(
+              width: double.infinity,
+              height: 200,
+              child: Container(
+                alignment: const Alignment(0.0, 2.5),
+                child: Stack(
+                  children: [
+                    (imageFileAvatar == null)
+                        ? ClipRRect(
+                            borderRadius: BorderRadius.circular(15.0),
+                            child: user.photoUrl.isEmpty
+                                ? Container(
+                                    decoration: BoxDecoration(
+                                      color: const Color(0xFF003a54),
+                                      borderRadius: BorderRadius.circular(15.0),
+                                    ),
+                                    child: Image.asset(
+                                      'assets/images/defaultavatar.png',
+                                      width: 120,
+                                    ),
+                                  )
+                                : CachedNetworkImage(
+                                    imageUrl: user.photoUrl,
+                                    height: 120,
                                     width: 120,
+                                    fit: BoxFit.cover,
                                   ),
-                                )
-                              : CachedNetworkImage(
-                                  imageUrl: user.photoUrl,
-                                  height: 120,
-                                  width: 120,
-                                  fit: BoxFit.cover,
-                                ),
-                        )
-                      : Material(
-                          borderRadius:
-                              const BorderRadius.all(Radius.circular(15.0)),
-                          clipBehavior: Clip.hardEdge,
-                          child: Image.file(
-                            imageFileAvatar!,
-                            width: 120.0,
-                            height: 120.0,
-                            fit: BoxFit.cover,
+                          )
+                        : Material(
+                            borderRadius:
+                                const BorderRadius.all(Radius.circular(15.0)),
+                            clipBehavior: Clip.hardEdge,
+                            child: Image.file(
+                              imageFileAvatar!,
+                              width: 120.0,
+                              height: 120.0,
+                              fit: BoxFit.cover,
+                            ),
                           ),
-                        ),
-                  widget.isProfileOwner
-                      ? SvgPicture.asset(
-                          'assets/images/photo.svg',
-                          width: 40,
-                        ).onTap(() {
-                          getavatarImage();
-                        })
-                      : const Text(''),
-                ],
+                    widget.ownerId == widget.user.id
+                        ? SvgPicture.asset(
+                            'assets/images/photo.svg',
+                            width: 40,
+                          ).onTap(() {
+                            getAvatarImage();
+                          })
+                        : const Text(''),
+                  ],
+                ),
               ),
             ),
-          ),
-          widget.isProfileOwner
-              ? Container()
-              : SizedBox(
-                  width: double.infinity,
-                  height: 200,
-                  child: Container(
-                    alignment: const Alignment(0.8, 1.5),
-                    child: Stack(
-                      children: [
-                        isDisliked
-                            ? Container(
-                                width: 60,
-                                padding: const EdgeInsets.all(10.0),
-                                margin: const EdgeInsets.all(6.0),
-                                decoration: BoxDecoration(
-                                  color: Theme.of(context).secondaryHeaderColor,
-                                  shape: BoxShape.circle,
-                                ),
-                                child: Image.asset(
-                                  'assets/images/dislikedpp.png',
-                                  width: 40,
-                                ),
-                              ).onTap(() {
-                                handleDislikeLikeUser();
-                              })
-                            : Container(
-                                width: 60,
-                                padding: const EdgeInsets.all(10.0),
-                                margin: const EdgeInsets.all(6.0),
-                                decoration: BoxDecoration(
-                                  color: Theme.of(context).secondaryHeaderColor,
-                                  shape: BoxShape.circle,
-                                ),
-                                child: Image.asset(
-                                  'assets/images/dislikepp.png',
-                                  width: 40,
-                                ),
-                              ).onTap(() {
-                                handleDislikeLikeUser();
-                              }),
-                      ],
+            if (!isOwner)
+              StreamBuilder<DocumentSnapshot<Map<String, dynamic>>>(
+                stream: dislikedppCollection
+                    .doc(widget.user.id)
+                    .collection('userDislikes')
+                    .doc(widget.ownerId)
+                    .snapshots(),
+                builder: (context, snapshot) {
+                  final isDislike = snapshot.data?.exists == true;
+                  return SizedBox(
+                    width: double.infinity,
+                    height: 200,
+                    child: Container(
+                      alignment: const Alignment(0.8, 1.5),
+                      child: Stack(
+                        children: [
+                          Container(
+                            width: 60,
+                            padding: const EdgeInsets.all(10.0),
+                            margin: const EdgeInsets.all(6.0),
+                            decoration: BoxDecoration(
+                              color: Theme.of(context).secondaryHeaderColor,
+                              shape: BoxShape.circle,
+                            ),
+                            child: Image.asset(
+                              isDislike
+                                  ? 'assets/images/dislikedpp.png'
+                                  : 'assets/images/dislikepp.png',
+                              width: 40,
+                            ),
+                          ).onTap(() {
+                            _onClickButtonDislike(!isDislike);
+                          }),
+                        ],
+                      ),
                     ),
-                  ),
-                ),
-          widget.isProfileOwner
-              ? Positioned(
-                  bottom: 0,
-                  right: 0,
-                  child: SvgPicture.asset(
-                    'assets/images/photo.svg',
-                    width: 40,
-                  ).onTap(() {
-                    getcoverImage();
-                  }))
-              : Container(),
-        ]),
+                  );
+                },
+              ),
+            if (isOwner)
+              Positioned(
+                bottom: 0,
+                right: 0,
+                child: SvgPicture.asset(
+                  'assets/images/photo.svg',
+                  width: 40,
+                ).onTap(() {
+                  getcoverImage();
+                }),
+              ),
+          ],
+        ),
         const SizedBox(height: 70),
         Row(
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -929,7 +867,7 @@ class _ProfileState extends State<Profile2> {
           style: Theme.of(context).textTheme.headline6!.copyWith(fontSize: 14),
         ),
         const SizedBox(height: 20),
-        if (widget.isProfileOwner)
+        if (widget.ownerId == widget.user.id)
           Row(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
@@ -969,32 +907,15 @@ class _ProfileState extends State<Profile2> {
                   context: context,
                   builder: (context) => VipDialog(user: user),
                 );
-                // if (!isWeb) {
-                //   Navigator.push(
-                //     context,
-                //     MaterialPageRoute(
-                //       builder: (context) => const Upgrade(),
-                //     ),
-                //   );
-                // } else {
-                //   final scaffold = ScaffoldMessenger.of(context);
-                //   scaffold.showSnackBar(
-                //     SnackBar(
-                //       content: const Text("NOT SUPPORTED"),
-                //       action: SnackBarAction(
-                //           label: 'Ok', onPressed: scaffold.hideCurrentSnackBar),
-                //     ),
-                //   );
-                // }
               }),
             ],
           ),
         Row(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            buildProfileButton(),
+            _buildProfileButton(),
             const SizedBox(width: 10),
-            if (!widget.isProfileOwner)
+            if (widget.ownerId != widget.user.id)
               Row(
                 children: [
                   Container(
@@ -1055,7 +976,7 @@ class _ProfileState extends State<Profile2> {
               ),
               StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
                 stream: followersCollection
-                    .doc(widget.profileId)
+                    .doc(widget.user.id)
                     .collection('userFollowers')
                     .snapshots(),
                 builder: (context, snapshot) {
@@ -1073,7 +994,7 @@ class _ProfileState extends State<Profile2> {
                     AppLocalizations.of(context)!.followers,
                     followerCount,
                     () {
-                      if (widget.isProfileOwner) {
+                      if (widget.ownerId == widget.user.id) {
                         bool noCredit = user.creditPoints < 10;
                         consentSheet(
                           context,
@@ -1089,20 +1010,9 @@ class _ProfileState extends State<Profile2> {
                                   context);
                             } else {
                               Navigator.of(context).pop();
-                              usersCollection.doc(widget.profileId).update({
+                              usersCollection.doc(widget.user.id).update({
                                 "credit_points": FieldValue.increment(-10),
                               });
-
-                              //##Uncomment the below code to get user id of followers
-                              // var querySnapshots = await followersRef
-                              //     .doc(user.id)
-                              //     .collection('userFollowers')
-                              //     .get();
-                              // for (var doc in querySnapshots.docs) {
-                              //   await doc.reference.update({
-                              //     "userId": doc.id,
-                              //   });
-                              // }
 
                               Navigator.push(
                                 context,
@@ -1132,20 +1042,9 @@ class _ProfileState extends State<Profile2> {
                             } else {
                               Navigator.of(context).pop();
 
-                              usersCollection.doc(widget.profileId).update({
+                              usersCollection.doc(widget.user.id).update({
                                 "credit_points": FieldValue.increment(-20),
                               });
-
-                              //##Uncomment the below code to get user id of followers
-                              // var querySnapshots = await followersRef
-                              //     .doc(user.id)
-                              //     .collection('userFollowers')
-                              //     .get();
-                              // for (var doc in querySnapshots.docs) {
-                              //   await doc.reference.update({
-                              //     "userId": doc.id,
-                              //   });
-                              // }
 
                               Navigator.push(
                                 context,
@@ -1165,7 +1064,7 @@ class _ProfileState extends State<Profile2> {
               ),
               StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
                 stream: followingCollection
-                    .doc(widget.profileId)
+                    .doc(widget.user.id)
                     .collection('userFollowing')
                     .snapshots(),
                 builder: (context, snapshot) {
@@ -1183,7 +1082,7 @@ class _ProfileState extends State<Profile2> {
                     AppLocalizations.of(context)!.following,
                     count,
                     () {
-                      if (widget.isProfileOwner) {
+                      if (widget.ownerId == widget.user.id) {
                         bool noCredit = user.creditPoints < 10;
                         consentSheet(
                           context,
@@ -1199,20 +1098,9 @@ class _ProfileState extends State<Profile2> {
                                   context);
                             } else {
                               Navigator.of(context).pop();
-                              usersCollection.doc(widget.profileId).update({
+                              usersCollection.doc(widget.user.id).update({
                                 "credit_points": FieldValue.increment(-10),
                               });
-
-                              //##Uncomment the below code to get user id of following users
-                              // var querySnapshots = await followingRef
-                              //     .doc(user.id)
-                              //     .collection('userFollowing')
-                              //     .get();
-                              // for (var doc in querySnapshots.docs) {
-                              //   await doc.reference.update({
-                              //     "userId": doc.id,
-                              //   });
-                              // }
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
@@ -1241,22 +1129,11 @@ class _ProfileState extends State<Profile2> {
                             } else {
                               Navigator.of(context).pop();
 
-                              usersCollection.doc(widget.profileId).update({
-                                "credit_points": FieldValue.increment(-20),
+                              usersCollection.doc(widget.user.id).update({
+                                User.fieldNameCreditPoints:
+                                    FieldValue.increment(-20),
                                 // 'userIsVerified': true,
                               });
-                              //##Uncomment the below code to get user id of following users
-
-                              // var querySnapshots = await followingRef
-                              //     .doc(user.id)
-                              //     .collection('userFollowing')
-                              //     .get();
-                              // for (var doc in querySnapshots.docs) {
-                              //   await doc.reference.update({
-                              //     "userId": doc.id,
-                              //   });
-                              // }
-
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
@@ -1282,206 +1159,237 @@ class _ProfileState extends State<Profile2> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
-              buildCountColumn(
-                "Views",
-                ppViewCount,
-                () {
-                  if (widget.isProfileOwner) {
-                    bool noCredit = user.creditPoints < 10;
-                    consentSheet(
-                      context,
-                      'Would you like to see users who viewed your Profile?',
-                      'Spent 10 Credits to see users who viewed your Profile',
-                      () {
-                        if (noCredit) {
-                          Navigator.of(context).pop();
-                          simpleworldtoast(
-                              "Error",
-                              "Does not have enough credits, please get more then 10 credits",
-                              context);
-                        } else {
-                          Navigator.of(context).pop();
-                          usersCollection.doc(widget.profileId).update({
-                            "credit_points": FieldValue.increment(-10),
-                          });
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => UsersViewedMyProfileList(
-                                userId: user.id,
-                              ),
-                            ),
-                          );
-                        }
-                      },
-                    );
-                  } else {
-                    bool noCredit = currentUserCredit < 20;
-                    consentSheet(
-                      context,
-                      'Would you like to see users who viewed  this Profile?',
-                      'Spent 20 Credits to see users who viewed this Profile',
-                      () {
-                        if (noCredit) {
-                          Navigator.of(context).pop();
-                          simpleworldtoast(
-                              "Error",
-                              "Does not have enough credits, please get more then 20 credits",
-                              context);
-                        } else {
-                          Navigator.of(context).pop();
+              StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
+                stream: ppviewsCollection
+                    .doc(widget.user.id)
+                    .collection('userviews')
+                    .snapshots(),
+                builder: (context, snapshot) {
+                  final count = snapshot.data?.docs.length ?? 0;
+                  return buildCountColumn(
+                    "Views",
+                    count,
+                    () {
+                      if (widget.ownerId == widget.user.id) {
+                        bool noCredit = user.creditPoints < 10;
+                        consentSheet(
+                          context,
+                          'Would you like to see users who viewed your Profile?',
+                          'Spent 10 Credits to see users who viewed your Profile',
+                          () {
+                            if (noCredit) {
+                              Navigator.of(context).pop();
+                              simpleworldtoast(
+                                  "Error",
+                                  "Does not have enough credits, please get more then 10 credits",
+                                  context);
+                            } else {
+                              Navigator.of(context).pop();
+                              usersCollection.doc(widget.user.id).update({
+                                "credit_points": FieldValue.increment(-10),
+                              });
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      UsersViewedMyProfileList(
+                                    userId: user.id,
+                                  ),
+                                ),
+                              );
+                            }
+                          },
+                        );
+                      } else {
+                        bool noCredit = currentUserCredit < 20;
+                        consentSheet(
+                          context,
+                          'Would you like to see users who viewed  this Profile?',
+                          'Spent 20 Credits to see users who viewed this Profile',
+                          () {
+                            if (noCredit) {
+                              Navigator.of(context).pop();
+                              simpleworldtoast(
+                                  "Error",
+                                  "Does not have enough credits, please get more then 20 credits",
+                                  context);
+                            } else {
+                              Navigator.of(context).pop();
 
-                          usersCollection.doc(widget.profileId).update({
-                            "credit_points": FieldValue.increment(-20),
-                          });
+                              usersCollection.doc(widget.user.id).update({
+                                "credit_points": FieldValue.increment(-20),
+                              });
 
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => UsersViewedMyProfileList(
-                                userId: user.id,
-                              ),
-                            ),
-                          );
-                        }
-                      },
-                    );
-                  }
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      UsersViewedMyProfileList(
+                                    userId: user.id,
+                                  ),
+                                ),
+                              );
+                            }
+                          },
+                        );
+                      }
+                    },
+                  );
                 },
               ),
-              buildCountColumn("Likes", likedCount, () {
-                if (widget.isProfileOwner) {
-                  bool noCredit = user.creditPoints < 10;
-                  consentSheet(
-                    context,
-                    'Would you like to see users who liked your Profile?',
-                    'Spent 10 Credits to see users who liked your Profile',
-                    () {
-                      if (noCredit) {
-                        Navigator.of(context).pop();
-                        simpleworldtoast(
-                            "Error",
-                            "Does not have enough credits, please get more then 10 credits",
-                            context);
-                      } else {
-                        Navigator.of(context).pop();
-                        usersCollection.doc(widget.profileId).update({
-                          "credit_points": FieldValue.increment(-10),
-                        });
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => UsersLikedMyProfileList(
-                              userId: user.id,
-                            ),
-                          ),
-                        );
-                      }
-                    },
-                  );
-                } else {
-                  bool noCredit = currentUserCredit < 20;
-                  consentSheet(
-                    context,
-                    'Would you like to see users who liked  this Profile?',
-                    'Spent 20 Credits to see users who liked this Profile',
-                    () {
-                      if (noCredit) {
-                        Navigator.of(context).pop();
-                        simpleworldtoast(
-                            "Error",
-                            "Does not have enough credits, please get more then 20 credits",
-                            context);
-                      } else {
-                        Navigator.of(context).pop();
+              StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
+                stream: likedDppCollection
+                    .doc(widget.user.id)
+                    .collection('userlikes')
+                    .snapshots(),
+                builder: (context, snapshot) {
+                  final count = snapshot.data?.docs.length ?? 0;
+                  return buildCountColumn("Likes", count, () {
+                    if (isOwner) {
+                      bool noCredit = user.creditPoints < 10;
+                      consentSheet(
+                        context,
+                        'Would you like to see users who liked your Profile?',
+                        'Spent 10 Credits to see users who liked your Profile',
+                        () {
+                          if (noCredit) {
+                            Navigator.of(context).pop();
+                            simpleworldtoast(
+                                "Error",
+                                "Does not have enough credits, please get more then 10 credits",
+                                context);
+                          } else {
+                            Navigator.of(context).pop();
+                            usersCollection.doc(widget.user.id).update({
+                              "credit_points": FieldValue.increment(-10),
+                            });
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => UsersLikedMyProfileList(
+                                  userId: user.id,
+                                ),
+                              ),
+                            );
+                          }
+                        },
+                      );
+                    } else {
+                      bool noCredit = currentUserCredit < 20;
+                      consentSheet(
+                        context,
+                        'Would you like to see users who liked  this Profile?',
+                        'Spent 20 Credits to see users who liked this Profile',
+                        () {
+                          if (noCredit) {
+                            Navigator.of(context).pop();
+                            simpleworldtoast(
+                                "Error",
+                                "Does not have enough credits, please get more then 20 credits",
+                                context);
+                          } else {
+                            Navigator.of(context).pop();
 
-                        usersCollection.doc(widget.profileId).update({
-                          "credit_points": FieldValue.increment(-20),
-                        });
+                            usersCollection.doc(widget.user.id).update({
+                              "credit_points": FieldValue.increment(-20),
+                            });
 
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => UsersLikedMyProfileList(
-                              userId: user.id,
-                            ),
-                          ),
-                        );
-                      }
-                    },
-                  );
-                }
-              }),
-              buildCountColumn("Dislikes", dislikedCount, () {
-                if (widget.isProfileOwner) {
-                  bool noCredit = user.creditPoints < 10;
-                  consentSheet(
-                    context,
-                    'Would you like to see users who Disliked your Profile?',
-                    'Spent 10 Credits to see users who Disliked your Profile',
-                    () {
-                      if (noCredit) {
-                        Navigator.of(context).pop();
-                        simpleworldtoast(
-                            "Error",
-                            "Does not have enough credits, please get more then 10 credits",
-                            context);
-                      } else {
-                        Navigator.of(context).pop();
-                        usersCollection.doc(widget.profileId).update({
-                          "credit_points": FieldValue.increment(-10),
-                        });
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => UsersDisLikedMyProfileList(
-                              userId: user.id,
-                            ),
-                          ),
-                        );
-                      }
-                    },
-                  );
-                } else {
-                  bool noCredit = currentUserCredit < 20;
-                  consentSheet(
-                    context,
-                    'Would you like to see users who Disliked  this Profile?',
-                    'Spent 20 Credits to see users who Disliked this Profile',
-                    () {
-                      if (noCredit) {
-                        Navigator.of(context).pop();
-                        simpleworldtoast(
-                            "Error",
-                            "Does not have enough credits, please get more then 20 credits",
-                            context);
-                      } else {
-                        Navigator.of(context).pop();
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => UsersLikedMyProfileList(
+                                  userId: user.id,
+                                ),
+                              ),
+                            );
+                          }
+                        },
+                      );
+                    }
+                  });
+                },
+              ),
+              StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
+                stream: dislikedppCollection
+                    .doc(widget.user.id)
+                    .collection('userDislikes')
+                    .snapshots(),
+                builder: (context, snapshot) {
+                  final count = snapshot.data?.docs.length ?? 0;
+                  return buildCountColumn("Dislikes", count, () {
+                    if (widget.ownerId == widget.user.id) {
+                      bool noCredit = user.creditPoints < 10;
+                      consentSheet(
+                        context,
+                        'Would you like to see users who Disliked your Profile?',
+                        'Spent 10 Credits to see users who Disliked your Profile',
+                        () {
+                          if (noCredit) {
+                            Navigator.of(context).pop();
+                            simpleworldtoast(
+                                "Error",
+                                "Does not have enough credits, please get more then 10 credits",
+                                context);
+                          } else {
+                            Navigator.of(context).pop();
+                            usersCollection.doc(widget.user.id).update({
+                              "credit_points": FieldValue.increment(-10),
+                            });
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    UsersDisLikedMyProfileList(
+                                  userId: user.id,
+                                ),
+                              ),
+                            );
+                          }
+                        },
+                      );
+                    } else {
+                      bool noCredit = currentUserCredit < 20;
+                      consentSheet(
+                        context,
+                        'Would you like to see users who Disliked  this Profile?',
+                        'Spent 20 Credits to see users who Disliked this Profile',
+                        () {
+                          if (noCredit) {
+                            Navigator.of(context).pop();
+                            simpleworldtoast(
+                                "Error",
+                                "Does not have enough credits, please get more then 20 credits",
+                                context);
+                          } else {
+                            Navigator.of(context).pop();
 
-                        usersCollection.doc(widget.profileId).update({
-                          "credit_points": FieldValue.increment(-20),
-                        });
+                            usersCollection.doc(widget.user.id).update({
+                              "credit_points": FieldValue.increment(-20),
+                            });
 
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => UsersDisLikedMyProfileList(
-                              userId: user.id,
-                            ),
-                          ),
-                        );
-                      }
-                    },
-                  );
-                }
-              }),
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    UsersDisLikedMyProfileList(
+                                  userId: user.id,
+                                ),
+                              ),
+                            );
+                          }
+                        },
+                      );
+                    }
+                  });
+                },
+              ),
             ],
           ),
         ),
         const SizedBox(height: 20),
         const Divider(),
         FutureBuilder<DocumentSnapshot<Map<String, dynamic>>>(
-          future: usersCollection.doc(widget.profileId).get(),
+          future: usersCollection.doc(widget.user.id).get(),
           builder: (context, snapshot) {
             if (!snapshot.hasData) {
               return const CupertinoActivityIndicator();
@@ -1499,16 +1407,16 @@ class _ProfileState extends State<Profile2> {
     // return Container(
     //   color: Theme.of(context).scaffoldBackgroundColor,
     //   // child: StreamBuilder<GloabalUser?>(
-    //   // future: GloabalUser.fetchUser(widget.profileId),
+    //   // future: GloabalUser.fetchUser(widget.user.id),
     //   child: StreamBuilder<DocumentSnapshot<GloabalUser>>(
-    //     stream: GloabalUser.userDoc(widget.profileId).snapshots(),
+    //     stream: GloabalUser.userDoc(widget.user.id).snapshots(),
     //     builder: (context, snapshot) {
     //       log('snapshot.connectionState: ${snapshot.connectionState}');
     //       if (!snapshot.hasData) {
     //         return circularProgress();
     //       }
     //       final user = snapshot.data?.data();
-    //       final bool isProfileOwner = widget.profileId == widget.profileId;
+    //       final bool isProfileOwner = widget.user.id == widget.user.id;
     //       return Column(
     //         mainAxisAlignment: MainAxisAlignment.center,
     //         crossAxisAlignment: CrossAxisAlignment.center,
@@ -1870,7 +1778,7 @@ class _ProfileState extends State<Profile2> {
     //                                 context);
     //                           } else {
     //                             Navigator.of(context).pop();
-    //                             usersRef.doc(widget.profileId).update({
+    //                             usersRef.doc(widget.user.id).update({
     //                               "credit_points": FieldValue.increment(-10),
     //                             });
 
@@ -1913,7 +1821,7 @@ class _ProfileState extends State<Profile2> {
     //                           } else {
     //                             Navigator.of(context).pop();
 
-    //                             usersRef.doc(widget.profileId).update({
+    //                             usersRef.doc(widget.user.id).update({
     //                               "credit_points": FieldValue.increment(-20),
     //                             });
 
@@ -1962,7 +1870,7 @@ class _ProfileState extends State<Profile2> {
     //                                 context);
     //                           } else {
     //                             Navigator.of(context).pop();
-    //                             usersRef.doc(widget.profileId).update({
+    //                             usersRef.doc(widget.user.id).update({
     //                               "credit_points": FieldValue.increment(-10),
     //                             });
 
@@ -2004,7 +1912,7 @@ class _ProfileState extends State<Profile2> {
     //                           } else {
     //                             Navigator.of(context).pop();
 
-    //                             usersRef.doc(widget.profileId).update({
+    //                             usersRef.doc(widget.user.id).update({
     //                               "credit_points": FieldValue.increment(-20),
     //                               // 'userIsVerified': true,
     //                             });
@@ -2062,7 +1970,7 @@ class _ProfileState extends State<Profile2> {
     //                                 context);
     //                           } else {
     //                             Navigator.of(context).pop();
-    //                             usersRef.doc(widget.profileId).update({
+    //                             usersRef.doc(widget.user.id).update({
     //                               "credit_points": FieldValue.increment(-10),
     //                             });
     //                             Navigator.push(
@@ -2093,7 +2001,7 @@ class _ProfileState extends State<Profile2> {
     //                           } else {
     //                             Navigator.of(context).pop();
 
-    //                             usersRef.doc(widget.profileId).update({
+    //                             usersRef.doc(widget.user.id).update({
     //                               "credit_points": FieldValue.increment(-20),
     //                             });
 
@@ -2128,7 +2036,7 @@ class _ProfileState extends State<Profile2> {
     //                               context);
     //                         } else {
     //                           Navigator.of(context).pop();
-    //                           usersRef.doc(widget.profileId).update({
+    //                           usersRef.doc(widget.user.id).update({
     //                             "credit_points": FieldValue.increment(-10),
     //                           });
     //                           Navigator.push(
@@ -2158,7 +2066,7 @@ class _ProfileState extends State<Profile2> {
     //                         } else {
     //                           Navigator.of(context).pop();
 
-    //                           usersRef.doc(widget.profileId).update({
+    //                           usersRef.doc(widget.user.id).update({
     //                             "credit_points": FieldValue.increment(-20),
     //                           });
 
@@ -2191,7 +2099,7 @@ class _ProfileState extends State<Profile2> {
     //                               context);
     //                         } else {
     //                           Navigator.of(context).pop();
-    //                           usersRef.doc(widget.profileId).update({
+    //                           usersRef.doc(widget.user.id).update({
     //                             "credit_points": FieldValue.increment(-10),
     //                           });
     //                           Navigator.push(
@@ -2222,7 +2130,7 @@ class _ProfileState extends State<Profile2> {
     //                         } else {
     //                           Navigator.of(context).pop();
 
-    //                           usersRef.doc(widget.profileId).update({
+    //                           usersRef.doc(widget.user.id).update({
     //                             "credit_points": FieldValue.increment(-20),
     //                           });
 
@@ -2245,7 +2153,7 @@ class _ProfileState extends State<Profile2> {
     //           ),
     //           const SizedBox(height: 20),
     //           const Divider(),
-    //           PostBox(userId: widget.profileId!),
+    //           PostBox(userId: widget.user.id!),
     //           const Divider(),
     //           buildProfilePosts()
     //         ],

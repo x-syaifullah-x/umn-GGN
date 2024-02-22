@@ -3,6 +3,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:global_net/data/user.dart';
 import 'package:global_net/models/user.dart';
 import 'package:nb_utils/nb_utils.dart';
 import 'package:global_net/pages/home/home.dart';
@@ -26,7 +27,7 @@ class LikedUserTileState extends State<LikedUserTile> {
   Map<dynamic, dynamic>? userdoc;
   LikedUserTileState(this.userdoc);
 
-  final String? currentUserId = globalUserId;
+  final String currentUserId = globalUserId;
   bool isFollowing = false;
 
   @override
@@ -68,17 +69,18 @@ class LikedUserTileState extends State<LikedUserTile> {
           GestureDetector(
             onTap: () {
               final id = userdoc!['userId'];
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => Profile(
-                    profileId: id,
-                    reactions: Reaction.reactions,
-                    isProfileOwner: id == currentUserId,
+              usersCollection.doc(id).get().then((value) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => Profile(
+                      user: User.fromJson(value.data()),
+                      reactions: Reaction.reactions,
+                      ownerId: currentUserId,
+                    ),
                   ),
-                ),
-              ).then((value) => setState(() {}));
-              ;
+                ).then((value) => setState(() {}));
+              });
             },
             child: Column(
               mainAxisSize: MainAxisSize.min,

@@ -13,6 +13,8 @@ import 'package:global_net/widgets/simple_world_widgets.dart';
 import 'package:global_net/data/reaction_data.dart' as Reaction;
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+import '../data/user.dart';
+
 class FollowersTile extends StatefulWidget {
   Map<dynamic, dynamic>? userdoc;
 
@@ -26,7 +28,7 @@ class FollowersTileState extends State<FollowersTile> {
   Map<dynamic, dynamic>? userdoc;
   FollowersTileState(this.userdoc);
 
-  final String? currentUserId = globalUserId;
+  final String currentUserId = globalUserId;
   bool isFollowing = false;
   String userid = '';
 
@@ -69,16 +71,18 @@ class FollowersTileState extends State<FollowersTile> {
           GestureDetector(
             onTap: () {
               final id = userdoc!['userId'];
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => Profile(
-                    profileId: id,
-                    reactions: Reaction.reactions,
-                    isProfileOwner: id == currentUserId,
+              usersCollection.doc(id).get().then((value) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => Profile(
+                      user: User.fromJson(value.data()),
+                      reactions: Reaction.reactions,
+                      ownerId: currentUserId,
+                    ),
                   ),
-                ),
-              ).then((value) => setState(() {}));
+                ).then((value) => setState(() {}));
+              });
             },
             child: Column(
               mainAxisSize: MainAxisSize.min,

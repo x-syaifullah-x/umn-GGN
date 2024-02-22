@@ -2,7 +2,7 @@ name: Build web release
 
 on:
   push:
-    branches: [ a ]
+    branches: [ b ]
   # pull_request:
   #   branches: [ master ]
 

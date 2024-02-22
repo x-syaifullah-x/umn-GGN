@@ -12,6 +12,8 @@ import 'package:global_net/widgets/progress.dart';
 import 'package:global_net/widgets/simple_world_widgets.dart';
 import 'package:nb_utils/nb_utils.dart';
 
+import '../../../data/user.dart';
+
 class UserWidget extends StatelessWidget {
   static const fieldUserId = "userId";
   static const fieldCreateAt = "createAt";
@@ -51,16 +53,18 @@ class UserWidget extends StatelessWidget {
         ),
       ),
       onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => Profile(
-              profileId: userId,
-              reactions: reaction.reactions,
-              isProfileOwner: userId == currentUserId,
+        usersCollection.doc(userId).get().then((value) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => Profile(
+                user: User.fromJson(value.data()),
+                reactions: reaction.reactions,
+                ownerId: currentUserId,
+              ),
             ),
-          ),
-        );
+          );
+        });
       },
     );
   }
