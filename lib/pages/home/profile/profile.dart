@@ -105,7 +105,6 @@ class Profile2 extends StatefulWidget {
 class _ProfileState extends State<Profile2> {
   String postOrientation = "list";
   bool isLoading = false;
-  int currentUserCredit = 0;
   int postCount = 0;
   final ImagePicker _picker = ImagePicker();
   File? storyFile;
@@ -122,7 +121,6 @@ class _ProfileState extends State<Profile2> {
     super.initState();
     getProfilePosts();
     flickMultiManager = FlickMultiManager();
-    _getCurrentUserCredits();
     _viewMyProfile();
   }
 
@@ -140,14 +138,6 @@ class _ProfileState extends State<Profile2> {
       postCount = snapshot.docs.length;
       posts = snapshot.docs.map((doc) => SinglePost.fromDocument(doc)).toList();
     });
-  }
-
-  _getCurrentUserCredits() async {
-    usersCollection.doc(widget.user.id).get().then(
-          (value) => setState(() {
-            currentUserCredit = value["credit_points"];
-          }),
-        );
   }
 
   _viewMyProfile() {
@@ -1026,7 +1016,7 @@ class _ProfileState extends State<Profile2> {
                           },
                         );
                       } else {
-                        bool noCredit = currentUserCredit < 20;
+                        bool noCredit = user.creditPoints < 20;
                         consentSheet(
                           context,
                           AppLocalizations.of(context)!.followed_consent3,
@@ -1113,7 +1103,7 @@ class _ProfileState extends State<Profile2> {
                           },
                         );
                       } else {
-                        bool noCredit = currentUserCredit < 20;
+                        bool noCredit = user.creditPoints < 20;
                         consentSheet(
                           context,
                           AppLocalizations.of(context)!.following_consent3,
@@ -1201,7 +1191,7 @@ class _ProfileState extends State<Profile2> {
                           },
                         );
                       } else {
-                        bool noCredit = currentUserCredit < 20;
+                        bool noCredit = user.creditPoints < 20;
                         consentSheet(
                           context,
                           'Would you like to see users who viewed  this Profile?',
@@ -1275,7 +1265,7 @@ class _ProfileState extends State<Profile2> {
                         },
                       );
                     } else {
-                      bool noCredit = currentUserCredit < 20;
+                      bool noCredit = user.creditPoints < 20;
                       consentSheet(
                         context,
                         'Would you like to see users who liked  this Profile?',
@@ -1348,7 +1338,7 @@ class _ProfileState extends State<Profile2> {
                         },
                       );
                     } else {
-                      bool noCredit = currentUserCredit < 20;
+                      bool noCredit = user.creditPoints < 20;
                       consentSheet(
                         context,
                         'Would you like to see users who Disliked  this Profile?',

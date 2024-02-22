@@ -27,21 +27,13 @@ class ActivityFeed extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  ActivityFeedState createState() => ActivityFeedState();
+  State<ActivityFeed> createState() => _ActivityFeed();
 }
 
-class ActivityFeedState extends State<ActivityFeed>
+class _ActivityFeed extends State<ActivityFeed>
     with AutomaticKeepAliveClientMixin<ActivityFeed> {
-  List<ActivityFeedItem> feedItem = [];
-
   @override
   bool get wantKeepAlive => true;
-
-  @override
-  void initState() {
-    super.initState();
-    _updateFeed(widget.userId);
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -82,101 +74,86 @@ class ActivityFeedState extends State<ActivityFeed>
       return child;
     }
 
-    return StreamBuilder(
-      stream: feedCollection
-          .doc(userData)
-          .collection('feedItems')
+    final feedItemsCollection =
+        feedCollection.doc(userData).collection('feedItems');
+    return StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
+      stream: feedItemsCollection
           .orderBy('createAt', descending: true)
           .limit(50)
           .snapshots(),
       builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
-        if (snapshot.hasData) {
-          QuerySnapshot<Object?>? data = snapshot.data;
-          if (data != null && data.docs.isNotEmpty) {
-            final bool widthMoreThan_500 =
-                (MediaQuery.of(context).size.width > 500);
-            child = Stack(
-              alignment: AlignmentDirectional.bottomCenter,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 50.0),
-                  child: RawScrollbar(
-                    controller: scrollController,
-                    interactive: true,
-                    thumbVisibility: !kIsWeb && widthMoreThan_500,
-                    trackVisibility: !kIsWeb && widthMoreThan_500,
-                    radius: const Radius.circular(20),
-                    child: ListView.separated(
-                      controller: scrollController,
-                      itemCount: data.docs.length,
-                      itemBuilder: (context, int index) {
-                        QueryDocumentSnapshot<Object?> feedItem =
-                            data.docs[index];
-                        return _buildItem(
-                          context: context,
-                          feedItem: feedItem,
-                          currentUserId: widget.userId,
-                        );
-                      },
-                      separatorBuilder: (context, index) {
-                        return const Divider();
-                      },
-                    ),
-                  ),
-                ),
-                // const AnchoredAd(),
-                if (!kIsWeb)
-                  MaxAdView(
-                    adUnitId: AppLovin.adUnitId,
-                    adFormat: AdFormat.banner,
-                    listener: AdViewAdListener(
-                      onAdLoadedCallback: (ad) {},
-                      onAdLoadFailedCallback: (adUnitId, error) {},
-                      onAdClickedCallback: (ad) {},
-                      onAdExpandedCallback: (ad) {},
-                      onAdCollapsedCallback: (ad) {},
-                    ),
-                  )
-              ],
-            );
-          }
-
-          return SizedBox(
+        if (!snapshot.hasData) {
+          return Container(
             height: MediaQuery.of(context).size.height,
             width: MediaQuery.of(context).size.width,
-            child: child,
+            alignment: Alignment.center,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisSize: MainAxisSize.max,
+              children: const <Widget>[
+                CupertinoActivityIndicator(),
+              ],
+            ),
           );
         }
-        return Container(
+        final data = snapshot.data;
+        if (data != null && data.docs.isNotEmpty) {
+          final bool widthMoreThan_500 =
+              (MediaQuery.of(context).size.width > 500);
+          child = Stack(
+            alignment: AlignmentDirectional.bottomCenter,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(bottom: 50.0),
+                child: RawScrollbar(
+                  controller: scrollController,
+                  interactive: true,
+                  thumbVisibility: !kIsWeb && widthMoreThan_500,
+                  trackVisibility: !kIsWeb && widthMoreThan_500,
+                  radius: const Radius.circular(20),
+                  child: ListView.separated(
+                    controller: scrollController,
+                    itemCount: data.docs.length,
+                    itemBuilder: (context, int index) {
+                      QueryDocumentSnapshot<Object?> feedItem =
+                          data.docs[index];
+                      return _buildItem(
+                        context: context,
+                        feedItem: feedItem,
+                        currentUserId: widget.userId,
+                      );
+                    },
+                    separatorBuilder: (context, index) {
+                      return const Divider();
+                    },
+                  ),
+                ),
+              ),
+              // const AnchoredAd(),
+              if (!kIsWeb)
+                MaxAdView(
+                  adUnitId: AppLovin.adUnitId,
+                  adFormat: AdFormat.banner,
+                  listener: AdViewAdListener(
+                    onAdLoadedCallback: (ad) {},
+                    onAdLoadFailedCallback: (adUnitId, error) {},
+                    onAdClickedCallback: (ad) {},
+                    onAdExpandedCallback: (ad) {},
+                    onAdCollapsedCallback: (ad) {},
+                  ),
+                )
+            ],
+          );
+        }
+
+        return SizedBox(
           height: MediaQuery.of(context).size.height,
           width: MediaQuery.of(context).size.width,
-          alignment: Alignment.center,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisSize: MainAxisSize.max,
-            children: const <Widget>[
-              CupertinoActivityIndicator(),
-            ],
-          ),
+          child: child,
         );
       },
     );
-  }
-
-  Future _updateFeed(String userId) async {
-    QuerySnapshot activityFeedSnapshot = await feedCollection
-        .doc(userId)
-        .collection("feedItems")
-        .where("isSeen", isEqualTo: false)
-        .get();
-    for (var doc in activityFeedSnapshot.docs) {
-      if (doc.exists) {
-        doc.reference.update({
-          "isSeen": true,
-        });
-      }
-    }
   }
 
   Widget _buildItem({
@@ -359,19 +336,6 @@ class ActivityFeedItem extends StatelessWidget {
     this.commentData,
     this.timestamp,
   }) : super(key: key);
-
-  // factory ActivityFeedItem.fromDocument(DocumentSnapshot doc) {
-  //   return ActivityFeedItem(
-  //     username: doc['username'],
-  //     userId: doc['userId'],
-  //     type: doc['type'],
-  //     postId: doc['postId'],
-  //     userProfileImg: doc['userProfileImg'],
-  //     commentData: doc['commentData'],
-  //     timestamp: doc['timestamp'],
-  //     mediaUrl: doc['mediaUrl'],
-  //   );
-  // }
 }
 
 showProfile(BuildContext context, {required String userId}) async {

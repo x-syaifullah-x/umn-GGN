@@ -74,7 +74,23 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   final PageController pageController = PageController(initialPage: 0);
   int pageIndex = 0;
   late final TabController _tabController =
-      TabController(vsync: this, length: 5);
+      TabController(vsync: this, length: 5)
+        ..addListener(() {
+          if (_tabController.index == 3) {
+            final feedItemsCollection =
+                feedCollection.doc(widget.userId).collection('feedItems');
+            feedItemsCollection
+                .where("isSeen", isEqualTo: false)
+                .get()
+                .then((value) {
+              for (var doc in value.docs) {
+                feedItemsCollection.doc(doc.id).update({
+                  "isSeen": true,
+                });
+              }
+            });
+          }
+        });
   final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
   var currentUser = FirebaseAuth.instance.currentUser;
   bool isFollowing = false;
@@ -224,7 +240,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                   )
                 : const Icon(IconlyLight.profile),
           ),
-          FeedsCount(
+          TabFeedsCount(
             userId: userId,
             tabController: _tabController,
           ),
