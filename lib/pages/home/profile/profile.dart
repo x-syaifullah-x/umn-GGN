@@ -9,10 +9,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_reaction_button/flutter_reaction_button.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:global_net/pages/menu/dialogs/vip_dialog.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:nb_utils/nb_utils.dart';
-import 'package:global_net/models/user.dart';
 import 'package:global_net/pages/chat/simpleworld_chat.dart';
 import 'package:global_net/pages/comming_soon_page.dart';
 import 'package:global_net/pages/create_post/post_box.dart';
@@ -22,7 +18,7 @@ import 'package:global_net/pages/followers_list.dart';
 import 'package:global_net/pages/following_users_list.dart';
 import 'package:global_net/pages/home/home.dart';
 import 'package:global_net/pages/liked_list.dart';
-import 'package:global_net/pages/home/profile/store_products.dart';
+import 'package:global_net/pages/menu/dialogs/vip_dialog.dart';
 import 'package:global_net/pages/ppviewed_list.dart';
 import 'package:global_net/story/add_story.dart';
 import 'package:global_net/widgets/header.dart';
@@ -30,6 +26,8 @@ import 'package:global_net/widgets/multi_manager/flick_multi_manager.dart';
 import 'package:global_net/widgets/progress.dart';
 import 'package:global_net/widgets/simple_world_widgets.dart';
 import 'package:global_net/widgets/single_post.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:nb_utils/nb_utils.dart';
 
 import '../../../data/user.dart';
 import '../user/user.dart';
@@ -240,17 +238,16 @@ class _ProfileState extends State<Profile2> {
   }
 
   _viewMyProfile() {
-    bool isProfileOwner = widget.profileId == widget.profileId;
-    isProfileOwner
-        ? Container()
-        : ppviewsCollection
-            .doc(widget.profileId)
-            .collection('userviews')
-            .doc()
-            .set({
-            'userId': widget.profileId,
-            'timestamp': DateTime.now().millisecondsSinceEpoch.toString(),
-          });
+    if (widget.isProfileOwner) {
+      ppviewsCollection
+          .doc(widget.profileId)
+          .collection('userviews')
+          .doc()
+          .set({
+        'userId': widget.profileId,
+        'timestamp': DateTime.now().millisecondsSinceEpoch.toString(),
+      });
+    }
   }
 
   Future handleChooseFromGallery() async {
@@ -318,8 +315,7 @@ class _ProfileState extends State<Profile2> {
     } else {
       maxWidth = MediaQuery.of(context).size.width * 0.4;
     }
-    bool isProfileOwner = widget.profileId == widget.profileId;
-    if (isProfileOwner) {
+    if (widget.isProfileOwner) {
       return Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -336,7 +332,7 @@ class _ProfileState extends State<Profile2> {
             child: Center(
               child: Text(
                 AppLocalizations.of(context)!.add_story,
-                textAlign: TextAlign.left,
+                textAlign: TextAlign.center,
                 style: const TextStyle(
                   fontWeight: FontWeight.w700,
                   fontSize: 16,
@@ -362,7 +358,7 @@ class _ProfileState extends State<Profile2> {
             child: Center(
               child: Text(
                 AppLocalizations.of(context)!.edit_profile,
-                textAlign: TextAlign.left,
+                textAlign: TextAlign.center,
                 style: const TextStyle(
                   fontWeight: FontWeight.w700,
                   fontSize: 16,
@@ -909,7 +905,7 @@ class _ProfileState extends State<Profile2> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              user!.username.capitalize(),
+              user.username.capitalize(),
               style:
                   Theme.of(context).textTheme.headline6!.copyWith(fontSize: 16),
             ),
@@ -1064,7 +1060,7 @@ class _ProfileState extends State<Profile2> {
                     .snapshots(),
                 builder: (context, snapshot) {
                   int followerCount = 0;
-                  snapshot.data?.docs?.forEach((e) {
+                  snapshot.data?.docs.forEach((e) {
                     try {
                       if (e[UserWidget.fieldValue] == true) {
                         followerCount += 1;
@@ -1487,6 +1483,9 @@ class _ProfileState extends State<Profile2> {
         FutureBuilder<DocumentSnapshot<Map<String, dynamic>>>(
           future: usersCollection.doc(widget.profileId).get(),
           builder: (context, snapshot) {
+            if (!snapshot.hasData) {
+              return const CupertinoActivityIndicator();
+            }
             final data = snapshot.data?.data();
             final user = User.fromJson(data);
             return PostBox(user: user);
