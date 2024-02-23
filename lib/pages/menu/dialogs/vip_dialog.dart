@@ -10,6 +10,7 @@ import 'package:global_net/widgets/simple_world_widgets.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../v2/news/presentation/app_web_view.dart';
+import '../../payments.dart';
 
 class VipDialog extends StatelessWidget {
   static const stripePymentUrl =
@@ -213,22 +214,13 @@ class VipDialog extends StatelessWidget {
                     width: MediaQuery.of(context).size.width * 0.65,
                     child: ElevatedButton(
                       onPressed: () {
-                        // Navigator.of(context).push(MaterialPageRoute(
-                        //   builder: (context) => const CommimgSoon(),
-                        // ));
-                        if (kIsWeb) {
-                          launchUrl(Uri.parse(stripePymentUrl));
-                          Navigator.of(context).pop();
-                        } else {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(builder: (context) {
-                              return const AppWebView(
-                                url: stripePymentUrl,
-                                title: 'Bay Credits',
-                              );
-                            }),
-                          );
-                        }
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) {
+                              return Payments(user: user);
+                            },
+                          ),
+                        );
                       },
                       child: const Text("BUY CREDIT"),
                     ),

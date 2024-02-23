@@ -33,7 +33,7 @@ class AppWebViewState extends State<AppWebView> {
           title: Text(widget.title),
           backgroundColor: Theme.of(context).primaryColor,
           // toolbarHeight: 50,
-          iconTheme: IconThemeData(
+          iconTheme: const IconThemeData(
             color: Colors.white,
           ),
           // automaticallyImplyLeading: true,
