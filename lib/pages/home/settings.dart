@@ -215,25 +215,16 @@ class _SettingsState extends State<SettingsPage> {
                   ),
                 ),
               ),
-            ).onTap(
-              () async {
-                _signOut().then((value) async {
-                  SharedPreferences preferences =
-                      await SharedPreferences.getInstance();
-                  preferences
-                      .remove(SharedPreferencesKey.userId)
-                      .then((_) async {
-                    Navigator.pushAndRemoveUntil(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const LoginPage(),
-                      ),
-                      (route) => false,
-                    );
-                  });
-                });
-              },
-            ),
+            ).onTap(() async {
+              _signOut();
+              Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const LoginPage(),
+                ),
+                (route) => false,
+              );
+            }),
           ),
           ListTile(
             title: Container(
@@ -289,12 +280,7 @@ class _SettingsState extends State<SettingsPage> {
       await usersCollection.doc(widget.user.id).update({
         data_user.User.fieldNameTokenNotfaction: "",
       });
-      await FirebaseAuth.instance.signOut();
-    } catch (e) {
-      debugPrint('$e');
-    }
-
-    try {
+      FirebaseAuth.instance.signOut();
       final pref = await SharedPreferences.getInstance();
       await pref.remove(SharedPreferencesKey.userId);
     } catch (e) {

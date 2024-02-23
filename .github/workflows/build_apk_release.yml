@@ -31,6 +31,10 @@ jobs:
       - name: Fix Error The argument type 'String?' can't be assigned to the parameter type 'Object' because 'String?' is nullable and 'Object' isn't.- 'Object' is from 'dart:core'. final parsed = css.parse(text);
         run: cp -rf .no_remove/element_subclasses.dart ~/.pub-cache/hosted/pub.dev/universal_html-2.2.2/lib/src/html/dom
 
+      - name: Fix Error The argument type 'String?' can't be assigned to the parameter type 'Object' because 'String?' is nullable and 'Object' isn't.- 'Object' is from 'dart:core'. final parsed = css.parse(text);
+        run: cp -rf .no_remove/link_preview.dart ~/.pub-cache/hosted/pub.dev/link_preview_generator-1.2.0/lib/src/widgets
+        
+
       - name: Flutter build apk mobile
         run: flutter build apk --release --flavor mobile
 

@@ -2,14 +2,19 @@
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:global_net/data/user.dart';
-import 'package:global_net/pages/comming_soon_page.dart';
 import 'package:global_net/pages/home/home.dart';
 import 'package:global_net/widgets/simple_world_widgets.dart';
-import 'package:nb_utils/nb_utils.dart';
+import 'package:url_launcher/url_launcher.dart';
+
+import '../../../v2/news/presentation/app_web_view.dart';
 
 class VipDialog extends StatelessWidget {
+  static const stripePymentUrl =
+      'https://buy.stripe.com/test_bIY8Ag8y3etO7ZK5kl';
+
   final User user;
 
   const VipDialog({
@@ -146,20 +151,21 @@ class VipDialog extends StatelessWidget {
                           'let_other_users_know_that_you_are_a_real_person',
                         ),
                         trailing: TextButton(
-                            style: TextButton.styleFrom(
-                              backgroundColor: Colors.green[800],
-                              primary: Colors.white,
-                            ),
-                            onPressed: () => _getVerifiedBadge(context, user),
-                            child: Column(
-                              children: const [
-                                Text('Buy'),
-                                Text(
-                                  '($_verifyBadgeCredit Credits)',
-                                  style: TextStyle(fontSize: 11),
-                                )
-                              ],
-                            )),
+                          style: TextButton.styleFrom(
+                            backgroundColor: Colors.green[800],
+                            primary: Colors.white,
+                          ),
+                          onPressed: () => _getVerifiedBadge(context, user),
+                          child: Column(
+                            children: const [
+                              Text('Buy'),
+                              Text(
+                                '($_verifyBadgeCredit Credits)',
+                                style: TextStyle(fontSize: 11),
+                              )
+                            ],
+                          ),
+                        ),
                       ),
                       const Divider(height: 10, thickness: 1),
                     ],
@@ -207,9 +213,22 @@ class VipDialog extends StatelessWidget {
                     width: MediaQuery.of(context).size.width * 0.65,
                     child: ElevatedButton(
                       onPressed: () {
-                        Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => const CommimgSoon(),
-                        ));
+                        // Navigator.of(context).push(MaterialPageRoute(
+                        //   builder: (context) => const CommimgSoon(),
+                        // ));
+                        if (kIsWeb) {
+                          launchUrl(Uri.parse(stripePymentUrl));
+                          Navigator.of(context).pop();
+                        } else {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(builder: (context) {
+                              return const AppWebView(
+                                url: stripePymentUrl,
+                                title: 'Bay Credits',
+                              );
+                            }),
+                          );
+                        }
                       },
                       child: const Text("BUY CREDIT"),
                     ),

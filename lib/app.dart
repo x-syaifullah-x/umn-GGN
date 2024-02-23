@@ -1,16 +1,11 @@
 import 'package:adaptive_theme/adaptive_theme.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:nb_utils/nb_utils.dart';
-import 'package:provider/provider.dart';
 import 'package:global_net/config/palette.dart';
 import 'package:global_net/l10n/l10n.dart';
 import 'package:global_net/pages/WalkThroughScreen.dart';
@@ -18,7 +13,9 @@ import 'package:global_net/pages/auth/login_page.dart';
 import 'package:global_net/pages/home/home.dart';
 import 'package:global_net/provider/locale_provider.dart';
 import 'package:global_net/share_preference/preferences_key.dart';
-import 'package:global_net/widgets/simple_world_widgets.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:nb_utils/nb_utils.dart';
+import 'package:provider/provider.dart';
 
 class App extends StatefulWidget {
   static const route = '/App';
@@ -270,7 +267,6 @@ class AppState extends State<App> with WidgetsBindingObserver {
     }
 
     final String? userId = prefs.getString(SharedPreferencesKey.userId);
-
     if (userId != null) {
       return Home(userId: userId);
     }

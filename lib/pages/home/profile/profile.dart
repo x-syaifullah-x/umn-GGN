@@ -28,8 +28,10 @@ import 'package:global_net/widgets/simple_world_widgets.dart';
 import 'package:global_net/widgets/single_post.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:nb_utils/nb_utils.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../data/user.dart';
+import '../../../v2/news/presentation/app_web_view.dart';
 import '../user/user.dart';
 
 class Profile extends StatelessWidget {
@@ -895,10 +897,23 @@ class _ProfileState extends State<Profile2> {
                   ),
                 ),
               ).onTap(() {
-                showDialog(
-                  context: context,
-                  builder: (context) => VipDialog(user: user),
-                );
+                const url = VipDialog.stripePymentUrl;
+                if (kIsWeb) {
+                  launchUrl(Uri.parse(url));
+                } else {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(builder: (context) {
+                      return const AppWebView(
+                        url: url,
+                        title: 'Bay Credits',
+                      );
+                    }),
+                  );
+                }
+                // showDialog(
+                //   context: context,
+                //   builder: (context) => VipDialog(user: user),
+                // );
               }),
             ],
           ),
