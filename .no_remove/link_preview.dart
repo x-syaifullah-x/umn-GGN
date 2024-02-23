@@ -126,13 +126,13 @@ class LinkPreviewGenerator extends StatefulWidget {
     this.proxyUrl,
     this.errorWidget,
     // this.errorBody = 'Oops! Unable to parse the url.',
-    this.errorBody = '...',
+    this.errorBody = ' ',
     // this.errorImage =
     //     'https://raw.githubusercontent.com/ghpranav/link_preview_generator/main/assets/giphy.gif',
     this.errorImage =
         'https://raw.githubusercontent.com/x-syaifullah-x/umn-GGN/b/assets/images/can_not_read.gif',
     // this.errorTitle = 'Something went wrong!',
-    this.errorTitle = '...',
+    this.errorTitle = 'We can not read this link at this time',
     this.borderRadius = 12.0,
     this.boxShadow,
     this.removeElevation = false,

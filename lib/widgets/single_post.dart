@@ -1,5 +1,3 @@
-// ignore_for_file: no_logic_in_create_state, unnecessary_this
-
 import 'dart:async';
 
 import 'package:cached_network_image/cached_network_image.dart';
