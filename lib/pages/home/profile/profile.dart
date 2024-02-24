@@ -18,7 +18,6 @@ import 'package:global_net/pages/followers_list.dart';
 import 'package:global_net/pages/following_users_list.dart';
 import 'package:global_net/pages/home/home.dart';
 import 'package:global_net/pages/liked_list.dart';
-import 'package:global_net/pages/menu/dialogs/vip_dialog.dart';
 import 'package:global_net/pages/ppviewed_list.dart';
 import 'package:global_net/story/add_story.dart';
 import 'package:global_net/widgets/header.dart';
@@ -28,10 +27,8 @@ import 'package:global_net/widgets/simple_world_widgets.dart';
 import 'package:global_net/widgets/single_post.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:nb_utils/nb_utils.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import '../../../data/user.dart';
-import '../../../v2/news/presentation/app_web_view.dart';
 import '../../payments.dart';
 import '../user/user.dart';
 
@@ -71,8 +68,6 @@ class Profile extends StatelessWidget {
                 physics: const AlwaysScrollableScrollPhysics(),
                 child: Container(
                   color: Theme.of(context).scaffoldBackgroundColor,
-                  // child: StreamBuilder<GloabalUser?>(
-                  // future: GloabalUser.fetchUser(widget.user.id),
                   child: Profile2(
                     reactions: reactions,
                     ownerId: ownerId,

@@ -90,6 +90,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
               }
             });
           }
+          _handleTabSelection();
         });
   final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
   var currentUser = FirebaseAuth.instance.currentUser;
@@ -106,7 +107,6 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     FirebaseMessaging.instance.getInitialMessage().then((message) {
       log("_HomeState.getInitialMessage(): $message");
     });
-    _tabController.addListener(_handleTabSelection);
   }
 
   @override

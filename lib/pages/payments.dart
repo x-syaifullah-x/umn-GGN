@@ -1,7 +1,10 @@
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:global_net/pages/home/home.dart';
 import 'package:nb_utils/nb_utils.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -23,6 +26,8 @@ class Payments extends StatefulWidget {
 
 class _PaymentsState extends State<Payments> {
   int _selectedOption = 0;
+  bool _isCheck = false;
+  bool _isError = false;
 
   @override
   Widget build(BuildContext context) {
@@ -60,16 +65,6 @@ class _PaymentsState extends State<Payments> {
               decoration: isLarge
                   ? BoxDecoration(
                       borderRadius: BorderRadius.circular(4),
-                      // color: Colors.white,
-                      // border: Border(
-                      //   left: BorderSide(
-                      //     color: Colors.green,
-                      //     width: 3,
-                      //   ),
-                      // ),
-                      // boxShadow: const [
-                      //   BoxShadow(color: Colors.blueGrey, spreadRadius: 1),
-                      // ],
                     )
                   : null,
               child: Card(
@@ -139,12 +134,78 @@ class _PaymentsState extends State<Payments> {
                                 ),
                               ),
                               if (datLength > 0)
-                                Container(
+                                Column(
+                                  children: [
+                                    const SizedBox(
+                                      height: 12,
+                                    ),
+                                    const Text(
+                                      "Your Wallet ID, Please copy it to pay",
+                                    ),
+                                    const SizedBox(
+                                      height: 4,
+                                    ),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Text(
+                                          widget.user.id,
+                                          style: const TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        const SizedBox(
+                                          width: 4,
+                                        ),
+                                        InkWell(
+                                          child: const Icon(
+                                            Icons.copy_all_sharp,
+                                            size: 18,
+                                          ),
+                                          onTap: () async {
+                                            try {
+                                              await Clipboard.setData(
+                                                ClipboardData(
+                                                  text: widget.user.id,
+                                                ),
+                                              );
+                                              toast(
+                                                  "Wallet ID has been successfully copied");
+                                            } catch (e) {
+                                              log("$e");
+                                            }
+                                          },
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(
+                                      height: 8,
+                                    ),
+                                  ],
+                                ),
+                              // Container(
+                              //   margin: const EdgeInsets.all(8),
+                              //   child: const Text(
+                              //     "PLEASE USE GLOBAL NET LOGIN EMAIL",
+                              //     style: TextStyle(
+                              //         fontSize: 12,
+                              //         fontWeight: FontWeight.w600),
+                              //   ),
+                              // ),
+                              if (datLength > 0)
+                                SizedBox(
                                   width: finalWidth * .65,
-                                  margin: const EdgeInsets.only(bottom: 8),
                                   height: 45,
                                   child: ElevatedButton(
                                     onPressed: () {
+                                      if (!_isCheck) {
+                                        setState(() {
+                                          _isError = true;
+                                        });
+                                        return;
+                                      }
                                       final String? url =
                                           docs?[_selectedOption]['url'];
                                       if (url == null) return;
@@ -178,7 +239,42 @@ class _PaymentsState extends State<Payments> {
                                     },
                                     child: const Text("Pay"),
                                   ),
-                                )
+                                ),
+                              if (datLength > 0)
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    SizedBox(
+                                      height: 24.0,
+                                      width: 24.0,
+                                      child: Checkbox(
+                                        value: _isCheck,
+                                        onChanged: (v) {
+                                          setState(() {
+                                            _isCheck = v as bool;
+                                            if (v) {
+                                              if (_isError) {
+                                                _isError = false;
+                                              }
+                                            }
+                                          });
+                                        },
+                                      ),
+                                    ),
+                                    TextButton(
+                                      onPressed: () {},
+                                      child: const Text("Terms and Condition"),
+                                    )
+                                  ],
+                                ),
+                              if (datLength > 0 && _isError)
+                                Container(
+                                  margin: const EdgeInsets.only(bottom: 16),
+                                  child: const Text(
+                                    "Please accept the Terms and Conditions to pay",
+                                    style: TextStyle(color: Colors.red),
+                                  ),
+                                ),
                             ],
                           );
                         },
