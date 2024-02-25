@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
@@ -48,7 +46,7 @@ class _PaymentsState extends State<Payments> {
               title: Container(
                 margin: const EdgeInsets.all(18),
                 child: const Text(
-                  "Buy Credits",
+                  'Buy Credits',
                   style: TextStyle(
                     // color: Colors.black,
                     fontSize: 28,
@@ -102,7 +100,7 @@ class _PaymentsState extends State<Payments> {
                                             CrossAxisAlignment.start,
                                         children: [
                                           Text(
-                                            "$creditPoint Credits",
+                                            '$creditPoint Credits',
                                             style: const TextStyle(
                                               fontSize: 16,
                                               fontWeight: FontWeight.bold,
@@ -112,7 +110,7 @@ class _PaymentsState extends State<Payments> {
                                             height: 4,
                                           ),
                                           Text(
-                                            "$price",
+                                            '$price',
                                             style: const TextStyle(
                                               fontWeight: FontWeight.w300,
                                               fontSize: 14,
@@ -140,7 +138,7 @@ class _PaymentsState extends State<Payments> {
                                       height: 12,
                                     ),
                                     const Text(
-                                      "Your Wallet ID, Please copy it to pay",
+                                      'Your Wallet ID, Please copy it to pay',
                                     ),
                                     const SizedBox(
                                       height: 4,
@@ -172,9 +170,9 @@ class _PaymentsState extends State<Payments> {
                                                 ),
                                               );
                                               toast(
-                                                  "Wallet ID has been successfully copied");
+                                                  'Wallet ID has been successfully copied');
                                             } catch (e) {
-                                              log("$e");
+                                              log('$e');
                                             }
                                           },
                                         ),
@@ -237,7 +235,7 @@ class _PaymentsState extends State<Payments> {
                                         });
                                       }
                                     },
-                                    child: const Text("Pay"),
+                                    child: const Text('Pay'),
                                   ),
                                 ),
                               if (datLength > 0)
@@ -263,7 +261,7 @@ class _PaymentsState extends State<Payments> {
                                     ),
                                     TextButton(
                                       onPressed: () {},
-                                      child: const Text("Terms and Condition"),
+                                      child: const Text('Terms and Condition'),
                                     )
                                   ],
                                 ),
@@ -271,7 +269,7 @@ class _PaymentsState extends State<Payments> {
                                 Container(
                                   margin: const EdgeInsets.only(bottom: 16),
                                   child: const Text(
-                                    "Please accept the Terms and Conditions to pay",
+                                    'Please accept the Terms and Conditions to pay',
                                     style: TextStyle(color: Colors.red),
                                   ),
                                 ),
