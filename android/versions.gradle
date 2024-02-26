@@ -10,7 +10,7 @@ ext {
     vKotlin = "1.7.10" // Default version
     kotlin_version = "$vKotlin"
     // https://developer.android.com/ndk/downloads
-    vNdkVersion = "26.1.10909125"
+    vNdkVersion = "26.2.11394342"
     // https://developers.google.com/android/guides/google-services-plugin
     vGoogleServices = "4.4.0"
 }
