@@ -1,6 +1,7 @@
 import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:applovin_max/applovin_max.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -80,12 +81,12 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
             final feedItemsCollection =
                 feedCollection.doc(widget.userId).collection('feedItems');
             feedItemsCollection
-                .where("isSeen", isEqualTo: false)
+                .where('isSeen', isEqualTo: false)
                 .get()
                 .then((value) {
               for (var doc in value.docs) {
                 feedItemsCollection.doc(doc.id).update({
-                  "isSeen": true,
+                  'isSeen': true,
                 });
               }
             });
@@ -105,7 +106,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     getAllStories();
 
     FirebaseMessaging.instance.getInitialMessage().then((message) {
-      log("_HomeState.getInitialMessage(): $message");
+      log('_HomeState.getInitialMessage(): $message');
     });
   }
 
@@ -154,20 +155,11 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
           width: 1.0,
         ),
       ),
-      title: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: <Widget>[
-          Row(
-            children: <Widget>[
-              Text(
-                'Global Net',
-                style: GoogleFonts.portLligatSans(
-                  textStyle: Theme.of(context).textTheme.headline4,
-                ),
-              ),
-            ],
-          ),
-        ],
+      title: Text(
+        'Global Net',
+        style: GoogleFonts.portLligatSans(
+          textStyle: Theme.of(context).textTheme.headline4,
+        ),
       ),
       actions: [
         Container(
@@ -469,7 +461,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                   return;
                 }
                 toastLong(
-                  "${dataSideLeft[index]} will be available soon",
+                  '${dataSideLeft[index]} will be available soon',
                 );
               },
             );

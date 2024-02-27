@@ -17,6 +17,8 @@ import 'package:global_net/pages/edit_profile.dart';
 import 'package:global_net/pages/followers_list.dart';
 import 'package:global_net/pages/following_users_list.dart';
 import 'package:global_net/pages/home/home.dart';
+import 'package:global_net/pages/home/profile/coupon/coupon.dart';
+import 'package:global_net/pages/home/profile/coupon/coupon_create.dart';
 import 'package:global_net/pages/liked_list.dart';
 import 'package:global_net/pages/ppviewed_list.dart';
 import 'package:global_net/story/add_story.dart';
@@ -735,9 +737,8 @@ class _ProfileState extends State<Profile2> {
         ),
         const SizedBox(height: 20),
         if (widget.ownerId == widget.user.id)
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
+          Column(
+            children: [
               Text(
                 '${AppLocalizations.of(context)!.you_have} ${user.creditPoints} ${AppLocalizations.of(context)!.credits}',
                 style: Theme.of(context)
@@ -745,41 +746,124 @@ class _ProfileState extends State<Profile2> {
                     .headline6!
                     .copyWith(fontSize: 14),
               ),
-              Container(
-                margin: const EdgeInsets.only(top: 10.0, left: 10),
-                padding: const EdgeInsets.only(left: 10, right: 10),
-                height: 38,
-                // width: (context.width() - (3 * 16)) * 0.4,
-                // width: double.infinity,
-                decoration: const BoxDecoration(
-                  color: Color(0xffE5E6EB),
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(5.0),
-                  ),
-                ),
-                child: Center(
-                  child: Text(
-                    AppLocalizations.of(context)!.buy_credits,
-                    textAlign: TextAlign.left,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.w700,
-                      fontSize: 16,
-                      letterSpacing: 0.0,
-                      color: Colors.black,
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  Container(
+                    margin: const EdgeInsets.only(top: 10.0, left: 10),
+                    padding: const EdgeInsets.only(left: 10, right: 10),
+                    height: 38,
+                    // width: (context.width() - (3 * 16)) * 0.4,
+                    // width: double.infinity,
+                    decoration: const BoxDecoration(
+                      color: Color(0xffE5E6EB),
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(5.0),
+                      ),
                     ),
-                  ),
-                ),
-              ).onTap(() {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) {
-                      return Payments(user: user);
-                    },
-                  ),
-                );
-              }),
+                    child: Center(
+                      child: Text(
+                        AppLocalizations.of(context)!.buy_credits,
+                        textAlign: TextAlign.left,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.w700,
+                          fontSize: 16,
+                          letterSpacing: 0.0,
+                          color: Colors.black,
+                        ),
+                      ),
+                    ),
+                  ).onTap(() {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) {
+                          return Payments(user: user);
+                        },
+                      ),
+                    );
+                  }),
+                  Container(
+                    margin: const EdgeInsets.only(top: 10.0, left: 10),
+                    padding: const EdgeInsets.only(left: 10, right: 10),
+                    height: 38,
+                    // width: (context.width() - (3 * 16)) * 0.4,
+                    // width: double.infinity,
+                    decoration: const BoxDecoration(
+                      color: Color(0xffE5E6EB),
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(5.0),
+                      ),
+                    ),
+                    child: const Center(
+                      child: Text(
+                        'Use Credits',
+                        textAlign: TextAlign.left,
+                        style: TextStyle(
+                          fontWeight: FontWeight.w700,
+                          fontSize: 16,
+                          letterSpacing: 0.0,
+                          color: Colors.black,
+                        ),
+                      ),
+                    ),
+                  ).onTap(() {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) {
+                          return CouponPage(user: user);
+                        },
+                      ),
+                    );
+                  }),
+                ],
+              ),
             ],
           ),
+        // Row(
+        //   mainAxisSize: MainAxisSize.min,
+        //   children: <Widget>[
+        //     Text(
+        //       '${AppLocalizations.of(context)!.you_have} ${user.creditPoints} ${AppLocalizations.of(context)!.credits}',
+        //       style: Theme.of(context)
+        //           .textTheme
+        //           .headline6!
+        //           .copyWith(fontSize: 14),
+        //     ),
+        //     Container(
+        //       margin: const EdgeInsets.only(top: 10.0, left: 10),
+        //       padding: const EdgeInsets.only(left: 10, right: 10),
+        //       height: 38,
+        //       // width: (context.width() - (3 * 16)) * 0.4,
+        //       // width: double.infinity,
+        //       decoration: const BoxDecoration(
+        //         color: Color(0xffE5E6EB),
+        //         borderRadius: BorderRadius.all(
+        //           Radius.circular(5.0),
+        //         ),
+        //       ),
+        //       child: Center(
+        //         child: Text(
+        //           AppLocalizations.of(context)!.buy_credits,
+        //           textAlign: TextAlign.left,
+        //           style: const TextStyle(
+        //             fontWeight: FontWeight.w700,
+        //             fontSize: 16,
+        //             letterSpacing: 0.0,
+        //             color: Colors.black,
+        //           ),
+        //         ),
+        //       ),
+        //     ).onTap(() {
+        //       Navigator.of(context).push(
+        //         MaterialPageRoute(
+        //           builder: (context) {
+        //             return Payments(user: user);
+        //           },
+        //         ),
+        //       );
+        //     }),
+        //   ],
+        // ),
         Row(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[

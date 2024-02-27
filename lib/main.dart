@@ -14,14 +14,15 @@ import 'package:nb_utils/nb_utils.dart';
 import 'ads/applovin_ad_unit_id.dart';
 import 'app.dart';
 
+const bool useEmulator = kDebugMode;
+const String host = '192.168.43.89';
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final savedThemeMode = await AdaptiveTheme.getThemeMode();
 
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  bool isUseEmulator = kDebugMode;
-  if (isUseEmulator) {
-    const host = '192.168.43.89';
+  if (useEmulator) {
     FirebaseAuth.instance.useAuthEmulator(host, 9099);
     FirebaseFirestore.instance.useFirestoreEmulator(host, 8080);
     FirebaseStorage.instance.useStorageEmulator(host, 9199);
