@@ -74,7 +74,7 @@ class _PaymentsState extends State<Payments> {
                     ),
                     Flexible(
                       child: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
-                        stream: firestore.collection("payments").snapshots(),
+                        stream: firestore.collection('payments').snapshots(),
                         builder: (context, snapshot) {
                           if (!snapshot.hasData) {
                             return const SizedBox(
@@ -183,15 +183,6 @@ class _PaymentsState extends State<Payments> {
                                     ),
                                   ],
                                 ),
-                              // Container(
-                              //   margin: const EdgeInsets.all(8),
-                              //   child: const Text(
-                              //     "PLEASE USE GLOBAL NET LOGIN EMAIL",
-                              //     style: TextStyle(
-                              //         fontSize: 12,
-                              //         fontWeight: FontWeight.w600),
-                              //   ),
-                              // ),
                               if (datLength > 0)
                                 SizedBox(
                                   width: finalWidth * .65,
@@ -260,7 +251,23 @@ class _PaymentsState extends State<Payments> {
                                       ),
                                     ),
                                     TextButton(
-                                      onPressed: () {},
+                                      onPressed: () {
+                                        const String url =
+                                            'https://docs.google.com/document/d/e/2PACX-1vSVsg1yyLr-VC9yJ04vB-BtVoo3TGGrL8PRGzXgbb6QOaiZBiV9WLOKRuTlDzSUEgr_xOXVhax-_T2X/pub';
+                                        if (kIsWeb) {
+                                          launchUrl(Uri.parse(url));
+                                        } else {
+                                          Navigator.of(context).push(
+                                            MaterialPageRoute(
+                                                builder: (context) {
+                                              return const AppWebView(
+                                                url: url,
+                                                title: 'Terms and Condition',
+                                              );
+                                            }),
+                                          );
+                                        }
+                                      },
                                       child: const Text('Terms and Condition'),
                                     )
                                   ],

@@ -1,20 +1,20 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class User {
-  static const String fieldNameCreditPoints = "credit_points";
-  static const String fieldNameDisplayName = "displayName";
-  static const String fieldNameEmail = "email";
-  static const String fieldNameGroups = "groups";
-  static const String fieldNameId = "id";
-  static const String fieldNameLoginType = "loginType";
-  static const String fieldNameNoAds = "no_ads";
-  static const String fieldNamePhotoUrl = "photoUrl";
-  static const String fieldNameTimestamp = "timestamp";
-  static const String fieldNameTokenNotfaction = "tokenNotification";
-  static const String fieldNameUserIsVerified = "userIsVerified";
-  static const String fieldNameUsername = "username";
-  static const String fieldNameBio = "bio";
-  static const String fieldNameCoverUrl = "coverUrl";
+  static const String fieldNameCreditPoints = 'credit_points';
+  static const String fieldNameDisplayName = 'displayName';
+  static const String fieldNameEmail = 'email';
+  static const String fieldNameGroups = 'groups';
+  static const String fieldNameId = 'id';
+  static const String fieldNameLoginType = 'loginType';
+  static const String fieldNameNoAds = 'no_ads';
+  static const String fieldNamePhotoUrl = 'photoUrl';
+  static const String fieldNameTimestamp = 'timestamp';
+  static const String fieldNameTokenNotfaction = 'tokenNotification';
+  static const String fieldNameUserIsVerified = 'userIsVerified';
+  static const String fieldNameUsername = 'username';
+  static const String fieldNameBio = 'bio';
+  static const String fieldNameCoverUrl = 'coverUrl';
 
   final int creditPoints;
   final String displayName;
