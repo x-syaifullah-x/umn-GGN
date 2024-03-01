@@ -1,4 +1,4 @@
-import 'package:adaptive_theme/adaptive_theme.dart';
+import 'package:adaptive_theme/adaptive_theme.dart';    
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -6,7 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:global_net/data/reaction_data.dart' as Reaction;
+import 'package:global_net/data/reaction_data.dart' as reaction;
 import 'package:global_net/data/user.dart' as data_user;
 import 'package:global_net/pages/all_videos.dart';
 import 'package:global_net/pages/auth/login_page.dart';
@@ -21,12 +21,11 @@ import 'package:global_net/pages/menu/all_stories.dart';
 import 'package:global_net/pages/menu/dialogs/vip_dialog.dart';
 import 'package:global_net/pages/menu/discover.dart';
 import 'package:global_net/pages/menu/help_support.dart';
+import 'package:global_net/share_preference/preferences_key.dart';
+import 'package:global_net/widgets/header.dart';
+import 'package:global_net/widgets/language_picker_widget.dart';
 import 'package:global_net/widgets/simple_world_widgets.dart';
 import 'package:nb_utils/nb_utils.dart';
-
-import '../../share_preference/preferences_key.dart';
-import '../../widgets/header.dart';
-import '../../widgets/language_picker_widget.dart';
 
 class SettingsPage extends StatefulWidget {
   final data_user.User user;
@@ -151,7 +150,7 @@ class _SettingsState extends State<SettingsPage> {
               icon: const Icon(Icons.star),
               label: const Text('Store'),
               style: ElevatedButton.styleFrom(
-                primary: const Color(0xFFFFD700),
+                backgroundColor: const Color(0xFFFFD700),
                 minimumSize: const Size(100, 38),
                 maximumSize: const Size(100, 38),
               ),
@@ -239,7 +238,7 @@ class _SettingsState extends State<SettingsPage> {
               ),
               child: const Center(
                 child: Text(
-                  "Delete User",
+                  'Delete User',
                   textAlign: TextAlign.left,
                   style: TextStyle(
                     fontWeight: FontWeight.w700,
@@ -291,7 +290,7 @@ class _SettingsState extends State<SettingsPage> {
   Widget _deactiveAccount(String userId) {
     return _buildField(
       photoUrl: 'assets/images/delete_user.png',
-      fieldName: AppLocalizations.of(context)?.deactive_account ?? "-",
+      fieldName: AppLocalizations.of(context)?.deactive_account ?? '-',
       onTap: () {
         Navigator.push(
           context,
@@ -306,7 +305,7 @@ class _SettingsState extends State<SettingsPage> {
   Widget _helpAndSupport(String userId) {
     return _buildField(
       photoUrl: 'assets/images/compliant.png',
-      fieldName: AppLocalizations.of(context)?.help_support ?? "-",
+      fieldName: AppLocalizations.of(context)?.help_support ?? '-',
       onTap: () {
         Navigator.push(
           context,
@@ -323,14 +322,14 @@ class _SettingsState extends State<SettingsPage> {
   Widget _documents(String userId) {
     return _buildField(
       photoUrl: 'assets/images/documents.png',
-      fieldName: AppLocalizations.of(context)?.documents ?? "-",
+      fieldName: AppLocalizations.of(context)?.documents ?? '-',
       onTap: () {
         Navigator.push(
           context,
           CupertinoPageRoute(
             builder: (context) => AllPdfs(
               UserId: globalUserId,
-              reactions: Reaction.reactions,
+              reactions: reaction.reactions,
             ),
           ),
         );
@@ -341,14 +340,14 @@ class _SettingsState extends State<SettingsPage> {
   Widget _videos(String userId) {
     return _buildField(
       photoUrl: 'assets/images/play_button.png',
-      fieldName: AppLocalizations.of(context)?.videos ?? "-",
+      fieldName: AppLocalizations.of(context)?.videos ?? '-',
       onTap: () {
         Navigator.push(
           context,
           CupertinoPageRoute(
             builder: (context) => AllVideos(
               UserId: userId,
-              reactions: Reaction.reactions,
+              reactions: reaction.reactions,
             ),
           ),
         );
@@ -359,7 +358,7 @@ class _SettingsState extends State<SettingsPage> {
   Widget _stories(String userId) {
     return _buildField(
       photoUrl: 'assets/images/open_book.png',
-      fieldName: AppLocalizations.of(context)?.stories ?? "-",
+      fieldName: AppLocalizations.of(context)?.stories ?? '-',
       onTap: () {
         Navigator.push(
           context,
@@ -376,7 +375,7 @@ class _SettingsState extends State<SettingsPage> {
   Widget _discover(String userId) {
     return _buildField(
       photoUrl: 'assets/images/earth.png',
-      fieldName: AppLocalizations.of(context)?.discover ?? "-",
+      fieldName: AppLocalizations.of(context)?.discover ?? '-',
       onTap: () {
         Navigator.push(
           context,
@@ -391,7 +390,7 @@ class _SettingsState extends State<SettingsPage> {
   Widget _editProfile(String userId) {
     return _buildField(
       photoUrl: 'assets/images/edit.svg',
-      fieldName: AppLocalizations.of(context)?.edit_profile ?? "-",
+      fieldName: AppLocalizations.of(context)?.edit_profile ?? '-',
       onTap: () {
         Navigator.push(
           context,
@@ -408,7 +407,7 @@ class _SettingsState extends State<SettingsPage> {
   Widget _recentUsers(String userId) {
     return _buildField(
       photoUrl: 'assets/images/recent_useers.svg',
-      fieldName: AppLocalizations.of(context)?.recent_users ?? "-",
+      fieldName: AppLocalizations.of(context)?.recent_users ?? '-',
       onTap: () {
         Navigator.push(
           context,
@@ -425,7 +424,7 @@ class _SettingsState extends State<SettingsPage> {
   Widget _chat(String userId) {
     return _buildField(
       photoUrl: 'assets/images/messenger.svg',
-      fieldName: AppLocalizations.of(context)?.messenger ?? "-",
+      fieldName: AppLocalizations.of(context)?.messenger ?? '-',
       onTap: () {
         Navigator.push(
           context,
@@ -469,7 +468,7 @@ class _SettingsState extends State<SettingsPage> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              photoUrl.contains("http")
+              photoUrl.contains('http')
                   ? ClipRRect(
                       borderRadius: BorderRadius.circular(10.0),
                       child: CachedNetworkImage(

@@ -6,32 +6,33 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_reaction_button/flutter_reaction_button.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:global_net/pages/chat/simpleworld_chat.dart';
 import 'package:global_net/pages/comming_soon_page.dart';
+import 'package:global_net/pages/coupon/coupon.dart';
 import 'package:global_net/pages/create_post/post_box.dart';
 import 'package:global_net/pages/disliked_list.dart';
 import 'package:global_net/pages/edit_profile.dart';
 import 'package:global_net/pages/followers_list.dart';
 import 'package:global_net/pages/following_users_list.dart';
 import 'package:global_net/pages/home/home.dart';
-import 'package:global_net/pages/home/profile/coupon/coupon.dart';
-import 'package:global_net/pages/home/profile/coupon/coupon_create.dart';
 import 'package:global_net/pages/liked_list.dart';
 import 'package:global_net/pages/ppviewed_list.dart';
+import 'package:global_net/pages/wallet/wallet.dart';
 import 'package:global_net/story/add_story.dart';
 import 'package:global_net/widgets/header.dart';
 import 'package:global_net/widgets/multi_manager/flick_multi_manager.dart';
 import 'package:global_net/widgets/progress.dart';
 import 'package:global_net/widgets/simple_world_widgets.dart';
 import 'package:global_net/widgets/single_post.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:nb_utils/nb_utils.dart';
 
 import '../../../data/user.dart';
-import '../../payments.dart';
 import '../user/user.dart';
 
 class Profile extends StatelessWidget {
@@ -51,7 +52,7 @@ class Profile extends StatelessWidget {
     final ScrollController scrollController = ScrollController();
     final bool widthMoreThan_500 = (MediaQuery.of(context).size.width > 500);
     return Scaffold(
-      backgroundColor: Theme.of(context).backgroundColor,
+      backgroundColor: Theme.of(context).colorScheme.background,
       appBar: header(
         context,
         titleText: AppLocalizations.of(context)!.profile,
@@ -119,12 +120,25 @@ class _ProfileState extends State<Profile2> {
   @override
   void initState() {
     super.initState();
-    getProfilePosts();
+    _getProfilePosts();
     flickMultiManager = FlickMultiManager();
     _viewMyProfile();
   }
 
-  getProfilePosts() async {
+  _viewMyProfile() {
+    if (widget.user.id != widget.ownerId) {
+      ppviewsCollection
+          .doc(widget.user.id)
+          .collection('userviews')
+          .doc(widget.ownerId)
+          .set({
+        'userId': widget.ownerId,
+        'timestamp': DateTime.now().millisecondsSinceEpoch.toString(),
+      });
+    }
+  }
+
+  _getProfilePosts() async {
     setState(() {
       isLoading = true;
     });
@@ -142,17 +156,9 @@ class _ProfileState extends State<Profile2> {
     });
   }
 
-  _viewMyProfile() {
-    if (widget.user.id != widget.ownerId) {
-      ppviewsCollection
-          .doc(widget.user.id)
-          .collection('userviews')
-          .doc(widget.ownerId)
-          .set({
-        'userId': widget.ownerId,
-        'timestamp': DateTime.now().millisecondsSinceEpoch.toString(),
-      });
-    }
+  @override
+  Widget build(BuildContext context) {
+    return _buildProfileHeader(widget.user);
   }
 
   Future handleChooseFromGallery() async {
@@ -530,7 +536,7 @@ class _ProfileState extends State<Profile2> {
     );
   }
 
-  Widget buildProfileHeader(User user) {
+  Widget _buildProfileHeader(User user) {
     final bool isOwner = widget.ownerId == widget.user.id;
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -541,7 +547,7 @@ class _ProfileState extends State<Profile2> {
             (imageFileCover == null)
                 ? user.coverUrl.isEmpty
                     ? Image.asset(
-                        'assets/images/defaultcover.png',
+                        'assets/images/defaultcover_new.jpg',
                         alignment: Alignment.center,
                         width: double.infinity,
                         fit: BoxFit.cover,
@@ -713,8 +719,10 @@ class _ProfileState extends State<Profile2> {
           children: [
             Text(
               user.username.capitalize(),
-              style:
-                  Theme.of(context).textTheme.headline6!.copyWith(fontSize: 16),
+              style: Theme.of(context)
+                  .textTheme
+                  .titleLarge!
+                  .copyWith(fontSize: 16),
             ),
 
             /// Show verified badge
@@ -733,137 +741,160 @@ class _ProfileState extends State<Profile2> {
         const SizedBox(height: 3),
         Text(
           user.bio,
-          style: Theme.of(context).textTheme.headline6!.copyWith(fontSize: 14),
+          style: Theme.of(context).textTheme.titleLarge!.copyWith(fontSize: 14),
         ),
-        const SizedBox(height: 20),
         if (widget.ownerId == widget.user.id)
           Column(
             children: [
-              Text(
-                '${AppLocalizations.of(context)!.you_have} ${user.creditPoints} ${AppLocalizations.of(context)!.credits}',
-                style: Theme.of(context)
-                    .textTheme
-                    .headline6!
-                    .copyWith(fontSize: 14),
+              LayoutBuilder(
+                builder: (buildContext, constraint) {
+                  final width = constraint.biggest.width;
+                  return Card(
+                    elevation: 8,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 16,
+                      ),
+                      width: width * .85,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Wallet ID',
+                                style: GoogleFonts.portLligatSans(
+                                  textStyle: Theme.of(context)
+                                      .textTheme
+                                      .headlineMedium,
+                                  fontSize: 16,
+                                ),
+                              ),
+                              const SizedBox(
+                                width: 8,
+                              ),
+                              InkWell(
+                                child: const Icon(
+                                  Icons.copy_all_sharp,
+                                  size: 18,
+                                ),
+                                onTap: () async {
+                                  try {
+                                    await Clipboard.setData(
+                                      ClipboardData(
+                                        text: widget.user.id,
+                                      ),
+                                    );
+                                    toast(
+                                        'Wallet ID has been successfully copied');
+                                  } catch (e) {
+                                    log('$e');
+                                  }
+                                },
+                              ),
+                              Text(
+                                user.id,
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(
+                            height: 16,
+                          ),
+                          Text(
+                            'Total Balance',
+                            style: GoogleFonts.portLligatSans(
+                              textStyle:
+                                  Theme.of(context).textTheme.headlineMedium,
+                              fontSize: 16,
+                            ),
+                          ),
+                          const SizedBox(
+                            height: 4,
+                          ),
+                          Text(
+                            'Credits ${user.creditPoints} = USD \$${(user.creditPoints / 100.00).toStringAsFixed(2)}',
+                            style: GoogleFonts.portLligatSans(
+                              textStyle:
+                                  Theme.of(context).textTheme.headlineMedium,
+                              fontSize: 18,
+                            ),
+                          ),
+                          8.height,
+                          Center(
+                            child: SizedBox(
+                              height: 32,
+                              width: width * .65,
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (context) {
+                                        return Wallet(user: user);
+                                      },
+                                    ),
+                                  );
+                                },
+                                child: const Text('Buy Credits'),
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                  );
+                },
               ),
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  Container(
-                    margin: const EdgeInsets.only(top: 10.0, left: 10),
-                    padding: const EdgeInsets.only(left: 10, right: 10),
-                    height: 38,
-                    // width: (context.width() - (3 * 16)) * 0.4,
-                    // width: double.infinity,
-                    decoration: const BoxDecoration(
-                      color: Color(0xffE5E6EB),
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(5.0),
-                      ),
-                    ),
-                    child: Center(
-                      child: Text(
-                        AppLocalizations.of(context)!.buy_credits,
-                        textAlign: TextAlign.left,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.w700,
-                          fontSize: 16,
-                          letterSpacing: 0.0,
-                          color: Colors.black,
-                        ),
-                      ),
-                    ),
-                  ).onTap(() {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) {
-                          return Payments(user: user);
-                        },
-                      ),
-                    );
-                  }),
-                  Container(
-                    margin: const EdgeInsets.only(top: 10.0, left: 10),
-                    padding: const EdgeInsets.only(left: 10, right: 10),
-                    height: 38,
-                    // width: (context.width() - (3 * 16)) * 0.4,
-                    // width: double.infinity,
-                    decoration: const BoxDecoration(
-                      color: Color(0xffE5E6EB),
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(5.0),
-                      ),
-                    ),
-                    child: const Center(
-                      child: Text(
-                        'Use Credits',
-                        textAlign: TextAlign.left,
-                        style: TextStyle(
-                          fontWeight: FontWeight.w700,
-                          fontSize: 16,
-                          letterSpacing: 0.0,
-                          color: Colors.black,
-                        ),
-                      ),
-                    ),
-                  ).onTap(() {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) {
-                          return CouponPage(user: user);
-                        },
-                      ),
-                    );
-                  }),
-                ],
-              ),
+              // Text(
+              //   '${AppLocalizations.of(context)!.you_have} ${user.creditPoints} ${AppLocalizations.of(context)!.credits}',
+              //   style: Theme.of(context)
+              //       .textTheme
+              //       .titleLarge!
+              //       .copyWith(fontSize: 14),
+              // ),
+              // Row(
+              //   mainAxisSize: MainAxisSize.min,
+              //   children: <Widget>[
+              //     Container(
+              //       margin: const EdgeInsets.only(top: 10.0, left: 10),
+              //       padding: const EdgeInsets.only(left: 10, right: 10),
+              //       height: 38,
+              //       decoration: const BoxDecoration(
+              //         color: Color(0xffE5E6EB),
+              //         borderRadius: BorderRadius.all(
+              //           Radius.circular(5.0),
+              //         ),
+              //       ),
+              //       child: Center(
+              //         child: Text(
+              //           AppLocalizations.of(context)!.buy_credits,
+              //           textAlign: TextAlign.left,
+              //           style: const TextStyle(
+              //             fontWeight: FontWeight.w700,
+              //             fontSize: 16,
+              //             letterSpacing: 0.0,
+              //             color: Colors.black,
+              //           ),
+              //         ),
+              //       ),
+              //     ).onTap(() {
+              //       Navigator.of(context).push(
+              //         MaterialPageRoute(
+              //           builder: (context) {
+              //             return Wallet(user: user);
+              //           },
+              //         ),
+              //       );
+              //     }),
+              //   ],
+              // ),
             ],
           ),
-        // Row(
-        //   mainAxisSize: MainAxisSize.min,
-        //   children: <Widget>[
-        //     Text(
-        //       '${AppLocalizations.of(context)!.you_have} ${user.creditPoints} ${AppLocalizations.of(context)!.credits}',
-        //       style: Theme.of(context)
-        //           .textTheme
-        //           .headline6!
-        //           .copyWith(fontSize: 14),
-        //     ),
-        //     Container(
-        //       margin: const EdgeInsets.only(top: 10.0, left: 10),
-        //       padding: const EdgeInsets.only(left: 10, right: 10),
-        //       height: 38,
-        //       // width: (context.width() - (3 * 16)) * 0.4,
-        //       // width: double.infinity,
-        //       decoration: const BoxDecoration(
-        //         color: Color(0xffE5E6EB),
-        //         borderRadius: BorderRadius.all(
-        //           Radius.circular(5.0),
-        //         ),
-        //       ),
-        //       child: Center(
-        //         child: Text(
-        //           AppLocalizations.of(context)!.buy_credits,
-        //           textAlign: TextAlign.left,
-        //           style: const TextStyle(
-        //             fontWeight: FontWeight.w700,
-        //             fontSize: 16,
-        //             letterSpacing: 0.0,
-        //             color: Colors.black,
-        //           ),
-        //         ),
-        //       ),
-        //     ).onTap(() {
-        //       Navigator.of(context).push(
-        //         MaterialPageRoute(
-        //           builder: (context) {
-        //             return Payments(user: user);
-        //           },
-        //         ),
-        //       );
-        //     }),
-        //   ],
-        // ),
         Row(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
@@ -911,7 +942,7 @@ class _ProfileState extends State<Profile2> {
               ),
           ],
         ),
-        const SizedBox(height: 20),
+        20.height,
         const Divider(),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 50),
@@ -1364,17 +1395,12 @@ class _ProfileState extends State<Profile2> {
           },
         ),
         const Divider(),
-        buildProfilePosts()
+        _buildProfilePosts()
       ],
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return buildProfileHeader(widget.user);
-  }
-
-  buildProfilePosts() {
+  _buildProfilePosts() {
     if (isLoading) {
       return circularProgress();
     } else if (posts.isEmpty) {

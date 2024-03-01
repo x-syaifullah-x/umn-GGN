@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:global_net/data/user.dart';
-import 'package:global_net/pages/home/profile/coupon/coupon_create.dart';
-import 'package:global_net/pages/home/profile/coupon/coupon_s.dart';
+import 'package:global_net/pages/coupon/coupon_create.dart';
+import 'package:global_net/pages/coupon/coupon_s.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class CouponPage extends StatelessWidget {

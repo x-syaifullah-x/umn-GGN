@@ -49,21 +49,29 @@ class User {
   });
 
   factory User.fromJson(Map<String, dynamic>? json) => User(
-        bio: json?[fieldNameBio],
-        coverUrl: json?[fieldNameCoverUrl],
-        creditPoints: json?[fieldNameCreditPoints],
-        displayName: json?[fieldNameDisplayName],
-        email: json?[fieldNameEmail],
-        groups: json?[fieldNameGroups],
-        id: json?[fieldNameId],
-        loginType: json?[fieldNameLoginType],
-        noAds: json?[fieldNameNoAds],
-        photoUrl: json?[fieldNamePhotoUrl],
+        bio: json?[fieldNameBio] ?? '',
+        coverUrl: json?[fieldNameCoverUrl] ?? '',
+        creditPoints: json?[fieldNameCreditPoints] ?? 0,
+        displayName: json?[fieldNameDisplayName] ?? '',
+        email: json?[fieldNameEmail] ?? '',
+        groups: json?[fieldNameGroups] ?? '',
+        id: json?[fieldNameId] ?? '',
+        loginType: json?[fieldNameLoginType] ?? '',
+        noAds: json?[fieldNameNoAds] ?? '',
+        photoUrl: json?[fieldNamePhotoUrl] ?? '',
         timestamp: _getTimesTamp(json?[fieldNameTimestamp]),
-        tokenNotfaction: json?[fieldNameTokenNotfaction],
-        userIsVerified: json?[fieldNameUserIsVerified],
-        username: json?[fieldNameUsername],
+        tokenNotfaction: json?[fieldNameTokenNotfaction] ?? '',
+        userIsVerified: json?[fieldNameUserIsVerified] ?? '',
+        username: json?[fieldNameUsername] ?? '',
       );
+
+  dynamic chech(Function a) {
+    try {
+      return a.call();
+    } catch (e) {
+      return '';
+    }
+  }
 
   static int _getTimesTamp(dynamic) {
     if (dynamic is Timestamp) {

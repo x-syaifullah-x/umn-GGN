@@ -1,16 +1,10 @@
-// ignore_for_file: non_constant_identifier_names, avoid_print
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:global_net/data/user.dart';
 import 'package:global_net/pages/home/home.dart';
+import 'package:global_net/pages/wallet/buy_credits.dart';
 import 'package:global_net/widgets/simple_world_widgets.dart';
-import 'package:url_launcher/url_launcher.dart';
-
-import '../../../v2/news/presentation/app_web_view.dart';
-import '../../payments.dart';
 
 class VipDialog extends StatelessWidget {
   static const stripePymentUrl =
@@ -217,7 +211,7 @@ class VipDialog extends StatelessWidget {
                         Navigator.of(context).push(
                           MaterialPageRoute(
                             builder: (context) {
-                              return Payments(user: user);
+                              return BuyCredits(user: user);
                             },
                           ),
                         );
@@ -236,48 +230,102 @@ class VipDialog extends StatelessWidget {
   }
 
   void _getVerifiedBadge(BuildContext context, User user) {
-    bool noCredit = user.creditPoints < _verifyBadgeCredit;
-    if (noCredit) {
-      simpleworldtoast(
-        "Error",
-        "Does not have enough credits, please get more then $_verifyBadgeCredit credits",
-        context,
-      );
-    } else {
-      usersCollection.doc(user.id).update({
-        "credit_points": FieldValue.increment(-_verifyBadgeCredit),
-        'userIsVerified': true,
-      }).then((value) {
-        Navigator.of(context).pop();
-        simpleworldtoast(
-          "Purchase Successful",
-          "Congratulations!, You have got the verified Badge",
-          context,
-        );
-      });
-    }
+    AlertDialog alert = AlertDialog(
+      title: const Text('Confirm'),
+      content: const Text(
+        'Are you sure you want to purchase the verified_account_badge for \$$_verifyBadgeCredit?',
+      ),
+      actions: [
+        TextButton(
+          child: const Text('Cancel'),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
+        TextButton(
+          child: const Text('Ok'),
+          onPressed: () {
+            Navigator.of(context).pop();
+            bool noCredit = user.creditPoints < _verifyBadgeCredit;
+            if (noCredit) {
+              simpleworldtoast(
+                'Error',
+                'Does not have enough credits, please get more then $_verifyBadgeCredit credits',
+                context,
+              );
+            } else {
+              usersCollection.doc(user.id).update({
+                'credit_points': FieldValue.increment(-_verifyBadgeCredit),
+                'userIsVerified': true,
+              }).then((value) {
+                Navigator.of(context).pop();
+                simpleworldtoast(
+                  'Purchase Successful',
+                  'Congratulations!, You have got the verified Badge',
+                  context,
+                );
+              });
+            }
+          },
+        ),
+      ],
+    );
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
   }
 
   void _getNoAds(BuildContext context, User user) {
-    bool noCredit = user.creditPoints < _noAdsCredit;
-    if (noCredit) {
-      simpleworldtoast(
-        "Error",
-        "Does not have enough credits, please get more then $_noAdsCredit credits",
-        context,
-      );
-    } else {
-      usersCollection.doc(user.id).update({
-        "credit_points": FieldValue.increment(-_noAdsCredit),
-        'no_ads': true,
-      }).then((value) {
-        Navigator.of(context).pop();
-        simpleworldtoast(
-          "Purchase Successful",
-          "Congratulations!, You Won't see any more ADS",
-          context,
-        );
-      });
-    }
+    AlertDialog alert = AlertDialog(
+      title: const Text('Confirm'),
+      content: const Text(
+        'Are you sure you want to purchase the verified_account_badge for \$$_noAdsCredit?',
+      ),
+      actions: [
+        TextButton(
+          child: const Text('Cancel'),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
+        TextButton(
+          child: const Text('Ok'),
+          onPressed: () {
+            Navigator.of(context).pop();
+            bool noCredit = user.creditPoints < _noAdsCredit;
+            if (noCredit) {
+              simpleworldtoast(
+                'Error',
+                'Does not have enough credits, please get more then $_noAdsCredit credits',
+                context,
+              );
+            } else {
+              usersCollection.doc(user.id).update({
+                'credit_points': FieldValue.increment(-_noAdsCredit),
+                'no_ads': true,
+              }).then((value) {
+                Navigator.of(context).pop();
+                simpleworldtoast(
+                  'Purchase Successful',
+                  'Congratulations!, You Won\'t see any more ADS',
+                  context,
+                );
+              });
+            }
+          },
+        ),
+      ],
+    );
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
   }
 }

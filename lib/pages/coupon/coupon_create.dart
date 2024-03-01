@@ -236,7 +236,7 @@ class _CouponCreateState extends State<CouponCreate> {
                     });
                     final uri = useEmulator
                         ? Uri.http(
-                            host,
+                            hostEmulator,
                             '/globelgirl-2c269/us-central1/stripe/coupon/create',
                           )
                         : Uri.https(

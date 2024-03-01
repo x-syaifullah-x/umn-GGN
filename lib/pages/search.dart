@@ -74,8 +74,11 @@ class _SearchState extends State<Search>
             height: orientation == Orientation.portrait ? 150.0 : 100.0,
           ),
           30.height,
-          Text("Find Users",
-              textAlign: TextAlign.center, style: boldTextStyle(size: 30)),
+          Text(
+            'Find Users',
+            textAlign: TextAlign.center,
+            style: boldTextStyle(size: 30),
+          ),
         ],
       ),
     );

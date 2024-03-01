@@ -15,7 +15,8 @@ import 'ads/applovin_ad_unit_id.dart';
 import 'app.dart';
 
 const bool useEmulator = kDebugMode;
-const String host = '192.168.43.89';
+const String _host = '192.168.43.89';
+const String hostEmulator = '$_host:5001';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -23,9 +24,9 @@ Future<void> main() async {
 
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   if (useEmulator) {
-    FirebaseAuth.instance.useAuthEmulator(host, 9099);
-    FirebaseFirestore.instance.useFirestoreEmulator(host, 8080);
-    FirebaseStorage.instance.useStorageEmulator(host, 9199);
+    FirebaseAuth.instance.useAuthEmulator(_host, 9099);
+    FirebaseFirestore.instance.useFirestoreEmulator(_host, 8080);
+    FirebaseStorage.instance.useStorageEmulator(_host, 9199);
   }
 
   if (!kIsWeb) {

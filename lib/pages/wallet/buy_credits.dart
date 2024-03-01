@@ -3,26 +3,25 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:global_net/data/user.dart';
 import 'package:global_net/pages/home/home.dart';
+import 'package:global_net/v2/news/presentation/app_web_view.dart';
 import 'package:nb_utils/nb_utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../data/user.dart';
-import '../v2/news/presentation/app_web_view.dart';
-
-class Payments extends StatefulWidget {
+class BuyCredits extends StatefulWidget {
   final User user;
 
-  const Payments({
+  const BuyCredits({
     required this.user,
     Key? key,
   }) : super(key: key);
 
   @override
-  State<Payments> createState() => _PaymentsState();
+  State<BuyCredits> createState() => _BuyCreditsState();
 }
 
-class _PaymentsState extends State<Payments> {
+class _BuyCreditsState extends State<BuyCredits> {
   int _selectedOption = 0;
   bool _isCheck = false;
   bool _isError = false;
@@ -74,7 +73,12 @@ class _PaymentsState extends State<Payments> {
                     ),
                     Flexible(
                       child: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
-                        stream: firestore.collection('payments').snapshots(),
+                        stream: firestore
+                            .collection('stripe')
+                            .doc('payment')
+                            .collection('links')
+                            .orderBy('metadata.order_id')
+                            .snapshots(),
                         builder: (context, snapshot) {
                           if (!snapshot.hasData) {
                             return const SizedBox(
@@ -92,8 +96,14 @@ class _PaymentsState extends State<Payments> {
                                   itemCount: datLength,
                                   itemBuilder: (context, index) {
                                     final doc = docs?[index];
-                                    final price = doc?['price'];
-                                    final creditPoint = doc?['credit_points'];
+                                    final metadata = doc?['metadata'] ?? {};
+                                    final price =
+                                        (int.parse(metadata['price']) / 100)
+                                            .toStringAsFixed(2);
+                                    final creditPoint =
+                                        metadata['credit_points'];
+                                    // final price = doc?['price'];
+                                    // final creditPoint = doc?['credit_points'];
                                     return ListTile(
                                       title: Column(
                                         crossAxisAlignment:
@@ -110,7 +120,7 @@ class _PaymentsState extends State<Payments> {
                                             height: 4,
                                           ),
                                           Text(
-                                            '$price',
+                                            '\$$price',
                                             style: const TextStyle(
                                               fontWeight: FontWeight.w300,
                                               fontSize: 14,
@@ -137,47 +147,47 @@ class _PaymentsState extends State<Payments> {
                                     const SizedBox(
                                       height: 12,
                                     ),
-                                    const Text(
-                                      'Your Wallet ID, Please copy it to pay',
-                                    ),
-                                    const SizedBox(
-                                      height: 4,
-                                    ),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Text(
-                                          widget.user.id,
-                                          style: const TextStyle(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                        const SizedBox(
-                                          width: 4,
-                                        ),
-                                        InkWell(
-                                          child: const Icon(
-                                            Icons.copy_all_sharp,
-                                            size: 18,
-                                          ),
-                                          onTap: () async {
-                                            try {
-                                              await Clipboard.setData(
-                                                ClipboardData(
-                                                  text: widget.user.id,
-                                                ),
-                                              );
-                                              toast(
-                                                  'Wallet ID has been successfully copied');
-                                            } catch (e) {
-                                              log('$e');
-                                            }
-                                          },
-                                        ),
-                                      ],
-                                    ),
+                                    // const Text(
+                                    //   'Your Wallet ID, Please copy it to pay',
+                                    // ),
+                                    // const SizedBox(
+                                    //   height: 4,
+                                    // ),
+                                    // Row(
+                                    //   mainAxisAlignment:
+                                    //       MainAxisAlignment.center,
+                                    //   children: [
+                                    //     Text(
+                                    //       widget.user.id,
+                                    //       style: const TextStyle(
+                                    //         fontSize: 16,
+                                    //         fontWeight: FontWeight.bold,
+                                    //       ),
+                                    //     ),
+                                    //     const SizedBox(
+                                    //       width: 4,
+                                    //     ),
+                                    //     InkWell(
+                                    //       child: const Icon(
+                                    //         Icons.copy_all_sharp,
+                                    //         size: 18,
+                                    //       ),
+                                    //       onTap: () async {
+                                    //         try {
+                                    //           await Clipboard.setData(
+                                    //             ClipboardData(
+                                    //               text: widget.user.id,
+                                    //             ),
+                                    //           );
+                                    //           toast(
+                                    //               'Wallet ID has been successfully copied');
+                                    //         } catch (e) {
+                                    //           log('$e');
+                                    //         }
+                                    //       },
+                                    //     ),
+                                    //   ],
+                                    // ),
                                     const SizedBox(
                                       height: 8,
                                     ),
@@ -195,10 +205,11 @@ class _PaymentsState extends State<Payments> {
                                         });
                                         return;
                                       }
-                                      final String? url =
-                                          docs?[_selectedOption]['url'];
-                                      if (url == null) return;
                                       final user = widget.user;
+                                      final a = docs?[_selectedOption]['url'];
+                                      if (a == null) return;
+                                      final String url =
+                                          '$a?client_reference_id=${user.id}';
                                       if (kIsWeb) {
                                         launchUrl(Uri.parse(url));
                                       } else {
