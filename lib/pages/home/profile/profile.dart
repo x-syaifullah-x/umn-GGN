@@ -109,10 +109,6 @@ class _ProfileState extends State<Profile2> {
   int postCount = 0;
   final ImagePicker _picker = ImagePicker();
   File? storyFile;
-  File? imageFileAvatar;
-  File? imageFileCover;
-  String? imageFileAvatarUrl;
-  String? imageFileCoverUrl;
   bool showHeart = false;
   late FlickMultiManager flickMultiManager;
   List<SinglePost> posts = [];
@@ -391,69 +387,61 @@ class _ProfileState extends State<Profile2> {
     }
   }
 
-  Future getAvatarImage() async {
+  Future _getAvatarImage() async {
     final newImageFile =
         await _picker.pickImage(source: ImageSource.gallery, imageQuality: 50);
-
-    setState(() {
-      this.imageFileAvatar = imageFileAvatar;
-      if (newImageFile != null) {
-        imageFileAvatar = File(newImageFile.path);
-      } else {}
-    });
-
-    uploadAvatar(imageFileAvatar);
+    final Uint8List? image = await newImageFile?.readAsBytes();
+    if (image != null) {
+      _uploadAvatar(fileName: widget.user.id, image: image);
+    }
   }
 
-  Future uploadAvatar(imageFileAvatar) async {
-    String mFileName = widget.user.id;
-    Reference storageReference =
-        FirebaseStorage.instance.ref().child('avatar_$mFileName.jpg');
-    UploadTask storageUploadTask = storageReference.putFile(imageFileAvatar!);
-    String downloadUrl = await (await storageUploadTask).ref.getDownloadURL();
-    imageFileAvatarUrl = downloadUrl;
-    setState(() {
-      isLoading = false;
-      usersCollection
-          .doc(widget.user.id)
-          .update({'photoUrl': imageFileAvatarUrl});
-
-      SnackBar snackbar =
-          const SnackBar(content: Text('Profile Photo updated!'));
+  Future _uploadAvatar({
+    required String fileName,
+    required Uint8List image,
+  }) async {
+    final resultUrl =
+        await _uploadImage(path: 'avatar_$fileName.jpg', image: image);
+    usersCollection.doc(widget.user.id).update({'photoUrl': resultUrl});
+    isLoading = false;
+    SnackBar snackbar = const SnackBar(content: Text('Profile Photo updated!'));
+    if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(snackbar);
-    });
+    }
   }
 
-  Future getcoverImage() async {
-    final newImageFile =
+  Future _getcoverImage() async {
+    final resultImagePicker =
         await _picker.pickImage(source: ImageSource.gallery, imageQuality: 50);
-
-    setState(() {
-      this.imageFileCover = imageFileCover;
-      if (newImageFile != null) {
-        imageFileCover = File(newImageFile.path);
-      }
-    });
-
-    uploadCover(imageFileCover);
+    final image = await resultImagePicker?.readAsBytes();
+    if (image != null) {
+      _uploadCover(image);
+    }
   }
 
-  Future uploadCover(imageFileCover) async {
-    String mFileName = widget.user.id;
-    Reference storageReference =
-        FirebaseStorage.instance.ref().child('cover_$mFileName.jpg');
-    UploadTask storageUploadTask = storageReference.putFile(imageFileCover!);
-    String downloadUrl = await (await storageUploadTask).ref.getDownloadURL();
-    imageFileCoverUrl = downloadUrl;
-    setState(() {
-      isLoading = false;
-      usersCollection
-          .doc(widget.user.id)
-          .update({'coverUrl': imageFileCoverUrl});
-
-      SnackBar snackbar = const SnackBar(content: Text('Cover Photo updated!'));
+  Future _uploadCover(Uint8List image) async {
+    String userId = widget.user.id;
+    final resultUrlImage =
+        await _uploadImage(path: 'cover_$userId.jpg', image: image);
+    usersCollection.doc(widget.user.id).update({'coverUrl': resultUrlImage});
+    isLoading = false;
+    SnackBar snackbar = const SnackBar(content: Text('Cover Photo updated!'));
+    if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(snackbar);
-    });
+    }
+  }
+
+  Future<String?> _uploadImage({
+    required String path,
+    required Uint8List image,
+  }) async {
+    try {
+      Reference storageReference = FirebaseStorage.instance.ref().child(path);
+      TaskSnapshot storageUploadTask = await storageReference.putData(image);
+      return storageUploadTask.ref.getDownloadURL();
+    } catch (e) {
+      return null;
+    }
   }
 
   consentSheet(
@@ -544,29 +532,19 @@ class _ProfileState extends State<Profile2> {
       children: <Widget>[
         Stack(
           children: <Widget>[
-            (imageFileCover == null)
-                ? user.coverUrl.isEmpty
-                    ? Image.asset(
-                        'assets/images/defaultcover_new.jpg',
-                        alignment: Alignment.center,
-                        width: double.infinity,
-                        fit: BoxFit.cover,
-                        height: 200,
-                      )
-                    : SizedBox(
-                        height: 200,
-                        width: double.infinity,
-                        child: CachedNetworkImage(
-                          imageUrl: user.coverUrl,
-                          fit: BoxFit.cover,
-                        ),
-                      )
-                : Material(
-                    clipBehavior: Clip.hardEdge,
-                    child: Image.file(
-                      imageFileCover!,
-                      width: double.infinity,
-                      height: 200.0,
+            user.coverUrl.isEmpty
+                ? Image.asset(
+                    'assets/images/defaultcover_new.jpg',
+                    alignment: Alignment.center,
+                    width: double.infinity,
+                    fit: BoxFit.cover,
+                    height: 200,
+                  )
+                : SizedBox(
+                    height: 200,
+                    width: double.infinity,
+                    child: CachedNetworkImage(
+                      imageUrl: user.coverUrl,
                       fit: BoxFit.cover,
                     ),
                   ),
@@ -616,35 +594,25 @@ class _ProfileState extends State<Profile2> {
                 alignment: const Alignment(0.0, 2.5),
                 child: Stack(
                   children: [
-                    (imageFileAvatar == null)
-                        ? ClipRRect(
-                            borderRadius: BorderRadius.circular(15.0),
-                            child: user.photoUrl.isEmpty
-                                ? Container(
-                                    decoration: BoxDecoration(
-                                      color: const Color(0xFF003a54),
-                                      borderRadius: BorderRadius.circular(15.0),
-                                    ),
-                                    child: Image.asset(
-                                      'assets/images/defaultavatar.png',
-                                      width: 120,
-                                    ),
-                                  )
-                                : CachedNetworkImage(
-                                    imageUrl: user.photoUrl,
-                                    height: 120,
-                                    width: 120,
-                                    fit: BoxFit.cover,
-                                  ),
+                    user.photoUrl.isEmpty
+                        ? Container(
+                            decoration: BoxDecoration(
+                              color: const Color(0xFF003a54),
+                              borderRadius: BorderRadius.circular(15.0),
+                            ),
+                            child: Image.asset(
+                              'assets/images/defaultavatar.png',
+                              width: 120,
+                            ),
                           )
                         : Material(
                             borderRadius:
                                 const BorderRadius.all(Radius.circular(15.0)),
                             clipBehavior: Clip.hardEdge,
-                            child: Image.file(
-                              imageFileAvatar!,
-                              width: 120.0,
-                              height: 120.0,
+                            child: CachedNetworkImage(
+                              imageUrl: user.photoUrl,
+                              height: 120,
+                              width: 120,
                               fit: BoxFit.cover,
                             ),
                           ),
@@ -653,7 +621,7 @@ class _ProfileState extends State<Profile2> {
                             'assets/images/photo.svg',
                             width: 40,
                           ).onTap(() {
-                            getAvatarImage();
+                            _getAvatarImage();
                           })
                         : const Text(''),
                   ],
@@ -707,7 +675,7 @@ class _ProfileState extends State<Profile2> {
                   'assets/images/photo.svg',
                   width: 40,
                 ).onTap(() {
-                  getcoverImage();
+                  _getcoverImage();
                 }),
               ),
           ],

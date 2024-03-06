@@ -14,7 +14,7 @@ import 'package:nb_utils/nb_utils.dart';
 import 'ads/applovin_ad_unit_id.dart';
 import 'app.dart';
 
-const bool useEmulator = kDebugMode;
+const bool useEmulator = false;
 const String _host = '192.168.43.89';
 const String hostEmulator = '$_host:5001';
 
@@ -30,7 +30,7 @@ Future<void> main() async {
   }
 
   if (!kIsWeb) {
-    Map? sdkConfiguration = await AppLovinMAX.initialize(
+    MaxConfiguration? sdkConfiguration = await AppLovinMAX.initialize(
       AppLovin.sdkKey,
     );
     log(sdkConfiguration);

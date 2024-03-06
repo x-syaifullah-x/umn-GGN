@@ -1,7 +1,6 @@
 import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:applovin_max/applovin_max.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -9,6 +8,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:global_net/ads/applovin_ad_unit_id.dart';
 import 'package:global_net/data/reaction_data.dart' as reaction;
 import 'package:global_net/data/user.dart' as data;
 import 'package:global_net/models/user.dart';
@@ -19,6 +19,7 @@ import 'package:global_net/pages/home/profile/profile.dart';
 import 'package:global_net/pages/home/settings.dart';
 import 'package:global_net/pages/home/user/users.dart';
 import 'package:global_net/pages/search.dart';
+import 'package:global_net/v2/exchange_rate_new/widgets/exchange_rate_new.dart';
 import 'package:global_net/v2/news/presentation/app_web_view.dart';
 import 'package:global_net/v2/news/presentation/pages/news.dart';
 import 'package:global_net/widgets/circle_button.dart';
@@ -30,9 +31,6 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:iconly/iconly.dart';
 import 'package:nb_utils/nb_utils.dart';
 import 'package:url_launcher/url_launcher.dart';
-
-import '../../ads/applovin_ad_unit_id.dart';
-import '../../v2/exchange_rate_new/widgets/exchange_rate_new.dart';
 
 final GoogleSignIn googleSignIn = GoogleSignIn();
 
@@ -158,7 +156,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
       title: Text(
         'Global Net',
         style: GoogleFonts.portLligatSans(
-          textStyle: Theme.of(context).textTheme.headline4,
+          textStyle: Theme.of(context).textTheme.headlineMedium,
         ),
       ),
       actions: [

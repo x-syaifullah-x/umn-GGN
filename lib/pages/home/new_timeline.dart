@@ -1,4 +1,3 @@
-import 'package:applovin_max/applovin_max.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -9,8 +8,8 @@ import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:flutter_reaction_button/flutter_reaction_button.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:global_net/data/reaction_data.dart';
-import 'package:global_net/models/user.dart';
 import 'package:global_net/pages/create_post/post_box.dart';
+import 'package:global_net/pages/home/a.dart';
 import 'package:global_net/pages/home/activity_feed.dart';
 import 'package:global_net/pages/home/home.dart';
 import 'package:global_net/pages/post_screen.dart';
@@ -54,7 +53,8 @@ class NewTimeline extends StatefulWidget {
   NewTimelineState createState() => NewTimelineState();
 }
 
-class NewTimelineState extends State<NewTimeline> {
+class NewTimelineState extends State<NewTimeline>
+    with AutomaticKeepAliveClientMixin<NewTimeline> {
   bool isGlobal = false;
   bool isLoading = false;
   late FlickMultiManager flickMultiManager;
@@ -67,6 +67,9 @@ class NewTimelineState extends State<NewTimeline> {
   final ScrollController scrollController = ScrollController();
 
   @override
+  bool get wantKeepAlive => true;
+
+  @override
   void initState() {
     super.initState();
     flickMultiManager = FlickMultiManager();
@@ -74,17 +77,18 @@ class NewTimelineState extends State<NewTimeline> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Theme.of(context).backgroundColor,
-      body: _followersPostList(context, widget.user),
-    );
-  }
-
-  @override
   void dispose() {
     flickMultiManager = FlickMultiManager();
     super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    super.build(context);
+    return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.onBackground,
+      body: _followersPostList(context, widget.user),
+    );
   }
 
   Widget _followersPostList(BuildContext c, User user) {
@@ -117,7 +121,7 @@ class NewTimelineState extends State<NewTimeline> {
                 const Padding(
                   padding: EdgeInsets.only(top: 20.0),
                   child: Text(
-                    "No Posts",
+                    'No Posts',
                     style: TextStyle(
                       color: Colors.red,
                       fontSize: 40.0,
@@ -153,19 +157,13 @@ class NewTimelineState extends State<NewTimeline> {
                       scrollController: scrollController,
                     ),
                   ),
-                  // if (!kIsWeb) const InlineAdaptiveAds(),
                   if (!kIsWeb)
-                    MaxAdView(
-                      adUnitId: AppLovin.adUnitId,
-                      adFormat: AdFormat.banner,
-                      listener: AdViewAdListener(
-                        onAdLoadedCallback: (ad) {},
-                        onAdLoadFailedCallback: (adUnitId, error) {},
-                        onAdClickedCallback: (ad) {},
-                        onAdExpandedCallback: (ad) {},
-                        onAdCollapsedCallback: (ad) {},
-                      ),
-                    )
+                    AdOne(
+                      key: Key('$index'),
+                    ),
+                  // AdTwo(
+                  //   key: Key('$index'),
+                  // ),
                 ],
               );
             } else {
@@ -178,9 +176,9 @@ class NewTimelineState extends State<NewTimeline> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    buildPostHeader(post),
-                    buildPostImage(post),
-                    buildPostFooter(post),
+                    _buildPostHeader(post),
+                    _buildPostImage(post),
+                    _buildPostFooter(post),
                   ],
                 ),
               );
@@ -199,7 +197,7 @@ class NewTimelineState extends State<NewTimeline> {
     );
   }
 
-  Widget buildPostHeader(post) {
+  Widget _buildPostHeader(post) {
     bool hasLocation = post['location']?.isNotEmpty == true;
     final id = post['ownerId'];
     return StreamBuilder<DocumentSnapshot<Map<String, dynamic>>>(
@@ -234,7 +232,7 @@ class NewTimelineState extends State<NewTimeline> {
                             width: 50.0,
                             fit: BoxFit.cover,
                           ),
-                  )
+                  ),
                 ],
               ).onTap(() {
                 showProfile(context, userId: user.id);
@@ -258,10 +256,10 @@ class NewTimelineState extends State<NewTimeline> {
                           if (hasLocation)
                             Text(
                               ' is at ',
-                              style:
-                                  Theme.of(context).textTheme.caption!.copyWith(
-                                        fontSize: 12.0,
-                                      ),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodySmall
+                                  ?.copyWith(fontSize: 12.0),
                             ),
                           if (hasLocation)
                             SizedBox(
@@ -295,9 +293,10 @@ class NewTimelineState extends State<NewTimeline> {
                           ),
                           locale: 'en_short',
                         ),
-                        style: Theme.of(context).textTheme.caption!.copyWith(
-                              fontSize: 12.0,
-                            ),
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodySmall
+                            ?.copyWith(fontSize: 12.0),
                       ),
                     ],
                   ),
@@ -324,7 +323,7 @@ class NewTimelineState extends State<NewTimeline> {
     );
   }
 
-  Widget buildPostImage(post) {
+  Widget _buildPostImage(post) {
     bool hasDesc = post['description']?.isNotEmpty == true;
     bool isPdf = post['type'] == 'pdf';
     bool isVide = post['type'] == 'video';
@@ -335,7 +334,7 @@ class NewTimelineState extends State<NewTimeline> {
         r'(?:(?:https?|ftp):\/\/)?[\w/\-?=%.]+\.[\w/\-?=%.]+',
         unicode: true,
       );
-      final aa = textData.replaceAll("@", "");
+      final aa = textData.replaceAll('@', '');
       Iterable<RegExpMatch> matches = urlRegExp.allMatches(aa);
 
       for (var match in matches) {
@@ -425,7 +424,7 @@ class NewTimelineState extends State<NewTimeline> {
               alignment: Alignment.center,
               children: <Widget>[
                 Center(
-                    child: Container(
+                    child: SizedBox(
                   width: double.infinity,
                   height: MediaQuery.of(context).size.height * 0.5,
                   child: PhotoGrid(
@@ -505,10 +504,14 @@ class NewTimelineState extends State<NewTimeline> {
     } else if (isText) {
       return GestureDetector(
         onTap: () => Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => PostScreen(
-                    postId: post['postId'], userId: post['ownerId']))),
+          context,
+          MaterialPageRoute(
+            builder: (context) => PostScreen(
+              postId: post['postId'],
+              userId: post['ownerId'],
+            ),
+          ),
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -562,8 +565,11 @@ class NewTimelineState extends State<NewTimeline> {
                 width: MediaQuery.of(context).size.width * 0.9,
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
-                    borderRadius: const BorderRadius.all(Radius.circular(10)),
-                    border: Border.all(color: Colors.grey)),
+                  borderRadius: const BorderRadius.all(
+                    Radius.circular(10),
+                  ),
+                  border: Border.all(color: Colors.grey),
+                ),
                 child: ListTile(
                   leading: SvgPicture.asset(
                     'assets/images/pdf_file.svg',
@@ -574,8 +580,8 @@ class NewTimelineState extends State<NewTimeline> {
                     post['pdfName']!,
                     style: Theme.of(context)
                         .textTheme
-                        .caption!
-                        .copyWith(fontSize: 16),
+                        .bodySmall
+                        ?.copyWith(fontSize: 16),
                   ),
                   subtitle: Text(
                     post['pdfsize']!,
@@ -589,10 +595,12 @@ class NewTimelineState extends State<NewTimeline> {
       }
       return GestureDetector(
         onTap: () => Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => PostScreen(
-                    postId: post['postId'], userId: post['ownerId']))),
+          context,
+          MaterialPageRoute(
+            builder: (context) =>
+                PostScreen(postId: post['postId'], userId: post['ownerId']),
+          ),
+        ),
         child: Container(
           width: MediaQuery.of(context).size.width * 0.9,
           alignment: Alignment.center,
@@ -608,7 +616,7 @@ class NewTimelineState extends State<NewTimeline> {
             title: Text(
               post['pdfName']!,
               style:
-                  Theme.of(context).textTheme.caption!.copyWith(fontSize: 16),
+                  Theme.of(context).textTheme.bodySmall?.copyWith(fontSize: 16),
             ),
             subtitle: Text(
               post['pdfsize']!,
@@ -621,7 +629,7 @@ class NewTimelineState extends State<NewTimeline> {
     return Container();
   }
 
-  Widget buildPostFooter(post) {
+  Widget _buildPostFooter(post) {
     Color? color = Theme.of(context).iconTheme.color;
     bool isPhoto = post['type'] == 'photo';
     final postId = post['postId'];
@@ -700,7 +708,7 @@ class NewTimelineState extends State<NewTimeline> {
                     child: Row(
                       children: [
                         SvgPicture.asset(
-                          "assets/images/comment.svg",
+                          'assets/images/comment.svg',
                           height: 20,
                           color: color,
                         ),
@@ -725,7 +733,7 @@ class NewTimelineState extends State<NewTimeline> {
                       child: Row(
                         children: [
                           SvgPicture.asset(
-                            "assets/images/share.svg",
+                            'assets/images/share.svg',
                             height: 20,
                             color: color,
                           ),
@@ -809,10 +817,10 @@ class NewTimelineState extends State<NewTimeline> {
                   ? ListTile(
                       onTap: () {
                         Navigator.pop(context);
-                        handleDeletePosts(context, post);
+                        _handleDeletePosts(context, post);
                       },
                       title: const Text(
-                        "Delete Post",
+                        'Delete Post',
                         style: TextStyle(
                             fontWeight: FontWeight.w500, fontSize: 15.0),
                       ),
@@ -822,10 +830,10 @@ class NewTimelineState extends State<NewTimeline> {
                   ? ListTile(
                       onTap: () {
                         Navigator.pop(context);
-                        handleReportPosts(context, post);
+                        _handleReportPosts(context, post);
                       },
                       title: const Text(
-                        "Report",
+                        'Report',
                         style: TextStyle(
                             fontWeight: FontWeight.w500, fontSize: 15.0),
                       ),
@@ -835,22 +843,10 @@ class NewTimelineState extends State<NewTimeline> {
                   ? ListTile(
                       onTap: () {
                         Navigator.pop(context);
-                        handleHidePosts(context, post);
+                        _handleHidePosts(context, post);
                       },
                       title: const Text(
-                        "Hide",
-                        style: TextStyle(
-                            fontWeight: FontWeight.w500, fontSize: 15.0),
-                      ),
-                    )
-                  : Container(),
-              post['ownerId'] != widget.user.id
-                  ? ListTile(
-                      onTap: () {
-                        Navigator.pop(context);
-                      },
-                      title: const Text(
-                        "Block User",
+                        'Hide',
                         style: TextStyle(
                             fontWeight: FontWeight.w500, fontSize: 15.0),
                       ),
@@ -862,7 +858,19 @@ class NewTimelineState extends State<NewTimeline> {
                         Navigator.pop(context);
                       },
                       title: const Text(
-                        "Save Post",
+                        'Block User',
+                        style: TextStyle(
+                            fontWeight: FontWeight.w500, fontSize: 15.0),
+                      ),
+                    )
+                  : Container(),
+              post['ownerId'] != widget.user.id
+                  ? ListTile(
+                      onTap: () {
+                        Navigator.pop(context);
+                      },
+                      title: const Text(
+                        'Save Post',
                         style: TextStyle(
                             fontWeight: FontWeight.w500, fontSize: 15.0),
                       ),
@@ -878,29 +886,28 @@ class NewTimelineState extends State<NewTimeline> {
   void deleteNestedSubcollections(post) {
     Future<QuerySnapshot> photos = postsCollection
         .doc(post['ownerId'])
-        .collection("userPosts")
+        .collection('userPosts')
         .doc(post['postId'])
-        .collection("albumposts")
+        .collection('albumposts')
         .get();
     photos.then((value) {
-      value.docs.forEach((element) {
+      for (var element in value.docs) {
         postsCollection
             .doc(post['ownerId'])
-            .collection("userPosts")
+            .collection('userPosts')
             .doc(post['postId'])
-            .collection("albumposts")
+            .collection('albumposts')
             .doc(element.id)
             .delete()
-            .then((value) => print("success"));
-      });
-      FirebaseStorage.instance.refFromURL(post['mediaUrl']!).delete();
+            .then((value) => log('success'));
+      }
+      FirebaseStorage.instance.refFromURL(post['mediaUrl']).delete();
     });
   }
 
   void deletePost(post) async {
     bool isPdf = post['type'] == 'pdf';
     bool isVide = post['type'] == 'video';
-    bool isPhoto = post['type'] == 'photo';
     postsCollection
         .doc(post['ownerId'])
         .collection('userPosts')
@@ -923,24 +930,24 @@ class NewTimelineState extends State<NewTimeline> {
 
     QuerySnapshot activityFeedSnapshot = await feedCollection
         .doc(post['ownerId'])
-        .collection("feedItems")
+        .collection('feedItems')
         .where('postId', isEqualTo: post['postId'])
         .get();
-    activityFeedSnapshot.docs.forEach((doc) {
+    for (var doc in activityFeedSnapshot.docs) {
       if (doc.exists) {
         doc.reference.delete();
       }
-    });
+    }
 
     QuerySnapshot commentsSnapshot = await commentsCollection
         .doc(post['postId'])
         .collection('comments')
         .get();
-    commentsSnapshot.docs.forEach((doc) {
+    for (var doc in commentsSnapshot.docs) {
       if (doc.exists) {
         doc.reference.delete();
       }
-    });
+    }
   }
 
   void hidePost(post) async {
@@ -957,11 +964,9 @@ class NewTimelineState extends State<NewTimeline> {
   }
 
   void _onShare(post, BuildContext context) async {
-    bool hasdesc = post['description']?.isNotEmpty == true;
     bool isPdf = post['type'] == 'pdf';
     bool isVide = post['type'] == 'video';
     bool isPhoto = post['type'] == 'photo';
-    bool isText = post['type'] == 'text';
     final RenderBox box = context.findRenderObject() as RenderBox;
 
     if (isPhoto) {
@@ -992,12 +997,12 @@ class NewTimelineState extends State<NewTimeline> {
     }
   }
 
-  Future handleDeletePosts(BuildContext parentConext, post) {
+  Future _handleDeletePosts(BuildContext parentConext, post) {
     return showDialog(
         context: parentConext,
         builder: (context) {
           return SimpleDialog(
-            title: const Text("Remove this Post?"),
+            title: const Text('Remove this Post?'),
             children: <Widget>[
               SimpleDialogOption(
                 onPressed: () {
@@ -1018,12 +1023,12 @@ class NewTimelineState extends State<NewTimeline> {
         });
   }
 
-  Future handleHidePosts(BuildContext parentConext, post) {
+  Future _handleHidePosts(BuildContext parentConext, post) {
     return showDialog(
         context: parentConext,
         builder: (context) {
           return SimpleDialog(
-            title: const Text("Hide this Post?"),
+            title: const Text('Hide this Post?'),
             children: <Widget>[
               SimpleDialogOption(
                 onPressed: () {
@@ -1044,17 +1049,17 @@ class NewTimelineState extends State<NewTimeline> {
         });
   }
 
-  Future handleReportPosts(BuildContext parentConext, post) {
+  Future _handleReportPosts(BuildContext parentConext, post) {
     return showDialog(
         context: parentConext,
         builder: (context) {
           return SimpleDialog(
-            title: const Text("Are you sure you want to Report this Post?"),
+            title: const Text('Are you sure you want to Report this Post?'),
             children: <Widget>[
               SimpleDialogOption(
                 onPressed: () {
                   Navigator.pop(context);
-                  reportPost(post);
+                  _reportPost(post);
                 },
                 child: const Text(
                   'Report',
@@ -1070,8 +1075,8 @@ class NewTimelineState extends State<NewTimeline> {
         });
   }
 
-  void reportPost(post) async {
+  void _reportPost(post) async {
     reportsCollection.doc(post['postId']).set({});
-    simpleworldtoast("", "Post was reported to Admin", context);
+    simpleworldtoast('', 'Post was reported to Admin', context);
   }
 }
