@@ -133,7 +133,7 @@ class _ActivityFeed extends State<ActivityFeed>
               // const AnchoredAd(),
               if (!kIsWeb)
                 MaxAdView(
-                  adUnitId: AppLovin.adUnitId,
+                  adUnitId: AppLovin.adUnitIdBanner,
                   adFormat: AdFormat.banner,
                   listener: AdViewAdListener(
                     onAdLoadedCallback: (ad) {},

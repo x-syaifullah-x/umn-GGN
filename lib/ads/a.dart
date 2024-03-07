@@ -27,7 +27,7 @@ class _AdOneState extends State<AdOne>
       height: _isLoad ? 165 : 0.5,
       width: double.infinity,
       child: MaxNativeAdView(
-        adUnitId: '8ed2644f59ef2ee2',
+        adUnitId: AppLovin.adUnitIdNative,
         controller: _nativeAdViewController,
         listener: NativeAdListener(
           onAdLoadedCallback: (ad) {
@@ -44,7 +44,7 @@ class _AdOneState extends State<AdOne>
             });
           },
           onAdLoadFailedCallback: (adUnitId, error) {
-              _nativeAdViewController.loadAd();
+            _nativeAdViewController.loadAd();
           },
           onAdClickedCallback: (ad) {},
           onAdRevenuePaidCallback: (ad) {},
@@ -159,7 +159,7 @@ class _AdTwoState extends State<AdTwo> {
       width: double.infinity,
       child: MaxAdView(
         adaptiveBannerWidth: double.infinity,
-        adUnitId: AppLovin.adUnitId,
+        adUnitId: AppLovin.adUnitIdBanner,
         adFormat: AdFormat.banner,
         listener: AdViewAdListener(
           onAdLoadedCallback: (ad) {

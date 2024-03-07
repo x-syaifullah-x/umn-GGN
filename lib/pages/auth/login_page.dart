@@ -572,7 +572,7 @@ class _LoginPageState extends State<LoginPage> {
   Widget terms() {
     return InkWell(
       onTap: () {
-        const url = "https://globalgirlsinc.net/?page_id=108";
+        const url = 'https://docs.google.com/document/d/e/2PACX-1vSVsg1yyLr-VC9yJ04vB-BtVoo3TGGrL8PRGzXgbb6QOaiZBiV9WLOKRuTlDzSUEgr_xOXVhax-_T2X/pub';
         if (kIsWeb) {
           launchUrl(Uri.parse(url));
         } else {
