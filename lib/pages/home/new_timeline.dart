@@ -7,9 +7,9 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:flutter_reaction_button/flutter_reaction_button.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:global_net/ads/a.dart';
 import 'package:global_net/data/reaction_data.dart';
 import 'package:global_net/pages/create_post/post_box.dart';
-import 'package:global_net/pages/home/a.dart';
 import 'package:global_net/pages/home/activity_feed.dart';
 import 'package:global_net/pages/home/home.dart';
 import 'package:global_net/pages/post_screen.dart';
@@ -101,6 +101,7 @@ class NewTimelineState extends State<NewTimeline>
       radius: const Radius.circular(20),
       child: RefreshIndicator(
         child: PaginateFirestore(
+          key: const Key('key-PaginateFirestore'),
           scrollController: scrollController,
           shrinkWrap: true,
           onEmpty: Padding(
@@ -148,6 +149,7 @@ class NewTimelineState extends State<NewTimeline>
             final post = documentSnapshots[index].data() as Map?;
             if ((index + 1) % 5 == 0) {
               return Column(
+                key: Key('$index'),
                 children: [
                   Container(
                     height: 370,
@@ -168,6 +170,7 @@ class NewTimelineState extends State<NewTimeline>
               );
             } else {
               return Container(
+                key: Key('$index'),
                 margin: const EdgeInsets.only(
                   top: 5,
                   bottom: 5,

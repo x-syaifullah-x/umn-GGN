@@ -15,7 +15,7 @@ class LoginAds extends StatelessWidget {
     if (kIsWeb) return Container();
 
     return MaxAdView(
-      adUnitId: AppLovin.adUnitId,
+      adUnitId: AppLovin.adUnitIdBanner,
       adFormat: AdFormat.banner,
       listener: AdViewAdListener(
         onAdLoadedCallback: (ad) {},

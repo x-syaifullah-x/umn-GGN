@@ -76,7 +76,7 @@ class _Users extends State<Users> with AutomaticKeepAliveClientMixin<Users> {
             // const AdsWidget()
             if (!kIsWeb)
               MaxAdView(
-                adUnitId: AppLovin.adUnitId,
+                adUnitId: AppLovin.adUnitIdBanner,
                 adFormat: AdFormat.banner,
                 listener: AdViewAdListener(
                   onAdLoadedCallback: (ad) {},
