@@ -42,7 +42,7 @@
         android:usesCleartextTraffic="true"
         tools:replace="android:label,android:icon" >
         <activity
-            android:name="ggn.liru.yang.net.MainActivity"
+            android:name="com.MainActivity"
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
             android:exported="true"
             android:hardwareAccelerated="true"

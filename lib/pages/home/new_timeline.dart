@@ -639,6 +639,7 @@ class NewTimelineState extends State<NewTimeline>
     final ownerId = post['ownerId'];
 
     return Container(
+      key: Key('$postId'),
       padding: const EdgeInsets.all(8.0),
       child: Column(
         children: [

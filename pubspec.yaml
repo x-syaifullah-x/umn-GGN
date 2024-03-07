@@ -1,7 +1,7 @@
 name: global_net
 description: A new Flutter project.
 
-version: 2.0.1
+version: 2.0.5+4
 
 environment:
   sdk: ">=2.14.4 <=2.19.6" # ref 4d9e56e694
@@ -78,7 +78,7 @@ dependencies:
   geolocator: 10.1.0
   geocoding: 2.0.5
   giphy_get: 2.0.4
-  in_app_purchase: 3.0.8
+  # in_app_purchase: 3.0.8
   scoped_model: 2.0.0
   sign_in_with_apple: 4.2.0
   crypto: 3.0.2

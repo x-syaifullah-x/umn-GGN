@@ -2,7 +2,7 @@ name: Build apk release
 
 on:
   push:
-    branches: [ b ]
+    branches: [ b-global.net.liru ]
   # pull_request:
   #   branches: [ master ]
 
@@ -34,7 +34,6 @@ jobs:
       - name: Fix Error The argument type 'String?' can't be assigned to the parameter type 'Object' because 'String?' is nullable and 'Object' isn't.- 'Object' is from 'dart:core'. final parsed = css.parse(text);
         run: cp -rf .no_remove/link_preview.dart ~/.pub-cache/hosted/pub.dev/link_preview_generator-1.2.0/lib/src/widgets
         
-
       - name: Flutter build apk mobile
         run: flutter build apk --release --flavor mobile
 
@@ -44,11 +43,20 @@ jobs:
           name: apk-mobile-release
           path: build/app/outputs/flutter-apk/app-mobile-release.apk
 
-      - name: Flutter build apk tv
-        run: flutter build apk --release --flavor tv
+      # - name: Flutter build apk tv
+      #   run: flutter build apk --release --flavor tv
 
-      - name: Uploading apk
+      # - name: Uploading apk
+      #   uses: actions/upload-artifact@v3
+      #   with:
+      #     name: apk-tv-release
+      #     path: build/app/outputs/flutter-apk/app-tv-release.apk
+
+      - name: Flutter build aab mobile
+        run: flutter build appbundle --release --flavor mobile
+
+      - name: Uploading appbundle
         uses: actions/upload-artifact@v3
         with:
-          name: apk-tv-release
-          path: build/app/outputs/flutter-apk/app-tv-release.apk
+          name: aab-mobile-release
+          path: build/app/outputs/bundle/mobileRelease/app-mobile-release.aab

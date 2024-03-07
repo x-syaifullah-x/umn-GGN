@@ -28,7 +28,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../menu/terms_and_conditions.dart';
 
 const String vApiKey =
-    "BIxps5Is9CmqlWy6PpPjZXiM0hTlCcnFIcFtQwos8yvFoumKit1TUpZqpkaU13KEh0n9M5pXGF8W33b1S-TFnZw";
+    'BIxps5Is9CmqlWy6PpPjZXiM0hTlCcnFIcFtQwos8yvFoumKit1TUpZqpkaU13KEh0n9M5pXGF8W33b1S-TFnZw';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({
@@ -572,7 +572,7 @@ class _LoginPageState extends State<LoginPage> {
   Widget terms() {
     return InkWell(
       onTap: () {
-        const url = "https://globalgirlsinc.net/?page_id=108";
+        const url = 'https://docs.google.com/document/d/e/2PACX-1vSVsg1yyLr-VC9yJ04vB-BtVoo3TGGrL8PRGzXgbb6QOaiZBiV9WLOKRuTlDzSUEgr_xOXVhax-_T2X/pub';
         if (kIsWeb) {
           launchUrl(Uri.parse(url));
         } else {
