@@ -41,6 +41,9 @@ android {
     buildToolsVersion build_versions.build_tools
 
     defaultConfig {
+        ndk {
+        debugSymbolLevel 'FULL'
+    }
         // applicationId "net.girls.yang"
         applicationId namespace
 

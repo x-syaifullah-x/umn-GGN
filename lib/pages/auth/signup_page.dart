@@ -5,13 +5,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:global_net/models/user.dart';
 import 'package:global_net/pages/home/home.dart';
 import 'package:global_net/pages/auth/login_page.dart';
 import 'package:global_net/pages/auth/signup_page2.dart';
 import 'package:global_net/pages/webview/webview.dart';
 import 'package:global_net/share_preference/preferences_key.dart';
-import 'package:global_net/widgets/bezier_container.dart';
 import 'package:nb_utils/nb_utils.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:global_net/widgets/simple_world_widgets.dart';
@@ -24,7 +22,6 @@ class SignUpPage extends StatefulWidget {
 }
 
 class SignUpPageState extends State<SignUpPage> {
-  bool _isLoading = false;
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
   late String userId;
@@ -33,7 +30,6 @@ class SignUpPageState extends State<SignUpPage> {
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController cpassController = TextEditingController();
   TextEditingController mobileController = TextEditingController();
-  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
   bool isAuth = false;
   bool checkedValue = false;
 
@@ -60,10 +56,20 @@ class SignUpPageState extends State<SignUpPage> {
       height: height,
       child: Stack(
         children: <Widget>[
-          Positioned(
-            top: -MediaQuery.of(context).size.height * .15,
-            right: -MediaQuery.of(context).size.width * .4,
-            child: const BezierContainer(),
+          // Positioned(
+          //   top: -MediaQuery.of(context).size.height * .15,
+          //   right: -MediaQuery.of(context).size.width * .4,
+          //   child: const BezierContainer(),
+          // ),
+          Container(
+            width: double.infinity,
+            height: double.infinity,
+            decoration: const BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage('assets/images/bg_login_page.jpg'),
+                fit: BoxFit.fill,
+              ),
+            ),
           ),
           SingleChildScrollView(
             child: Container(
@@ -85,7 +91,7 @@ class SignUpPageState extends State<SignUpPage> {
                   const SizedBox(
                     height: 20,
                   ),
-                  _submitButton(),
+                  _submitButton(context),
                   SizedBox(height: height * .14),
                   _loginAccount(),
                 ],
@@ -150,7 +156,7 @@ class SignUpPageState extends State<SignUpPage> {
   }
 
   _termsCondition(BuildContext context) {
-    void _handleURLButtonPress(BuildContext context, String url) {
+    void handleURLButtonPress(BuildContext context, String url) {
       Navigator.push(context,
           MaterialPageRoute(builder: (context) => WebViewContainer(url)));
     }
@@ -167,8 +173,8 @@ class SignUpPageState extends State<SignUpPage> {
               )),
           InkWell(
             onTap: () {
-              _handleURLButtonPress(context,
-                  "https://sites.google.com/view/simple-worlds-help-center/privacy-policy");
+              handleURLButtonPress(context,
+                  'https://sites.google.com/view/simple-worlds-help-center/privacy-policy');
               // Navigator.push(
               //     context,
               //     MaterialPageRoute(
@@ -189,8 +195,8 @@ class SignUpPageState extends State<SignUpPage> {
               )),
           InkWell(
             onTap: () {
-              _handleURLButtonPress(context,
-                  "https://sites.google.com/view/simple-worlds-help-center/privacy-policy");
+              handleURLButtonPress(context,
+                  'https://sites.google.com/view/simple-worlds-help-center/privacy-policy');
               // Navigator.push(
               //     context,
               //     MaterialPageRoute(
@@ -216,7 +222,7 @@ class SignUpPageState extends State<SignUpPage> {
     );
   }
 
-  Widget _submitButton() {
+  Widget _submitButton(BuildContext context) {
     return Container(
       width: MediaQuery.of(context).size.width,
       padding: const EdgeInsets.symmetric(vertical: 15),
@@ -240,7 +246,7 @@ class SignUpPageState extends State<SignUpPage> {
           emailController.text.trim() != '' &&
           passwordController.text.length > 5 &&
           checkedValue != false) {
-        _register();
+        _register(context);
       } else if (checkedValue == false) {
         simpleAlertBox(
             content: Text(
@@ -250,23 +256,19 @@ class SignUpPageState extends State<SignUpPage> {
       } else {
         simpleAlertBox(
             content: const Text(
-                "Fields is empty or password length should be between 6-8 characters."),
+                'Fields is empty or password length should be between 6-8 characters.'),
             context: context);
       }
     });
   }
 
-  Future<void> _register() async {
+  Future<void> _register(BuildContext context) async {
     try {
-      setState(() {
-        _isLoading = true;
-      });
+      setState(() {});
       final valid = await usernameCheck(nameController.text);
       if (!valid) {
-        setState(() {
-          _isLoading = false;
-        });
-        simpleworldtoast("Error", "Username is taken ", context);
+        setState(() {});
+        simpleworldtoast('Error', 'Username is taken ', context);
       } else {
         final User? user = (await _auth.createUserWithEmailAndPassword(
           email: emailController.text.trim(),
@@ -278,16 +280,17 @@ class SignUpPageState extends State<SignUpPage> {
         } else {
           setState(() {
             isAuth = false;
-            _isLoading = false;
           });
           simpleworldtoast(
-              "Error", "Something went wrong please try again ", context);
+            'Error',
+            'Something went wrong please try again ',
+            context,
+          );
         }
       }
     } catch (e) {
       setState(() {
         isAuth = false;
-        _isLoading = false;
       });
       // print(e.toString());
       simpleworldtoast("Error",
@@ -332,7 +335,6 @@ class SignUpPageState extends State<SignUpPage> {
 
     setState(() {
       globalUserId = userId;
-      _isLoading = false;
       isAuth = true;
     });
 

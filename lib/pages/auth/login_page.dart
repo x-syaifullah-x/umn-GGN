@@ -60,7 +60,7 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      // backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: NotificationListener(
         onNotification: ((notification) {
           return true;
@@ -82,10 +82,20 @@ class _LoginPageState extends State<LoginPage> {
         children: [
           Stack(
             children: <Widget>[
-              Positioned(
-                top: -height * .15,
-                right: -MediaQuery.of(context).size.width * .4,
-                child: const BezierContainer(),
+              // Positioned(
+              //   top: -height * .15,
+              //   right: -MediaQuery.of(context).size.width * .4,
+              //   child: const BezierContainer(),
+              // ),
+              Container(
+                width: double.infinity,
+                height: double.infinity,
+                decoration: const BoxDecoration(
+                  image: DecorationImage(
+                    image: AssetImage('assets/images/bg_login_page.jpg'),
+                    fit: BoxFit.fill,
+                  ),
+                ),
               ),
               SingleChildScrollView(
                 child: Container(
@@ -218,7 +228,7 @@ class _LoginPageState extends State<LoginPage> {
           _emailNode.unfocus();
           _passwordNode.unfocus();
         });
-        simpleworldtoast("Error", "Email and password is required", context);
+        simpleworldtoast('Error', 'Email and password is required', context);
       }
     });
   }
@@ -245,7 +255,7 @@ class _LoginPageState extends State<LoginPage> {
       setState(() {
         _isLoading = false;
       });
-      simpleworldtoast("Error", "Please try again", context);
+      simpleworldtoast('Error', 'Please try again', context);
     }
   }
 
@@ -299,7 +309,7 @@ class _LoginPageState extends State<LoginPage> {
             _isLoading = false;
           });
           simpleworldtoast(
-            "Error",
+            'Error',
             'Failed to sign in with Google, please try again:',
             context,
           );
@@ -331,7 +341,7 @@ class _LoginPageState extends State<LoginPage> {
     try {
       String? token = await FirebaseMessaging.instance
           .getToken(vapidKey: (kIsWeb ? vApiKey : null));
-      log("tokenNotification: $token");
+      log('tokenNotification: $token');
       docRef.update({
         data.User.fieldNameTokenNotfaction: token,
       });
@@ -455,8 +465,8 @@ class _LoginPageState extends State<LoginPage> {
         checkUserExists(
           user.uid,
           user.email,
-          user.displayName ?? "",
-          user.photoURL ?? "",
+          user.displayName ?? '',
+          user.photoURL ?? '',
         );
       }
     } catch (e) {
@@ -464,7 +474,7 @@ class _LoginPageState extends State<LoginPage> {
         _isLoading = false;
       });
       log(e);
-      simpleworldtoast("Error", 'Failed to sign in with Google', context);
+      simpleworldtoast('Error', 'Failed to sign in with Google', context);
     }
   }
 
@@ -550,7 +560,10 @@ class _LoginPageState extends State<LoginPage> {
           children: <Widget>[
             Text(
               AppLocalizations.of(context)!.not_account,
-              style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+              style: const TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+              ),
             ),
             const SizedBox(
               width: 10,
@@ -572,7 +585,8 @@ class _LoginPageState extends State<LoginPage> {
   Widget terms() {
     return InkWell(
       onTap: () {
-        const url = 'https://docs.google.com/document/d/e/2PACX-1vSVsg1yyLr-VC9yJ04vB-BtVoo3TGGrL8PRGzXgbb6QOaiZBiV9WLOKRuTlDzSUEgr_xOXVhax-_T2X/pub';
+        const url =
+            'https://docs.google.com/document/d/e/2PACX-1vSVsg1yyLr-VC9yJ04vB-BtVoo3TGGrL8PRGzXgbb6QOaiZBiV9WLOKRuTlDzSUEgr_xOXVhax-_T2X/pub';
         if (kIsWeb) {
           launchUrl(Uri.parse(url));
         } else {
@@ -618,7 +632,7 @@ class _LoginPageState extends State<LoginPage> {
       text: TextSpan(
         text: 'Global Net',
         style: GoogleFonts.portLligatSans(
-          textStyle: Theme.of(context).textTheme.headline4,
+          textStyle: Theme.of(context).textTheme.headlineMedium,
           fontSize: 30,
           fontWeight: FontWeight.w700,
           color: Colors.red[800],
