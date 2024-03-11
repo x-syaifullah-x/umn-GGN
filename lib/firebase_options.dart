@@ -65,14 +65,14 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyCyspSzqWm44Io5XnIIyR5KlrobPLP8c9g',
-    appId: '1:813756573374:ios:d9f6faf80c18a61e12a0ef',
+    appId: '1:813756573374:ios:3b746165853623a912a0ef',
     messagingSenderId: '813756573374',
     projectId: 'globelgirl-2c269',
     databaseURL: 'https://globelgirl-2c269-default-rtdb.firebaseio.com',
     storageBucket: 'globelgirl-2c269.appspot.com',
-    androidClientId: '813756573374-5joimsmd2pho2j4687ico3jogphoo7pe.apps.googleusercontent.com',
-    iosClientId: '813756573374-6vg3mc5sqt99trbdm2e22m8avcufgkrs.apps.googleusercontent.com',
-    iosBundleId: 'com.gg.globalgirlsnet',
+    androidClientId: '813756573374-4gea05ght11kd07s505bjq557dhr9p2a.apps.googleusercontent.com',
+    iosClientId: '813756573374-239pu1t9v9a2iimndfke375os1i28q80.apps.googleusercontent.com',
+    iosBundleId: 'global.net.liru',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
@@ -82,7 +82,7 @@ class DefaultFirebaseOptions {
     projectId: 'globelgirl-2c269',
     databaseURL: 'https://globelgirl-2c269-default-rtdb.firebaseio.com',
     storageBucket: 'globelgirl-2c269.appspot.com',
-    androidClientId: '813756573374-5joimsmd2pho2j4687ico3jogphoo7pe.apps.googleusercontent.com',
+    androidClientId: '813756573374-4gea05ght11kd07s505bjq557dhr9p2a.apps.googleusercontent.com',
     iosClientId: '813756573374-kvkp75j8ehi0e25bf5d1lek5g7qc4qpi.apps.googleusercontent.com',
     iosBundleId: 'com.certainity.simpleworld',
   );

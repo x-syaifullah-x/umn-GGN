@@ -267,25 +267,31 @@ class SignUpPageState extends State<SignUpPage> {
       setState(() {});
       final valid = await usernameCheck(nameController.text);
       if (!valid) {
-        setState(() {});
-        simpleworldtoast('Error', 'Username is taken ', context);
+        setState(() {
+          if (mounted) {
+            simpleworldtoast('Error', 'Username is taken ', context);
+          }
+        });
       } else {
-        final User? user = (await _auth.createUserWithEmailAndPassword(
+        final userCredential = await _auth.createUserWithEmailAndPassword(
           email: emailController.text.trim(),
           password: passwordController.text,
-        ))
-            .user;
+        );
+        final User? user = userCredential.user;
         if (user != null) {
           createUserInFirestore(user.uid, user.email);
         } else {
           setState(() {
             isAuth = false;
           });
-          simpleworldtoast(
-            'Error',
-            'Something went wrong please try again ',
-            context,
-          );
+
+          if (mounted) {
+            simpleworldtoast(
+              'Error',
+              'Something went wrong please try again ',
+              context,
+            );
+          }
         }
       }
     } catch (e) {
@@ -293,15 +299,22 @@ class SignUpPageState extends State<SignUpPage> {
         isAuth = false;
       });
       // print(e.toString());
-      simpleworldtoast("Error",
-          "The email address is already in use by anoter account", context);
+      simpleworldtoast(
+        'Error',
+        'The email address is already in use by anoter account',
+        context,
+      );
     }
   }
 
   Future<bool> usernameCheck(String username) async {
-    final result =
-        await usersCollection.where('username', isEqualTo: username).get();
-    return result.docs.isEmpty;
+    try {
+      final result =
+          await usersCollection.where('username', isEqualTo: username).get();
+      return result.docs.isEmpty;
+    } catch (e) {
+      return Future.value(false);
+    }
   }
 
   createUserInFirestore(userId, email) async {
@@ -310,19 +323,19 @@ class SignUpPageState extends State<SignUpPage> {
 
     if (!doc.exists) {
       usersCollection.doc(userId).set({
-        "id": userId,
-        "username": nameController.text,
-        "photoUrl": '',
-        "email": email,
-        "displayName": nameController.text,
-        "bio": "",
-        "coverUrl": "",
-        "groups": [],
-        "loginType": 'app',
-        "timestamp": timestamp,
-        "userIsVerified": false,
-        "credit_points": 0,
-        "no_ads": false,
+        'id': userId,
+        'username': nameController.text,
+        'photoUrl': '',
+        'email': email,
+        'displayName': nameController.text,
+        'bio': '',
+        'coverUrl': '',
+        'groups': [],
+        'loginType': 'app',
+        'timestamp': timestamp,
+        'userIsVerified': false,
+        'credit_points': 0,
+        'no_ads': false,
       });
       await followersCollection
           .doc(userId)

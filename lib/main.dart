@@ -13,10 +13,10 @@ import 'package:nb_utils/nb_utils.dart';
 
 import 'ads/applovin_ad_unit_id.dart';
 import 'app.dart';
-
 const bool useEmulator = false;
 const String _host = '192.168.43.89';
 const String hostEmulator = '$_host:5001';
+
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -58,7 +58,7 @@ Future<void> main() async {
           SplashScreen.route: (BuildContext context) => const SplashScreen(),
           App.route: (BuildContext context) => App(prefs, savedThemeMode),
         },
-      ),
-    );
+      
+    ));
   });
 }
