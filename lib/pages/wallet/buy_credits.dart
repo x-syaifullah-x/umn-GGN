@@ -2,11 +2,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:global_net/data/user.dart';
 import 'package:global_net/pages/home/home.dart';
 import 'package:global_net/v2/news/presentation/app_web_view.dart';
-import 'package:nb_utils/nb_utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class BuyCredits extends StatefulWidget {
@@ -141,54 +139,18 @@ class _BuyCreditsState extends State<BuyCredits> {
                                   },
                                 ),
                               ),
+                              Image.asset(
+                                // Assets.images.splash1.path,
+                                'images/splash2',
+                                fit: BoxFit.contain,
+                              ),
                               if (datLength > 0)
                                 Column(
-                                  children: [
-                                    const SizedBox(
+                                  children: const [
+                                    SizedBox(
                                       height: 12,
                                     ),
-                                    // const Text(
-                                    //   'Your Wallet ID, Please copy it to pay',
-                                    // ),
-                                    // const SizedBox(
-                                    //   height: 4,
-                                    // ),
-                                    // Row(
-                                    //   mainAxisAlignment:
-                                    //       MainAxisAlignment.center,
-                                    //   children: [
-                                    //     Text(
-                                    //       widget.user.id,
-                                    //       style: const TextStyle(
-                                    //         fontSize: 16,
-                                    //         fontWeight: FontWeight.bold,
-                                    //       ),
-                                    //     ),
-                                    //     const SizedBox(
-                                    //       width: 4,
-                                    //     ),
-                                    //     InkWell(
-                                    //       child: const Icon(
-                                    //         Icons.copy_all_sharp,
-                                    //         size: 18,
-                                    //       ),
-                                    //       onTap: () async {
-                                    //         try {
-                                    //           await Clipboard.setData(
-                                    //             ClipboardData(
-                                    //               text: widget.user.id,
-                                    //             ),
-                                    //           );
-                                    //           toast(
-                                    //               'Wallet ID has been successfully copied');
-                                    //         } catch (e) {
-                                    //           log('$e');
-                                    //         }
-                                    //       },
-                                    //     ),
-                                    //   ],
-                                    // ),
-                                    const SizedBox(
+                                    SizedBox(
                                       height: 8,
                                     ),
                                   ],

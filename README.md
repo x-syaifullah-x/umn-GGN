@@ -33,7 +33,7 @@ samples, guidance on mobile development, and a full API reference.
 
 This will generate a JSON format file containing all messages that 
 need to be translated.
-../../../.pub-cache/hosted/pub.dev/universal_html-2.2.2/lib/src/html/dom/element_subclasses.dart:2752:30: Error: The argument type 'String?' can't be assigned to the parameter type 'Object' because 'String?' is nullable and 'Object' isn't.
+~/.pub-cache/hosted/pub.dev/universal_html-2.2.2/lib/src/html/dom/element_subclasses.dart:2752:30: Error: The argument type 'String?' can't be assigned to the parameter type 'Object' because 'String?' is nullable and 'Object' isn't.
  - 'Object' is from 'dart:core'.
     final parsed = css.parse(text);
     replace to

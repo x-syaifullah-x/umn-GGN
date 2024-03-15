@@ -5,7 +5,7 @@ import 'package:global_net/app.dart';
 import 'package:global_net/gen/assets.gen.dart';
 
 class SplashScreen extends StatefulWidget {
-  static const route = "/";
+  static const route = '/';
 
   const SplashScreen({
     Key? key,
@@ -38,7 +38,7 @@ class _SplashScreenState extends State<SplashScreen>
     _animationController.forward();
     if (mounted) {
       setState(() {});
-      _startTime();
+      // _startTime();
     }
   }
 
@@ -55,11 +55,12 @@ class _SplashScreenState extends State<SplashScreen>
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
         child: SizedBox(
-          height: height,
+          height: double.infinity,
           width: double.infinity,
           child: Image.asset(
-            Assets.images.splash1.path,
-            fit: BoxFit.contain,
+            // Assets.images.splash1.path,
+            'images/splash2.png',
+            fit: BoxFit.fill,
           ),
         ),
       ),
