@@ -99,11 +99,8 @@ class _BuyCreditsState extends State<BuyCredits> {
                                     final price =
                                         (int.parse(metadata['price']) / 100)
                                             .toStringAsFixed(2);
-                                    final creditPoint =
-                                        metadata['credit_points'];
-                                    // final price = doc?['price'];
-                                    // final creditPoint = doc?['credit_points'];
-                                    if (datLength - 1 == index)
+                                    final name = metadata['name'];
+                                    if (datLength - 1 == index) {
                                       return Column(
                                         children: [
                                           ListTile(
@@ -112,7 +109,7 @@ class _BuyCreditsState extends State<BuyCredits> {
                                                   CrossAxisAlignment.start,
                                               children: [
                                                 Text(
-                                                  '$creditPoint Credits',
+                                                  name,
                                                   style: const TextStyle(
                                                     fontSize: 16,
                                                     fontWeight: FontWeight.bold,
@@ -143,8 +140,8 @@ class _BuyCreditsState extends State<BuyCredits> {
                                           ),
                                           35.height,
                                           SizedBox(
-                                            height: 250,
-                                            width: 250,
+                                            height: 280,
+                                            width: 300,
                                             child: Image.asset(
                                               'assets/images/buy_credit_1.png',
                                               fit: BoxFit.contain,
@@ -152,13 +149,14 @@ class _BuyCreditsState extends State<BuyCredits> {
                                           )
                                         ],
                                       );
+                                    }
                                     return ListTile(
                                       title: Column(
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                         children: [
                                           Text(
-                                            '$creditPoint Credits',
+                                            name,
                                             style: const TextStyle(
                                               fontSize: 16,
                                               fontWeight: FontWeight.bold,

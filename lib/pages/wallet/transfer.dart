@@ -288,6 +288,17 @@ class _TransferState extends State<Transfer> {
                             }
                           },
                         ),
+                  24.height,
+                  Center(
+                    child: SizedBox(
+                      height: 300,
+                      width: 300,
+                      child: Image.asset(
+                        'assets/images/bg_coupon_1.png',
+                        fit: BoxFit.contain,
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),

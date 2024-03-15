@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:global_net/data/user.dart';
 import 'package:global_net/main.dart';
@@ -187,7 +186,18 @@ class _CouponCreateState extends State<CouponCreate> {
                       ],
                     ),
                   ),
-                  createButton(userId: userId)
+                  createButton(userId: userId),
+                  (isAppBarEnable ? 32 : 24).height,
+                  Center(
+                    child: SizedBox(
+                      height: 300,
+                      width: 300,
+                      child: Image.asset(
+                        'assets/images/bg_coupon_2.png',
+                        fit: BoxFit.fill,
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -237,11 +247,11 @@ class _CouponCreateState extends State<CouponCreate> {
                     final uri = useEmulator
                         ? Uri.http(
                             hostEmulator,
-                            '/globelgirl-2c269/us-central1/stripe/coupon/create',
+                            '/globelgirl-2c269/us-central1/api/stripe/coupon/create',
                           )
                         : Uri.https(
                             'us-central1-globelgirl-2c269.cloudfunctions.net',
-                            '/stripe/coupon/create',
+                            '/api/stripe/coupon/create',
                           );
                     final response = await http.post(
                       uri,

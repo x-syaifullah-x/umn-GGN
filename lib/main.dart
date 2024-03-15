@@ -13,10 +13,10 @@ import 'package:nb_utils/nb_utils.dart';
 
 import 'ads/applovin_ad_unit_id.dart';
 import 'app.dart';
-const bool useEmulator = false;
+
+const bool useEmulator = kDebugMode;
 const String _host = '192.168.43.89';
 const String hostEmulator = '$_host:5001';
-
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -48,17 +48,15 @@ Future<void> main() async {
   await initialize();
 
   SharedPreferences.getInstance().then((prefs) async {
-    runApp(
-      MaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: 'Global Net',
-        initialRoute: SplashScreen.route,
-        routes: {
-          News.route: (context) => const News(),
-          SplashScreen.route: (BuildContext context) => const SplashScreen(),
-          App.route: (BuildContext context) => App(prefs, savedThemeMode),
-        },
-      
+    runApp(MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: 'Global Net',
+      initialRoute: SplashScreen.route,
+      routes: {
+        News.route: (context) => const News(),
+        SplashScreen.route: (BuildContext context) => const SplashScreen(),
+        App.route: (BuildContext context) => App(prefs, savedThemeMode),
+      },
     ));
   });
 }
