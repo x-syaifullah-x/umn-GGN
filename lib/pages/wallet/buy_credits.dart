@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:global_net/data/user.dart';
 import 'package:global_net/pages/home/home.dart';
 import 'package:global_net/v2/news/presentation/app_web_view.dart';
+import 'package:nb_utils/nb_utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class BuyCredits extends StatefulWidget {
@@ -102,6 +103,55 @@ class _BuyCreditsState extends State<BuyCredits> {
                                         metadata['credit_points'];
                                     // final price = doc?['price'];
                                     // final creditPoint = doc?['credit_points'];
+                                    if (datLength - 1 == index)
+                                      return Column(
+                                        children: [
+                                          ListTile(
+                                            title: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  '$creditPoint Credits',
+                                                  style: const TextStyle(
+                                                    fontSize: 16,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                                const SizedBox(
+                                                  height: 4,
+                                                ),
+                                                Text(
+                                                  '\$$price',
+                                                  style: const TextStyle(
+                                                    fontWeight: FontWeight.w300,
+                                                    fontSize: 14,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                            leading: Radio(
+                                              value: index,
+                                              groupValue: _selectedOption,
+                                              onChanged: (value) {
+                                                setState(() {
+                                                  _selectedOption =
+                                                      value as int;
+                                                });
+                                              },
+                                            ),
+                                          ),
+                                          35.height,
+                                          SizedBox(
+                                            height: 250,
+                                            width: 250,
+                                            child: Image.asset(
+                                              'assets/images/buy_credit_1.png',
+                                              fit: BoxFit.contain,
+                                            ),
+                                          )
+                                        ],
+                                      );
                                     return ListTile(
                                       title: Column(
                                         crossAxisAlignment:
@@ -138,11 +188,6 @@ class _BuyCreditsState extends State<BuyCredits> {
                                     );
                                   },
                                 ),
-                              ),
-                              Image.asset(
-                                // Assets.images.splash1.path,
-                                'images/splash2',
-                                fit: BoxFit.contain,
                               ),
                               if (datLength > 0)
                                 Column(

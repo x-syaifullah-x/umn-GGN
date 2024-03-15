@@ -38,19 +38,17 @@ class _SplashScreenState extends State<SplashScreen>
     _animationController.forward();
     if (mounted) {
       setState(() {});
-      // _startTime();
+      _startTime();
     }
   }
 
   void _startTime() async => Timer(
-        const Duration(seconds: 1),
+        const Duration(seconds: 2),
         () => Navigator.of(context).pushReplacementNamed(App.route),
       );
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
-    final height = size.height;
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
@@ -59,7 +57,7 @@ class _SplashScreenState extends State<SplashScreen>
           width: double.infinity,
           child: Image.asset(
             // Assets.images.splash1.path,
-            'images/splash2.png',
+            'assets/images/splash2.png',
             fit: BoxFit.fill,
           ),
         ),
