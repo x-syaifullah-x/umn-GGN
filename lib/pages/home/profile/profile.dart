@@ -51,37 +51,67 @@ class Profile extends StatelessWidget {
   Widget build(BuildContext context) {
     final ScrollController scrollController = ScrollController();
     final bool widthMoreThan_500 = (MediaQuery.of(context).size.width > 500);
-    return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.background,
-      appBar: header(
-        context,
-        titleText: AppLocalizations.of(context)!.profile,
-      ),
-      body: Column(
-        children: [
-          Expanded(
-            child: RawScrollbar(
-              controller: scrollController,
-              interactive: true,
-              thumbVisibility: !kIsWeb && widthMoreThan_500,
-              trackVisibility: !kIsWeb && widthMoreThan_500,
-              radius: const Radius.circular(20),
-              child: SingleChildScrollView(
-                controller: scrollController,
-                physics: const AlwaysScrollableScrollPhysics(),
-                child: Container(
-                  color: Theme.of(context).scaffoldBackgroundColor,
-                  child: Profile2(
-                    reactions: reactions,
-                    ownerId: ownerId,
-                    user: user,
+    return !user.active
+        ? const ProfileDeactive()
+        : Scaffold(
+            backgroundColor: Theme.of(context).colorScheme.background,
+            appBar: header(
+              context,
+              titleText: AppLocalizations.of(context)!.profile,
+            ),
+            body: Column(
+              children: [
+                Expanded(
+                  child: RawScrollbar(
+                    controller: scrollController,
+                    interactive: true,
+                    thumbVisibility: !kIsWeb && widthMoreThan_500,
+                    trackVisibility: !kIsWeb && widthMoreThan_500,
+                    radius: const Radius.circular(20),
+                    child: SingleChildScrollView(
+                      controller: scrollController,
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      child: Container(
+                        color: Theme.of(context).scaffoldBackgroundColor,
+                        child: Profile2(
+                          reactions: reactions,
+                          ownerId: ownerId,
+                          user: user,
+                        ),
+                      ),
+                    ),
                   ),
                 ),
-              ),
+                // const AdsWidget(),
+              ],
             ),
-          ),
-          // const AdsWidget(),
-        ],
+          );
+  }
+}
+
+class ProfileDeactive extends StatefulWidget {
+  const ProfileDeactive({Key? key}) : super(key: key);
+
+  @override
+  State<ProfileDeactive> createState() => _ProfileDeactiveState();
+}
+
+class _ProfileDeactiveState extends State<ProfileDeactive> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: SafeArea(
+        child: Stack(
+          children: [
+            Image.asset(
+              'assets/images/defaultcover_new.jpg',
+              alignment: Alignment.center,
+              width: double.infinity,
+              fit: BoxFit.fill,
+              height: double.infinity,
+            ),
+          ],
+        ),
       ),
     );
   }

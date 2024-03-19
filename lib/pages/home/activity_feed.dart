@@ -340,11 +340,12 @@ class ActivityFeedItem extends StatelessWidget {
 
 showProfile(BuildContext context, {required String userId}) async {
   usersCollection.doc(userId).get().then((value) {
+    final user = User.fromJson(value.data());
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => Profile(
-          user: User.fromJson(value.data()),
+          user: user,
           reactions: reaction.reactions,
           ownerId: globalUserId,
         ),

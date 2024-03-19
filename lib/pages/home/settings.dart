@@ -1,4 +1,4 @@
-import 'package:adaptive_theme/adaptive_theme.dart';    
+import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -14,6 +14,7 @@ import 'package:global_net/pages/chat/simpleworld_chat_main.dart';
 import 'package:global_net/pages/comming_soon_page.dart';
 import 'package:global_net/pages/edit_profile.dart';
 import 'package:global_net/pages/home/activity_feed.dart';
+import 'package:global_net/pages/home/deactivate_account.dart';
 import 'package:global_net/pages/home/home.dart';
 import 'package:global_net/pages/home/user/users.dart';
 import 'package:global_net/pages/menu/all_pdfs.dart';
@@ -277,7 +278,7 @@ class _SettingsState extends State<SettingsPage> {
 
     try {
       await usersCollection.doc(widget.user.id).update({
-        data_user.User.fieldNameTokenNotfaction: "",
+        data_user.User.fieldNameTokenNotfaction: '',
       });
       FirebaseAuth.instance.signOut();
       final pref = await SharedPreferences.getInstance();
@@ -295,7 +296,9 @@ class _SettingsState extends State<SettingsPage> {
         Navigator.push(
           context,
           CupertinoPageRoute(
-            builder: (context) => const CommimgSoon(),
+            builder: (context) => DeactiveAccount(
+              userId: userId,
+            ),
           ),
         );
       },
@@ -322,15 +325,21 @@ class _SettingsState extends State<SettingsPage> {
   Widget _documents(String userId) {
     return _buildField(
       photoUrl: 'assets/images/documents.png',
-      fieldName: AppLocalizations.of(context)?.documents ?? '-',
+      fieldName: 'Friend List',
       onTap: () {
+        // Navigator.push(
+        //   context,
+        //   CupertinoPageRoute(
+        //     builder: (context) => AllPdfs(
+        //       UserId: globalUserId,
+        //       reactions: reaction.reactions,
+        //     ),
+        //   ),
+        // );
         Navigator.push(
           context,
           CupertinoPageRoute(
-            builder: (context) => AllPdfs(
-              UserId: globalUserId,
-              reactions: reaction.reactions,
-            ),
+            builder: (context) => const CommimgSoon(),
           ),
         );
       },

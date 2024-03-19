@@ -16,7 +16,6 @@ import 'package:global_net/pages/auth/forgotpass.dart';
 import 'package:global_net/pages/auth/signup_page.dart';
 import 'package:global_net/pages/home/home.dart';
 import 'package:global_net/share_preference/preferences_key.dart';
-import 'package:global_net/widgets/bezier_container.dart';
 import 'package:global_net/widgets/language_picker_widget_home.dart';
 import 'package:global_net/widgets/progress.dart';
 import 'package:global_net/widgets/simple_world_widgets.dart';
@@ -518,6 +517,7 @@ class _LoginPageState extends State<LoginPage> {
         creditPoints: 0,
         noAds: false,
         tokenNotfaction: '',
+        active: true,
       );
       await usersCollection.doc(dataUser.id).set(dataUser.toJson());
       await followersCollection

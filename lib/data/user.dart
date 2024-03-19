@@ -15,6 +15,7 @@ class User {
   static const String fieldNameUsername = 'username';
   static const String fieldNameBio = 'bio';
   static const String fieldNameCoverUrl = 'coverUrl';
+  static const String fieldNameActive = 'active';
 
   final int creditPoints;
   final String displayName;
@@ -30,6 +31,7 @@ class User {
   final String username;
   final String bio;
   final String coverUrl;
+  final bool active;
 
   const User({
     required this.bio,
@@ -46,6 +48,7 @@ class User {
     required this.tokenNotfaction,
     required this.userIsVerified,
     required this.username,
+    required this.active,
   });
 
   factory User.fromJson(Map<String, dynamic>? json) => User(
@@ -63,6 +66,7 @@ class User {
         tokenNotfaction: json?[fieldNameTokenNotfaction] ?? '',
         userIsVerified: json?[fieldNameUserIsVerified] ?? '',
         username: json?[fieldNameUsername] ?? '',
+        active: json?[fieldNameActive] ?? true,
       );
 
   dynamic chech(Function a) {
@@ -95,5 +99,6 @@ class User {
         fieldNameTokenNotfaction: tokenNotfaction,
         fieldNameUserIsVerified: userIsVerified,
         fieldNameUsername: username,
+        fieldNameActive: active,
       };
 }

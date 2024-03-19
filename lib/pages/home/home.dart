@@ -106,6 +106,14 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     FirebaseMessaging.instance.getInitialMessage().then((message) {
       log('_HomeState.getInitialMessage(): $message');
     });
+
+    usersCollection.doc(widget.userId).get().then((value) {
+      if (value[data.User.fieldNameActive] == false) {
+        usersCollection.doc(widget.userId).update({
+          data.User.fieldNameActive: true,
+        });
+      }
+    });
   }
 
   @override
@@ -117,8 +125,9 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     final String userId = widget.userId;
+    final userColl = usersCollection.doc(userId);
     return StreamBuilder<DocumentSnapshot<Map<String, dynamic>>>(
-      stream: usersCollection.doc(userId).snapshots(),
+      stream: userColl.snapshots(),
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
           return const CupertinoActivityIndicator();

@@ -336,6 +336,7 @@ class SignUpPageState extends State<SignUpPage> {
         'userIsVerified': false,
         'credit_points': 0,
         'no_ads': false,
+        'active': true
       });
       await followersCollection
           .doc(userId)

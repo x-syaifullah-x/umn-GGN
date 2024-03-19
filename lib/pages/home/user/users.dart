@@ -4,6 +4,7 @@ import 'package:applovin_max/applovin_max.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:global_net/data/user.dart';
 import 'package:global_net/pages/home/home.dart';
 import 'package:global_net/pages/home/user/user.dart';
 import 'package:global_net/widgets/header.dart';
@@ -57,12 +58,12 @@ class _Users extends State<Users> with AutomaticKeepAliveClientMixin<Users> {
                     shrinkWrap: true,
                     isLive: true,
                     itemBuilderType: PaginateBuilderType.gridView,
-                    query:
-                        usersCollection.orderBy('timestamp', descending: true),
+                    query: usersCollection
+                        .where(User.fieldNameActive, isEqualTo: true)
+                        .orderBy('timestamp', descending: true),
                     itemBuilder: (context, documentSnapshot, index) {
                       final userDoc = documentSnapshot[index].data()
                           as Map<String, dynamic>;
-                      log('${userDoc.length}');
                       return UserWidget(
                         currentUserId: widget.userId,
                         userId: userDoc['id'],
