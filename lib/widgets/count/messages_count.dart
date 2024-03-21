@@ -29,18 +29,14 @@ class MessagesState extends State<MessagesCount> {
     super.initState();
   }
 
-  Stream<QuerySnapshot> requestCount() {
-    String currentUserId = widget.currentUserId;
-    return messengerCollection
-        .doc(currentUserId)
-        .collection(currentUserId)
-        .snapshots();
-  }
-
   @override
   Widget build(BuildContext context) {
+    final currentUserId = widget.currentUserId;
     return StreamBuilder<QuerySnapshot>(
-      stream: requestCount(),
+      stream: messengerCollection
+          .doc(currentUserId)
+          .collection(currentUserId)
+          .snapshots(),
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           var ds = snapshot.data!.docs;

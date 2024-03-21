@@ -7,7 +7,10 @@ import 'package:global_net/pages/chat/simpleworld_messenger.dart';
 class SimpleWorldChat extends StatefulWidget {
   final String userId;
 
-  const SimpleWorldChat({Key? key, required this.userId}) : super(key: key);
+  const SimpleWorldChat({
+    Key? key,
+    required this.userId,
+  }) : super(key: key);
 
   @override
   SimpleWorldChatState createState() => SimpleWorldChatState();
@@ -43,7 +46,12 @@ class SimpleWorldChatState extends State<SimpleWorldChat>
     setState(() {});
   }
 
-  AnimatedTheme buildAuthScreen() {
+  @override
+  Widget build(BuildContext context) {
+    return _buildAuthScreen();
+  }
+
+  AnimatedTheme _buildAuthScreen() {
     return AnimatedTheme(
       duration: const Duration(milliseconds: 300),
       data: Theme.of(context),
@@ -66,7 +74,7 @@ class SimpleWorldChatState extends State<SimpleWorldChat>
                 children: <Widget>[
                   Text(
                     'Chats',
-                    style: Theme.of(context).textTheme.headline5!.copyWith(
+                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                           fontWeight: FontWeight.bold,
                           fontSize: 20,
                         ),
@@ -101,7 +109,7 @@ class SimpleWorldChatState extends State<SimpleWorldChat>
           controller: _tabController,
           children: [
             Messenger(
-              userId: widget.userId!,
+              userId: widget.userId,
             ),
             GroupChatList(
               userId: widget.userId,
@@ -113,10 +121,5 @@ class SimpleWorldChatState extends State<SimpleWorldChat>
         ),
       ),
     );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return buildAuthScreen();
   }
 }

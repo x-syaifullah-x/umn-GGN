@@ -11,18 +11,16 @@ import 'package:badges/badges.dart' as badges;
 class Messenger extends StatefulWidget {
   final String userId;
 
-  const Messenger({required this.userId, Key? key}) : super(key: key);
+  const Messenger({
+    Key? key,
+    required this.userId,
+  }) : super(key: key);
 
   @override
   MessengerState createState() => MessengerState();
 }
 
 class MessengerState extends State<Messenger> {
-  @override
-  void initState() {
-    super.initState();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -54,15 +52,15 @@ class MessengerState extends State<Messenger> {
       stream: messengerCollection
           .doc(userData)
           .collection(userData)
-          .orderBy("timestamp", descending: true)
+          .orderBy('timestamp', descending: true)
           .snapshots(),
       builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
         if (snapshot.hasData) {
+          final length = snapshot.data?.docs.length ?? 0;
           return SizedBox(
             height: MediaQuery.of(context).size.height,
             width: MediaQuery.of(context).size.width,
-            // ignore: prefer_is_empty
-            child: snapshot.data!.docs.length > 0
+            child: length > 0
                 ? ListView.separated(
                     padding: const EdgeInsets.all(8),
                     shrinkWrap: true,
@@ -76,7 +74,7 @@ class MessengerState extends State<Messenger> {
                     },
                   )
                 : const Center(
-                    child: Text("Currently you don't have any messages"),
+                    child: Text('Currently you don\'t have any messages'),
                   ),
           );
         }
@@ -98,69 +96,75 @@ class MessengerState extends State<Messenger> {
 
   Widget buildItem(List messenger, int index) {
     return ListTile(
-        onTap: () {
-          Navigator.push(
-              context,
-              CupertinoPageRoute(
-                  builder: (context) => Chat(
-                      receiverId: messenger[index]['id'],
-                      receiverAvatar: messenger[index]['profileImage'],
-                      receiverName: messenger[index]['name'])));
-        },
-        leading: messenger[index]['profileImage'].isNotEmpty
-            ? ClipRRect(
+      onTap: () {
+        Navigator.push(
+          context,
+          CupertinoPageRoute(
+            builder: (context) => Chat(
+              receiverId: messenger[index]['id'],
+              receiverAvatar: messenger[index]['profileImage'],
+              receiverName: messenger[index]['name'],
+            ),
+          ),
+        );
+      },
+      leading: messenger[index]['profileImage'].isNotEmpty
+          ? ClipRRect(
+              borderRadius: BorderRadius.circular(15.0),
+              child: CachedNetworkImage(
+                imageUrl: messenger[index]['profileImage'],
+                height: 50,
+                width: 50,
+                fit: BoxFit.cover,
+              ),
+            )
+          : Container(
+              decoration: BoxDecoration(
+                color: const Color(0xFF003a54),
                 borderRadius: BorderRadius.circular(15.0),
-                child: CachedNetworkImage(
-                  imageUrl: messenger[index]['profileImage'],
-                  height: 50,
-                  width: 50,
-                  fit: BoxFit.cover,
-                ),
-              )
-            : Container(
-                decoration: BoxDecoration(
-                  color: const Color(0xFF003a54),
-                  borderRadius: BorderRadius.circular(15.0),
-                ),
-                child: Image.asset(
-                  'assets/images/defaultavatar.png',
-                  width: 50,
+              ),
+              child: Image.asset(
+                'assets/images/defaultavatar.png',
+                width: 50,
+              ),
+            ),
+      title: Text(
+        messenger[index]['name'],
+        style: Theme.of(context).textTheme.bodyLarge?.copyWith(fontSize: 16),
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+      ),
+      subtitle: Text(
+        messenger[index]['type'] != null && messenger[index]['type'] == 1
+            ? '📷 Image'
+            : messenger[index]['content'],
+        style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontSize: 15),
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+      ),
+      trailing: Column(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          Text(format(
+              DateTime.fromMillisecondsSinceEpoch(
+                int.parse(
+                  messenger[index]['timestamp'],
                 ),
               ),
-        title: Text(messenger[index]['name'],
-            style: Theme.of(context).textTheme.bodyText1!.copyWith(
-                  fontSize: 16,
-                ),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis),
-        subtitle: Text(
-            messenger[index]['type'] != null && messenger[index]['type'] == 1
-                ? "📷 Image"
-                : messenger[index]['content'],
-            style:
-                Theme.of(context).textTheme.bodyText2!.copyWith(fontSize: 15),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis),
-        trailing: Column(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            Text(format(
-                DateTime.fromMillisecondsSinceEpoch(int.parse(
-                  messenger[index]['timestamp'],
-                )),
-                locale: 'en_short')),
-            int.parse(messenger[index]['badge']) > 0
-                ? badges.Badge(
-                    elevation: 0,
-                    shape: BadgeShape.circle,
-                    padding: const EdgeInsets.all(7),
-                    badgeContent: Text(
-                      messenger[index]['badge'],
-                      style: const TextStyle(color: Colors.white),
-                    ),
-                  )
-                : const Text(''),
-          ],
-        ));
+              locale: 'en_short')),
+          int.parse(messenger[index]['badge']) > 0
+              ? badges.Badge(
+                  elevation: 0,
+                  shape: BadgeShape.circle,
+                  padding: const EdgeInsets.all(7),
+                  badgeContent: Text(
+                    messenger[index]['badge'],
+                    style: const TextStyle(color: Colors.white),
+                  ),
+                )
+              : const Text(''),
+        ],
+      ),
+    );
   }
 }

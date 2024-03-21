@@ -1,11 +1,8 @@
-// ignore_for_file: unnecessary_this
-
 import 'dart:async';
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:dio/dio.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -26,33 +23,37 @@ class Chat extends StatelessWidget {
   final String receiverAvatar;
   final String receiverName;
 
-  // ignore: use_key_in_widget_constructors
-  const Chat(
-      {Key? key,
-      required this.receiverId,
-      required this.receiverAvatar,
-      required this.receiverName});
+  const Chat({
+    Key? key,
+    required this.receiverId,
+    required this.receiverAvatar,
+    required this.receiverName,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     MySize().init(context);
 
     return Scaffold(
-        appBar: MyCustomAppBar(
-            height: 70,
-            receiverId: receiverId,
-            receiverAvatar: receiverAvatar,
-            receiverName: receiverName),
-        body: Column(
-          children: [
-            Expanded(
-              child: ChatScreen(
-                  receiverId: receiverId,
-                  receiverAvatar: receiverAvatar,
-                  receiverName: receiverName),
+      appBar: MyCustomAppBar(
+        height: 70,
+        userId: globalUserId,
+        receiverId: receiverId,
+        receiverAvatar: receiverAvatar,
+        receiverName: receiverName,
+      ),
+      body: Column(
+        children: [
+          Expanded(
+            child: ChatScreen(
+              receiverId: receiverId,
+              receiverAvatar: receiverAvatar,
+              receiverName: receiverName,
             ),
-          ],
-        ));
+          ),
+        ],
+      ),
+    );
   }
 }
 
@@ -69,28 +70,13 @@ class ChatScreen extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  // ignore: no_logic_in_create_state
-  State createState() => ChatScreenState(
-      receiverId: receiverId,
-      receiverAvatar: receiverAvatar,
-      receiverName: receiverName);
+  State<ChatScreen> createState() => ChatScreenState();
 }
 
 class ChatScreenState extends State<ChatScreen> {
   final String? currentUserId = globalUserId;
   final String? currentUserName = globalDisplayName;
   final String? currentUserPhoto = globalImage;
-
-  final String receiverId;
-  final String receiverAvatar;
-  final String receiverName;
-
-  ChatScreenState({
-    Key? key,
-    required this.receiverId,
-    required this.receiverAvatar,
-    required this.receiverName,
-  });
 
   final TextEditingController textEditingController = TextEditingController();
   final ScrollController listscrollController = ScrollController();
@@ -106,8 +92,7 @@ class ChatScreenState extends State<ChatScreen> {
 
   String? chatId;
 
-  // ignore: prefer_typing_uninitialized_variables
-  var listMessage;
+  List<QueryDocumentSnapshot<Object?>>? listMessage;
 
   @override
   void initState() {
@@ -117,8 +102,6 @@ class ChatScreenState extends State<ChatScreen> {
     isDisplaySticker = false;
     isLoading = false;
 
-    chatId = "";
-
     readLocal();
     removeBadge();
   }
@@ -127,27 +110,29 @@ class ChatScreenState extends State<ChatScreen> {
     await messengerCollection
         .doc(currentUserId)
         .collection(currentUserId!)
-        .doc(receiverId)
+        .doc(widget.receiverId)
         .get()
         .then((doc) async {
       if (doc.exists) {
         await messengerCollection
             .doc(currentUserId)
             .collection(currentUserId!)
-            .doc(receiverId)
+            .doc(widget.receiverId)
             .update({'badge': '0'});
       }
     });
   }
 
   readLocal() {
-    if (currentUserId.hashCode <= receiverId.hashCode) {
-      chatId = '$currentUserId-$receiverId';
+    if (currentUserId.hashCode <= widget.receiverId.hashCode) {
+      chatId = '$currentUserId-${widget.receiverId}';
     } else {
-      chatId = '$receiverId-$currentUserId';
+      chatId = '${widget.receiverId}-$currentUserId';
     }
 
-    usersCollection.doc(currentUserId).update({'chattingWith': receiverId});
+    usersCollection
+        .doc(currentUserId)
+        .update({'chattingWith': widget.receiverId});
     setState(() {});
   }
 
@@ -162,16 +147,22 @@ class ChatScreenState extends State<ChatScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        children: [
-          Expanded(
-            child: createListMessages(),
-          ),
-          (isDisplaySticker ? createStickers() : Container()),
-          Container(
-            child: createInput(),
-          ),
-        ],
+      body: StreamBuilder<DocumentSnapshot<Map<String, dynamic>>>(
+        stream: usersCollection
+            .doc(currentUserId)
+            .collection('blocked')
+            .doc(widget.receiverId)
+            .snapshots(),
+        builder: (context, snapshot) {
+          final isBlocked = snapshot.data?.exists ?? false;
+          return Column(
+            children: [
+              Expanded(child: _createListMessages()),
+              isDisplaySticker ? createStickers() : Container(),
+              _createInput(isBlocked: isBlocked),
+            ],
+          );
+        },
       ),
     );
   }
@@ -211,9 +202,9 @@ class ChatScreenState extends State<ChatScreen> {
                 style: TextButton.styleFrom(
                   textStyle: const TextStyle(fontSize: 20),
                 ),
-                onPressed: () => onSendMessage("mimi1", 2),
+                onPressed: () => onSendMessage('mimi1', 2),
                 child: Image.asset(
-                  "assets/images/mimi1.gif",
+                  'assets/images/mimi1.gif',
                   width: 50.0,
                   height: 50.0,
                   fit: BoxFit.cover,
@@ -223,9 +214,9 @@ class ChatScreenState extends State<ChatScreen> {
                 style: TextButton.styleFrom(
                   textStyle: const TextStyle(fontSize: 20),
                 ),
-                onPressed: () => onSendMessage("mimi2", 2),
+                onPressed: () => onSendMessage('mimi2', 2),
                 child: Image.asset(
-                  "assets/images/mimi2.gif",
+                  'assets/images/mimi2.gif',
                   width: 50.0,
                   height: 50.0,
                   fit: BoxFit.cover,
@@ -235,50 +226,9 @@ class ChatScreenState extends State<ChatScreen> {
                 style: TextButton.styleFrom(
                   textStyle: const TextStyle(fontSize: 20),
                 ),
-                onPressed: () => onSendMessage("mimi3", 2),
+                onPressed: () => onSendMessage('mimi3', 2),
                 child: Image.asset(
-                  "assets/images/mimi3.gif",
-                  width: 50.0,
-                  height: 50.0,
-                  fit: BoxFit.cover,
-                ),
-              ),
-            ],
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              TextButton(
-                style: TextButton.styleFrom(
-                  textStyle: const TextStyle(fontSize: 20),
-                ),
-                onPressed: () => onSendMessage("mimi4", 2),
-                child: Image.asset(
-                  "assets/images/mimi4.gif",
-                  width: 50.0,
-                  height: 50.0,
-                  fit: BoxFit.cover,
-                ),
-              ),
-              TextButton(
-                style: TextButton.styleFrom(
-                  textStyle: const TextStyle(fontSize: 20),
-                ),
-                onPressed: () => onSendMessage("mimi5", 2),
-                child: Image.asset(
-                  "assets/images/mimi5.gif",
-                  width: 50.0,
-                  height: 50.0,
-                  fit: BoxFit.cover,
-                ),
-              ),
-              TextButton(
-                style: TextButton.styleFrom(
-                  textStyle: const TextStyle(fontSize: 20),
-                ),
-                onPressed: () => onSendMessage("mimi6", 2),
-                child: Image.asset(
-                  "assets/images/mimi6.gif",
+                  'assets/images/mimi3.gif',
                   width: 50.0,
                   height: 50.0,
                   fit: BoxFit.cover,
@@ -293,9 +243,9 @@ class ChatScreenState extends State<ChatScreen> {
                 style: TextButton.styleFrom(
                   textStyle: const TextStyle(fontSize: 20),
                 ),
-                onPressed: () => onSendMessage("mimi7", 2),
+                onPressed: () => onSendMessage('mimi4', 2),
                 child: Image.asset(
-                  "assets/images/mimi7.gif",
+                  'assets/images/mimi4.gif',
                   width: 50.0,
                   height: 50.0,
                   fit: BoxFit.cover,
@@ -305,9 +255,9 @@ class ChatScreenState extends State<ChatScreen> {
                 style: TextButton.styleFrom(
                   textStyle: const TextStyle(fontSize: 20),
                 ),
-                onPressed: () => onSendMessage("mimi8", 2),
+                onPressed: () => onSendMessage('mimi5', 2),
                 child: Image.asset(
-                  "assets/images/mimi8.gif",
+                  'assets/images/mimi5.gif',
                   width: 50.0,
                   height: 50.0,
                   fit: BoxFit.cover,
@@ -317,9 +267,50 @@ class ChatScreenState extends State<ChatScreen> {
                 style: TextButton.styleFrom(
                   textStyle: const TextStyle(fontSize: 20),
                 ),
-                onPressed: () => onSendMessage("mimi9", 2),
+                onPressed: () => onSendMessage('mimi6', 2),
                 child: Image.asset(
-                  "assets/images/mimi9.gif",
+                  'assets/images/mimi6.gif',
+                  width: 50.0,
+                  height: 50.0,
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ],
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              TextButton(
+                style: TextButton.styleFrom(
+                  textStyle: const TextStyle(fontSize: 20),
+                ),
+                onPressed: () => onSendMessage('mimi7', 2),
+                child: Image.asset(
+                  'assets/images/mimi7.gif',
+                  width: 50.0,
+                  height: 50.0,
+                  fit: BoxFit.cover,
+                ),
+              ),
+              TextButton(
+                style: TextButton.styleFrom(
+                  textStyle: const TextStyle(fontSize: 20),
+                ),
+                onPressed: () => onSendMessage('mimi8', 2),
+                child: Image.asset(
+                  'assets/images/mimi8.gif',
+                  width: 50.0,
+                  height: 50.0,
+                  fit: BoxFit.cover,
+                ),
+              ),
+              TextButton(
+                style: TextButton.styleFrom(
+                  textStyle: const TextStyle(fontSize: 20),
+                ),
+                onPressed: () => onSendMessage('mimi9', 2),
+                child: Image.asset(
+                  'assets/images/mimi9.gif',
                   width: 50.0,
                   height: 50.0,
                   fit: BoxFit.cover,
@@ -339,17 +330,18 @@ class ChatScreenState extends State<ChatScreen> {
     });
   }
 
-  createListMessages() {
+  _createListMessages() {
     return Container(
       margin: const EdgeInsets.only(top: 10),
-      child: chatId == ""
+      child: chatId == ''
           ? Center(child: circularProgress())
           : StreamBuilder<QuerySnapshot>(
               stream: messagesCollection
                   .doc(chatId)
                   .collection(chatId!)
-                  .orderBy("timestamp", descending: true)
-                  // .limit(20)
+                  // .where('visible_by.$currentUserId', isEqualTo: true)
+                  // .where('delete_by.$currentUserId', isEqualTo: false)
+                  .orderBy('timestamp', descending: true)
                   .snapshots(),
               builder: (context, snapshot) {
                 if (!snapshot.hasData) {
@@ -363,18 +355,19 @@ class ChatScreenState extends State<ChatScreen> {
                     controller: listscrollController,
                     itemCount: snapshot.data!.docs.length,
                     itemBuilder: (context, int index) {
-                      return createItem(index, snapshot.data!.docs[index]);
+                      return _createItem(index, snapshot.data!.docs[index]);
                     },
                   );
                 }
-              }),
+              },
+            ),
     );
   }
 
   bool isLastMsgLeft(int index) {
     if ((index > 0 &&
             listMessage != null &&
-            listMessage[index - 1]["idFrom"] == currentUserId) ||
+            listMessage?[index - 1]['idFrom'] == currentUserId) ||
         index == 0) {
       return true;
     } else {
@@ -385,7 +378,7 @@ class ChatScreenState extends State<ChatScreen> {
   bool isLastMsgRight(int index) {
     if ((index > 0 &&
             listMessage != null &&
-            listMessage[index - 1]["idFrom"] != currentUserId) ||
+            listMessage?[index - 1]['idFrom'] != currentUserId) ||
         index == 0) {
       return true;
     } else {
@@ -393,19 +386,42 @@ class ChatScreenState extends State<ChatScreen> {
     }
   }
 
-  Widget createItem(int index, DocumentSnapshot doc) {
+  Widget _createItem(int index, DocumentSnapshot doc) {
     double cWidth = MediaQuery.of(context).size.width * 0.8;
+    bool isVisible = doc['visible_by.$currentUserId'];
+    bool isDelete = doc['delete_by.$currentUserId'];
+
+    if (!isVisible) {
+      return Container();
+    }
+
+    if (isDelete) {
+      return Container();
+    }
+
+    // bool isVisible = true;
+    // try {
+    //   isVisible = doc.get('visible')[currentUserId];
+    // } catch (e) {
+    //   debugPrint('$e');
+    // }
+    // if (!isVisible) {
+    //   return Container();
+    // }
     //My messages - Right Side
-    if (doc["idFrom"] == currentUserId) {
+    if (doc['idFrom'] == currentUserId) {
       return Row(
         mainAxisAlignment: MainAxisAlignment.end,
         children: <Widget>[
-          doc["type"] == 0
+          doc['type'] == 0
               //Text
               ? Container(
                   width: cWidth,
-                  margin: Spacing.only(top: 6, bottom: 4).add(EdgeInsets.only(
-                      right: MediaQuery.of(context).size.width * 0.02)),
+                  margin: Spacing.only(top: 6, bottom: 4).add(
+                    EdgeInsets.only(
+                      right: MediaQuery.of(context).size.width * 0.02,
+                    ),
+                  ),
                   alignment: Alignment.centerRight,
                   child: Container(
                       padding: Spacing.fromLTRB(16, 10, 16, 10),
@@ -413,8 +429,8 @@ class ChatScreenState extends State<ChatScreen> {
                           color: Theme.of(context).primaryColor,
                           borderRadius: BorderRadius.circular(10)),
                       child: Text(
-                        doc["content"],
-                        style: Theme.of(context).textTheme.subtitle2!.copyWith(
+                        doc['content'],
+                        style: Theme.of(context).textTheme.titleSmall?.copyWith(
                               fontSize: 15,
                               color: Colors.white,
                             ),
@@ -629,7 +645,7 @@ class ChatScreenState extends State<ChatScreen> {
     }
   }
 
-  createInput() {
+  Widget _createInput({required bool isBlocked}) {
     return Container(
       width: MediaQuery.of(context).size.width,
       padding: Spacing.fromLTRB(8, 8, 8, 8),
@@ -654,8 +670,9 @@ class ChatScreenState extends State<ChatScreen> {
                     getImage();
                   },
                   child: Container(
-                      padding: Spacing.all(8),
-                      child: const Icon(Ionicons.camera_outline)),
+                    padding: Spacing.all(8),
+                    child: const Icon(Ionicons.camera_outline),
+                  ),
                 ),
                 InkWell(
                   onTap: () {
@@ -665,23 +682,26 @@ class ChatScreenState extends State<ChatScreen> {
                     });
                   },
                   child: Container(
-                      padding: Spacing.all(8),
-                      child: const Icon(Ionicons.happy_outline)),
+                    padding: Spacing.all(8),
+                    child: const Icon(Ionicons.happy_outline),
+                  ),
                 ),
                 Expanded(
                   child: Container(
                     margin: Spacing.left(16),
                     child: TextFormField(
-                      style: Theme.of(context).textTheme.bodyText2,
+                      style: Theme.of(context).textTheme.bodyMedium,
                       decoration: InputDecoration(
-                        hintText: "Type here",
-                        hintStyle: Theme.of(context).textTheme.bodyText2,
+                        hintText: 'Type here',
+                        hintStyle: Theme.of(context).textTheme.bodyMedium,
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.all(
                             Radius.circular(MySize.size40!),
                           ),
                           borderSide: BorderSide(
-                              color: Theme.of(context).shadowColor, width: 0),
+                            color: Theme.of(context).shadowColor,
+                            width: 0,
+                          ),
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.all(
@@ -710,10 +730,57 @@ class ChatScreenState extends State<ChatScreen> {
                   width: MySize.size38,
                   height: MySize.size38,
                   decoration: BoxDecoration(
-                      shape: BoxShape.circle, color: Colors.red[800]),
+                    shape: BoxShape.circle,
+                    color: Colors.red[800],
+                  ),
                   child: InkWell(
                     onTap: () {
-                      onSendMessage(textEditingController.text, 0);
+                      if (!isBlocked) {
+                        onSendMessage(textEditingController.text, 0);
+                      } else {
+                        showDialog(
+                          context: context,
+                          barrierDismissible: false,
+                          builder: (context) {
+                            return AlertDialog(
+                              title: const Text('Unblock'),
+                              content: Text(
+                                'Unblock ${widget.receiverName} to send a message',
+                              ),
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop({
+                                      'is_unblock': false,
+                                    });
+                                  },
+                                  child: const Text('Cancel'),
+                                ),
+                                TextButton(
+                                  onPressed: () {
+                                    usersCollection
+                                        .doc(currentUserId)
+                                        .collection('blocked')
+                                        .doc(widget.receiverId)
+                                        .delete()
+                                        .then((value) {
+                                      Navigator.of(context).pop({
+                                        'is_unblock': true,
+                                      });
+                                    });
+                                  },
+                                  child: const Text('Unblock'),
+                                )
+                              ],
+                            );
+                          },
+                        ).then((value) {
+                          final isUnblock = value['is_unblock'];
+                          if (isUnblock) {
+                            onSendMessage(textEditingController.text, 0);
+                          }
+                        });
+                      }
                     },
                     child: SvgPicture.asset(
                       'assets/images/chat_send.svg',
@@ -732,102 +799,112 @@ class ChatScreenState extends State<ChatScreen> {
   }
 
   void onSendMessage(String contentMsg, int type) async {
-    int badgeCount = 0;
-    if (contentMsg != "") {
+    // int badgeCount = 0;
+    if (contentMsg != '') {
       textEditingController.clear();
-      var docRef = messagesCollection
-          .doc(chatId)
-          .collection(chatId!)
-          .doc(DateTime.now().millisecondsSinceEpoch.toString());
-      FirebaseFirestore.instance.runTransaction((transaction) async {
-        transaction.set(docRef, {
-          "idFrom": currentUserId,
-          "idTo": receiverId,
-          "timestamp": DateTime.now().millisecondsSinceEpoch.toString(),
-          "content": contentMsg,
-          "type": type,
-        });
-      }).then((onValue) async {
-        await messengerCollection
-            .doc(currentUserId)
-            .collection(currentUserId!)
-            .doc(receiverId)
-            .set({
-          'id': receiverId,
-          'timestamp': DateTime.now().millisecondsSinceEpoch.toString(),
-          'content': contentMsg,
-          'badge': '0',
-          'name': receiverName,
-          'profileImage': receiverAvatar,
-          'type': type
-        });
-      }).then((onValue) async {
-        try {
-          await messengerCollection
-              .doc(receiverId)
-              .collection(receiverId)
-              .doc(currentUserId)
-              .get()
-              .then((doc) async {
-            debugPrint("doc[\"badge\"]: ${doc["badge"]}");
-            if (doc["badge"] != null) {
-              badgeCount = int.parse(doc["badge"]);
-              await messengerCollection
-                  .doc(receiverId)
-                  .collection(receiverId)
-                  .doc(currentUserId)
-                  .set({
-                'id': currentUserId,
-                'name': currentUserName,
-                'timestamp': DateTime.now().millisecondsSinceEpoch.toString(),
-                'content': contentMsg,
-                'badge': '${badgeCount + 1}',
-                'profileImage': currentUserPhoto,
-                'type': type
-              }).then((onValue) {
-                feedCollection.doc(receiverId).collection('feedItems').add({
-                  "type": "message",
-                  "contentMessage": contentMsg,
-                  "timestamp": timestamp,
-                  "fromId": currentUserId,
-                  "toId": receiverId,
-                  "username": globalName,
-                  "userProfileImg": globalImage,
-                  "Msgtype": type,
-                  "isSeen": false,
-                });
-              });
-            }
-          });
-        } catch (e) {
-          await messengerCollection
-              .doc(receiverId)
-              .collection(receiverId)
-              .doc(currentUserId)
-              .set({
-            'id': currentUserId,
-            'name': currentUserName,
-            'timestamp': DateTime.now().millisecondsSinceEpoch.toString(),
-            'content': contentMsg,
-            'badge': '${badgeCount + 1}',
-            'profileImage': currentUserPhoto,
-            'type': type
-          }).then((onValue) {
-            feedCollection.doc(receiverId).collection('feedItems').add({
-              "type": "message",
-              "contentMessage": contentMsg,
-              "timestamp": timestamp,
-              "fromId": currentUserId,
-              "toId": receiverId,
-              "username": globalName,
-              "userProfileImg": globalImage,
-              "Msgtype": type,
-              "isSeen": false,
-            });
-          });
-          debugPrint("$e");
-        }
+      firestore.collection('tmp').add({
+        'doc': chatId,
+        'collection': chatId,
+        'idFrom': currentUserId,
+        'idTo': widget.receiverId,
+        'content': contentMsg,
+        'type': type,
       });
+
+      // var docRef = messagesCollection
+      //     .doc(chatId)
+      //     .collection(chatId!)
+      //     .doc(DateTime.now().millisecondsSinceEpoch.toString());
+      // FirebaseFirestore.instance.runTransaction((transaction) async {
+      //   transaction.set(docRef, {
+      //     'idFrom': currentUserId,
+      //     'idTo': widget.receiverId,
+      //     'timestamp': DateTime.now().millisecondsSinceEpoch.toString(),
+      //     'content': contentMsg,
+      //     'type': type,
+      //   });
+      // }).then((onValue) async {
+      //   await messengerCollection
+      //       .doc(currentUserId)
+      //       .collection(currentUserId!)
+      //       .doc(widget.receiverId)
+      //       .set({
+      //     'id': widget.receiverId,
+      //     'timestamp': DateTime.now().millisecondsSinceEpoch.toString(),
+      //     'content': contentMsg,
+      //     'badge': '0',
+      //     'name': widget.receiverName,
+      //     'profileImage': widget.receiverAvatar,
+      //     'type': type
+      //   });
+      // }).then((onValue) async {
+      //   try {
+      //     await messengerCollection
+      //         .doc(widget.receiverId)
+      //         .collection(widget.receiverId)
+      //         .doc(currentUserId)
+      //         .get()
+      //         .then((doc) async {
+      //       if (doc['badge'] != null) {
+      //         badgeCount = int.parse(doc['badge']);
+      //         await messengerCollection
+      //             .doc(widget.receiverId)
+      //             .collection(widget.receiverId)
+      //             .doc(currentUserId)
+      //             .set({
+      //           'id': currentUserId,
+      //           'name': currentUserName,
+      //           'timestamp': DateTime.now().millisecondsSinceEpoch.toString(),
+      //           'content': contentMsg,
+      //           'badge': '${badgeCount + 1}',
+      //           'profileImage': currentUserPhoto,
+      //           'type': type
+      //         }).then((onValue) {
+      //           feedCollection
+      //               .doc(widget.receiverId)
+      //               .collection('feedItems')
+      //               .add({
+      //             'type': 'message',
+      //             'contentMessage': contentMsg,
+      //             'timestamp': timestamp,
+      //             'fromId': currentUserId,
+      //             'toId': widget.receiverId,
+      //             'username': globalName,
+      //             'userProfileImg': globalImage,
+      //             'Msgtype': type,
+      //             'isSeen': false,
+      //           });
+      //         });
+      //       }
+      //     });
+      //   } catch (e) {
+      //     await messengerCollection
+      //         .doc(widget.receiverId)
+      //         .collection(widget.receiverId)
+      //         .doc(currentUserId)
+      //         .set({
+      //       'id': currentUserId,
+      //       'name': currentUserName,
+      //       'timestamp': DateTime.now().millisecondsSinceEpoch.toString(),
+      //       'content': contentMsg,
+      //       'badge': '${badgeCount + 1}',
+      //       'profileImage': currentUserPhoto,
+      //       'type': type
+      //     }).then((onValue) {
+      //       feedCollection.doc(widget.receiverId).collection('feedItems').add({
+      //         'type': 'message',
+      //         'contentMessage': contentMsg,
+      //         'timestamp': timestamp,
+      //         'fromId': currentUserId,
+      //         'toId': widget.receiverId,
+      //         'username': globalName,
+      //         'userProfileImg': globalImage,
+      //         'Msgtype': type,
+      //         'isSeen': false,
+      //       });
+      //     });
+      //   }
+      // });
 
       listscrollController.animateTo(
         0.0,
@@ -835,20 +912,16 @@ class ChatScreenState extends State<ChatScreen> {
         curve: Curves.easeOut,
       );
     } else {
-      Fluttertoast.showToast(msg: "Empty Message. can not be send");
+      Fluttertoast.showToast(msg: 'Empty Message. can not be send');
     }
-    var user = await usersCollection.doc(receiverId).get();
-    var current = await usersCollection.doc(currentUserId).get();
+    // var user = await usersCollection.doc(widget.receiverId).get();
+    // var current = await usersCollection.doc(currentUserId).get();
 
-    //currentUserId
-    print(user.data()!["androidNotificationToken"]);
-
-    //displayName
-    getapi(
-      user.data()!["androidNotificationToken"],
-      current.data()!["displayName"],
-      contentMsg,
-    );
+    // getapi(
+    //   user.data()![User.fieldNameTokenNotfaction],
+    //   current.data()!['displayName'],
+    //   contentMsg,
+    // );
   }
 
   Future getImage() async {
@@ -872,7 +945,7 @@ class ChatScreenState extends State<ChatScreen> {
   Future uploadImageFile() async {
     String fileName = DateTime.now().millisecondsSinceEpoch.toString();
     Reference storageReference =
-        FirebaseStorage.instance.ref().child("Chat Images").child(fileName);
+        FirebaseStorage.instance.ref().child('Chat Images').child(fileName);
     UploadTask storageUploadTask = storageReference.putFile(imageFile!);
     String downloadUrl = await (await storageUploadTask).ref.getDownloadURL();
     imageUrl = downloadUrl;
@@ -883,34 +956,34 @@ class ChatScreenState extends State<ChatScreen> {
   }
 }
 
-getapi(String token, String username, String msg) async {
-  var dio = Dio();
-  final response = await dio.post("https://fcm.googleapis.com/fcm/send",
-      data: {
-        "to": token,
-        "priority": "HIGH",
-        "notification": {
-          "title": "$username sent you Message",
-          "body": "$msg",
-        },
-        "data": {
-          "title": "Hello",
-          "notification": {
-            "title": "$username sent you Message",
-            "body": "$msg",
-          },
-          "android": "",
-          "apple": "",
-        }
-      },
-      options: Options(
-        headers: {
-          "authorization":
-              'key=AAAAvXer5r4:APA91bGggY3wt1_z6GlcKyi-6PXLLf03oMqs6SYjRVrHW5NsF1Eq1TkUOmIVqCYany-eA_8DHxzpucyypO2FYsowMlwNIeqmuusXtOr1bATNinWw-MBAJoXip2gZZ3Aso-EUp1i7g2BV',
-          "Content-Type": "application/json",
-        },
-      ));
+// _getapi(String token, String username, String msg) async {
+//   var dio = Dio();
+//   final response = await dio.post('https://fcm.googleapis.com/fcm/send',
+//       data: {
+//         'to': token,
+//         'priority': 'HIGH',
+//         'notification': {
+//           'title': '$username sent you Message',
+//           'body': msg,
+//         },
+//         'data': {
+//           'title': 'Hello',
+//           'notification': {
+//             'title': '$username sent you Message',
+//             'body': msg,
+//           },
+//           'android': '',
+//           'apple': '',
+//         }
+//       },
+//       options: Options(
+//         headers: {
+//           "authorization":
+//               'key=AAAAvXer5r4:APA91bGggY3wt1_z6GlcKyi-6PXLLf03oMqs6SYjRVrHW5NsF1Eq1TkUOmIVqCYany-eA_8DHxzpucyypO2FYsowMlwNIeqmuusXtOr1bATNinWw-MBAJoXip2gZZ3Aso-EUp1i7g2BV',
+//           "Content-Type": "application/json",
+//         },
+//       ));
 
-  print("getApi: ${response.statusCode!}");
-  print("getApi: ${response.data}");
-}
+//   print("getApi: ${response.statusCode!}");
+//   print("getApi: ${response.data}");
+// }
