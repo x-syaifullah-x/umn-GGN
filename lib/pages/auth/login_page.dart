@@ -51,9 +51,8 @@ class _LoginPageState extends State<LoginPage> {
   @override
   void initState() {
     super.initState();
-    FirebaseMessaging.instance.getInitialMessage().then((message) {
-      log(message);
-    });
+
+    FirebaseMessaging.instance.getInitialMessage().then((message) {});
   }
 
   @override

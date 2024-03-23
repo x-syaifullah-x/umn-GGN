@@ -25,18 +25,13 @@ class SignUpPageState extends State<SignUpPage> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
   late String userId;
-  final TextEditingController nameController = TextEditingController();
-  final TextEditingController emailController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
-  final TextEditingController cpassController = TextEditingController();
-  TextEditingController mobileController = TextEditingController();
-  bool isAuth = false;
-  bool checkedValue = false;
+  final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
 
-  @override
-  void initState() {
-    super.initState();
-  }
+  bool isAuth = false;
+
+  bool _isCheckTermsAndPrivacyPolicy = false;
 
   @override
   Widget build(BuildContext context) {
@@ -55,7 +50,7 @@ class SignUpPageState extends State<SignUpPage> {
     return SizedBox(
       height: height,
       child: Stack(
-        children: <Widget>[
+        children: [
           // Positioned(
           //   top: -MediaQuery.of(context).size.height * .15,
           //   right: -MediaQuery.of(context).size.width * .4,
@@ -83,7 +78,7 @@ class SignUpPageState extends State<SignUpPage> {
                   const SizedBox(
                     height: 50,
                   ),
-                  _emailPasswordWidget(),
+                  _fieldInput(),
                   const SizedBox(
                     height: 20,
                   ),
@@ -91,7 +86,7 @@ class SignUpPageState extends State<SignUpPage> {
                   const SizedBox(
                     height: 20,
                   ),
-                  _submitButton(context),
+                  _registerButton(context),
                   SizedBox(height: height * .14),
                   _loginAccount(),
                 ],
@@ -195,44 +190,46 @@ class SignUpPageState extends State<SignUpPage> {
               )),
           InkWell(
             onTap: () {
-              handleURLButtonPress(context,
-                  'https://sites.google.com/view/simple-worlds-help-center/privacy-policy');
-              // Navigator.push(
-              //     context,
-              //     MaterialPageRoute(
-              //         builder: (context) => const PrivacyPolicyPage()));
+              handleURLButtonPress(
+                context,
+                'https://sites.google.com/view/simple-worlds-help-center/privacy-policy',
+              );
             },
-            child: Text(AppLocalizations.of(context)!.privacy_policy,
-                style: TextStyle(
-                    fontSize: 16,
-                    fontStyle: FontStyle.normal,
-                    color: Theme.of(context).primaryColor,
-                    fontWeight: FontWeight.bold)),
+            child: Text(
+              AppLocalizations.of(context)!.privacy_policy,
+              style: TextStyle(
+                fontSize: 16,
+                fontStyle: FontStyle.normal,
+                color: Theme.of(context).primaryColor,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
           ),
         ],
       ),
-
-      value: checkedValue,
+      value: _isCheckTermsAndPrivacyPolicy,
       onChanged: (newValue) {
         setState(() {
-          checkedValue = newValue!;
+          _isCheckTermsAndPrivacyPolicy = newValue!;
         });
       },
       controlAffinity: ListTileControlAffinity.leading, //  <-- leading Checkbox
     );
   }
 
-  Widget _submitButton(BuildContext context) {
+  Widget _registerButton(BuildContext context) {
     return Container(
       width: MediaQuery.of(context).size.width,
       padding: const EdgeInsets.symmetric(vertical: 15),
       alignment: Alignment.center,
       decoration: BoxDecoration(
-          borderRadius: const BorderRadius.all(Radius.circular(5)),
-          gradient: LinearGradient(
-              begin: Alignment.centerLeft,
-              end: Alignment.centerRight,
-              colors: [Colors.red.shade500, Colors.red.shade900])),
+        borderRadius: const BorderRadius.all(Radius.circular(5)),
+        gradient: LinearGradient(
+          begin: Alignment.centerLeft,
+          end: Alignment.centerRight,
+          colors: [Colors.red.shade500, Colors.red.shade900],
+        ),
+      ),
       child: Text(
         AppLocalizations.of(context)!.register_now,
         style: const TextStyle(fontSize: 20, color: Colors.white),
@@ -240,32 +237,46 @@ class SignUpPageState extends State<SignUpPage> {
     ).onTap(() {
       RegExp regex = RegExp(
           r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$');
-      if (passwordController.text != '' &&
-          nameController.text != '' &&
-          regex.hasMatch(emailController.text.trim()) &&
-          emailController.text.trim() != '' &&
-          passwordController.text.length > 5 &&
-          checkedValue != false) {
-        _register(context);
-      } else if (checkedValue == false) {
+
+      if (_usernameController.text.isEmptyOrNull) {
         simpleAlertBox(
-            content: Text(
-              AppLocalizations.of(context)!.consent_error,
-            ),
-            context: context);
-      } else {
-        simpleAlertBox(
-            content: const Text(
-                'Fields is empty or password length should be between 6-8 characters.'),
-            context: context);
+          context: context,
+          content: const Text('Please enter your username.'),
+        );
+        return;
       }
+
+      if (!regex.hasMatch(_emailController.text.trim())) {
+        simpleAlertBox(
+          context: context,
+          content: const Text('Please enter the correct email.'),
+        );
+        return;
+      }
+
+      if (_passwordController.text.length < 6) {
+        simpleAlertBox(
+          context: context,
+          content: const Text('Password must be 6 characters or more.'),
+        );
+        return;
+      }
+
+      if (!_isCheckTermsAndPrivacyPolicy) {
+        simpleAlertBox(
+          context: context,
+          content: Text(AppLocalizations.of(context)!.consent_error),
+        );
+        return;
+      }
+
+      _register(context);
     });
   }
 
   Future<void> _register(BuildContext context) async {
     try {
-      setState(() {});
-      final valid = await usernameCheck(nameController.text);
+      final valid = await _usernameCheck(_usernameController.text);
       if (!valid) {
         setState(() {
           if (mounted) {
@@ -274,12 +285,12 @@ class SignUpPageState extends State<SignUpPage> {
         });
       } else {
         final userCredential = await _auth.createUserWithEmailAndPassword(
-          email: emailController.text.trim(),
-          password: passwordController.text,
+          email: _emailController.text.trim(),
+          password: _passwordController.text,
         );
         final User? user = userCredential.user;
         if (user != null) {
-          createUserInFirestore(user.uid, user.email);
+          _createUserInFirestore(user.uid, user.email);
         } else {
           setState(() {
             isAuth = false;
@@ -298,7 +309,6 @@ class SignUpPageState extends State<SignUpPage> {
       setState(() {
         isAuth = false;
       });
-      // print(e.toString());
       simpleworldtoast(
         'Error',
         'The email address is already in use by anoter account',
@@ -307,7 +317,7 @@ class SignUpPageState extends State<SignUpPage> {
     }
   }
 
-  Future<bool> usernameCheck(String username) async {
+  Future<bool> _usernameCheck(String username) async {
     try {
       final result =
           await usersCollection.where('username', isEqualTo: username).get();
@@ -317,17 +327,17 @@ class SignUpPageState extends State<SignUpPage> {
     }
   }
 
-  createUserInFirestore(userId, email) async {
+  _createUserInFirestore(userId, email) async {
     User? user = firebaseAuth.currentUser;
     DocumentSnapshot doc = await usersCollection.doc(user!.uid).get();
 
     if (!doc.exists) {
       usersCollection.doc(userId).set({
         'id': userId,
-        'username': nameController.text,
+        'username': _usernameController.text,
         'photoUrl': '',
         'email': email,
-        'displayName': nameController.text,
+        'displayName': _usernameController.text,
         'bio': '',
         'coverUrl': '',
         'groups': [],
@@ -353,54 +363,42 @@ class SignUpPageState extends State<SignUpPage> {
     });
 
     configurePushNotifications(userId);
-    if (isAuth = true) {
+    if (isAuth) {
       Navigator.of(context).pushReplacement(
         CupertinoPageRoute(
-            builder: (context) => GetAvatar(
-                  currentUserId: userId,
-                )),
+          builder: (context) => GetAvatar(currentUserId: userId),
+        ),
       );
     }
   }
 
   configurePushNotifications(userId) async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
-
     preferences
         .setString(SharedPreferencesKey.userId, userId)
         .then((value) async {
       try {
         String? token = await FirebaseMessaging.instance
             .getToken(vapidKey: (kIsWeb ? vApiKey : null));
-        log("tokenNotification: $token");
         await usersCollection.doc(userId).update({
-          // "androidNotificationToken": token,
-          "tokenNotification": token,
+          'tokenNotification': token,
         });
       } catch (e) {
-        log(e);
+        debugPrint('$e');
       }
     });
-
-    // preferences.setString(SharedPreferencesKey.userId, userId).then((value) {
-    //   _firebaseMessaging.getToken().then((token) {
-    //     // print("Firebase Messaging Token: $token\n");
-    //     // usersCollection.doc(userId).update({"androidNotificationToken": token});
-    //     usersCollection.doc(userId).update({"tokenNotification": token});
-    //   });
-    // });
 
     FirebaseMessaging.onMessage.listen((message) async {
       final String recipientId = userId;
       final String body = message.notification?.body ?? '';
 
       if (recipientId == userId) {
-        // print("Notification shown!");
         SnackBar snackbar = SnackBar(
-            content: Text(
-          body,
-          overflow: TextOverflow.ellipsis,
-        ));
+          content: Text(
+            body,
+            overflow: TextOverflow.ellipsis,
+          ),
+        );
         ScaffoldMessenger.of(context).showSnackBar(snackbar);
       }
     });
@@ -444,7 +442,7 @@ class SignUpPageState extends State<SignUpPage> {
       text: TextSpan(
         text: 'Global  Net',
         style: GoogleFonts.portLligatSans(
-          textStyle: Theme.of(context).textTheme.headline4,
+          textStyle: Theme.of(context).textTheme.headlineMedium,
           fontSize: 30,
           fontWeight: FontWeight.w700,
           color: Colors.red[800],
@@ -453,16 +451,25 @@ class SignUpPageState extends State<SignUpPage> {
     );
   }
 
-  Widget _emailPasswordWidget() {
+  Widget _fieldInput() {
     return Column(
       children: <Widget>[
-        _entryField(AppLocalizations.of(context)!.username, nameController,
-            TextInputAction.next),
-        _entryField(AppLocalizations.of(context)!.email_id, emailController,
-            TextInputAction.next),
-        _entryField(AppLocalizations.of(context)!.password, passwordController,
-            TextInputAction.next,
-            isPassword: true),
+        _entryField(
+          AppLocalizations.of(context)!.username,
+          _usernameController,
+          TextInputAction.next,
+        ),
+        _entryField(
+          AppLocalizations.of(context)!.email_id,
+          _emailController,
+          TextInputAction.next,
+        ),
+        _entryField(
+          AppLocalizations.of(context)!.password,
+          _passwordController,
+          TextInputAction.next,
+          isPassword: true,
+        ),
       ],
     );
   }

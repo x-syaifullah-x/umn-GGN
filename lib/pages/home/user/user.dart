@@ -93,7 +93,7 @@ class UserWidget extends StatelessWidget {
                           topRight: Radius.circular(12),
                         ),
                         child: Image.asset(
-                          'assets/images/defaultcover.png',
+                          'assets/images/defaultcover_new.jpg',
                           alignment: Alignment.center,
                           width: double.infinity,
                           fit: BoxFit.cover,
@@ -297,7 +297,7 @@ class UserWidget extends StatelessWidget {
     );
   }
 
-  handleUnfollowUser({
+   handleUnfollowUser({
     required String currentUserId,
     required String userDoc,
   }) {
@@ -315,17 +315,6 @@ class UserWidget extends StatelessWidget {
         });
       }
     });
-
-    // activityFeedRef
-    //     .doc(userDoc['id'])
-    //     .collection('feedItems')
-    //     .doc(currentUserId)
-    //     .get()
-    //     .then((doc) {
-    //   if (doc.exists) {
-    //     doc.reference.delete();
-    //   }
-    // });
   }
 
   handleFollowUser({

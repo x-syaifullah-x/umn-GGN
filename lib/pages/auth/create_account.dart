@@ -92,7 +92,7 @@ class CreateAccountState extends State<CreateAccount> {
         .get()
         .then(
           (value) => setState(() {
-            credits = value["credit_points"];
+            credits = value['credit_points'];
           }),
         )
         .catchError(onError);
@@ -103,10 +103,10 @@ class CreateAccountState extends State<CreateAccount> {
 
     if (form.validate()) {
       usersCollection.doc(userId).update({
-        "username": nameController.text,
+        'username': nameController.text,
       });
       form.save();
-      SnackBar snackbar = SnackBar(content: Text("Welcome $username!"));
+      SnackBar snackbar = SnackBar(content: Text('Welcome $username!'));
       ScaffoldMessenger.of(context).showSnackBar(snackbar);
 
       if (credits == 0) {
@@ -158,7 +158,7 @@ class CreateAccountState extends State<CreateAccount> {
       text: TextSpan(
         text: 'Create a username',
         style: GoogleFonts.portLligatSans(
-          textStyle: Theme.of(context).textTheme.headline4,
+          textStyle: Theme.of(context).textTheme.headlineMedium,
           fontSize: 30,
           fontWeight: FontWeight.w700,
           color: Colors.red[800],
@@ -199,9 +199,9 @@ class CreateAccountState extends State<CreateAccount> {
             controller: nameController,
             validator: (val) {
               if (val!.trim().length < 3 || val.isEmpty) {
-                return "Username too short";
+                return 'Username too short';
               } else if (val.trim().length > 12) {
-                return "Username too long";
+                return 'Username too long';
               } else {
                 return null;
               }
@@ -211,9 +211,9 @@ class CreateAccountState extends State<CreateAccount> {
                 border: InputBorder.none,
                 fillColor: Theme.of(context).inputDecorationTheme.fillColor,
                 filled: true,
-                labelText: "Username",
+                labelText: 'Username',
                 labelStyle: const TextStyle(fontSize: 15.0),
-                hintText: "Must be at least 3 characters"),
+                hintText: 'Must be at least 3 characters'),
           ),
         ),
       ],
