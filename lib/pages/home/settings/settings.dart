@@ -16,6 +16,7 @@ import 'package:global_net/pages/edit_profile.dart';
 import 'package:global_net/pages/home/activity_feed.dart';
 import 'package:global_net/pages/home/deactivate_account.dart';
 import 'package:global_net/pages/home/home.dart';
+import 'package:global_net/pages/home/settings/friend_list.dart';
 import 'package:global_net/pages/home/user/users.dart';
 import 'package:global_net/pages/menu/all_pdfs.dart';
 import 'package:global_net/pages/menu/all_stories.dart';
@@ -325,21 +326,12 @@ class _SettingsState extends State<SettingsPage> {
   Widget _documents(String userId) {
     return _buildField(
       photoUrl: 'assets/images/documents.png',
-      fieldName: 'Friend List',
+      fieldName: 'Friends',
       onTap: () {
-        // Navigator.push(
-        //   context,
-        //   CupertinoPageRoute(
-        //     builder: (context) => AllPdfs(
-        //       UserId: globalUserId,
-        //       reactions: reaction.reactions,
-        //     ),
-        //   ),
-        // );
         Navigator.push(
           context,
           CupertinoPageRoute(
-            builder: (context) => const CommimgSoon(),
+            builder: (context) => FriendList(userId: userId),
           ),
         );
       },

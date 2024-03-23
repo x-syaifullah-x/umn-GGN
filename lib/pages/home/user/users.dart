@@ -4,21 +4,23 @@ import 'package:applovin_max/applovin_max.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:global_net/ads/applovin_ad_unit_id.dart';
 import 'package:global_net/data/user.dart';
 import 'package:global_net/pages/home/home.dart';
 import 'package:global_net/pages/home/user/user.dart';
 import 'package:global_net/widgets/header.dart';
+import 'package:nb_utils/nb_utils.dart';
 import 'package:paginate_firestore/bloc/pagination_listeners.dart';
 import 'package:paginate_firestore/paginate_firestore.dart';
 
-import '../../../ads/applovin_ad_unit_id.dart';
-
 class Users extends StatefulWidget {
   final String userId;
+  final String? title;
 
   const Users({
     Key? key,
     required this.userId,
+    this.title,
   }) : super(key: key);
 
   @override
@@ -40,7 +42,9 @@ class _Users extends State<Users> with AutomaticKeepAliveClientMixin<Users> {
     return Scaffold(
       appBar: header(
         context,
-        titleText: AppLocalizations.of(context)!.recent_users,
+        titleText: widget.title.isEmptyOrNull
+            ? AppLocalizations.of(context)!.recent_users
+            : widget.title,
         removeBackButton: false,
       ),
       body: RawScrollbar(

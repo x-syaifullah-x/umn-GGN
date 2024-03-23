@@ -14,7 +14,7 @@ import 'package:nb_utils/nb_utils.dart';
 import 'ads/applovin_ad_unit_id.dart';
 import 'app.dart';
 
-const bool useEmulator = false;
+const bool useEmulator = kDebugMode;
 const String _host = '192.168.43.89';
 const String hostEmulator = '$_host:5001';
 

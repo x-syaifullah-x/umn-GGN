@@ -16,7 +16,7 @@ import 'package:global_net/pages/home/activity_feed.dart';
 import 'package:global_net/pages/home/business_structure/business_structure.dart';
 import 'package:global_net/pages/home/new_timeline.dart';
 import 'package:global_net/pages/home/profile/profile.dart';
-import 'package:global_net/pages/home/settings.dart';
+import 'package:global_net/pages/home/settings/settings.dart';
 import 'package:global_net/pages/home/user/users.dart';
 import 'package:global_net/pages/search.dart';
 import 'package:global_net/v2/exchange_rate_new/widgets/exchange_rate_new.dart';

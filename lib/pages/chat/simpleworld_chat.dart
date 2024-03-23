@@ -391,7 +391,7 @@ class ChatScreenState extends State<ChatScreen> {
     bool isVisible = doc['visible_by.$currentUserId'];
     bool isDelete = doc['delete_by.$currentUserId'];
 
-    if (!isVisible) {
+    if (isVisible) {
       return Container();
     }
 
