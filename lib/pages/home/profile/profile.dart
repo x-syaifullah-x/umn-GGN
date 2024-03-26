@@ -12,7 +12,6 @@ import 'package:flutter_reaction_button/flutter_reaction_button.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:global_net/pages/chat/simpleworld_chat.dart';
 import 'package:global_net/pages/comming_soon_page.dart';
-import 'package:global_net/pages/coupon/coupon.dart';
 import 'package:global_net/pages/create_post/post_box.dart';
 import 'package:global_net/pages/disliked_list.dart';
 import 'package:global_net/pages/edit_profile.dart';

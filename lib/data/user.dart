@@ -57,7 +57,7 @@ class User {
         creditPoints: json?[fieldNameCreditPoints] ?? 0,
         displayName: json?[fieldNameDisplayName] ?? '',
         email: json?[fieldNameEmail] ?? '',
-        groups: json?[fieldNameGroups] ?? '',
+        groups: json?[fieldNameGroups] ?? [],
         id: json?[fieldNameId] ?? '',
         loginType: json?[fieldNameLoginType] ?? '',
         noAds: json?[fieldNameNoAds] ?? '',

@@ -5,11 +5,14 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:global_net/pages/comming_soon_page.dart';
+import 'package:global_net/pages/home/business_structure/friends.dart';
 import 'package:graphview/GraphView.dart';
 
 import 'edge_model.dart';
 import 'node_item.dart';
 import 'node_model.dart';
+import 'package:global_net/data/user.dart' as data_user;
 
 class BusinessStructure extends StatefulWidget {
   const BusinessStructure({
@@ -47,7 +50,7 @@ class _BusinessStructureState extends State<BusinessStructure> {
             color: primaryColor, //change your color here
           ),
           title: Text(
-            AppLocalizations.of(context)?.business_structure ?? "",
+            AppLocalizations.of(context)?.business_structure ?? '',
             style: TextStyle(
               color: primaryColor,
             ),
@@ -102,8 +105,15 @@ class _BusinessStructureState extends State<BusinessStructure> {
                             ..strokeWidth = 1.5
                             ..style = PaintingStyle.stroke,
                           builder: (Node node) {
+                            final model = node.key?.value as NodeModel;
                             return NodeItem(
-                              model: node.key?.value as NodeModel,
+                              key: Key(model.id),
+                              model: model,
+                              onTap: () {
+                                Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (context) => const CommimgSoon(),
+                                ));
+                              },
                               onAdd: (model) {
                                 _showFormAdd(
                                   userID: uid,
@@ -128,77 +138,104 @@ class _BusinessStructureState extends State<BusinessStructure> {
   }
 
   void _showFormAdd({required String userID, NodeModel? source}) {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text('FORM'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextFormField(
-                focusNode: focusNode,
-                controller: _textEditingController,
-                decoration: const InputDecoration(
-                  label: Text(
-                    'Enter Your Name',
-                    style: TextStyle(
-                      color: Colors.blueAccent,
-                    ),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      width: 1,
-                      color: Colors.grey,
-                    ),
-                    // borderRadius: BorderRadius.circular(50.0),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(width: 1, color: Colors.blueAccent),
-                  ),
-                ),
-              ),
-            ],
-          ),
-          actions: [
-            MaterialButton(
-              child: const Text('Cancel'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
+    Navigator.of(context)
+        .push(MaterialPageRoute(
+      builder: (context) => Friends(
+        userId: userID,
+        excludeId: source?.userId,
+      ),
+    ))
+        .then((value) {
+      if (value.toString().contains('user')) {
+        final user = value['user'] as data_user.User;
+        if (source == null) {
+          _addNode(
+            userUID: userID,
+            key: NodeModel(id: '1', userId: user.id),
+          );
+        } else {
+          _addNode(
+            userUID: userID,
+            key: source,
+            destination: NodeModel(
+              id: '${random.nextInt(1000000)}',
+              userId: user.id,
             ),
-            MaterialButton(
-              child: const Text('Ok'),
-              onPressed: () {
-                final inputName = _textEditingController.text;
-                if (inputName.isEmpty) {
-                  focusNode.requestFocus();
-                  return;
-                }
-                if (source == null) {
-                  _addNode(
-                    userUID: userID,
-                    key: NodeModel(id: 1, name: _textEditingController.text),
-                  );
-                } else {
-                  _addNode(
-                    userUID: userID,
-                    key: source,
-                    destination: NodeModel(
-                      id: random.nextInt(1000000),
-                      name: _textEditingController.text,
-                    ),
-                  );
-                }
-                _textEditingController.clear();
-                Navigator.of(context).pop();
-              },
-            )
-          ],
-        );
-      },
-    );
+          );
+        }
+      }
+    });
+    // showDialog(
+    //   context: context,
+    //   barrierDismissible: false,
+    //   builder: (context) {
+    //     return AlertDialog(
+    //       title: const Text('FORM'),
+    //       content: Column(
+    //         mainAxisSize: MainAxisSize.min,
+    //         children: [
+    //           TextFormField(
+    //             focusNode: focusNode,
+    //             controller: _textEditingController,
+    //             decoration: const InputDecoration(
+    //               label: Text(
+    //                 'Enter Your Name',
+    //                 style: TextStyle(
+    //                   color: Colors.blueAccent,
+    //                 ),
+    //               ),
+    //               enabledBorder: OutlineInputBorder(
+    //                 borderSide: BorderSide(
+    //                   width: 1,
+    //                   color: Colors.grey,
+    //                 ),
+    //                 // borderRadius: BorderRadius.circular(50.0),
+    //               ),
+    //               focusedBorder: OutlineInputBorder(
+    //                 borderSide: BorderSide(width: 1, color: Colors.blueAccent),
+    //               ),
+    //             ),
+    //           ),
+    //         ],
+    //       ),
+    //       actions: [
+    //         MaterialButton(
+    //           child: const Text('Cancel'),
+    //           onPressed: () {
+    //             Navigator.of(context).pop();
+    //           },
+    //         ),
+    //         MaterialButton(
+    //           child: const Text('Ok'),
+    //           onPressed: () {
+    //             final inputName = _textEditingController.text;
+    //             if (inputName.isEmpty) {
+    //               focusNode.requestFocus();
+    //               return;
+    //             }
+    //             if (source == null) {
+    //               _addNode(
+    //                 userUID: userID,
+    //                 key: NodeModel(id: 1, name: _textEditingController.text),
+    //               );
+    //             } else {
+    //               _addNode(
+    //                 userUID: userID,
+    //                 key: source,
+    //                 destination: NodeModel(
+    //                   id: random.nextInt(1000000),
+    //                   name: _textEditingController.text,
+    //                 ),
+    //               );
+    //             }
+    //             _textEditingController.clear();
+    //             Navigator.of(context).pop();
+    //           },
+    //         )
+    //       ],
+    //     );
+    // },
+    // );
   }
 
   void _addNode({

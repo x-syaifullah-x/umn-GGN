@@ -1,11 +1,11 @@
 class NodeModel {
+  final String id;
+  final String userId;
+
   NodeModel({
     required this.id,
-    required this.name,
+    required this.userId,
   });
-
-  final int id;
-  final String name;
 
   static const nodesKey = 'nodes';
   static const _idKey = 'key';
@@ -19,17 +19,18 @@ class NodeModel {
   }
 
   NodeModel.fromJson(Map<String, dynamic> json)
-      : id = int.tryParse('${json[_idKey]}') ?? 0,
-        name = json[_nameKey];
+      // : id = int.tryParse('${json[_idKey]}') ?? 0,
+      : id = json[_idKey],
+        userId = json[_nameKey];
 
   Map<String, dynamic> toJson() => {
         _idKey: id,
-        _nameKey: name,
+        _nameKey: userId,
       };
 
   @override
   String toString() {
-    return 'NodeModel{id: $id, name: $name}';
+    return 'NodeModel{id: $id, name: $userId}';
   }
 
   @override
@@ -38,8 +39,8 @@ class NodeModel {
       other is NodeModel &&
           runtimeType == other.runtimeType &&
           id == other.id &&
-          name == other.name;
+          userId == other.userId;
 
   @override
-  int get hashCode => id.hashCode ^ name.hashCode;
+  int get hashCode => id.hashCode ^ userId.hashCode;
 }
