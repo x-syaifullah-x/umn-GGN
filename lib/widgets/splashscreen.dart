@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:global_net/app.dart';
-import 'package:global_net/gen/assets.gen.dart';
 
 class SplashScreen extends StatefulWidget {
   static const route = '/';

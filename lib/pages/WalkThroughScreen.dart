@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:nb_utils/nb_utils.dart';
@@ -71,15 +70,20 @@ class WalkThroughScreenState extends State<WalkThroughScreen> {
                     pages[index].image!,
                     width: context.width(),
                     height: context.height() * 0.5,
-                    fit: context.isDesktop() ? BoxFit.fill : BoxFit.cover,
+                    // fit: context.isDesktop() ? BoxFit.fill : BoxFit.cover,
+                    fit: BoxFit.fill,
                   ),
                   50.height,
                   Column(
                     children: [
-                      Text(pages[index].title!,
-                              style: boldTextStyle(size: 30),
-                              textAlign: TextAlign.center)
-                          .paddingOnly(left: 30, right: 30),
+                      Text(
+                        pages[index].title!,
+                        style: boldTextStyle(size: 30),
+                        textAlign: TextAlign.center,
+                      ).paddingOnly(
+                        left: 30,
+                        right: 30,
+                      ),
                       30.height,
                       Text(
                         pages[index].subTitle!,

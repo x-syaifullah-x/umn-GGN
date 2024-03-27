@@ -1,36 +1,40 @@
 class NodeModel {
   final String id;
   final String userId;
+  final String title;
 
   NodeModel({
     required this.id,
     required this.userId,
+    required this.title,
   });
 
-  static const nodesKey = 'nodes';
-  static const _idKey = 'key';
-  static const _nameKey = 'name';
+  static const keyNodes = 'nodes';
+  static const _keyId = 'id';
+  static const _keyUserId = 'user_id';
+  static const _keyTitle = 'title';
 
-  static List<NodeModel> toList(Map<String, dynamic> data) {
-    final List value = data['nodes'] ?? [];
-    return value.map((e) {
-      return NodeModel.fromJson(e);
+  static List<NodeModel> toList(Map<String, dynamic>? json) {
+    final List values = json?[keyNodes] ?? [];
+    return values.map((value) {
+      return NodeModel.fromJson(value);
     }).toList();
   }
 
   NodeModel.fromJson(Map<String, dynamic> json)
-      // : id = int.tryParse('${json[_idKey]}') ?? 0,
-      : id = json[_idKey],
-        userId = json[_nameKey];
+      : id = json[_keyId],
+        userId = json[_keyUserId],
+        title = json[_keyTitle];
 
   Map<String, dynamic> toJson() => {
-        _idKey: id,
-        _nameKey: userId,
+        _keyId: id,
+        _keyUserId: userId,
+        _keyTitle: title,
       };
 
   @override
   String toString() {
-    return 'NodeModel{id: $id, name: $userId}';
+    return 'NodeModel{id: $id, user_id: $userId}';
   }
 
   @override

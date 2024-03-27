@@ -7,6 +7,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:global_net/pages/comming_soon_page.dart';
 import 'package:global_net/pages/home/business_structure/friends.dart';
+import 'package:global_net/pages/home/home.dart';
+import 'package:global_net/pages/home/profile/profile.dart';
 import 'package:graphview/GraphView.dart';
 
 import 'edge_model.dart';
@@ -109,10 +111,25 @@ class _BusinessStructureState extends State<BusinessStructure> {
                             return NodeItem(
                               key: Key(model.id),
                               model: model,
+                              onEdit: (model) {
+                                changeTitle(userID: uid, model: model);
+                              },
                               onTap: () {
-                                Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) => const CommimgSoon(),
-                                ));
+                                usersCollection.doc(model.userId).get().then(
+                                  (value) {
+                                    final user =
+                                        data_user.User.fromJson(value.data());
+                                    Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                        builder: (context) => Profile(
+                                          ownerId: uid,
+                                          reactions: const [],
+                                          user: user,
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                );
                               },
                               onAdd: (model) {
                                 _showFormAdd(
@@ -137,105 +154,231 @@ class _BusinessStructureState extends State<BusinessStructure> {
     return const Text('no user data');
   }
 
+  void changeTitle({
+    required String userID,
+    required NodeModel model,
+  }) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Change Title'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextFormField(
+                focusNode: focusNode,
+                controller: _textEditingController,
+                decoration: const InputDecoration(
+                  label: Text(
+                    'Enter Title',
+                    style: TextStyle(
+                      color: Colors.blueAccent,
+                    ),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      width: 1,
+                      color: Colors.grey,
+                    ),
+                    // borderRadius: BorderRadius.circular(50.0),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(width: 1, color: Colors.blueAccent),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            MaterialButton(
+              child: const Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            MaterialButton(
+              child: const Text('Ok'),
+              onPressed: () {
+                final title = _textEditingController.text;
+                if (title.isEmpty) {
+                  focusNode.requestFocus();
+                  return;
+                }
+                _getBusinessStructureDoc(userID).get().then((value) {
+                  final data = value.data();
+                  final edges = EdgeModel.toList(data);
+                  final nodes = NodeModel.toList(data);
+                  final aa = edges.map((e) {
+                    if (e.to.id == model.id) {
+                      return EdgeModel(
+                        from: e.from,
+                        to: NodeModel(
+                          id: e.to.id,
+                          title: title,
+                          userId: e.to.userId,
+                        ),
+                      );
+                    } else if (e.from.id == model.id) {
+                      return EdgeModel(
+                        to: e.to,
+                        from: NodeModel(
+                          id: e.from.id,
+                          title: title,
+                          userId: e.from.userId,
+                        ),
+                      );
+                    } else {
+                      return e;
+                    }
+                  }).toList();
+
+                  final bb = nodes.map((e) {
+                    if (e.id == model.id) {
+                      return NodeModel(
+                        id: e.id,
+                        userId: e.userId,
+                        title: title,
+                      );
+                    } else {
+                      return e;
+                    }
+                  }).toList();
+                  _getBusinessStructureDoc(userID).update({
+                    'edges': aa
+                        .map((e) => {
+                              'from': {
+                                'id': e.from.id,
+                                'title': e.from.title,
+                                'user_id': e.from.userId,
+                              },
+                              'to': {
+                                'id': e.to.id,
+                                'title': e.to.title,
+                                'user_id': e.to.userId,
+                              }
+                            })
+                        .toList(),
+                    'nodes': bb
+                        .map((e) => {
+                              'id': e.id,
+                              'title': e.title,
+                              'user_id': e.userId,
+                            })
+                        .toList(),
+                  }).then((value) => null);
+                });
+                //
+                _textEditingController.clear();
+                Navigator.of(context).pop();
+              },
+            )
+          ],
+        );
+      },
+    );
+  }
+
   void _showFormAdd({required String userID, NodeModel? source}) {
     Navigator.of(context)
-        .push(MaterialPageRoute(
-      builder: (context) => Friends(
-        userId: userID,
-        excludeId: source?.userId,
+        .push(
+      MaterialPageRoute(
+        builder: (context) => Friends(
+          userId: userID,
+          excludeId: source?.userId,
+        ),
       ),
-    ))
+    )
         .then((value) {
       if (value.toString().contains('user')) {
         final user = value['user'] as data_user.User;
-        if (source == null) {
-          _addNode(
-            userUID: userID,
-            key: NodeModel(id: '1', userId: user.id),
-          );
-        } else {
-          _addNode(
-            userUID: userID,
-            key: source,
-            destination: NodeModel(
-              id: '${random.nextInt(1000000)}',
-              userId: user.id,
-            ),
-          );
-        }
+        setTitle(userID: userID, user: user, source: source);
       }
     });
-    // showDialog(
-    //   context: context,
-    //   barrierDismissible: false,
-    //   builder: (context) {
-    //     return AlertDialog(
-    //       title: const Text('FORM'),
-    //       content: Column(
-    //         mainAxisSize: MainAxisSize.min,
-    //         children: [
-    //           TextFormField(
-    //             focusNode: focusNode,
-    //             controller: _textEditingController,
-    //             decoration: const InputDecoration(
-    //               label: Text(
-    //                 'Enter Your Name',
-    //                 style: TextStyle(
-    //                   color: Colors.blueAccent,
-    //                 ),
-    //               ),
-    //               enabledBorder: OutlineInputBorder(
-    //                 borderSide: BorderSide(
-    //                   width: 1,
-    //                   color: Colors.grey,
-    //                 ),
-    //                 // borderRadius: BorderRadius.circular(50.0),
-    //               ),
-    //               focusedBorder: OutlineInputBorder(
-    //                 borderSide: BorderSide(width: 1, color: Colors.blueAccent),
-    //               ),
-    //             ),
-    //           ),
-    //         ],
-    //       ),
-    //       actions: [
-    //         MaterialButton(
-    //           child: const Text('Cancel'),
-    //           onPressed: () {
-    //             Navigator.of(context).pop();
-    //           },
-    //         ),
-    //         MaterialButton(
-    //           child: const Text('Ok'),
-    //           onPressed: () {
-    //             final inputName = _textEditingController.text;
-    //             if (inputName.isEmpty) {
-    //               focusNode.requestFocus();
-    //               return;
-    //             }
-    //             if (source == null) {
-    //               _addNode(
-    //                 userUID: userID,
-    //                 key: NodeModel(id: 1, name: _textEditingController.text),
-    //               );
-    //             } else {
-    //               _addNode(
-    //                 userUID: userID,
-    //                 key: source,
-    //                 destination: NodeModel(
-    //                   id: random.nextInt(1000000),
-    //                   name: _textEditingController.text,
-    //                 ),
-    //               );
-    //             }
-    //             _textEditingController.clear();
-    //             Navigator.of(context).pop();
-    //           },
-    //         )
-    //       ],
-    //     );
-    // },
-    // );
+  }
+
+  void setTitle({
+    required String userID,
+    required data_user.User user,
+    NodeModel? source,
+  }) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Set Title'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextFormField(
+                focusNode: focusNode,
+                controller: _textEditingController,
+                decoration: const InputDecoration(
+                  label: Text(
+                    'Enter Title',
+                    style: TextStyle(
+                      color: Colors.blueAccent,
+                    ),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      width: 1,
+                      color: Colors.grey,
+                    ),
+                    // borderRadius: BorderRadius.circular(50.0),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(width: 1, color: Colors.blueAccent),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            MaterialButton(
+              child: const Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            MaterialButton(
+              child: const Text('Ok'),
+              onPressed: () {
+                final title = _textEditingController.text;
+                if (title.isEmpty) {
+                  focusNode.requestFocus();
+                  return;
+                }
+                if (source == null) {
+                  _addNode(
+                    userUID: userID,
+                    key: NodeModel(
+                      id: '1',
+                      userId: user.id,
+                      title: title,
+                    ),
+                  );
+                } else {
+                  _addNode(
+                    userUID: userID,
+                    key: source,
+                    destination: NodeModel(
+                      id: '${random.nextInt(1000000)}',
+                      userId: user.id,
+                      title: title,
+                    ),
+                  );
+                }
+                _textEditingController.clear();
+                Navigator.of(context).pop();
+              },
+            )
+          ],
+        );
+      },
+    );
   }
 
   void _addNode({
@@ -274,16 +417,16 @@ class _BusinessStructureState extends State<BusinessStructure> {
 
   void _updateGraphInFirebase({required String userUID}) {
     _getBusinessStructureDoc(userUID).set({
-      NodeModel.nodesKey: graph.nodes.map((node) {
+      NodeModel.keyNodes: graph.nodes.map((node) {
         final model = node.key?.value as NodeModel;
         return model.toJson();
       }).toList(),
-      EdgeModel.edgesKey: graph.edges.map((edge) {
+      EdgeModel.keyEdges: graph.edges.map((edge) {
         final from = edge.source.key?.value as NodeModel;
         final to = edge.destination.key?.value as NodeModel;
         return {
-          EdgeModel.edgeFromKey: from.toJson(),
-          EdgeModel.edgeToKey: to.toJson(),
+          EdgeModel.keyEdgesFrom: from.toJson(),
+          EdgeModel.keyEdgesTo: to.toJson(),
         };
       }).toList(),
     });

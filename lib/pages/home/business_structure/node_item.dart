@@ -13,6 +13,7 @@ class NodeItem extends StatelessWidget {
   final NodeModel model;
   final Callback? onAdd;
   final Callback? onRemove;
+  final Callback? onEdit;
   final Function? onTap;
 
   const NodeItem({
@@ -20,6 +21,7 @@ class NodeItem extends StatelessWidget {
     required this.model,
     this.onAdd,
     this.onRemove,
+    this.onEdit,
     this.onTap,
   }) : super(key: key);
 
@@ -107,6 +109,18 @@ class NodeItem extends StatelessWidget {
                         ),
                       ),
                       8.height,
+                      Padding(
+                        padding: const EdgeInsets.only(left: 8, right: 8),
+                        child: Text(
+                          model.title,
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                      8.height,
                     ],
                   ),
                 ),
@@ -120,11 +134,19 @@ class NodeItem extends StatelessWidget {
                   },
                   child: const Icon(Icons.add_circle),
                 ),
+                8.width,
                 InkWell(
                   onTap: () {
                     onRemove?.call(model);
                   },
                   child: const Icon(Icons.remove_circle),
+                ),
+                8.width,
+                InkWell(
+                  onTap: () {
+                    onEdit?.call(model);
+                  },
+                  child: const Icon(Icons.edit_document),
                 ),
               ],
             )

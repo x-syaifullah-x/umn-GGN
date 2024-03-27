@@ -9,15 +9,15 @@ class EdgeModel {
   final NodeModel from;
   final NodeModel to;
 
-  static const edgesKey = 'edges';
-  static const edgeFromKey = 'from';
-  static const edgeToKey = 'to';
+  static const keyEdges = 'edges';
+  static const keyEdgesFrom = 'from';
+  static const keyEdgesTo = 'to';
 
-  static List<EdgeModel> toList(Map<String, dynamic> json) {
-    final List edges = json[edgesKey] ?? [];
+  static List<EdgeModel> toList(Map<String, dynamic>? json) {
+    final List edges = json?[keyEdges] ?? [];
     return edges.map((edge) {
-      final from = edge[edgeFromKey];
-      final to = edge[edgeToKey];
+      final from = edge[keyEdgesFrom];
+      final to = edge[keyEdgesTo];
       return EdgeModel(
         from: NodeModel.fromJson(from),
         to: NodeModel.fromJson(to),

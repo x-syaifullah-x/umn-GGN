@@ -262,9 +262,10 @@ class AppState extends State<App> with WidgetsBindingObserver {
     final bool isSeenWalkthrough =
         prefs.getBool(SharedPreferencesKey.isSeenWalkthrough) ?? false;
     if (!isSeenWalkthrough) {
+    // if (true) {
       prefs.setBool(SharedPreferencesKey.isSeenWalkthrough, true);
       return const WalkThroughScreen();
-  }
+    }
 
     final String? userId = prefs.getString(SharedPreferencesKey.userId);
     if (userId != null) {
