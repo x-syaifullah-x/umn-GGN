@@ -1,4 +1,4 @@
-import "package:flutter/material.dart";
+import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class TermsAndConditions extends StatefulWidget {
@@ -16,11 +16,6 @@ class TermsAndConditions extends StatefulWidget {
 class TermsAndConditionsState extends State<TermsAndConditions> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   bool isLoading = true;
-
-  @override
-  void initState() {
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {

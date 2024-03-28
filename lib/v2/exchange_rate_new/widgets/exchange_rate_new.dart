@@ -234,7 +234,7 @@ class _ExchangeRate extends StatelessWidget {
   }) {
     final color = Colors.grey.withOpacity(0.6);
     return Container(
-      margin: EdgeInsets.only(
+      margin: const EdgeInsets.only(
         // left: 4,
         // right: marginRight,
         top: 8,

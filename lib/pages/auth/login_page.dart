@@ -502,6 +502,7 @@ class _LoginPageState extends State<LoginPage> {
     if (!doc.exists) {
       final DateTime date = DateTime.now();
       final dataUser = data.User(
+        currency: 'USD',
         id: userId,
         username: '',
         photoUrl: photoUrl,

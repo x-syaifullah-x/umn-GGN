@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:global_net/models/onboarding_model.dart';
 
 List<WalkThroughItemModel> getWalkThroughItems() {
@@ -16,7 +15,7 @@ List<WalkThroughItemModel> getWalkThroughItems() {
     image: isNew
         ? 'assets/images/growbusiness.png'
         : 'assets/images/walkthrough-4.png',
-    title: isNew ? 'Establish your business Network!' : 'Chat',
+    title: isNew ? 'Establish your Business Network!' : 'Chat',
     subTitle: isNew
         ? 'Global clientele and supply chain'
         : 'Chat with others and make new friends all over the world.',

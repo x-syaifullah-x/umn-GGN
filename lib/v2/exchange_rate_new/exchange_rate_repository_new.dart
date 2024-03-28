@@ -23,7 +23,7 @@ class ExchangeRateRepositoryNew {
   }) async =>
       http.get(
         Uri.https(
-          "exchangerate-api.p.rapidapi.com",
+          'exchangerate-api.p.rapidapi.com',
           path,
           queryParameters,
         ),

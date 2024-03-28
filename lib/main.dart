@@ -10,6 +10,7 @@ import 'package:global_net/firebase_options.dart';
 import 'package:global_net/v2/news/presentation/pages/news.dart';
 import 'package:global_net/widgets/splashscreen.dart';
 import 'package:nb_utils/nb_utils.dart';
+import 'package:streaming_shared_preferences/streaming_shared_preferences.dart';
 
 import 'ads/applovin_ad_unit_id.dart';
 import 'app.dart';
@@ -18,8 +19,11 @@ const bool useEmulator = kDebugMode;
 const String _host = '192.168.43.89';
 const String hostEmulator = '$_host:5001';
 
+late StreamingSharedPreferences streamingSharedPreferences;
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  streamingSharedPreferences = await StreamingSharedPreferences.instance;
   final savedThemeMode = await AdaptiveTheme.getThemeMode();
 
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);

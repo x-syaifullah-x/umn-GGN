@@ -22,6 +22,8 @@ import 'package:global_net/pages/liked_list.dart';
 import 'package:global_net/pages/ppviewed_list.dart';
 import 'package:global_net/pages/wallet/wallet.dart';
 import 'package:global_net/story/add_story.dart';
+import 'package:global_net/v2/exchange_rate_new/exchange_rate_repository_new.dart';
+import 'package:global_net/v2/exchange_rates/data/repository/response/exchange_rate_response.dart';
 import 'package:global_net/widgets/header.dart';
 import 'package:global_net/widgets/multi_manager/flick_multi_manager.dart';
 import 'package:global_net/widgets/progress.dart';
@@ -814,13 +816,74 @@ class _ProfileState extends State<Profile2> {
                           const SizedBox(
                             height: 4,
                           ),
-                          Text(
-                            'Credits ${user.creditPoints} = USD \$${(user.creditPoints / 100.00).toStringAsFixed(2)}',
-                            style: GoogleFonts.portLligatSans(
-                              textStyle:
-                                  Theme.of(context).textTheme.headlineMedium,
-                              fontSize: 18,
-                            ),
+                          // Text(
+                          //   'Credits ${user.creditPoints} = USD \$${(user.creditPoints / 100.00).toStringAsFixed(2)}',
+                          //   style: GoogleFonts.portLligatSans(
+                          //     textStyle:
+                          //         Theme.of(context).textTheme.headlineMedium,
+                          //     fontSize: 18,
+                          //   ),
+                          // ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              user.currency == 'USD'
+                                  ? Text(
+                                      'Credits ${user.creditPoints} = USD \$${(user.creditPoints / 100.00).toStringAsFixed(2)}',
+                                      style: GoogleFonts.portLligatSans(
+                                        textStyle: Theme.of(context)
+                                            .textTheme
+                                            .headlineMedium,
+                                        fontSize: 18,
+                                      ))
+                                  : FutureBuilder<ExchangeRateResponse>(
+                                      future: ExchangeRateRepositoryNew.instance
+                                          .latest('USD'),
+                                      builder: (context, snapshot) {
+                                        final data = snapshot.data;
+                                        if (data == null) {
+                                          return const CupertinoActivityIndicator();
+                                        }
+                                        final rate = data.rates.firstWhere(
+                                            (element) => element.name == 'CNY');
+                                        final amount = (rate.value *
+                                                user.creditPoints /
+                                                100.00)
+                                            .toDouble();
+                                        return Text(
+                                          'Credits ${user.creditPoints} = RMB ${amount.toStringAsFixed(2)}',
+                                          style: GoogleFonts.portLligatSans(
+                                            textStyle: Theme.of(context)
+                                                .textTheme
+                                                .headlineMedium,
+                                            fontSize: 18,
+                                          ),
+                                        );
+                                      },
+                                    ),
+                              InkWell(
+                                onTap: () async {
+                                  changeCurrency(context, user: user);
+                                },
+                                child: Row(
+                                  children: [
+                                    Text(
+                                      'Change Currency',
+                                      style: GoogleFonts.portLligatSans(
+                                        textStyle: Theme.of(context)
+                                            .textTheme
+                                            .headlineMedium,
+                                        fontSize: 16,
+                                      ),
+                                    ),
+                                    4.width,
+                                    const Icon(
+                                      Icons.swap_vert_circle_sharp,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
                           ),
                           8.height,
                           Center(
