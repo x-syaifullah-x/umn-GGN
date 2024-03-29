@@ -32,7 +32,7 @@ class _ChangeCurrencyState extends State<ChangeCurrency> {
         appBar: AppBar(
           backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
           title: Text(
-            'Change Currency',
+            'Currency Exchange',
             style: GoogleFonts.portLligatSans(
               textStyle: Theme.of(context).textTheme.headlineMedium,
             ),
@@ -53,7 +53,7 @@ class _ChangeCurrencyState extends State<ChangeCurrency> {
                       ),
                       4.height,
                       const Text(
-                        'This feature will allow you to convert your credits to and from \$USD and/or CN¥',
+                        'This feature will allow you to convert your credits to and from USD\$ and/or CN¥',
                         style: textStyle,
                       ),
                       // user.currency == 'USD'
@@ -107,10 +107,6 @@ class _ChangeCurrencyState extends State<ChangeCurrency> {
                           ],
                         ),
                       ),
-                      // const Text(
-                      //   'For more information see our terms and conditions.',
-                      //   style: textStyle,
-                      // ),
                       16.height,
                       const Text(
                         'C.E.O',
@@ -127,7 +123,13 @@ class _ChangeCurrencyState extends State<ChangeCurrency> {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      8.height,
+                      4.height,
+                      Image.asset(
+                        'assets/images/laceyyang sin-1.png',
+                        fit: BoxFit.fill,
+                        width: 100,
+                        height: 50,
+                      ),
                       Center(
                         child: SizedBox(
                           width: MediaQuery.of(context).size.width * .8,

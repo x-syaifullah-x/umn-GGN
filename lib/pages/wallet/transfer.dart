@@ -262,22 +262,43 @@ class _TransferState extends State<Transfer> {
                                 _errorMessageInputAmount =
                                     'Oops! Not enough credit balance.';
                               } else {
-                                await firestore
-                                    .collection('wallets')
-                                    .doc(userId)
-                                    .collection('transactions')
-                                    .add({
-                                  transactionsFieldType: 'transfer',
-                                  transactionsFieldAmount: amount,
-                                  transactionsFieldSender: userId,
-                                  transactionsFieldReceiver: inputWalletId,
-                                  transactionsFieldCreateAt:
-                                      DateTime.now().millisecondsSinceEpoch
+                                usersCollection
+                                    .doc(inputWalletId)
+                                    .get()
+                                    .then((value) async {
+                                  if (value.exists) {
+                                    final receiver =
+                                        User.fromJson(value.data());
+                                    if (receiver.currency == user.currency) {
+                                      await firestore
+                                          .collection('wallets')
+                                          .doc(userId)
+                                          .collection('transactions')
+                                          .add({
+                                        transactionsFieldType: 'transfer',
+                                        transactionsFieldAmount: amount,
+                                        transactionsFieldSender: userId,
+                                        transactionsFieldReceiver:
+                                            inputWalletId,
+                                        transactionsFieldCreateAt:
+                                            DateTime.now()
+                                                .millisecondsSinceEpoch
+                                      });
+                                      toast(
+                                        'Transfer successful',
+                                        length: Toast.LENGTH_LONG,
+                                      );
+                                      if (mounted) {
+                                        Navigator.of(context).pop();
+                                      }
+                                    } else {
+                                      toast(
+                                        'Sorry, you can\'t send to users with different currencies',
+                                        length: Toast.LENGTH_LONG,
+                                      );
+                                    }
+                                  }
                                 });
-                                toast('Transfer successful');
-                                if (mounted) {
-                                  Navigator.of(context).pop();
-                                }
                               }
                             } catch (e) {
                               toast('$e');

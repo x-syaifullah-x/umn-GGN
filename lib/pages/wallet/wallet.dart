@@ -408,7 +408,7 @@ class _WalletState extends State<Wallet> {
                     ? Icons.currency_exchange
                     : Icons.currency_yen_outlined,
               ),
-              title: 'Change Currency',
+              title: 'Currency Exchange',
               onItemClick: () {
                 changeCurrency(context, user: user);
               }),
