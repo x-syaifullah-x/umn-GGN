@@ -1,24 +1,26 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:global_net/pages/chat/lesson_search_page.dart';
 import 'package:global_net/pages/chat/search_page.dart';
 import 'package:global_net/pages/home/home.dart';
 import 'package:global_net/services/database_service.dart';
 import 'package:global_net/widgets/group_tile.dart';
+import 'package:global_net/widgets/lesson_tile.dart';
 import 'package:global_net/widgets/simple_world_widgets.dart';
 
-class GroupChatList extends StatefulWidget {
+class LessonChatList extends StatefulWidget {
   final String userId;
-  const GroupChatList({
+  const LessonChatList({
     Key? key,
     required this.userId,
   }) : super(key: key);
 
   @override
-  State<GroupChatList> createState() => _GroupChatListState();
+  State<LessonChatList> createState() => _LessonChatListState();
 }
 
-class _GroupChatListState extends State<GroupChatList> {
+class _LessonChatListState extends State<LessonChatList> {
   String? _groupName;
   final String _userName = globalName!;
   Stream? _groups;
@@ -54,7 +56,7 @@ class _GroupChatListState extends State<GroupChatList> {
                 )),
             const SizedBox(height: 20.0),
             const Text(
-                "You've not joined any group, tap on the 'add' icon to create a group or search for groups by tapping on the search button."),
+                "You've not joined any lesson, tap on the 'add' icon to create a lesson or search for lessons by tapping on the search button."),
           ],
         ));
   }
@@ -65,11 +67,15 @@ class _GroupChatListState extends State<GroupChatList> {
       builder: (context, AsyncSnapshot<dynamic> snapshot) {
         if (snapshot.hasData) {
           if (snapshot.data != null) {
-            if (snapshot.data['groups'].length != 0) {
-              return _groupsListnew(
-                snapshot.data['groups'],
-              );
-            } else {
+            try {
+              if (snapshot.data['lessons'].length != 0) {
+                return _groupsListnew(
+                  snapshot.data['lessons'],
+                );
+              } else {
+                return noGroupWidget();
+              }
+            } catch (e) {
               return noGroupWidget();
             }
           } else {
@@ -84,7 +90,7 @@ class _GroupChatListState extends State<GroupChatList> {
 
   Widget _groupsListnew(data) {
     return StreamBuilder(
-      stream: groupsCollection
+      stream: lessonsCollection
           .where('members', arrayContains: '${globalUserId}_${globalName!}')
           .snapshots(),
       builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
@@ -99,13 +105,12 @@ class _GroupChatListState extends State<GroupChatList> {
                       itemCount: snapshot.data!.docs.length,
                       itemBuilder: (context, int index) {
                         List messenger = snapshot.data!.docs;
-
-                        return GroupTile(
-                          groupIcon: messenger[index]['groupIcon'],
+                        return LessonTile(
+                          groupIcon: messenger[index]['lessonIcon'],
                           admin: messenger[index]['admin'],
                           userName: globalName!,
-                          groupId: messenger[index]['groupId'],
-                          groupName: messenger[index]['groupName'],
+                          groupId: messenger[index]['lessonId'],
+                          groupName: messenger[index]['lessonName'],
                           members: messenger[index]['members'],
                         );
                       },
@@ -151,13 +156,13 @@ class _GroupChatListState extends State<GroupChatList> {
         if (_groupName != null) {
           Navigator.of(context, rootNavigator: true).pop('dialog');
           DatabaseService(uid: widget.userId)
-              .createGroup(_userName, _groupName!);
+              .createLesson(_userName, _groupName!);
         }
       },
     );
 
     AlertDialog alert = AlertDialog(
-      title: const Text("Create a group"),
+      title: const Text("Create a lesson"),
       content: TextField(
           onChanged: (val) {
             _groupName = val;
@@ -193,7 +198,7 @@ class _GroupChatListState extends State<GroupChatList> {
                   color: Theme.of(context).iconTheme.color, size: 25.0),
               onPressed: () {
                 Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => SearchPage(
+                    builder: (context) => LessonSearchPage(
                           userId: widget.userId,
                         )));
               })
@@ -204,14 +209,10 @@ class _GroupChatListState extends State<GroupChatList> {
         onPressed: () {
           _popupDialog(context);
         },
+        elevation: 0.0,
         child: Container(
           width: 60,
           height: 60,
-          child: const Icon(
-            Icons.add,
-            size: 40,
-            color: Colors.white,
-          ),
           decoration: BoxDecoration(
             shape: BoxShape.circle,
             gradient: LinearGradient(
@@ -220,8 +221,12 @@ class _GroupChatListState extends State<GroupChatList> {
               colors: [Colors.red.shade500, Colors.red.shade900],
             ),
           ),
+          child: const Icon(
+            Icons.add,
+            size: 40,
+            color: Colors.white,
+          ),
         ),
-        elevation: 0.0,
       ),
     );
   }

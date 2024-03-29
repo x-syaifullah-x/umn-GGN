@@ -12,8 +12,11 @@ import 'package:global_net/ads/applovin_ad_unit_id.dart';
 import 'package:global_net/data/reaction_data.dart' as reaction;
 import 'package:global_net/data/user.dart' as data;
 import 'package:global_net/models/user.dart';
+import 'package:global_net/pages/chat/simpleworld_chat_main.dart';
 import 'package:global_net/pages/home/activity_feed.dart';
 import 'package:global_net/pages/home/business_structure/business_structure.dart';
+import 'package:global_net/pages/home/chat.dart';
+import 'package:global_net/pages/home/groups.dart';
 import 'package:global_net/pages/home/new_timeline.dart';
 import 'package:global_net/pages/home/profile/profile.dart';
 import 'package:global_net/pages/home/settings/settings.dart';
@@ -50,6 +53,7 @@ final timelineCollection = firestore.collection('timeline');
 final messagesCollection = firestore.collection('messages');
 final messengerCollection = firestore.collection('messenger');
 final groupsCollection = firestore.collection('groups');
+final lessonsCollection = firestore.collection('lessons');
 final storiesCollection = firestore.collection('stories');
 final reportsCollection = firestore.collection('reports');
 
@@ -463,6 +467,24 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                   Navigator.of(context).push(
                     MaterialPageRoute(builder: (context) {
                       return const News();
+                    }),
+                  );
+                  return;
+                } else if (AppLocalizations.of(context)!.chat == item) {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(builder: (context) {
+                      return Chate(
+                        userId: widget.userId,
+                      );
+                    }),
+                  );
+                  return;
+                } else if (AppLocalizations.of(context)!.group == item) {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(builder: (context) {
+                      return SimpleWorldChat(
+                        userId: widget.userId,
+                      );
                     }),
                   );
                   return;

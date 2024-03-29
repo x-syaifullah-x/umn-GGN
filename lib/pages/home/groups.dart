@@ -1,24 +1,22 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:global_net/pages/chat/group_chat_list.dart';
-import 'package:global_net/pages/menu/all_stories.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:global_net/pages/comming_soon_page.dart';
+import 'package:google_fonts/google_fonts.dart';
 
-import 'lesson_chat_list.dart';
-
-class SimpleWorldChat extends StatefulWidget {
+class Groups extends StatefulWidget {
   final String userId;
-
-  const SimpleWorldChat({
+  const Groups({
     Key? key,
     required this.userId,
   }) : super(key: key);
 
   @override
-  SimpleWorldChatState createState() => SimpleWorldChatState();
+  State<Groups> createState() => _GroupsState();
 }
 
-class SimpleWorldChatState extends State<SimpleWorldChat>
-    with SingleTickerProviderStateMixin {
+class _GroupsState extends State<Groups> with SingleTickerProviderStateMixin {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   final PageController pageController = PageController(initialPage: 0);
@@ -32,7 +30,7 @@ class SimpleWorldChatState extends State<SimpleWorldChat>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(vsync: this, length: 3);
+    _tabController = TabController(vsync: this, length: 2);
     FirebaseMessaging.instance.getInitialMessage().then((message) {});
     _tabController.addListener(_handleTabSelection);
   }
@@ -49,42 +47,22 @@ class SimpleWorldChatState extends State<SimpleWorldChat>
 
   @override
   Widget build(BuildContext context) {
-    return _buildAuthScreen();
-  }
-
-  AnimatedTheme _buildAuthScreen() {
-    return AnimatedTheme(
-      duration: const Duration(milliseconds: 300),
-      data: Theme.of(context),
+    return SafeArea(
       child: Scaffold(
-        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-        key: _scaffoldKey,
         appBar: AppBar(
           backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
-          automaticallyImplyLeading: true,
           shape: Border(
             bottom: BorderSide(
               color: Theme.of(context).shadowColor,
               width: 1.0,
             ),
           ),
-          title: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              Row(
-                children: <Widget>[
-                  Text(
-                    'Chats',
-                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 20,
-                        ),
-                  ),
-                ],
-              ),
-            ],
+          title: Text(
+            AppLocalizations.of(context)?.group ?? '',
+            style: GoogleFonts.portLligatSans(
+              textStyle: Theme.of(context).textTheme.headlineMedium,
+            ),
           ),
-          elevation: 0.0,
           bottom: TabBar(
             indicator: UnderlineTabIndicator(
               borderSide: BorderSide(width: 4.0, color: Colors.red.shade800),
@@ -95,13 +73,10 @@ class SimpleWorldChatState extends State<SimpleWorldChat>
             labelColor: Theme.of(context).tabBarTheme.labelColor,
             tabs: const [
               Tab(
-                text: 'GROUPS',
+                text: 'Chat With Groups',
               ),
               Tab(
-                text: 'LESSONS',
-              ),
-              Tab(
-                text: 'STORIES',
+                text: 'Groups With Lossons',
               ),
             ],
           ),
@@ -109,15 +84,8 @@ class SimpleWorldChatState extends State<SimpleWorldChat>
         body: TabBarView(
           controller: _tabController,
           children: [
-            GroupChatList(
-              userId: widget.userId,
-            ),
-            LessonChatList(
-              userId: widget.userId,
-            ),
-            AllStories(
-              showappbar: false,
-            ),
+            GroupChatList(userId: widget.userId),
+            const CommimgSoon(),
           ],
         ),
       ),
