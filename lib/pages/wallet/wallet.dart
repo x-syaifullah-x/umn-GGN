@@ -1,11 +1,9 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:global_net/data/user.dart';
-import 'package:global_net/main.dart';
 import 'package:global_net/pages/coupon/coupon.dart';
 import 'package:global_net/pages/home/home.dart';
 import 'package:global_net/pages/wallet/buy_credits.dart';
@@ -17,10 +15,6 @@ import 'package:global_net/v2/exchange_rates/data/repository/response/exchange_r
 import 'package:global_net/widgets/simple_world_widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:nb_utils/nb_utils.dart';
-import 'package:streaming_shared_preferences/streaming_shared_preferences.dart';
-import 'package:url_launcher/url_launcher.dart';
-
-import '../menu/terms_and_conditions.dart';
 
 class Wallet extends StatefulWidget {
   final User user;
@@ -396,7 +390,7 @@ class _WalletState extends State<Wallet> {
               }),
           _menuItemWidget(
               icon: const Icon(
-                Icons.currency_exchange_rounded,
+                Icons.shopping_bag,
               ),
               title: 'Coupon',
               onItemClick: () {
@@ -407,6 +401,16 @@ class _WalletState extends State<Wallet> {
                     },
                   ),
                 );
+              }),
+          _menuItemWidget(
+              icon: Icon(
+                user.currency == 'USD'
+                    ? Icons.currency_exchange
+                    : Icons.currency_yen_outlined,
+              ),
+              title: 'Change Currency',
+              onItemClick: () {
+                changeCurrency(context, user: user);
               }),
         ],
       ),
@@ -536,26 +540,26 @@ class _WalletState extends State<Wallet> {
                           );
                         },
                       ),
-                InkWell(
-                  onTap: () async {
-                    changeCurrency(context, user: user);
-                  },
-                  child: Row(
-                    children: [
-                      Text(
-                        'Change Currency',
-                        style: GoogleFonts.portLligatSans(
-                          textStyle: Theme.of(context).textTheme.headlineMedium,
-                          fontSize: 16,
-                        ),
-                      ),
-                      4.width,
-                      const Icon(
-                        Icons.swap_vert_circle_sharp,
-                      ),
-                    ],
-                  ),
-                ),
+                // InkWell(
+                //   onTap: () async {
+                //     changeCurrency(context, user: user);
+                //   },
+                //   child: Row(
+                //     children: [
+                //       Text(
+                //         'Change Currency',
+                //         style: GoogleFonts.portLligatSans(
+                //           textStyle: Theme.of(context).textTheme.headlineMedium,
+                //           fontSize: 16,
+                //         ),
+                //       ),
+                //       4.width,
+                //       const Icon(
+                //         Icons.swap_vert_circle_sharp,
+                //       ),
+                //     ],
+                //   ),
+                // ),
               ],
             )
           ],

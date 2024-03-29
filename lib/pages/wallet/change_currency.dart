@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:global_net/data/user.dart';
 import 'package:global_net/pages/home/home.dart';
@@ -51,25 +52,65 @@ class _ChangeCurrencyState extends State<ChangeCurrency> {
                         style: textStyle,
                       ),
                       4.height,
-                      user.currency == 'USD'
-                          ? const Text(
-                              'This feature will allow you to convert your US dollars into China\'s RMB.',
-                              style: textStyle,
-                            )
-                          : const Text(
-                              'This feature will allow you to convert your China\'s RMB into US dollars.',
-                              style: textStyle,
-                            ),
+                      const Text(
+                        'This feature will allow you to convert your credits to and from \$USD and/or CN¥',
+                        style: textStyle,
+                      ),
+                      // user.currency == 'USD'
+                      //     ? const Text(
+                      //         'This feature will allow you to convert your US dollars into China\'s RMB.',
+                      //         style: textStyle,
+                      //       )
+                      //     : const Text(
+                      //         'This feature will allow you to convert your China\'s RMB into US dollars.',
+                      //         style: textStyle,
+                      //       ),
                       4.height,
                       const Text(
                         'Pay your Chinese suppliers/employees directly with no hidden international fees.',
                         style: textStyle,
                       ),
                       4.height,
-                      const Text(
-                        'For more information see our terms and conditions.',
-                        style: textStyle,
+                      RichText(
+                        text: TextSpan(
+                          children: [
+                            const TextSpan(
+                              text: 'For more information see our ',
+                              style: TextStyle(
+                                color: Colors.black,
+                              ),
+                            ),
+                            TextSpan(
+                              text: 'terms and conditions.',
+                              style: const TextStyle(
+                                color: Colors.red,
+                              ),
+                              recognizer: TapGestureRecognizer()
+                                ..onTap = () {
+                                  const url =
+                                      'https://globalgnet.net/home/terms-and-conditions';
+                                  if (kIsWeb) {
+                                    launchUrl(Uri.parse(url));
+                                  } else {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            const TermsAndConditions(
+                                          url: url,
+                                        ),
+                                      ),
+                                    );
+                                  }
+                                },
+                            )
+                          ],
+                        ),
                       ),
+                      // const Text(
+                      //   'For more information see our terms and conditions.',
+                      //   style: textStyle,
+                      // ),
                       16.height,
                       const Text(
                         'C.E.O',
@@ -135,27 +176,14 @@ class _ChangeCurrencyState extends State<ChangeCurrency> {
                   ],
                 ),
               ),
-              Center(
-                child: TextButton(
-                  onPressed: () {
-                    const url =
-                        'https://globalgnet.net/home/terms-and-conditions';
-                    if (kIsWeb) {
-                      launchUrl(Uri.parse(url));
-                    } else {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const TermsAndConditions(
-                            url: url,
-                          ),
-                        ),
-                      );
-                    }
-                  },
-                  child: const Text('Terms & Conditions'),
-                ),
-              ),
+              // Center(
+              //   child: TextButton(
+              //     onPressed: () {
+
+              //     },
+              //     child: const Text('Terms & Conditions'),
+              //   ),
+              // ),
             ],
           ),
         ),

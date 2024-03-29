@@ -861,28 +861,28 @@ class _ProfileState extends State<Profile2> {
                                         );
                                       },
                                     ),
-                              InkWell(
-                                onTap: () async {
-                                  changeCurrency(context, user: user);
-                                },
-                                child: Row(
-                                  children: [
-                                    Text(
-                                      'Change Currency',
-                                      style: GoogleFonts.portLligatSans(
-                                        textStyle: Theme.of(context)
-                                            .textTheme
-                                            .headlineMedium,
-                                        fontSize: 16,
-                                      ),
-                                    ),
-                                    4.width,
-                                    const Icon(
-                                      Icons.swap_vert_circle_sharp,
-                                    ),
-                                  ],
-                                ),
-                              ),
+                              // InkWell(
+                              //   onTap: () async {
+                              //     changeCurrency(context, user: user);
+                              //   },
+                              //   child: Row(
+                              //     children: [
+                              //       Text(
+                              //         'Change Currency',
+                              //         style: GoogleFonts.portLligatSans(
+                              //           textStyle: Theme.of(context)
+                              //               .textTheme
+                              //               .headlineMedium,
+                              //           fontSize: 16,
+                              //         ),
+                              //       ),
+                              //       4.width,
+                              //       const Icon(
+                              //         Icons.swap_vert_circle_sharp,
+                              //       ),
+                              //     ],
+                              //   ),
+                              // ),
                             ],
                           ),
                           8.height,
@@ -900,7 +900,7 @@ class _ProfileState extends State<Profile2> {
                                     ),
                                   );
                                 },
-                                child: const Text('Buy Credits'),
+                                child: const Text('Global Net Credits'),
                               ),
                             ),
                           )
