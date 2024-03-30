@@ -7,7 +7,6 @@ import 'package:ionicons/ionicons.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:global_net/config/size_config.dart';
 import 'package:global_net/services/database_service.dart';
-import 'package:global_net/widgets/groupchatdrawer.dart';
 import 'package:global_net/widgets/message_tile.dart';
 
 class LessonChatPage extends StatefulWidget {
@@ -29,7 +28,7 @@ class LessonChatPage extends StatefulWidget {
       : super(key: key);
 
   @override
-  _LessonChatPageState createState() => _LessonChatPageState();
+  State<LessonChatPage> createState() => _LessonChatPageState();
 }
 
 class _LessonChatPageState extends State<LessonChatPage> {
@@ -259,7 +258,7 @@ class _LessonChatPageState extends State<LessonChatPage> {
             MdiIcons.chevronLeft,
           ),
         ),
-        leadingWidth: 15,
+        leadingWidth: 25,
         title: Row(
           children: [
             Container(

@@ -324,7 +324,7 @@ class _TransferState extends State<Transfer> {
                       height: 300,
                       width: 300,
                       child: Image.asset(
-                        'assets/images/bg_coupon_1.png',
+                        'assets/images/bg_coupon_1.webp',
                         fit: BoxFit.contain,
                       ),
                     ),

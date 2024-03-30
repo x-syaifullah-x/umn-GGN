@@ -193,7 +193,7 @@ class _CouponCreateState extends State<CouponCreate> {
                       height: 300,
                       width: 300,
                       child: Image.asset(
-                        'assets/images/bg_coupon_2.png',
+                        'assets/images/bg_coupon_2.webp',
                         fit: BoxFit.fill,
                       ),
                     ),

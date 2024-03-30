@@ -55,8 +55,7 @@ class _SplashScreenState extends State<SplashScreen>
           height: double.infinity,
           width: double.infinity,
           child: Image.asset(
-            // Assets.images.splash1.path,
-            'assets/images/splash2.png',
+            'assets/images/splash2.webp',
             fit: BoxFit.fill,
           ),
         ),

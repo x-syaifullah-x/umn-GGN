@@ -143,7 +143,7 @@ class _BuyCreditsState extends State<BuyCredits> {
                                             height: 280,
                                             width: 300,
                                             child: Image.asset(
-                                              'assets/images/buy_credit_1.png',
+                                              'assets/images/buy_credit_1.webp',
                                               fit: BoxFit.contain,
                                             ),
                                           )

@@ -493,15 +493,15 @@ class ChatScreenState extends State<ChatScreen> {
                     )
                   //Sticker
                   : Container(
+                      margin: EdgeInsets.only(
+                          bottom: isLastMsgRight(index) ? 20.0 : 10.0,
+                          right: 10.0),
                       child: Image.asset(
                         "assets/images/${doc['content']}.gif",
                         width: 100.0,
                         height: 100.0,
                         fit: BoxFit.cover,
                       ),
-                      margin: EdgeInsets.only(
-                          bottom: isLastMsgRight(index) ? 20.0 : 10.0,
-                          right: 10.0),
                     ),
         ],
       );
@@ -513,6 +513,7 @@ class ChatScreenState extends State<ChatScreen> {
         margin: Spacing.only(top: 6, bottom: 4).add(
             EdgeInsets.only(left: MediaQuery.of(context).size.width * 0.02)),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Row(
               children: <Widget>[
@@ -639,7 +640,6 @@ class ChatScreenState extends State<ChatScreen> {
                   )
                 : Container()
           ],
-          crossAxisAlignment: CrossAxisAlignment.start,
         ),
       );
     }
@@ -803,12 +803,15 @@ class ChatScreenState extends State<ChatScreen> {
     if (contentMsg != '') {
       textEditingController.clear();
       firestore.collection('tmp').add({
-        'doc': chatId,
-        'collection': chatId,
-        'idFrom': currentUserId,
-        'idTo': widget.receiverId,
-        'content': contentMsg,
-        'type': type,
+        'type': 'send_message',
+        'args': {
+          'doc': chatId,
+          'collection': chatId,
+          'idFrom': currentUserId,
+          'idTo': widget.receiverId,
+          'content': contentMsg,
+          'type': type,
+        }
       });
 
       // var docRef = messagesCollection

@@ -2,6 +2,8 @@ import 'package:badges/badges.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:global_net/pages/chat/group_chat_page.dart';
+import 'package:global_net/pages/home/chat.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:nb_utils/nb_utils.dart';
 import 'package:global_net/pages/chat/simpleworld_chat_main.dart';
@@ -65,7 +67,7 @@ class MessagesState extends State<MessagesCount> {
                     context,
                     MaterialPageRoute(
                       builder: (context) =>
-                          SimpleWorldChat(userId: widget.currentUserId),
+                          ChatGLS(userId: widget.currentUserId),
                     ),
                   );
                 },
@@ -79,8 +81,7 @@ class MessagesState extends State<MessagesCount> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) =>
-                      SimpleWorldChat(userId: widget.currentUserId),
+                  builder: (context) => Chats(userId: widget.currentUserId),
                 ),
               );
             },

@@ -14,7 +14,7 @@ class LessonSearchPage extends StatefulWidget {
 
   const LessonSearchPage({Key? key, this.userId}) : super(key: key);
   @override
-  _LessonSearchPageState createState() => _LessonSearchPageState();
+  State<LessonSearchPage> createState() => _LessonSearchPageState();
 }
 
 class _LessonSearchPageState extends State<LessonSearchPage> {

@@ -135,7 +135,7 @@ class _ChangeCurrencyState extends State<ChangeCurrency> {
                           width: MediaQuery.of(context).size.width * .8,
                           height: MediaQuery.of(context).size.height * .55,
                           child: Image.asset(
-                            'assets/images/RMBgirlsr.png',
+                            'assets/images/RMBgirlsr.webp',
                             fit: BoxFit.fill,
                           ),
                         ),

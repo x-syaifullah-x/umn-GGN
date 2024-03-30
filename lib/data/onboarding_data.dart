@@ -4,8 +4,9 @@ List<WalkThroughItemModel> getWalkThroughItems() {
   List<WalkThroughItemModel> walkThroughItems = [];
   const isNew = true;
   walkThroughItems.add(WalkThroughItemModel(
-    image:
-        isNew ? 'assets/images/network.png' : 'assets/images/walkthrough-3.png',
+    image: isNew
+        ? 'assets/images/network.webp'
+        : 'assets/images/walkthrough-3.png',
     title: isNew ? 'Global Girls Network!' : 'Upload Photos & Videos',
     subTitle: isNew
         ? 'Businesses, Suppliers, Consumers'
@@ -13,7 +14,7 @@ List<WalkThroughItemModel> getWalkThroughItems() {
   ));
   walkThroughItems.add(WalkThroughItemModel(
     image: isNew
-        ? 'assets/images/growbusiness.png'
+        ? 'assets/images/growbusiness.webp'
         : 'assets/images/walkthrough-4.png',
     title: isNew ? 'Establish your Business Network!' : 'Chat',
     subTitle: isNew
@@ -22,7 +23,7 @@ List<WalkThroughItemModel> getWalkThroughItems() {
   ));
   walkThroughItems.add(WalkThroughItemModel(
     image: isNew
-        ? 'assets/images/togeters.png'
+        ? 'assets/images/togeters.webp'
         : 'assets/images/walkthrough-3.png',
     title: isNew ? 'Global Girls Network!' : 'Comment & React to Posts',
     subTitle: isNew
@@ -31,7 +32,7 @@ List<WalkThroughItemModel> getWalkThroughItems() {
   ));
   walkThroughItems.add(WalkThroughItemModel(
     image:
-        isNew ? 'assets/images/elevat.png' : 'assets/images/walkthrough-4.png',
+        isNew ? 'assets/images/elevat.webp' : 'assets/images/walkthrough-4.png',
     title: isNew ? 'Global Girls Network!' : 'Credit System',
     subTitle: isNew
         ? 'Create your Global Alliances'

@@ -5,20 +5,19 @@ import 'package:global_net/pages/menu/all_stories.dart';
 
 import 'lesson_chat_list.dart';
 
-class SimpleWorldChat extends StatefulWidget {
+class ChatGLS extends StatefulWidget {
   final String userId;
 
-  const SimpleWorldChat({
+  const ChatGLS({
     Key? key,
     required this.userId,
   }) : super(key: key);
 
   @override
-  SimpleWorldChatState createState() => SimpleWorldChatState();
+  ChatGLSState createState() => ChatGLSState();
 }
 
-class SimpleWorldChatState extends State<SimpleWorldChat>
-    with SingleTickerProviderStateMixin {
+class ChatGLSState extends State<ChatGLS> with SingleTickerProviderStateMixin {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   final PageController pageController = PageController(initialPage: 0);
@@ -74,7 +73,7 @@ class SimpleWorldChatState extends State<SimpleWorldChat>
               Row(
                 children: <Widget>[
                   Text(
-                    'Chats',
+                    'Groups / Lessons',
                     style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                           fontWeight: FontWeight.bold,
                           fontSize: 20,

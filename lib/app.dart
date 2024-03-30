@@ -8,7 +8,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:global_net/config/palette.dart';
 import 'package:global_net/l10n/l10n.dart';
-import 'package:global_net/pages/WalkThroughScreen.dart';
+import 'package:global_net/pages/walk_through_screen.dart';
 import 'package:global_net/pages/auth/login_page.dart';
 import 'package:global_net/pages/home/home.dart';
 import 'package:global_net/provider/locale_provider.dart';

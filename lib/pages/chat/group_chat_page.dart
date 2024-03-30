@@ -258,7 +258,7 @@ class _ChatPageState extends State<ChatPage> {
             MdiIcons.chevronLeft,
           ),
         ),
-        leadingWidth: 15,
+        leadingWidth: 25,
         title: Row(
           children: [
             Container(

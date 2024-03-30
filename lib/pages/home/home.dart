@@ -473,7 +473,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                 } else if (AppLocalizations.of(context)!.chat == item) {
                   Navigator.of(context).push(
                     MaterialPageRoute(builder: (context) {
-                      return Chate(
+                      return Chats(
                         userId: widget.userId,
                       );
                     }),
@@ -482,7 +482,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                 } else if (AppLocalizations.of(context)!.group == item) {
                   Navigator.of(context).push(
                     MaterialPageRoute(builder: (context) {
-                      return SimpleWorldChat(
+                      return ChatGLS(
                         userId: widget.userId,
                       );
                     }),
