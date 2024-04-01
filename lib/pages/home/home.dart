@@ -16,7 +16,6 @@ import 'package:global_net/pages/chat/simpleworld_chat_main.dart';
 import 'package:global_net/pages/home/activity_feed.dart';
 import 'package:global_net/pages/home/business_structure/business_structure.dart';
 import 'package:global_net/pages/home/chat.dart';
-import 'package:global_net/pages/home/groups.dart';
 import 'package:global_net/pages/home/new_timeline.dart';
 import 'package:global_net/pages/home/profile/profile.dart';
 import 'package:global_net/pages/home/settings/settings.dart';
@@ -54,6 +53,7 @@ final messagesCollection = firestore.collection('messages');
 final messengerCollection = firestore.collection('messenger');
 final groupsCollection = firestore.collection('groups');
 final lessonsCollection = firestore.collection('lessons');
+final hiresCollection = firestore.collection('hires');
 final storiesCollection = firestore.collection('stories');
 final reportsCollection = firestore.collection('reports');
 

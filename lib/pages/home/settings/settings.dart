@@ -204,7 +204,7 @@ class _SettingsState extends State<SettingsPage> {
                   context,
                   CupertinoPageRoute(
                     builder: (context) => HelpSupportPage(
-                      currentUserId: widget.user.id,
+                      userId: widget.user.id,
                     ),
                   ),
                 );
@@ -334,7 +334,7 @@ class _SettingsState extends State<SettingsPage> {
   Widget _groupsOrLessons(String userId) {
     return _buildField(
       photoUrl: 'assets/images/compliant.png',
-      fieldName: 'Groups / Lessons',
+      fieldName: AppLocalizations.of(context)?.group ?? '',
       onTap: () {
         Navigator.push(
           context,

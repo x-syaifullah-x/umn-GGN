@@ -2,23 +2,22 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:global_net/pages/chat/group_chat_page.dart';
-import 'package:global_net/pages/chat/lesson_chat_page.dart';
+import 'package:global_net/pages/chat/hire_chat_page.dart';
 import 'package:global_net/pages/home/home.dart';
 import 'package:global_net/services/database_service.dart';
 import 'package:global_net/share_preference/preferences_key.dart';
 import 'package:global_net/widgets/header.dart';
 import 'package:global_net/widgets/simple_world_widgets.dart';
 
-class LessonSearchPage extends StatefulWidget {
+class HireSearchPage extends StatefulWidget {
   final String? userId;
 
-  const LessonSearchPage({Key? key, this.userId}) : super(key: key);
+  const HireSearchPage({Key? key, this.userId}) : super(key: key);
   @override
-  State<LessonSearchPage> createState() => _LessonSearchPageState();
+  State<HireSearchPage> createState() => _HireSearchPageState();
 }
 
-class _LessonSearchPageState extends State<LessonSearchPage> {
+class _HireSearchPageState extends State<HireSearchPage> {
   // data
   TextEditingController searchEditingController = TextEditingController();
   QuerySnapshot? searchResultSnapshot;
@@ -49,7 +48,7 @@ class _LessonSearchPageState extends State<LessonSearchPage> {
         isLoading = true;
       });
       await DatabaseService()
-          .searchLessonByName(searchEditingController.text)
+          .searchHireByName(searchEditingController.text)
           .then((snapshot) {
         searchResultSnapshot = snapshot;
         setState(() {
@@ -74,7 +73,7 @@ class _LessonSearchPageState extends State<LessonSearchPage> {
   _joinValueInGroup(
       String userName, String groupId, String groupName, String admin) async {
     bool value = await DatabaseService(uid: globalUserId)
-        .isUserJoinedLesson(groupId, groupName, userName);
+        .isUserJoinedHire(groupId, groupName, userName);
     setState(() {
       _isJoined = value;
     });
@@ -82,7 +81,7 @@ class _LessonSearchPageState extends State<LessonSearchPage> {
 
   Widget groupsListnew() {
     return StreamBuilder(
-      stream: lessonsCollection.snapshots(),
+      stream: hiresCollection.snapshots(),
       builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
         if (snapshot.hasData) {
           return SizedBox(
@@ -96,10 +95,10 @@ class _LessonSearchPageState extends State<LessonSearchPage> {
 
                         return grouplistTile(
                           globalName!,
-                          messenger[index]['lessonId'],
-                          messenger[index]['lessonName'],
+                          messenger[index]['id'],
+                          messenger[index]['name'],
                           messenger[index]['admin'],
-                          messenger[index]['lessonIcon'],
+                          messenger[index]['icon'],
                           messenger[index]['members'],
                         );
                       },
@@ -134,10 +133,10 @@ class _LessonSearchPageState extends State<LessonSearchPage> {
             itemBuilder: (context, index) {
               return groupTile(
                 _userName,
-                searchResultSnapshot!.docs[index]["lessonId"],
-                searchResultSnapshot!.docs[index]["lessonName"],
+                searchResultSnapshot!.docs[index]["id"],
+                searchResultSnapshot!.docs[index]["name"],
                 searchResultSnapshot!.docs[index]["admin"],
-                searchResultSnapshot!.docs[index]["lessonIcon"],
+                searchResultSnapshot!.docs[index]["icon"],
                 searchResultSnapshot!.docs[index]['members'],
               );
             })
@@ -183,7 +182,7 @@ class _LessonSearchPageState extends State<LessonSearchPage> {
       trailing: InkWell(
         onTap: () async {
           await DatabaseService(uid: globalUserId)
-              .togglingLessonJoin(groupId, groupName, userName);
+              .togglingHireJoin(groupId, groupName, userName);
           if (_isJoined) {
             setState(() {
               _isJoined = !_isJoined;
@@ -192,7 +191,7 @@ class _LessonSearchPageState extends State<LessonSearchPage> {
             Future.delayed(const Duration(milliseconds: 2000), () {
               Navigator.of(context).push(
                 MaterialPageRoute(
-                  builder: (context) => LessonChatPage(
+                  builder: (context) => HireChatPage(
                     groupId: groupId,
                     userName: userName,
                     groupName: groupName,
@@ -207,7 +206,7 @@ class _LessonSearchPageState extends State<LessonSearchPage> {
             setState(() {
               _isJoined = !_isJoined;
             });
-            _showScaffold('Left the lesson "$groupName"');
+            _showScaffold('Left the hire "$groupName"');
           }
         },
         child: _isJoined
@@ -275,12 +274,12 @@ class _LessonSearchPageState extends State<LessonSearchPage> {
           ? InkWell(
               onTap: () async {
                 await DatabaseService(uid: globalUserId)
-                    .togglingLessonJoin(groupId, groupName, userName);
+                    .togglingHireJoin(groupId, groupName, userName);
 
                 setState(() {
                   _isJoined = !_isJoined;
                 });
-                _showScaffold('Left the lesson "$groupName"');
+                _showScaffold('Left the hire "$groupName"');
               },
               child: Container(
                 decoration: BoxDecoration(
@@ -295,15 +294,15 @@ class _LessonSearchPageState extends State<LessonSearchPage> {
           : InkWell(
               onTap: () async {
                 await DatabaseService(uid: globalUserId)
-                    .togglingLessonJoin(groupId, groupName, userName);
+                    .togglingHireJoin(groupId, groupName, userName);
                 setState(() {
                   _isJoined = !_isJoined;
                 });
-                _showScaffold('Successfully joined the lesson "$groupName"');
+                _showScaffold('Successfully joined the hire "$groupName"');
                 Future.delayed(const Duration(milliseconds: 2000), () {
                   Navigator.of(context).push(
                     MaterialPageRoute(
-                      builder: (context) => LessonChatPage(
+                      builder: (context) => HireChatPage(
                         groupId: groupId,
                         userName: userName,
                         groupName: groupName,
@@ -335,7 +334,7 @@ class _LessonSearchPageState extends State<LessonSearchPage> {
     return Scaffold(
       key: _scaffoldKey,
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      appBar: header(context, titleText: "Search Lessons"),
+      appBar: header(context, titleText: "Search Hires"),
       body: isLoading
           ? const Center(
               child: CircularProgressIndicator(),
@@ -352,7 +351,7 @@ class _LessonSearchPageState extends State<LessonSearchPage> {
                           controller: searchEditingController,
                           style: const TextStyle(),
                           decoration: const InputDecoration(
-                              hintText: "Search lessons...",
+                              hintText: "Search hires...",
                               hintStyle: TextStyle(
                                 fontSize: 16,
                               ),

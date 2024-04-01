@@ -1,4 +1,5 @@
-import "package:flutter/material.dart";
+import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class PrivacyPolicyPage extends StatefulWidget {
@@ -30,6 +31,18 @@ class PrivacyPolicyPageState extends State<PrivacyPolicyPage> {
         //     titleText: AppLocalizations.of(context)!.about_us,
         //     removeBackButton: false),
         appBar: AppBar(
+          shape: Border(
+            bottom: BorderSide(
+              color: Theme.of(context).shadowColor,
+              width: 1.0,
+            ),
+          ),
+          title: Text(
+            'Privacy Policy',
+            style: GoogleFonts.portLligatSans(
+              textStyle: Theme.of(context).textTheme.headlineMedium,
+            ),
+          ),
           toolbarHeight: 50,
           iconTheme: IconThemeData(
             color: Theme.of(context).appBarTheme.iconTheme!.color,
@@ -42,7 +55,8 @@ class PrivacyPolicyPageState extends State<PrivacyPolicyPage> {
             Expanded(
               child: WebView(
                 javascriptMode: JavascriptMode.unrestricted,
-                initialUrl: "http://globalgirlsinc.net/?page_id=13",
+                initialUrl:
+                    'https://docs.google.com/document/d/e/2PACX-1vQlrgtgPUl3sdsfFtLWXh-IPUcOMMKpHvQfX2NeDKK9CfGnZlyZsFAr5Fiye8cxUEmP4mR4-11IUklS/pub',
                 onPageFinished: (url) => {
                   setState(() => {
                         isLoading = false,

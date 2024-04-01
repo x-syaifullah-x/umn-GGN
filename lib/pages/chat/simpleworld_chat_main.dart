@@ -1,7 +1,8 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:global_net/pages/chat/hire_chat_list.dart';
 import 'package:global_net/pages/chat/group_chat_list.dart';
-import 'package:global_net/pages/menu/all_stories.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'lesson_chat_list.dart';
 
@@ -73,7 +74,7 @@ class ChatGLSState extends State<ChatGLS> with SingleTickerProviderStateMixin {
               Row(
                 children: <Widget>[
                   Text(
-                    'Groups / Lessons',
+                    AppLocalizations.of(context)?.group ?? '',
                     style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                           fontWeight: FontWeight.bold,
                           fontSize: 20,
@@ -100,7 +101,7 @@ class ChatGLSState extends State<ChatGLS> with SingleTickerProviderStateMixin {
                 text: 'LESSONS',
               ),
               Tab(
-                text: 'STORIES',
+                text: 'HIRES',
               ),
             ],
           ),
@@ -114,8 +115,8 @@ class ChatGLSState extends State<ChatGLS> with SingleTickerProviderStateMixin {
             LessonChatList(
               userId: widget.userId,
             ),
-            AllStories(
-              showappbar: false,
+            HireChatList(
+              userId: widget.userId,
             ),
           ],
         ),

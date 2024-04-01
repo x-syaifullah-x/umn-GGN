@@ -27,6 +27,28 @@ class DatabaseService {
   // }
 
   // create group
+  Future createHire(String? userName, String lessonName) async {
+    DocumentReference groupDocRef = await hiresCollection.add({
+      'name': lessonName,
+      'icon': '',
+      'admin': userName,
+      'members': [],
+      'if': '',
+      'recentMessage': '',
+      'recentMessageSender': ''
+    });
+
+    await groupDocRef.update({
+      'members': FieldValue.arrayUnion(['${globalUserId}_${userName!}']),
+      'id': groupDocRef.id
+    });
+
+    DocumentReference userDocRef = userCollection.doc(globalUserId);
+    return await userDocRef.update({
+      'hires': FieldValue.arrayUnion([groupDocRef.id + '_' + lessonName])
+    });
+  }
+
   Future createLesson(String? userName, String lessonName) async {
     DocumentReference groupDocRef = await lessonsCollection.add({
       'lessonName': lessonName,
@@ -72,7 +94,38 @@ class DatabaseService {
     });
   }
 
-  // toggling the user group join
+  Future togglingHireJoin(
+      String lessonId, String groupName, String lessonName) async {
+    final userDocRef = userCollection.doc(uid);
+    final userDocSnapshot = await userDocRef.get();
+    late List<dynamic> lessons;
+    try {
+      lessons = await userDocSnapshot['hires'];
+    } catch (e) {
+      lessons = [];
+    }
+
+    DocumentReference groupDocRef = hiresCollection.doc(lessonId);
+
+    if (lessons.contains(lessonId + '_' + groupName)) {
+      await userDocRef.update({
+        'hires': FieldValue.arrayRemove([lessonId + '_' + groupName])
+      });
+
+      await groupDocRef.update({
+        'members': FieldValue.arrayRemove([uid! + '_' + lessonName])
+      });
+    } else {
+      await userDocRef.update({
+        'hires': FieldValue.arrayUnion([lessonId + '_' + groupName])
+      });
+
+      await groupDocRef.update({
+        'members': FieldValue.arrayUnion([uid! + '_' + lessonName])
+      });
+    }
+  }
+
   Future togglingLessonJoin(
       String lessonId, String groupName, String lessonName) async {
     final userDocRef = userCollection.doc(uid);
@@ -169,6 +222,20 @@ class DatabaseService {
     }
   }
 
+  Future<bool> isUserJoinedHire(
+      String groupId, String groupName, String userName) async {
+    DocumentReference userDocRef = userCollection.doc(uid);
+    DocumentSnapshot userDocSnapshot = await userDocRef.get();
+
+    List<dynamic> groups = await userDocSnapshot['hires'];
+
+    if (groups.contains(groupId + '_' + groupName)) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   // get user data
   Future getUserData(String email) async {
     QuerySnapshot snapshot =
@@ -182,13 +249,22 @@ class DatabaseService {
   }
 
   // send message
+  hireSendMessage(String? groupId, chatMessageData) {
+    hiresCollection.doc(groupId).collection('messages').add(chatMessageData);
+    hiresCollection.doc(groupId).update({
+      'recentMessage': chatMessageData['message'],
+      'recentMessageSender': chatMessageData['sender'],
+      'recentMessageTime': chatMessageData['time'].toString(),
+    });
+  }
+
+  // send message
   lessonSendMessage(String? groupId, chatMessageData) {
-    FirebaseFirestore.instance
-        .collection('lessons')
+    lessonsCollection
         .doc(groupId)
         .collection('messages')
         .add(chatMessageData);
-    FirebaseFirestore.instance.collection('lessons').doc(groupId).update({
+    lessonsCollection.doc(groupId).update({
       'recentMessage': chatMessageData['message'],
       'recentMessageSender': chatMessageData['sender'],
       'recentMessageTime': chatMessageData['time'].toString(),
@@ -210,9 +286,17 @@ class DatabaseService {
   }
 
   // get chats of a particular group
+  getChatsHire(String? groupId) async {
+    return hiresCollection
+        .doc(groupId)
+        .collection('messages')
+        .orderBy('time', descending: true)
+        .snapshots();
+  }
+
+  // get chats of a particular group
   getChatsLesson(String? groupId) async {
-    return FirebaseFirestore.instance
-        .collection('lessons')
+    return lessonsCollection
         .doc(groupId)
         .collection('messages')
         .orderBy('time', descending: true)
@@ -242,5 +326,9 @@ class DatabaseService {
         .collection("lessons")
         .where('lessonName', isEqualTo: groupName)
         .get();
+  }
+
+  searchHireByName(String? groupName) {
+    return hiresCollection.where('name', isEqualTo: groupName).get();
   }
 }

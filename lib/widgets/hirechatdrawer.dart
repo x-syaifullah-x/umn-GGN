@@ -13,7 +13,7 @@ import 'package:global_net/pages/home/home.dart';
 import 'package:global_net/widgets/progress.dart';
 import 'package:global_net/widgets/simple_world_widgets.dart';
 
-class LessonDrawerMenu extends StatefulWidget {
+class HireDrawerMenu extends StatefulWidget {
   final String groupId;
   final String userName;
   final String groupName;
@@ -21,7 +21,7 @@ class LessonDrawerMenu extends StatefulWidget {
   final String groupIcon;
   final List members;
 
-  const LessonDrawerMenu({
+  const HireDrawerMenu({
     Key? key,
     required this.groupId,
     required this.userName,
@@ -32,11 +32,11 @@ class LessonDrawerMenu extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<LessonDrawerMenu> createState() =>
-      _LessonDrawerMenuState(groupId, userName, groupName, admin, groupIcon);
+  State<HireDrawerMenu> createState() =>
+      _HireDrawerMenuState(groupId, userName, groupName, admin, groupIcon);
 }
 
-class _LessonDrawerMenuState extends State<LessonDrawerMenu> {
+class _HireDrawerMenuState extends State<HireDrawerMenu> {
   final String groupId;
   final String userName;
   final String groupName;
@@ -48,15 +48,15 @@ class _LessonDrawerMenuState extends State<LessonDrawerMenu> {
   String? imageFileCoverUrl;
   bool isLoading = false;
 
-  _LessonDrawerMenuState(
+  _HireDrawerMenuState(
       this.groupId, this.userName, this.groupName, this.admin, this.groupIcon);
 
   void deleteNestedSubcollections() {
     Future<QuerySnapshot> photos =
-        lessonsCollection.doc(groupId).collection("messages").get();
+        hiresCollection.doc(groupId).collection("messages").get();
     photos.then((value) {
       value.docs.forEach((element) {
-        lessonsCollection
+        hiresCollection
             .doc(groupId)
             .collection("messages")
             .doc(element.id)
@@ -68,13 +68,13 @@ class _LessonDrawerMenuState extends State<LessonDrawerMenu> {
 
   DocumentReference userDocRef = usersCollection.doc(globalUserId);
   deleteGroup() async {
-    lessonsCollection.doc(groupId).get().then((doc) {
+    hiresCollection.doc(groupId).get().then((doc) {
       if (doc.exists) {
         doc.reference.delete();
       }
     });
     await userDocRef.update({
-      'lessons': FieldValue.arrayRemove([groupId + '_' + groupName])
+      'hires': FieldValue.arrayRemove([groupId + '_' + groupName])
     });
 
     deleteNestedSubcollections();
@@ -87,7 +87,7 @@ class _LessonDrawerMenuState extends State<LessonDrawerMenu> {
         context: parentConext,
         builder: (context) {
           return SimpleDialog(
-            title: const Text("Delete this lesson?"),
+            title: const Text("Delete this hires?"),
             children: <Widget>[
               SimpleDialogOption(
                 onPressed: () {
@@ -114,7 +114,7 @@ class _LessonDrawerMenuState extends State<LessonDrawerMenu> {
         context: parentConext,
         builder: (context) {
           return SimpleDialog(
-            title: const Text("Leave this Lesson?"),
+            title: const Text("Leave this Hire?"),
             children: <Widget>[
               SimpleDialogOption(
                 onPressed: () {
@@ -136,11 +136,11 @@ class _LessonDrawerMenuState extends State<LessonDrawerMenu> {
   }
 
   leaveGroup() async {
-    await lessonsCollection.doc(groupId).update({
+    await hiresCollection.doc(groupId).update({
       'members': FieldValue.arrayRemove([globalUserId! + '_' + globalName!])
     });
     await userDocRef.update({
-      'lessons': FieldValue.arrayRemove([groupId + '_' + groupName])
+      'hires': FieldValue.arrayRemove([groupId + '_' + groupName])
     });
   }
 
@@ -170,9 +170,9 @@ class _LessonDrawerMenuState extends State<LessonDrawerMenu> {
     imageFileCoverUrl = downloadUrl;
     setState(() {
       isLoading = false;
-      lessonsCollection.doc(groupId).update({"lessonIcon": imageFileCoverUrl});
+      hiresCollection.doc(groupId).update({"icon": imageFileCoverUrl});
 
-      SnackBar snackbar = const SnackBar(content: Text("Lesson Icon updated!"));
+      SnackBar snackbar = const SnackBar(content: Text("Hire Icon updated!"));
       ScaffoldMessenger.of(context).showSnackBar(snackbar);
     });
   }
@@ -380,7 +380,7 @@ class _LessonDrawerMenuState extends State<LessonDrawerMenu> {
                                     ])),
                             child: const Center(
                               child: Text(
-                                'Delete Lesson',
+                                'Delete Hire',
                                 textAlign: TextAlign.left,
                                 style: TextStyle(color: Colors.white),
                               ),
@@ -411,7 +411,7 @@ class _LessonDrawerMenuState extends State<LessonDrawerMenu> {
                             ),
                             child: const Center(
                               child: Text(
-                                'Leave Lesson',
+                                'Leave Hire',
                                 textAlign: TextAlign.left,
                                 style: TextStyle(color: Colors.white),
                               ),

@@ -8,14 +8,14 @@ class MessageTile extends StatelessWidget {
   final String? sender;
   final bool? sentByMe;
 
-  const MessageTile(
-      {Key? key,
-      this.message,
-      this.sender,
-      this.sentByMe,
-      this.time,
-      this.index})
-      : super(key: key);
+  const MessageTile({
+    Key? key,
+    this.message,
+    this.sender,
+    this.sentByMe,
+    this.time,
+    this.index,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

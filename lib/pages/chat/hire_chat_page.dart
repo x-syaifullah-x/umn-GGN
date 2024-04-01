@@ -2,14 +2,14 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:global_net/widgets/hirechatdrawer.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:global_net/config/size_config.dart';
 import 'package:global_net/services/database_service.dart';
-import 'package:global_net/widgets/groupchatdrawer.dart';
 import 'package:global_net/widgets/message_tile.dart';
 
-class ChatPage extends StatefulWidget {
+class HireChatPage extends StatefulWidget {
   final String groupId;
   final String userName;
   final String groupName;
@@ -17,21 +17,21 @@ class ChatPage extends StatefulWidget {
   final String groupIcon;
   final List members;
 
-  const ChatPage(
-      {Key? key,
-      required this.groupId,
-      required this.userName,
-      required this.groupName,
-      required this.admin,
-      required this.groupIcon,
-      required this.members})
-      : super(key: key);
+  const HireChatPage({
+    Key? key,
+    required this.groupId,
+    required this.userName,
+    required this.groupName,
+    required this.admin,
+    required this.groupIcon,
+    required this.members,
+  }) : super(key: key);
 
   @override
-  State<ChatPage> createState() => _ChatPageState();
+  State<HireChatPage> createState() => _HireChatPageState();
 }
 
-class _ChatPageState extends State<ChatPage> {
+class _HireChatPageState extends State<HireChatPage> {
   Stream<QuerySnapshot>? _chats;
   TextEditingController messageEditingController = TextEditingController();
   bool isExpanded = false, showMenu = false;
@@ -74,10 +74,10 @@ class _ChatPageState extends State<ChatPage> {
         'type': 0
       };
 
-      DatabaseService().sendMessage(widget.groupId, chatMessageMap);
+      DatabaseService().hireSendMessage(widget.groupId, chatMessageMap);
 
       setState(() {
-        messageEditingController.text = "";
+        messageEditingController.text = '';
       });
     }
   }
@@ -85,7 +85,7 @@ class _ChatPageState extends State<ChatPage> {
   @override
   void initState() {
     super.initState();
-    DatabaseService().getChats(widget.groupId).then((val) {
+    DatabaseService().getChatsHire(widget.groupId).then((val) {
       setState(() {
         _chats = val;
       });
@@ -235,7 +235,7 @@ class _ChatPageState extends State<ChatPage> {
           ),
           const ListTile(
             leading: Icon(Icons.account_circle),
-            title: Text('Delete Group'),
+            title: Text('Delete Hire'),
           ),
         ],
       ),
@@ -319,7 +319,7 @@ class _ChatPageState extends State<ChatPage> {
         ],
         elevation: 0.0,
       ),
-      endDrawer: DrawerMenu(
+      endDrawer: HireDrawerMenu(
         groupId: widget.groupId,
         groupName: widget.groupName,
         userName: widget.userName,
