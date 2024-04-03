@@ -12,7 +12,7 @@ ext {
     // https://developer.android.com/ndk/downloads
     vNdkVersion = "26.2.11394342"
     // https://developers.google.com/android/guides/google-services-plugin
-    vGoogleServices = "4.4.0"
+    vGoogleServices = "4.4.1"
 }
 
 def addRepos(RepositoryHandler handler) {
