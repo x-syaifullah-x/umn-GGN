@@ -10,8 +10,13 @@ import 'package:flutter_signin_button/button_list.dart';
 import 'package:flutter_signin_button/button_view.dart';
 import 'package:global_net/ads/login_ads.dart';
 import 'package:global_net/data/user.dart' as data;
+import 'package:global_net/domain/resources.dart';
+import 'package:global_net/domain/result.dart';
 import 'package:global_net/pages/auth/add_credit_to_account.dart';
+import 'package:global_net/pages/auth/data/auth_a.dart';
+import 'package:global_net/pages/auth/data/auth_repository.dart';
 import 'package:global_net/pages/auth/create_account.dart';
+import 'package:global_net/pages/auth/data/auth_result.dart';
 import 'package:global_net/pages/auth/forgotpass.dart';
 import 'package:global_net/pages/auth/signup_page.dart';
 import 'package:global_net/pages/home/home.dart';
@@ -435,13 +440,29 @@ class _LoginPageState extends State<LoginPage> {
   // }
 
   Future<void> _signInWithGoogle() async {
+    // final authRepo = AuthRepository.getInstance();
+    // try {
+    //   final authResult = await authRepo.sign(
+    //     TypeGoogle(),
+    //   );
+    //   if (authResult is ResultSuccess<AuthResult>) {
+    //     print(authResult.value.isNewUser);
+    //   } else if (authResult is ResultError) {
+    //     print(authResult.value);
+    //   } else {
+    //     print('Not implemented');
+    //   }
+    // } catch (e) {
+    //   log(e);
+    // }
+    // return;
     try {
       setState(() {
         _emailNode.unfocus();
         _passwordNode.unfocus();
         _isLoading = true;
       });
-      UserCredential userCredential;
+      late UserCredential userCredential;
 
       if (kIsWeb) {
         var googleProvider = GoogleAuthProvider();
