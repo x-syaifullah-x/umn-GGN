@@ -1,7 +1,7 @@
 name: global_net
 description: A new Flutter project.
 
-version: 2.0.8+8
+version: 2.0.9+9
 
 environment:
   sdk: ">=2.14.4 <=2.19.6" # ref 4d9e56e694
@@ -60,7 +60,8 @@ dependencies:
   filesize: 2.0.1
   easy_pdf_viewer: 1.0.6
   adaptive_theme: 3.1.1
-  video_player: 2.4.10
+  # video_player: 2.4.10
+  video_player: 2.7.0
   flick_video_player: 0.5.0
   string_validator: 0.3.0
   # google_mobile_ads: 2.3.0

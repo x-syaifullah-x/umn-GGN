@@ -35,7 +35,6 @@ import 'package:string_validator/string_validator.dart';
 import 'package:timeago/timeago.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
-import '../../ads/applovin_ad_unit_id.dart';
 import '../../data/user.dart';
 import '../comments_album.dart';
 
@@ -910,8 +909,6 @@ class NewTimelineState extends State<NewTimeline>
   }
 
   void deletePost(post) async {
-    bool isPdf = post['type'] == 'pdf';
-    bool isVide = post['type'] == 'video';
     postsCollection
         .doc(post['ownerId'])
         .collection('userPosts')
@@ -924,12 +921,29 @@ class NewTimelineState extends State<NewTimeline>
     });
 
     deleteNestedSubcollections(post);
-    if (isPdf) {
-      FirebaseStorage.instance.refFromURL(post['pdfUrl']!).delete();
-    } else if (isVide) {
-      FirebaseStorage.instance.refFromURL(post['videoUrl']!).delete();
-    } else {
-      FirebaseStorage.instance.refFromURL(post['mediaUrl']!).delete();
+
+    final pdfUrl = '${post['pdfUrl']}';
+    if (pdfUrl.isNotEmpty) {
+      FirebaseStorage.instance
+          .refFromURL(pdfUrl)
+          .delete()
+          .then((value) => null);
+    }
+
+    final videoUrl = '${post['videoUrl']}';
+    if (videoUrl.isNotEmpty) {
+      FirebaseStorage.instance
+          .refFromURL(videoUrl)
+          .delete()
+          .then((value) => null);
+    }
+
+    final mediaUrl = '${post['mediaUrl']}';
+    if (mediaUrl.isNotEmpty) {
+      FirebaseStorage.instance
+          .refFromURL(mediaUrl)
+          .delete()
+          .then((value) => null);
     }
 
     QuerySnapshot activityFeedSnapshot = await feedCollection
@@ -939,7 +953,7 @@ class NewTimelineState extends State<NewTimeline>
         .get();
     for (var doc in activityFeedSnapshot.docs) {
       if (doc.exists) {
-        doc.reference.delete();
+        doc.reference.delete().then((value) => null);
       }
     }
 
@@ -949,7 +963,7 @@ class NewTimelineState extends State<NewTimeline>
         .get();
     for (var doc in commentsSnapshot.docs) {
       if (doc.exists) {
-        doc.reference.delete();
+        doc.reference.delete().then((value) => null);
       }
     }
   }

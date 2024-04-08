@@ -9,7 +9,6 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:global_net/models/user.dart';
-import 'package:global_net/pages/auth/login_page.dart';
 import 'package:global_net/pages/comming_soon_page.dart';
 import 'package:global_net/pages/create_post/pdf_upload.dart';
 import 'package:global_net/pages/create_post/upload.dart';
@@ -19,7 +18,6 @@ import 'package:global_net/widgets/simple_world_widgets.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:nb_utils/nb_utils.dart';
 import 'package:uuid/uuid.dart';
-import 'package:video_compress/video_compress.dart';
 
 class AddPost extends StatefulWidget {
   final String userId;
@@ -80,49 +78,78 @@ class _AddPostState extends State<AddPost>
   }
 
   Future selectVideoFile() async {
-    final navigator = Navigator.of(context);
-    final pickedFile = await _picker.pickVideo(source: ImageSource.gallery);
+    final xFile = await _picker.pickVideo(
+      source: ImageSource.gallery,
+    );
+
+    final length = (await xFile?.length()) ?? 0;
 
     if (mounted) {
       setState(() async {
-        vediofile = vediofile;
-        if (pickedFile != null) {
-          vediofile = File(pickedFile.path);
-          await VideoCompress.setLogLevel(0);
-          final MediaInfo? info = await VideoCompress.compressVideo(
-            vediofile!.path,
-            quality: VideoQuality.LowQuality,
-            deleteOrigin: false,
-            includeAudio: true,
-          );
-          if (info != null) {
-            setState(() {
-              newvediofile = File(info.path!);
-            });
-          }
-          int size = newvediofile!.lengthSync();
-          double sizeInMb = size / (1024 * 1024);
+        if (xFile != null) {
+          double sizeInMb = length / (1024 * 1024);
           if (sizeInMb > 5) {
-            simpleworldtoast("", "File Size is larger then 5mb", context);
+            simpleworldtoast('', 'File Size is larger then 5mb', context);
             return;
           }
-          final userDoc = await usersCollection.doc(widget.userId).get();
-          final data = userDoc.data();
-          if (data != null) {
-            await navigator.push(
-              MaterialPageRoute(
-                builder: (context) => VideoUpload(
-                    currentUser: GloabalUser.fromMap(data),
-                    file: newvediofile!,
-                    videopath: pickedFile.path),
+
+          final navigator = Navigator.of(context);
+          await navigator.push(
+            MaterialPageRoute(
+              builder: (context) => VideoUpload(
+                userId: widget.userId,
+                xFile: xFile,
               ),
-            );
-          }
+            ),
+          );
         } else {
-          // print('No image selected.');
+          log('No image selected.');
         }
       });
     }
+    // final navigator = Navigator.of(context);
+    // final pickedFile = await _picker.pickVideo(source: ImageSource.gallery);
+
+    // if (mounted) {
+    //   setState(() async {
+    //     vediofile = vediofile;
+    //     if (pickedFile != null) {
+    //       vediofile = File(pickedFile.path);
+    //       await VideoCompress.setLogLevel(0);
+    //       final MediaInfo? info = await VideoCompress.compressVideo(
+    //         vediofile!.path,
+    //         quality: VideoQuality.LowQuality,
+    //         deleteOrigin: false,
+    //         includeAudio: true,
+    //       );
+    //       if (info != null) {
+    //         setState(() {
+    //           newvediofile = File(info.path!);
+    //         });
+    //       }
+    //       int size = newvediofile!.lengthSync();
+    //       double sizeInMb = size / (1024 * 1024);
+    //       if (sizeInMb > 5) {
+    //         simpleworldtoast("", "File Size is larger then 5mb", context);
+    //         return;
+    //       }
+    //       final userDoc = await usersCollection.doc(widget.userId).get();
+    //       final data = userDoc.data();
+    //       if (data != null) {
+    //         await navigator.push(
+    //           MaterialPageRoute(
+    //             builder: (context) => VideoUpload(
+    //                 currentUser: GloabalUser.fromMap(data),
+    //                 file: newvediofile!,
+    //                 videopath: pickedFile.path),
+    //           ),
+    //         );
+    //       }
+    //     } else {
+    //       // print('No image selected.');
+    //     }
+    //   });
+    // }
   }
 
   Future selectPDFFile() async {

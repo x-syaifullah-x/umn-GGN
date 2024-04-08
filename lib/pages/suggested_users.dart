@@ -23,10 +23,7 @@ class _SuggestedUsersListState extends State<SuggestedUsersList>
   bool isFollowing = false;
   bool isLoading = false;
 
-  @override
-  void initState() {
-    super.initState();
-  }
+  ScrollController _controller = ScrollController();
 
   @override
   bool get wantKeepAlive => true;
@@ -34,7 +31,6 @@ class _SuggestedUsersListState extends State<SuggestedUsersList>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    ScrollController controller = ScrollController();
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
@@ -46,20 +42,20 @@ class _SuggestedUsersListState extends State<SuggestedUsersList>
             color: Theme.of(context).appBarTheme.iconTheme!.color),
         title: Text(
           AppLocalizations.of(context)!.people_you_may_know,
-          style: Theme.of(context).textTheme.headline5!.copyWith(
+          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                 fontWeight: FontWeight.bold,
                 fontSize: 15,
               ),
         ),
       ),
       body: RawScrollbar(
-        controller: controller,
+        controller: _controller,
         interactive: true,
         // thumbVisibility: true,
         // trackVisibility: true,
         radius: const Radius.circular(20),
         child: PaginateFirestore(
-          scrollController: controller,
+          scrollController: _controller,
           itemBuilderType: PaginateBuilderType.listView,
           scrollDirection: Axis.horizontal,
           itemBuilder: (context, documentSnapshot, index) {

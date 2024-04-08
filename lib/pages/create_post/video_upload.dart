@@ -1,5 +1,3 @@
-// ignore_for_file: unnecessary_null_comparison, unnecessary_this
-
 import 'dart:async';
 import 'dart:io';
 
@@ -7,25 +5,27 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:nb_utils/nb_utils.dart';
-import 'package:global_net/models/user.dart';
 import 'package:global_net/pages/home/home.dart';
 import 'package:global_net/widgets/header.dart';
 import 'package:global_net/widgets/progress.dart';
 import 'package:global_net/widgets/simple_world_widgets.dart';
 import 'package:uuid/uuid.dart';
-import 'package:video_compress/video_compress.dart';
 import 'package:video_player/video_player.dart';
 
 class VideoUpload extends StatefulWidget {
-  final GloabalUser? currentUser;
-  File file;
-  String videopath;
+  final String userId;
+  final XFile xFile;
 
-  VideoUpload({this.currentUser, required this.file, required this.videopath});
+  const VideoUpload({
+    Key? key,
+    required this.userId,
+    required this.xFile,
+  }) : super(key: key);
 
   @override
-  _UploadState createState() => _UploadState();
+  State<VideoUpload> createState() => _UploadState();
 }
 
 class _UploadState extends State<VideoUpload>
@@ -34,15 +34,15 @@ class _UploadState extends State<VideoUpload>
   TextEditingController captionController = TextEditingController();
   late VideoPlayerController _controller;
 
-  File? file;
   bool isUploading = false;
   String postId = const Uuid().v4();
 
   @override
   void initState() {
     super.initState();
-    _controller = VideoPlayerController.network(
-      widget.videopath,
+
+    _controller = VideoPlayerController.networkUrl(
+      Uri.parse(widget.xFile.path),
       videoPlayerOptions: VideoPlayerOptions(mixWithOthers: true),
     );
 
@@ -59,44 +59,39 @@ class _UploadState extends State<VideoUpload>
     _controller.dispose();
   }
 
-  clearImage() {
-    if (mounted) {
-      setState(() {
-        file = null;
-      });
-    }
-  }
-
-  Future<String> uploadVideo(videoFile) async {
-    // await CompressVideo(widget.file);
-    UploadTask uploadTask = storageRef
-        .child("Videos")
-        .child("video_post_$postId.mp4")
-        .putFile(videoFile);
-    TaskSnapshot storageSnap = await uploadTask;
-    String downloadUrl = await storageSnap.ref.getDownloadURL();
+  Future<String> _uploadVideo() async {
+    final xFile = widget.xFile;
+    final reference =
+        storageRef.child('Videos').child('video_post_$postId.mp4');
+    final uploadTask = reference.putData(await xFile.readAsBytes());
+    final storageSnap = await uploadTask;
+    final downloadUrl = await storageSnap.ref.getDownloadURL();
     return downloadUrl;
   }
 
-  Future CompressVideo(videoFile) async {
-    if (file == null) {
-      return;
-    }
-    await VideoCompress.setLogLevel(0);
-    final MediaInfo? info = await VideoCompress.compressVideo(
-      widget.videopath,
-      quality: VideoQuality.MediumQuality,
-      deleteOrigin: false,
-      includeAudio: true,
-    );
-    print(info!.path);
-  }
+  // Future CompressVideo(videoFile) async {
+  //   if (file == null) {
+  //     return;
+  //   }
+  //   await VideoCompress.setLogLevel(0);
+  //   final MediaInfo? info = await VideoCompress.compressVideo(
+  //     widget.videopath,
+  //     quality: VideoQuality.MediumQuality,
+  //     deleteOrigin: false,
+  //     includeAudio: true,
+  //   );
+  //   print(info!.path);
+  // }
 
-  createPostInFirestore(
-      {String? videoUrl, String? location, String? description, int? type}) {
-    postsCollection.doc(globalUserId).collection("userPosts").doc(postId).set({
+  createPostInFirestore({
+    String? videoUrl,
+    String? location,
+    String? description,
+    int? type,
+  }) {
+    postsCollection.doc(widget.userId).collection('userPosts').doc(postId).set({
       "postId": postId,
-      "ownerId": globalUserId,
+      "ownerId": widget.userId,
       "username": globalName,
       "mediaUrl": [],
       "description": description,
@@ -117,9 +112,11 @@ class _UploadState extends State<VideoUpload>
       });
     }
 
-    String videoUrl = await uploadVideo(widget.file);
+    final videoUrl = await _uploadVideo();
     createPostInFirestore(
-        videoUrl: videoUrl, description: captionController.text);
+      videoUrl: videoUrl,
+      description: captionController.text,
+    );
     captionController.clear();
     if (mounted) {
       setState(() {
@@ -128,7 +125,7 @@ class _UploadState extends State<VideoUpload>
         Navigator.of(context).pushReplacement(
           CupertinoPageRoute(
               builder: (context) => Home(
-                    userId: globalUserId,
+                    userId: widget.userId,
                   )),
         );
       });
@@ -191,34 +188,33 @@ class _UploadState extends State<VideoUpload>
               ],
             ),
             alignment: Alignment.center,
+            width: double.infinity,
+            margin: const EdgeInsets.all(20.0),
             child: Center(
               child: Stack(
                 children: <Widget>[
-                  (widget.file == null)
-                      ? Container()
-                      : Material(
-                          child: SizedBox(
-                          height: 450.0,
-                          child: AspectRatio(
-                            aspectRatio: _controller.value.aspectRatio,
-                            child: Stack(
-                              alignment: Alignment.bottomCenter,
-                              children: <Widget>[
-                                VideoPlayer(_controller),
-                                ClosedCaption(
-                                    text: _controller.value.caption.text),
-                                _ControlsOverlay(controller: _controller),
-                                VideoProgressIndicator(_controller,
-                                    allowScrubbing: true),
-                              ],
-                            ),
+                  Material(
+                      child: SizedBox(
+                    height: 450.0,
+                    child: AspectRatio(
+                      aspectRatio: _controller.value.aspectRatio,
+                      child: Stack(
+                        alignment: Alignment.bottomCenter,
+                        children: <Widget>[
+                          VideoPlayer(_controller),
+                          ClosedCaption(text: _controller.value.caption.text),
+                          _ControlsOverlay(controller: _controller),
+                          VideoProgressIndicator(
+                            _controller,
+                            allowScrubbing: true,
                           ),
-                        )),
+                        ],
+                      ),
+                    ),
+                  )),
                 ],
               ),
             ),
-            width: double.infinity,
-            margin: const EdgeInsets.all(20.0),
           ),
           Container(
             margin: const EdgeInsets.only(left: 20, right: 20),
