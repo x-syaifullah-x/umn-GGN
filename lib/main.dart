@@ -52,15 +52,17 @@ Future<void> main() async {
   await initialize();
 
   SharedPreferences.getInstance().then((prefs) async {
-    runApp(MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Global Net',
-      initialRoute: SplashScreen.route,
-      routes: {
-        News.route: (context) => const News(),
-        SplashScreen.route: (BuildContext context) => const SplashScreen(),
-        App.route: (BuildContext context) => App(prefs, savedThemeMode),
-      },
-    ));
+    runApp(
+      MaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: 'Global Net',
+        initialRoute: SplashScreen.route,
+        routes: {
+          News.route: (context) => const News(),
+          SplashScreen.route: (BuildContext context) => const SplashScreen(),
+          App.route: (BuildContext context) => App(prefs, savedThemeMode),
+        },
+      ),
+    );
   });
 }

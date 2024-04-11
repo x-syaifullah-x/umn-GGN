@@ -166,11 +166,16 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
           width: 1.0,
         ),
       ),
-      title: Text(
-        'Global Net',
-        style: GoogleFonts.portLligatSans(
-          textStyle: Theme.of(context).textTheme.headlineMedium,
-        ),
+      // title: Text(
+      //   'Global Net',
+      //   style: GoogleFonts.portLligatSans(
+      //     textStyle: Theme.of(context).textTheme.headlineMedium,
+      //   ),
+      // ),
+      title: Image.asset(
+        'assets/images/concept.png',
+        height: 50,
+        fit: BoxFit.fill,
       ),
       actions: [
         Container(
