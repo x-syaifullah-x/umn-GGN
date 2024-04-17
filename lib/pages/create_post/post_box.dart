@@ -35,7 +35,6 @@ class _PostBoxState extends State<PostBox>
   final ImagePicker _picker = ImagePicker();
   TextEditingController captionController = TextEditingController();
   bool isLoading = false;
-  File? _videoFile;
   File? newvediofile;
   File? pdffile;
   File? file;
@@ -82,8 +81,10 @@ class _PostBoxState extends State<PostBox>
       setState(() async {
         if (xFile != null) {
           double sizeInMb = length / (1024 * 1024);
-          if (sizeInMb > 5) {
-            simpleworldtoast('', 'File Size is larger then 5mb', context);
+          const maxSize = 50;
+          if (sizeInMb > maxSize) {
+            simpleworldtoast(
+                '', 'File Size is larger then ${maxSize}mb', context);
             return;
           }
 

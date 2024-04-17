@@ -88,8 +88,10 @@ class _AddPostState extends State<AddPost>
       setState(() async {
         if (xFile != null) {
           double sizeInMb = length / (1024 * 1024);
-          if (sizeInMb > 5) {
-            simpleworldtoast('', 'File Size is larger then 5mb', context);
+          const maxSize = 50;
+          if (sizeInMb > maxSize) {
+            simpleworldtoast(
+                '', 'File Size is larger then ${maxSize}mb', context);
             return;
           }
 
