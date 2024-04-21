@@ -99,6 +99,8 @@ class _CouponsState extends State<Coupons> {
                         final doc = docs[index];
                         final docId = doc.id;
                         final coupon = doc['coupon'];
+                        final promotionCode = doc['promotion_code'];
+                        final promotionCodeCode = promotionCode['code'];
                         final couponId = coupon['id'];
                         final name = coupon['name'];
                         final amountOff = coupon['amount_off'];
@@ -125,7 +127,8 @@ class _CouponsState extends State<Coupons> {
                                   height: 8,
                                 ),
                                 Text(
-                                  'COUPON: $couponId',
+                                  // 'COUPON: $couponId',
+                                  promotionCodeCode,
                                 ),
                                 const SizedBox(
                                   height: 4,
@@ -153,7 +156,7 @@ class _CouponsState extends State<Coupons> {
                                         try {
                                           await Clipboard.setData(
                                             ClipboardData(
-                                              text: couponId,
+                                              text: promotionCodeCode,
                                             ),
                                           );
                                           toast(
@@ -163,7 +166,8 @@ class _CouponsState extends State<Coupons> {
                                           log('$e');
                                         }
                                       },
-                                      child: const Text('Copy Coupon'),
+                                      // child: const Text('Copy Coupon'),
+                                      child: const Text('Copy Code'),
                                     ),
                                     const SizedBox(
                                       width: 4,
