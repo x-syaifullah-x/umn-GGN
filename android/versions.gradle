@@ -3,16 +3,15 @@ build_versions.min_sdk = 21 // android lollipop ( 5.0 )
 build_versions.target_sdk = 34 // android latest
 build_versions.compile_sdk = build_versions.target_sdk
 build_versions.build_tools = "34.0.0"
+build_versions.ndk = "26.3.11579264" // https://developer.android.com/ndk/downloads
 ext.build_versions = build_versions
 
 ext {
     vGradle = "8.1.4" // Don't change
     vKotlin = "1.7.10" // Default version
     kotlin_version = "$vKotlin"
-    // https://developer.android.com/ndk/downloads
-    vNdkVersion = "26.2.11394342"
     // https://developers.google.com/android/guides/google-services-plugin
-    vGoogleServices = "4.4.1"
+    vGoogleServices = "4.4.2"
 }
 
 def addRepos(RepositoryHandler handler) {
