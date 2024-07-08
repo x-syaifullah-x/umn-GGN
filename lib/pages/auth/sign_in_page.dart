@@ -10,15 +10,10 @@ import 'package:flutter_signin_button/button_list.dart';
 import 'package:flutter_signin_button/button_view.dart';
 import 'package:global_net/ads/login_ads.dart';
 import 'package:global_net/data/user.dart' as data;
-import 'package:global_net/domain/resources.dart';
-import 'package:global_net/domain/result.dart';
 import 'package:global_net/pages/auth/add_credit_to_account.dart';
-import 'package:global_net/pages/auth/data/auth_a.dart';
-import 'package:global_net/pages/auth/data/auth_repository.dart';
 import 'package:global_net/pages/auth/create_account.dart';
-import 'package:global_net/pages/auth/data/auth_result.dart';
 import 'package:global_net/pages/auth/forgotpass.dart';
-import 'package:global_net/pages/auth/signup_page.dart';
+import 'package:global_net/pages/auth/sign_up_page.dart';
 import 'package:global_net/pages/home/home.dart';
 import 'package:global_net/share_preference/preferences_key.dart';
 import 'package:global_net/widgets/language_picker_widget_home.dart';
@@ -34,16 +29,16 @@ import '../menu/terms_and_conditions.dart';
 const String vApiKey =
     'BIxps5Is9CmqlWy6PpPjZXiM0hTlCcnFIcFtQwos8yvFoumKit1TUpZqpkaU13KEh0n9M5pXGF8W33b1S-TFnZw';
 
-class LoginPage extends StatefulWidget {
-  const LoginPage({
+class SignInPage extends StatefulWidget {
+  const SignInPage({
     Key? key,
   }) : super(key: key);
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  State<SignInPage> createState() => _SignInPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _SignInPageState extends State<SignInPage> {
   bool _isLoading = false;
 
   final TextEditingController _emailController = TextEditingController();

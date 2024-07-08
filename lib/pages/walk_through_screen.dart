@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:nb_utils/nb_utils.dart';
 import 'package:global_net/data/onboarding_data.dart';
 import 'package:global_net/models/onboarding_model.dart';
-import 'package:global_net/pages/auth/login_page.dart';
+import 'package:global_net/pages/auth/sign_in_page.dart';
 
 class WalkThroughScreen extends StatefulWidget {
   static String tag = '/WalkThroughScreen';
@@ -114,7 +114,7 @@ class WalkThroughScreenState extends State<WalkThroughScreen> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => const LoginPage(),
+                      builder: (context) => const SignInPage(),
                     ),
                   );
                 },
@@ -133,7 +133,7 @@ class WalkThroughScreenState extends State<WalkThroughScreen> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const LoginPage(),
+                        builder: (context) => const SignInPage(),
                       ),
                     );
                   } else {

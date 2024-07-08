@@ -28,7 +28,6 @@ import 'package:global_net/widgets/circle_button.dart';
 import 'package:global_net/widgets/count/feeds_count.dart';
 import 'package:global_net/widgets/count/messages_count.dart';
 import 'package:global_net/widgets/simple_world_widgets.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:iconly/iconly.dart';
 import 'package:nb_utils/nb_utils.dart';

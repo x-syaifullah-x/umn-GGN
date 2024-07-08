@@ -1,26 +1,24 @@
-// ignore_for_file: unnecessary_this
-
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
-import "package:flutter/material.dart";
+import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:nb_utils/nb_utils.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:global_net/pages/home/home.dart';
 import 'package:global_net/pages/user_to_follow.dart';
 import 'package:global_net/widgets/bezier_container.dart';
 import 'package:global_net/widgets/simple_world_widgets.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:nb_utils/nb_utils.dart';
 
 class GetAvatar extends StatefulWidget {
-  final String currentUserId;
+  final String userId;
 
   const GetAvatar({
     Key? key,
-    required this.currentUserId,
+    required this.userId,
   }) : super(key: key);
 
   @override
@@ -60,7 +58,7 @@ class _GetAvatarState extends State<GetAvatar> {
   }
 
   Future uploadAvatar(imageFileAvatar) async {
-    String mFileName = widget.currentUserId;
+    String mFileName = widget.userId;
     Reference storageReference =
         FirebaseStorage.instance.ref().child("avatar_$mFileName.jpg");
     UploadTask storageUploadTask = storageReference.putFile(imageFileAvatar!);
@@ -69,7 +67,7 @@ class _GetAvatarState extends State<GetAvatar> {
     setState(() {
       isLoading = false;
       usersCollection
-          .doc(widget.currentUserId)
+          .doc(widget.userId)
           .update({"photoUrl": imageFileAvatarUrl});
 
       SnackBar snackbar =
@@ -177,7 +175,7 @@ class _GetAvatarState extends State<GetAvatar> {
       Navigator.of(context).pushReplacement(
         CupertinoPageRoute(
           builder: (context) => UsersToFollowList(
-            userId: widget.currentUserId,
+            userId: widget.userId,
           ),
         ),
       );

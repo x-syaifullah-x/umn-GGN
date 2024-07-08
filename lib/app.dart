@@ -9,7 +9,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:global_net/config/palette.dart';
 import 'package:global_net/l10n/l10n.dart';
 import 'package:global_net/pages/walk_through_screen.dart';
-import 'package:global_net/pages/auth/login_page.dart';
+import 'package:global_net/pages/auth/sign_in_page.dart';
 import 'package:global_net/pages/home/home.dart';
 import 'package:global_net/provider/locale_provider.dart';
 import 'package:global_net/share_preference/preferences_key.dart';
@@ -262,7 +262,6 @@ class AppState extends State<App> with WidgetsBindingObserver {
     final bool isSeenWalkthrough =
         prefs.getBool(SharedPreferencesKey.isSeenWalkthrough) ?? false;
     if (!isSeenWalkthrough) {
-    // if (true) {
       prefs.setBool(SharedPreferencesKey.isSeenWalkthrough, true);
       return const WalkThroughScreen();
     }
@@ -271,6 +270,6 @@ class AppState extends State<App> with WidgetsBindingObserver {
     if (userId != null) {
       return Home(userId: userId);
     }
-    return const LoginPage();
+    return const SignInPage();
   }
 }

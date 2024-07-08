@@ -1,18 +1,20 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:global_net/pages/home/home.dart';
-import 'package:global_net/pages/auth/login_page.dart';
-import 'package:global_net/pages/auth/signup_page2.dart';
-import 'package:global_net/pages/webview/webview.dart';
-import 'package:global_net/share_preference/preferences_key.dart';
-import 'package:nb_utils/nb_utils.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:global_net/domain/result.dart';
+import 'package:global_net/pages/auth/data/auth_repository.dart';
+import 'package:global_net/pages/auth/data/models/auth_result.dart';
+import 'package:global_net/pages/auth/data/models/exeptions/sign_up_param_exception.dart';
+import 'package:global_net/pages/auth/data/models/sign_type.dart';
+import 'package:global_net/pages/auth/get_avatar.dart';
+import 'package:global_net/pages/auth/sign_in_page.dart';
+import 'package:global_net/pages/home/home.dart';
+import 'package:global_net/pages/webview/webview.dart';
 import 'package:global_net/widgets/simple_world_widgets.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:nb_utils/nb_utils.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({Key? key}) : super(key: key);
@@ -22,15 +24,11 @@ class SignUpPage extends StatefulWidget {
 }
 
 class SignUpPageState extends State<SignUpPage> {
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-  final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
-  late String userId;
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
-  bool isAuth = false;
-
+  bool _isRegister = false;
   bool _isCheckTermsAndPrivacyPolicy = false;
 
   @override
@@ -86,7 +84,9 @@ class SignUpPageState extends State<SignUpPage> {
                   const SizedBox(
                     height: 20,
                   ),
-                  _registerButton(context),
+                  _isRegister
+                      ? const CupertinoActivityIndicator()
+                      : _registerButton(context),
                   SizedBox(height: height * .14),
                   _loginAccount(),
                 ],
@@ -235,158 +235,62 @@ class SignUpPageState extends State<SignUpPage> {
         style: const TextStyle(fontSize: 20, color: Colors.white),
       ),
     ).onTap(() {
-      RegExp regex = RegExp(
-          r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$');
-
-      if (_usernameController.text.isEmptyOrNull) {
-        simpleAlertBox(
-          context: context,
-          content: const Text('Please enter your username.'),
-        );
-        return;
-      }
-
-      if (!regex.hasMatch(_emailController.text.trim())) {
-        simpleAlertBox(
-          context: context,
-          content: const Text('Please enter the correct email.'),
-        );
-        return;
-      }
-
-      if (_passwordController.text.length < 6) {
-        simpleAlertBox(
-          context: context,
-          content: const Text('Password must be 6 characters or more.'),
-        );
-        return;
-      }
-
-      if (!_isCheckTermsAndPrivacyPolicy) {
-        simpleAlertBox(
-          context: context,
-          content: Text(AppLocalizations.of(context)!.consent_error),
-        );
-        return;
-      }
-
-      _register(context);
+      final param = SignTypeEmail(
+        username: _usernameController.text,
+        email: _emailController.text.trim(),
+        password: _passwordController.text,
+        termsAndPrivacyPolicy: _isCheckTermsAndPrivacyPolicy,
+      );
+      _register(context, param);
     });
   }
 
-  Future<void> _register(BuildContext context) async {
-    try {
-      final valid = await _usernameCheck(_usernameController.text);
-      if (!valid) {
-        setState(() {
-          if (mounted) {
-            simpleworldtoast('Error', 'Username is taken ', context);
-          }
-        });
-      } else {
-        final userCredential = await _auth.createUserWithEmailAndPassword(
-          email: _emailController.text.trim(),
-          password: _passwordController.text,
+  void _register(BuildContext context, SignTypeEmail param) {
+    setState(() {
+      _isRegister = true;
+    });
+    AuthRepository.getInstance().sign(param).then((result) {
+      if (result is ResultSuccess<AuthResult>) {
+        final value = result.value;
+        final userId = value.uid;
+        followersCollection
+            .doc(userId)
+            .collection('userFollowers')
+            .doc(userId)
+            .set({'userId': userId}).then((value) => null);
+        _configurePushNotifications(userId).then((value) => null);
+        Navigator.of(context).pushReplacement(
+          CupertinoPageRoute(
+            builder: (context) => GetAvatar(userId: userId),
+          ),
         );
-        final User? user = userCredential.user;
-        if (user != null) {
-          _createUserInFirestore(user.uid, user.email);
+      } else if (result is ResultError) {
+        if (result.value is SignUpParamException) {
+          simpleAlertBox(
+            context: context,
+            content: Text(result.value.message),
+          );
         } else {
-          setState(() {
-            isAuth = false;
-          });
-
-          if (mounted) {
-            simpleworldtoast(
-              'Error',
-              'Something went wrong please try again ',
-              context,
-            );
-          }
+          simpleworldtoast('Error', '${result.value['message']}', context);
         }
       }
-    } catch (e) {
+    }).whenComplete(() {
       setState(() {
-        isAuth = false;
+        _isRegister = false;
       });
-      simpleworldtoast(
-        'Error',
-        'The email address is already in use by anoter account',
-        context,
-      );
-    }
+    });
   }
 
-  Future<bool> _usernameCheck(String username) async {
+  Future _configurePushNotifications(userId) async {
     try {
-      final result =
-          await usersCollection.where('username', isEqualTo: username).get();
-      return result.docs.isEmpty;
-    } catch (e) {
-      return Future.value(false);
-    }
-  }
-
-  _createUserInFirestore(userId, email) async {
-    User? user = firebaseAuth.currentUser;
-    DocumentSnapshot doc = await usersCollection.doc(user!.uid).get();
-
-    if (!doc.exists) {
-      usersCollection.doc(userId).set({
-        'id': userId,
-        'username': _usernameController.text,
-        'photoUrl': '',
-        'email': email,
-        'displayName': _usernameController.text,
-        'bio': '',
-        'coverUrl': '',
-        'groups': [],
-        'loginType': 'app',
-        'timestamp': timestamp,
-        'userIsVerified': false,
-        'credit_points': 0,
-        'no_ads': false,
-        'active': true
+      String? token = await FirebaseMessaging.instance
+          .getToken(vapidKey: (kIsWeb ? vApiKey : null));
+      await usersCollection.doc(userId).update({
+        'tokenNotification': token,
       });
-      await followersCollection
-          .doc(userId)
-          .collection('userFollowers')
-          .doc(userId)
-          .set({'userId': userId});
-
-      doc = await usersCollection.doc(userId).get();
+    } catch (e) {
+      debugPrint('$e');
     }
-
-    setState(() {
-      globalUserId = userId;
-      isAuth = true;
-    });
-
-    configurePushNotifications(userId);
-    if (isAuth) {
-      Navigator.of(context).pushReplacement(
-        CupertinoPageRoute(
-          builder: (context) => GetAvatar(currentUserId: userId),
-        ),
-      );
-    }
-  }
-
-  configurePushNotifications(userId) async {
-    SharedPreferences preferences = await SharedPreferences.getInstance();
-    preferences
-        .setString(SharedPreferencesKey.userId, userId)
-        .then((value) async {
-      try {
-        String? token = await FirebaseMessaging.instance
-            .getToken(vapidKey: (kIsWeb ? vApiKey : null));
-        await usersCollection.doc(userId).update({
-          'tokenNotification': token,
-        });
-      } catch (e) {
-        debugPrint('$e');
-      }
-    });
 
     FirebaseMessaging.onMessage.listen((message) async {
       final String recipientId = userId;
@@ -408,7 +312,7 @@ class SignUpPageState extends State<SignUpPage> {
     return InkWell(
       onTap: () {
         Navigator.push(context,
-            MaterialPageRoute(builder: (context) => const LoginPage()));
+            MaterialPageRoute(builder: (context) => const SignInPage()));
       },
       child: Container(
         padding: const EdgeInsets.all(15),

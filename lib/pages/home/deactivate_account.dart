@@ -2,7 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:global_net/data/user.dart' as user;
-import 'package:global_net/pages/auth/login_page.dart';
+import 'package:global_net/pages/auth/sign_in_page.dart';
 import 'package:global_net/pages/home/home.dart';
 import 'package:global_net/share_preference/preferences_key.dart';
 import 'package:nb_utils/nb_utils.dart';
@@ -91,7 +91,7 @@ class _DeactiveAccountState extends State<DeactiveAccount> {
                                               .pushAndRemoveUntil(
                                             MaterialPageRoute(
                                               builder: (context) =>
-                                                  const LoginPage(),
+                                                  const SignInPage(),
                                             ),
                                             (route) => false,
                                           );

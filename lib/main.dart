@@ -16,7 +16,7 @@ import 'ads/applovin_ad_unit_id.dart';
 import 'app.dart';
 
 const bool useEmulator = kDebugMode;
-const String _host = '192.168.180.89';
+const String _host = '192.168.155.89';
 const String hostEmulator = '$_host:5001';
 
 late StreamingSharedPreferences streamingSharedPreferences;

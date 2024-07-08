@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:global_net/pages/auth/login_page.dart';
+import 'package:global_net/pages/auth/sign_in_page.dart';
 import 'package:global_net/widgets/bezier_container.dart';
 import 'package:global_net/widgets/progress.dart';
 
@@ -92,7 +92,7 @@ class _ForgetPass2State extends State<ForgetPass2> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => const LoginPage(),
+              builder: (context) => const SignInPage(),
             ),
           );
         },

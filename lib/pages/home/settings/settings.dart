@@ -9,7 +9,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:global_net/data/reaction_data.dart' as reaction;
 import 'package:global_net/data/user.dart' as data_user;
 import 'package:global_net/pages/all_videos.dart';
-import 'package:global_net/pages/auth/login_page.dart';
+import 'package:global_net/pages/auth/sign_in_page.dart';
 import 'package:global_net/pages/chat/simpleworld_chat_main.dart';
 import 'package:global_net/pages/edit_profile.dart';
 import 'package:global_net/pages/home/activity_feed.dart';
@@ -246,7 +246,7 @@ class _SettingsState extends State<SettingsPage> {
               Navigator.pushAndRemoveUntil(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => const LoginPage(),
+                  builder: (context) => const SignInPage(),
                 ),
                 (route) => false,
               );
@@ -284,7 +284,7 @@ class _SettingsState extends State<SettingsPage> {
                 preferences.remove(SharedPreferencesKey.userId).then((_) async {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => const LoginPage()),
+                    MaterialPageRoute(builder: (context) => const SignInPage()),
                   );
                 });
               },
