@@ -13,6 +13,7 @@ import 'package:global_net/data/reaction_data.dart' as reaction;
 import 'package:global_net/data/user.dart' as data;
 import 'package:global_net/models/user.dart';
 import 'package:global_net/pages/chat/simpleworld_chat_main.dart';
+import 'package:global_net/pages/comming_soon_page.dart';
 import 'package:global_net/pages/home/activity_feed.dart';
 import 'package:global_net/pages/home/business_structure/business_structure.dart';
 import 'package:global_net/pages/home/chat.dart';
@@ -443,16 +444,21 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                   return;
                 }
                 if (AppLocalizations.of(context)!.media == item) {
-                  const url = 'https://v.douyin.com/iN4PtPCE';
-                  if (kIsWeb) {
-                    launchUrl(Uri.parse(url));
-                  } else {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) {
-                        return const AppWebView(url: url, title: 'Media');
-                      }),
-                    );
-                  }
+                  Navigator.of(context).push(
+                    MaterialPageRoute(builder: (context) {
+                      return const CommimgSoon();
+                    }),
+                  );
+                  // const url = 'https://v.douyin.com/iN4PtPCE';
+                  // if (kIsWeb) {
+                  //   launchUrl(Uri.parse(url));
+                  // } else {
+                  //   Navigator.of(context).push(
+                  //     MaterialPageRoute(builder: (context) {
+                  //       return const AppWebView(url: url, title: 'Media');
+                  //     }),
+                  //   );
+                  // }
                   return;
                 }
                 if (AppLocalizations.of(context)!.shop == item) {

@@ -27,11 +27,11 @@ Future<void> main() async {
   final savedThemeMode = await AdaptiveTheme.getThemeMode();
 
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  if (useEmulator) {
-    FirebaseAuth.instance.useAuthEmulator(_host, 9099);
-    FirebaseFirestore.instance.useFirestoreEmulator(_host, 8080);
-    FirebaseStorage.instance.useStorageEmulator(_host, 9199);
-  }
+  // if (useEmulator) {
+  //   FirebaseAuth.instance.useAuthEmulator(_host, 9099);
+  //   FirebaseFirestore.instance.useFirestoreEmulator(_host, 8080);
+  //   FirebaseStorage.instance.useStorageEmulator(_host, 9199);
+  // }
 
   if (!kIsWeb) {
     MaxConfiguration? sdkConfiguration = await AppLovinMAX.initialize(
