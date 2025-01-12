@@ -12,6 +12,7 @@ const transactionsFieldReceiver = 'receiver';
 const transactionsFieldCreateAt = 'createAt';
 const transactionsFieldType = 'type';
 const transactionsFieldAmount = 'amount';
+const transactionsFieldTransactionId = 'transaction_id';
 
 class Transfer extends StatefulWidget {
   final String userId;

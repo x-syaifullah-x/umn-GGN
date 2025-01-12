@@ -215,7 +215,9 @@ class _WalletState extends State<Wallet> {
             _itemTransactionIcon(
               url: transaction.sender == 'stripe'
                   ? 'https://asset.brandfetch.io/idxAg10C0L/idTHPdqoDR.jpeg'
-                  : user?.photoUrl ?? '',
+                  : transaction.type == Type.pay_ggn_shop
+                      ? 'https://globalgnet.net/uploads/media/2024/l1ogo-dark.png'
+                      : user?.photoUrl ?? '',
             ),
             const SizedBox(
               width: 16,
@@ -245,6 +247,7 @@ class _WalletState extends State<Wallet> {
   Widget _itemTransactionBody(TransactionModel transaction) {
     final bool isTransfer = transaction.type == Type.transfer;
     final bool isCreateCoupon = transaction.type == Type.create_coupon;
+    final bool isPayGGNShop = transaction.type == Type.pay_ggn_shop;
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -254,11 +257,11 @@ class _WalletState extends State<Wallet> {
         ),
         Text(
           transaction.amount > 0
-              ? '${isTransfer || isCreateCoupon ? '-' : '+'}${transaction.amount}'
+              ? '${isTransfer || isCreateCoupon || isPayGGNShop ? '-' : '+'}${transaction.amount}'
               : '0',
           style: TextStyle(
             color: transaction.amount > 0
-                ? isTransfer || isCreateCoupon
+                ? isTransfer || isCreateCoupon || isPayGGNShop
                     ? Colors.red
                     : Colors.green
                 : Colors.black,
@@ -297,6 +300,10 @@ class _WalletState extends State<Wallet> {
     if (type == Type.refund) {
       title = 'From ${transaction.sender.toString().capitalize()}';
     }
+
+    if (type == Type.pay_ggn_shop) {
+      title = 'txn_id: ${transaction.transaction_id}';
+    }
     return Text(
       title,
       style: const TextStyle(
@@ -314,6 +321,8 @@ class _WalletState extends State<Wallet> {
     if (transactionType == Type.create_coupon) title = 'Create Coupon';
     if (transactionType == Type.delete_coupon) title = 'Delete Coupon';
     if (transactionType == Type.refund) title = 'Refund';
+    if (transactionType == Type.pay_ggn_shop) title = 'Pay GGN Shop';
+
     return Text(
       title,
       style: const TextStyle(
@@ -491,6 +500,111 @@ class _WalletState extends State<Wallet> {
                     fontSize: 14,
                     fontWeight: FontWeight.bold,
                   ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Text(
+                  'PIN',
+                  style: GoogleFonts.portLligatSans(
+                    textStyle: Theme.of(context).textTheme.headlineMedium,
+                    fontSize: 16,
+                  ),
+                ),
+                const SizedBox(
+                  width: 8,
+                ),
+                InkWell(
+                  child: const Icon(
+                    Icons.edit_document,
+                    size: 18,
+                  ),
+                  onTap: () async {
+                    final t = TextEditingController();
+                    showDialog(
+                      context: context,
+                      builder: (context) {
+                        return AlertDialog(
+                          title: const Text('Change PIN'),
+                          content: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              TextField(
+                                controller: t,
+                                keyboardType: TextInputType.number,
+                                decoration: const InputDecoration(
+                                  border: OutlineInputBorder(),
+                                  hintText: 'Enter a PIN',
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              SizedBox(
+                                height: 32,
+                                // width: width * .65,
+                                child: ElevatedButton(
+                                  onPressed: () {
+                                    final pin = t.text;
+                                    if (pin.isEmptyOrNull) {
+                                      return;
+                                    }
+                                    firestore
+                                        .collection('wallets')
+                                        .doc(user.id)
+                                        .set({'pin': pin}).then(
+                                      (value) {
+                                        Navigator.of(
+                                          context,
+                                          rootNavigator: true,
+                                        ).pop();
+                                      },
+                                    ).catchError((e) {
+                                      toast(e);
+                                    });
+                                  },
+                                  child: const Text('CHANGE'),
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    );
+                  },
+                ),
+                // InkWell(
+                //   child: const Icon(
+                //     Icons.copy_all_sharp,
+                //     size: 18,
+                //   ),
+                //   onTap: () async {
+                //     try {
+                //       await Clipboard.setData(
+                //         ClipboardData(
+                //           text: widget.user.id,
+                //         ),
+                //       );
+                //       toast('PIN has been successfully copied');
+                //     } catch (e) {
+                //       log('$e');
+                //     }
+                //   },
+                // ),
+                StreamBuilder<DocumentSnapshot<Map<String, dynamic>>>(
+                  stream:
+                      firestore.collection('wallets').doc(user.id).snapshots(),
+                  builder: (context, snapshot) {
+                    final wallet = snapshot.data?.data();
+                    return Text(
+                      wallet?['pin'] ?? '----',
+                      style: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    );
+                  },
                 ),
               ],
             ),
