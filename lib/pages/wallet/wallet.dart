@@ -213,11 +213,13 @@ class _WalletState extends State<Wallet> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _itemTransactionIcon(
-              url: transaction.sender == 'stripe'
-                  ? 'https://asset.brandfetch.io/idxAg10C0L/idTHPdqoDR.jpeg'
-                  : transaction.type == Type.pay_ggn_shop
-                      ? 'https://globalgnet.net/uploads/media/2024/l1ogo-dark.png'
-                      : user?.photoUrl ?? '',
+              url: transaction.type == Type.subscription_accounting
+                  ? 'https://account.globalgnet.net/storage/uploads/logo/1-logo-dark.png'
+                  : transaction.sender == 'stripe'
+                      ? 'https://asset.brandfetch.io/idxAg10C0L/idTHPdqoDR.jpeg'
+                      : transaction.type == Type.pay_ggn_shop
+                          ? 'https://globalgnet.net/uploads/media/2024/l1ogo-dark.png'
+                          : user?.photoUrl ?? '',
             ),
             const SizedBox(
               width: 16,
@@ -248,6 +250,8 @@ class _WalletState extends State<Wallet> {
     final bool isTransfer = transaction.type == Type.transfer;
     final bool isCreateCoupon = transaction.type == Type.create_coupon;
     final bool isPayGGNShop = transaction.type == Type.pay_ggn_shop;
+    final bool isSubscriptionAccounting =
+        transaction.type == Type.subscription_accounting;
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -257,11 +261,14 @@ class _WalletState extends State<Wallet> {
         ),
         Text(
           transaction.amount > 0
-              ? '${isTransfer || isCreateCoupon || isPayGGNShop ? '-' : '+'}${transaction.amount}'
+              ? '${isTransfer || isCreateCoupon || isPayGGNShop || isSubscriptionAccounting ? '-' : '+'}${transaction.amount}'
               : '0',
           style: TextStyle(
             color: transaction.amount > 0
-                ? isTransfer || isCreateCoupon || isPayGGNShop
+                ? isTransfer ||
+                        isCreateCoupon ||
+                        isPayGGNShop ||
+                        isSubscriptionAccounting
                     ? Colors.red
                     : Colors.green
                 : Colors.black,
@@ -304,6 +311,10 @@ class _WalletState extends State<Wallet> {
     if (type == Type.pay_ggn_shop) {
       title = 'txn_id: ${transaction.transaction_id}';
     }
+
+    if (type == Type.subscription_accounting) {
+      title = 'txn_id: ${transaction.transaction_id}';
+    }
     return Text(
       title,
       style: const TextStyle(
@@ -322,6 +333,9 @@ class _WalletState extends State<Wallet> {
     if (transactionType == Type.delete_coupon) title = 'Delete Coupon';
     if (transactionType == Type.refund) title = 'Refund';
     if (transactionType == Type.pay_ggn_shop) title = 'Pay GGN Shop';
+    if (transactionType == Type.subscription_accounting) {
+      title = 'Subscription Site Accounting';
+    }
 
     return Text(
       title,

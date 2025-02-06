@@ -16,7 +16,7 @@ import 'ads/applovin_ad_unit_id.dart';
 import 'app.dart';
 
 const bool useEmulator = kDebugMode;
-const String _host = '192.168.0.157';
+const String _host = '192.168.1.2';
 const String hostEmulator = '$_host:5001';
 
 late StreamingSharedPreferences streamingSharedPreferences;
@@ -27,11 +27,11 @@ Future<void> main() async {
   final savedThemeMode = await AdaptiveTheme.getThemeMode();
 
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  // if (useEmulator) {
-  //   FirebaseAuth.instance.useAuthEmulator(_host, 9099);
-  //   FirebaseFirestore.instance.useFirestoreEmulator(_host, 8080);
-  //   FirebaseStorage.instance.useStorageEmulator(_host, 9199);
-  // }
+  if (useEmulator) {
+    FirebaseAuth.instance.useAuthEmulator(_host, 9099);
+    FirebaseFirestore.instance.useFirestoreEmulator(_host, 8080);
+    FirebaseStorage.instance.useStorageEmulator(_host, 9199);
+  }
 
   if (!kIsWeb) {
     MaxConfiguration? sdkConfiguration = await AppLovinMAX.initialize(

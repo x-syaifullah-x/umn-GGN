@@ -40,4 +40,5 @@ enum Type {
   delete_coupon,
   refund,
   pay_ggn_shop,
+  subscription_accounting
 }
