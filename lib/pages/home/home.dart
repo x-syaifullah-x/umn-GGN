@@ -409,8 +409,23 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
               ),
               onTap: () {
                 final item = dataSideLeft[index];
+
+                if (AppLocalizations.of(context)!.channel == item) {
+                  const url = 'https://ggnpixel.net';
+                  if (kIsWeb) {
+                    launchUrl(Uri.parse(url));
+                  } else {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(builder: (context) {
+                        return const AppWebView(url: url, title: 'Channel');
+                      }),
+                    );
+                  }
+                  return;
+                }
+
                 if (AppLocalizations.of(context)!.email == item) {
-                  const url = 'http://xsender.globalgnet.net';
+                  const url = 'https://mail.globalgnet.net/user/dashboard';
                   if (kIsWeb) {
                     launchUrl(Uri.parse(url));
                   } else {

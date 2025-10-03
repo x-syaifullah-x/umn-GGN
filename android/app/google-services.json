@@ -60,6 +60,58 @@
     },
     {
       "client_info": {
+        "mobilesdk_app_id": "1:813756573374:android:0078801c2a33e82112a0ef",
+        "android_client_info": {
+          "package_name": "global.net.liru.tv"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "813756573374-2pkem4ch3dcumrhhbtq76aa28r0t79nv.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "global.net.liru.tv",
+            "certificate_hash": "b4e86a7708cc1d7effd08426b8b81ff40f6d87af"
+          }
+        },
+        {
+          "client_id": "813756573374-s8f0tlp4v9okkdiiv8dvcssg9a86eegd.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "global.net.liru.tv",
+            "certificate_hash": "9599944cdcb9662e2d4f9845eca2c5f7edc04862"
+          }
+        },
+        {
+          "client_id": "813756573374-b07nefslur4ncltvs74pvsghn038hcau.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDx3Q1JEtUne8wWefRk2k1HkiaTBEduDMI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "813756573374-b07nefslur4ncltvs74pvsghn038hcau.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "813756573374-0oe4i3m57e4hpultb6h8l9dc42eg696g.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.net.globalgirl"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
         "mobilesdk_app_id": "1:813756573374:android:68328e49ed7dadff12a0ef",
         "android_client_info": {
           "package_name": "net.girls.yang"

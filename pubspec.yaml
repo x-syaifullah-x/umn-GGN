@@ -69,7 +69,11 @@ dependencies:
   json_annotation: 4.7.0
   badges: 2.0.3
   iconly: 1.0.1
-  video_compress: 3.1.2
+  # video_compress: 3.1.2
+  video_compress:
+    git:
+      url: https://github.com/SpectoraSoftware/VideoCompress
+      ref: caf41183e84adebd6ef5c8fba547937daf556a65
   webview_flutter: 2.0.12
   flutter_mobx: 2.0.6+5
   flutter:
