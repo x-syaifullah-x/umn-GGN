@@ -9,6 +9,7 @@ import 'package:global_net/pages/auth/data/models/auth_result.dart';
 import 'package:global_net/pages/auth/data/models/exeptions/sign_up_param_exception.dart';
 import 'package:global_net/pages/auth/data/models/sign_type.dart';
 import 'package:global_net/pages/auth/get_avatar.dart';
+import 'package:global_net/pages/auth/recaptcha/recaptcha_box.dart';
 import 'package:global_net/pages/auth/sign_in_page.dart';
 import 'package:global_net/pages/home/home.dart';
 import 'package:global_net/pages/webview/webview.dart';
@@ -30,6 +31,8 @@ class SignUpPageState extends State<SignUpPage> {
 
   bool _isRegister = false;
   bool _isCheckTermsAndPrivacyPolicy = false;
+
+  String? _recaptchaToken;
 
   @override
   Widget build(BuildContext context) {
@@ -83,6 +86,21 @@ class SignUpPageState extends State<SignUpPage> {
                   _termsCondition(context),
                   const SizedBox(
                     height: 20,
+                  ),
+                  RecaptchaBox(
+                    siteKey: '6LcotN4rAAAAACrhvDUssAE052h2b4YXK6QiG2VU',
+                    onVerified: (token) {
+                      setState(() {
+                        _recaptchaToken = token;
+                      });
+                      // Now send token to your server for verification
+                      // _verifyOnServer(token!);
+                    },
+                    onError: (error) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('reCAPTCHA error: $error')),
+                      );
+                    },
                   ),
                   _isRegister
                       ? const CupertinoActivityIndicator()
@@ -246,6 +264,10 @@ class SignUpPageState extends State<SignUpPage> {
   }
 
   void _register(BuildContext context, SignTypeEmail param) {
+    if (kIsWeb && _recaptchaToken == null) {
+      simpleworldtoast('Error', 'reCAPTCHA', context);
+      return;
+    }
     setState(() {
       _isRegister = true;
     });

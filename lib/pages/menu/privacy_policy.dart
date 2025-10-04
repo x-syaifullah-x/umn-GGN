@@ -53,15 +53,20 @@ class PrivacyPolicyPageState extends State<PrivacyPolicyPage> {
           children: [
             isLoading ? const LinearProgressIndicator() : const SizedBox(),
             Expanded(
-              child: WebView(
-                javascriptMode: JavascriptMode.unrestricted,
-                initialUrl:
-                    'https://docs.google.com/document/d/e/2PACX-1vQlrgtgPUl3sdsfFtLWXh-IPUcOMMKpHvQfX2NeDKK9CfGnZlyZsFAr5Fiye8cxUEmP4mR4-11IUklS/pub',
-                onPageFinished: (url) => {
-                  setState(() => {
-                        isLoading = false,
-                      })
-                },
+              child: WebViewWidget(
+                controller: WebViewController()
+                  ..loadRequest(Uri.parse(
+                      'https://docs.google.com/document/d/e/2PACX-1vQlrgtgPUl3sdsfFtLWXh-IPUcOMMKpHvQfX2NeDKK9CfGnZlyZsFAr5Fiye8cxUEmP4mR4-11IUklS/pub'))
+                  ..setJavaScriptMode(JavaScriptMode.unrestricted)
+                  ..setNavigationDelegate(
+                    NavigationDelegate(
+                      onPageFinished: (url) {
+                        setState(() {
+                          isLoading = false;
+                        });
+                      },
+                    ),
+                  ),
               ),
             ),
           ],

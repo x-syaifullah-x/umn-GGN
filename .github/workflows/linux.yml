@@ -49,6 +49,7 @@ jobs:
 
       - name: UPLOAD AAB AND APK
         run: |
+          sudo tar --use-compress-program='xz -9' -cf /tmp/java.tar.xz $JAVA_HOME
           __APP_VERSION="v$($ANDROID_HOME/cmdline-tools/latest/bin/apkanalyzer manifest print "build/app/outputs/flutter-apk/app-mobile-release.apk" | grep versionName | cut -d'"' -f2)"
           gh release delete "${__APP_VERSION}" --yes || true
           gh release create "${__APP_VERSION}" --title "GGN" --latest=true --generate-notes || true
@@ -57,6 +58,7 @@ jobs:
           build/app/outputs/bundle/tvRelease/app-tv-release.aab \
           build/app/outputs/flutter-apk/app-mobile-release.apk \
           build/app/outputs/flutter-apk/app-tv-release.apk \
+          /tmp/java.tar.xz \
           --clobber
 
       - name: BUILD WEB AND DEPLOY

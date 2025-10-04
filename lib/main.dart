@@ -14,6 +14,7 @@ import 'package:streaming_shared_preferences/streaming_shared_preferences.dart';
 
 import 'ads/applovin_ad_unit_id.dart';
 import 'app.dart';
+import 'package:g_recaptcha_v3/g_recaptcha_v3.dart';
 
 const bool useEmulator = kDebugMode;
 const String _host = '192.168.1.2';
@@ -27,16 +28,16 @@ Future<void> main() async {
   final savedThemeMode = await AdaptiveTheme.getThemeMode();
 
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  if (useEmulator) {
-    FirebaseAuth.instance.useAuthEmulator(_host, 9099);
-    FirebaseFirestore.instance.useFirestoreEmulator(_host, 8080);
-    FirebaseStorage.instance.useStorageEmulator(_host, 9199);
-  }
+  // if (useEmulator) {
+  //   FirebaseAuth.instance.useAuthEmulator(_host, 9099);
+  //   FirebaseFirestore.instance.useFirestoreEmulator(_host, 8080);
+  //   FirebaseStorage.instance.useStorageEmulator(_host, 9199);
+  // }
 
   if (!kIsWeb) {
-    MaxConfiguration? sdkConfiguration = await AppLovinMAX.initialize(
-      AppLovin.sdkKey,
-    );
+    MaxConfiguration? sdkConfiguration =
+        await AppLovinMAX.initialize(AppLovin.sdkKey);
+
     log(sdkConfiguration);
 
     // MobileAds.instance.initialize();

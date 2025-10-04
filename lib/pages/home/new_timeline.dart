@@ -84,6 +84,7 @@ class NewTimelineState extends State<NewTimeline>
   @override
   Widget build(BuildContext context) {
     super.build(context);
+
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.onBackground,
       body: _followersPostList(context, widget.user),
@@ -652,7 +653,7 @@ class NewTimelineState extends State<NewTimeline>
               Row(
                 children: [
                   GestureDetector(
-                    onTap: () => _showCommentsforAlbum(
+                    onTap: () => _showCommentsForAlbum(
                       context,
                       userId: widget.user.id,
                       postId: postId,
@@ -701,7 +702,7 @@ class NewTimelineState extends State<NewTimeline>
               Row(
                 children: [
                   GestureDetector(
-                    onTap: () => _showCommentsforAlbum(
+                    onTap: () => _showCommentsForAlbum(
                       context,
                       userId: widget.user.id,
                       postId: postId,
@@ -759,7 +760,7 @@ class NewTimelineState extends State<NewTimeline>
     );
   }
 
-  _showCommentsforAlbum(
+  void _showCommentsForAlbum(
     BuildContext context, {
     required String userId,
     String? postId,
@@ -909,6 +910,7 @@ class NewTimelineState extends State<NewTimeline>
   }
 
   void deletePost(post) async {
+    log(post['ownerId']);
     postsCollection
         .doc(post['ownerId'])
         .collection('userPosts')
@@ -1015,9 +1017,9 @@ class NewTimelineState extends State<NewTimeline>
     }
   }
 
-  Future _handleDeletePosts(BuildContext parentConext, post) {
+  Future _handleDeletePosts(BuildContext parentContext, post) {
     return showDialog(
-        context: parentConext,
+        context: parentContext,
         builder: (context) {
           return SimpleDialog(
             title: const Text('Remove this Post?'),
@@ -1041,9 +1043,9 @@ class NewTimelineState extends State<NewTimeline>
         });
   }
 
-  Future _handleHidePosts(BuildContext parentConext, post) {
+  Future _handleHidePosts(BuildContext parentContext, post) {
     return showDialog(
-        context: parentConext,
+        context: parentContext,
         builder: (context) {
           return SimpleDialog(
             title: const Text('Hide this Post?'),
@@ -1067,9 +1069,9 @@ class NewTimelineState extends State<NewTimeline>
         });
   }
 
-  Future _handleReportPosts(BuildContext parentConext, post) {
+  Future _handleReportPosts(BuildContext parentContext, post) {
     return showDialog(
-        context: parentConext,
+        context: parentContext,
         builder: (context) {
           return SimpleDialog(
             title: const Text('Are you sure you want to Report this Post?'),

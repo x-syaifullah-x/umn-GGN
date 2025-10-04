@@ -43,14 +43,19 @@ class AppWebViewState extends State<AppWebView> {
             children: [
               isLoading ? const LinearProgressIndicator() : const SizedBox(),
               Expanded(
-                child: WebView(
-                  javascriptMode: JavascriptMode.unrestricted,
-                  initialUrl: widget.url,
-                  onPageFinished: (url) => {
-                    setState(() => {
-                          isLoading = false,
-                        })
-                  },
+                child: WebViewWidget(
+                  controller: WebViewController()
+                    ..loadRequest(Uri.parse(widget.url))
+                    ..setJavaScriptMode(JavaScriptMode.unrestricted)
+                    ..setNavigationDelegate(
+                      NavigationDelegate(
+                        onPageFinished: (url) {
+                          setState(() {
+                            isLoading = false;
+                          });
+                        },
+                      ),
+                    ),
                 ),
               ),
             ],

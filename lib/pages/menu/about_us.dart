@@ -40,14 +40,20 @@ class AboutUsPageState extends State<AboutUsPage> {
           children: [
             isLoading ? const LinearProgressIndicator() : const SizedBox(),
             Expanded(
-              child: WebView(
-                javascriptMode: JavascriptMode.unrestricted,
-                initialUrl: "http://globalgirlsinc.net/?page_id=87",
-                onPageFinished: (url) => {
-                  setState(() => {
-                        isLoading = false,
-                      })
-                },
+              child: WebViewWidget(
+                controller: WebViewController()
+                  ..loadRequest(
+                      Uri.parse('http://globalgirlsinc.net/?page_id=87'))
+                  ..setJavaScriptMode(JavaScriptMode.unrestricted)
+                  ..setNavigationDelegate(
+                    NavigationDelegate(
+                      onPageFinished: (url) {
+                        setState(() {
+                          isLoading = false;
+                        });
+                      },
+                    ),
+                  ),
               ),
             ),
           ],

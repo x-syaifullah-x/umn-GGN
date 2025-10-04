@@ -10,6 +10,7 @@ dependency_overrides:
   firebase_core_platform_interface: 4.5.1
 
 dependencies:
+  g_recaptcha_v3: 0.0.5
   streaming_shared_preferences: 2.0.0
   universal_html: 2.2.2
   sqflite: 2.2.8+4
@@ -74,7 +75,8 @@ dependencies:
     git:
       url: https://github.com/SpectoraSoftware/VideoCompress
       ref: caf41183e84adebd6ef5c8fba547937daf556a65
-  webview_flutter: 2.0.12
+  # webview_flutter: 2.0.12
+  webview_flutter: 4.4.2
   flutter_mobx: 2.0.6+5
   flutter:
     sdk: flutter

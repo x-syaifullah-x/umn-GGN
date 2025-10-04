@@ -16,7 +16,7 @@ For help getting started with Flutter, view our
 samples, guidance on mobile development, and a full API reference.
 
 ### SDK Platform
-- 34
+- 36
 - 33
 - 31
 - 30
@@ -24,11 +24,18 @@ samples, guidance on mobile development, and a full API reference.
 - 28
 ### SDK Build-Tools
 - 33.0.1
-- 34.0.0
+- 36.0.0
 
 ### FLUTTER SDK MAX
 - 3.7.12
     - ref 4d9e56e
+
+### JAVA VERSION
+- 17
+
+### CODE EXTENSIONS FLUTTER
+- https://github.com/Dart-Code/Flutter/releases/download/v3.100.0/flutter-3.100.0.vsix
+- code --install-extension flutter-3.100.0.vsix
 
 
 This will generate a JSON format file containing all messages that 

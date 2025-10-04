@@ -8,11 +8,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_signin_button/button_list.dart';
 import 'package:flutter_signin_button/button_view.dart';
+import 'package:g_recaptcha_v3/g_recaptcha_v3.dart';
 import 'package:global_net/ads/login_ads.dart';
 import 'package:global_net/data/user.dart' as data;
 import 'package:global_net/pages/auth/add_credit_to_account.dart';
 import 'package:global_net/pages/auth/create_account.dart';
 import 'package:global_net/pages/auth/forgotpass.dart';
+import 'package:global_net/pages/auth/recaptcha/recaptcha_box.dart';
 import 'package:global_net/pages/auth/sign_up_page.dart';
 import 'package:global_net/pages/home/home.dart';
 import 'package:global_net/share_preference/preferences_key.dart';
@@ -47,6 +49,8 @@ class _SignInPageState extends State<SignInPage> {
   final _passwordNode = FocusNode();
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  String? _recaptchaToken;
 
   @override
   void initState() {
@@ -127,7 +131,23 @@ class _SignInPageState extends State<SignInPage> {
                       _title(),
                       const SizedBox(height: 50),
                       _emailPasswordWidget(),
-                      const SizedBox(height: 20),
+                      // const SizedBox(height: 20),
+                      RecaptchaBox(
+                        siteKey: '6LcotN4rAAAAACrhvDUssAE052h2b4YXK6QiG2VU',
+                        onVerified: (token) {
+                          setState(() {
+                            _recaptchaToken = token;
+                          });
+                          // Now send token to your server for verification
+                          // _verifyOnServer(token!);
+                        },
+                        onError: (error) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('reCAPTCHA error: $error')),
+                          );
+                        },
+                      ),
+                      // const SizedBox(height: 20),
                       _loginButton(),
                       _forgotPassword(),
                       _divider(),
@@ -215,6 +235,10 @@ class _SignInPageState extends State<SignInPage> {
       ),
     ).onTap(() {
       if (_emailController.text != '' && _passwordController.text != '') {
+        if (kIsWeb && _recaptchaToken == null) {
+          simpleworldtoast('Error', 'reCAPTCHA', context);
+          return;
+        }
         setState(() {
           _emailNode.unfocus();
           _passwordNode.unfocus();

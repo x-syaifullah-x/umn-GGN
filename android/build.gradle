@@ -15,7 +15,7 @@ buildscript {
             if(it.hasProperty("android") && it.android.namespace == null){
                 def manifest = new XmlSlurper().parse(file(it.android.sourceSets.main.manifest.srcFile))
                 def packageName = manifest.@package.text()
-                android.namespace= packageName
+                android.namespace = packageName
             }
         }
     }

@@ -290,7 +290,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
       AppLocalizations.of(context)!.channel,
       AppLocalizations.of(context)!.email,
       AppLocalizations.of(context)!.news,
-      AppLocalizations.of(context)!.media,
+      // AppLocalizations.of(context)!.media,
       AppLocalizations.of(context)!.iptv,
       AppLocalizations.of(context)!.chat,
       AppLocalizations.of(context)!.group,
