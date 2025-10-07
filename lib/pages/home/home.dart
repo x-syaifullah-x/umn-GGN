@@ -12,6 +12,7 @@ import 'package:global_net/ads/applovin_ad_unit_id.dart';
 import 'package:global_net/data/reaction_data.dart' as reaction;
 import 'package:global_net/data/user.dart' as data;
 import 'package:global_net/models/user.dart';
+import 'package:global_net/pages/auth/recaptcha/recaptcha_box.dart';
 import 'package:global_net/pages/chat/simpleworld_chat_main.dart';
 import 'package:global_net/pages/comming_soon_page.dart';
 import 'package:global_net/pages/home/activity_feed.dart';
@@ -286,6 +287,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     final double widthContentCenter =
         width - widthContentLeft - widthContentRight;
     final List<String> dataSideLeft = [
+      AppLocalizations.of(context)!.accounting,
       AppLocalizations.of(context)!.shop,
       AppLocalizations.of(context)!.channel,
       AppLocalizations.of(context)!.email,
@@ -295,7 +297,6 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
       AppLocalizations.of(context)!.chat,
       AppLocalizations.of(context)!.group,
       AppLocalizations.of(context)!.apps,
-      AppLocalizations.of(context)!.accounting,
       AppLocalizations.of(context)!.go_dark,
       AppLocalizations.of(context)!.credit_lines,
       AppLocalizations.of(context)!.crow_funding,
@@ -412,29 +413,40 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
 
                 if (AppLocalizations.of(context)!.channel == item) {
                   const url = 'https://ggnpixel.net';
-                  if (kIsWeb) {
-                    launchUrl(Uri.parse(url));
-                  } else {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) {
-                        return const AppWebView(url: url, title: 'Channel');
-                      }),
-                    );
-                  }
+                  tryOpenWpaWithFallback(
+                    'web+gnp://ggnpixel.net',
+                    url,
+                  );
+
+                  // if (kIsWeb) {
+                  //   launchUrl(Uri.parse(url));
+                  // } else {
+                  //   Navigator.of(context).push(
+                  //     MaterialPageRoute(builder: (context) {
+                  //       return const AppWebView(url: url, title: 'Channel');
+                  //     }),
+                  //   );
+                  // }
                   return;
                 }
 
                 if (AppLocalizations.of(context)!.email == item) {
-                  const url = 'https://mail.globalgnet.net/user/dashboard';
-                  if (kIsWeb) {
-                    launchUrl(Uri.parse(url));
-                  } else {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) {
-                        return const AppWebView(url: url, title: 'Email');
-                      }),
-                    );
-                  }
+                  const url = 'https://mail.globalgnet.net';
+                  tryOpenWpaWithFallback(
+                    'web+gnm://mail.globalgnet.net',
+                    url,
+                  );
+
+                  // if (kIsWeb) {
+                  //   Uri uri = Uri.parse(url);
+                  //   launchUrl(uri, mode: LaunchMode.externalApplication);
+                  // } else {
+                  //   Navigator.of(context).push(
+                  //     MaterialPageRoute(builder: (context) {
+                  //       return const AppWebView(url: url, title: 'Email');
+                  //     }),
+                  //   );
+                  // }
                   return;
                 }
                 if (AppLocalizations.of(context)!.business_structure == item) {
@@ -447,15 +459,20 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                 }
                 if (AppLocalizations.of(context)!.accounting == item) {
                   const url = 'https://account.globalgnet.net';
-                  if (kIsWeb) {
-                    launchUrl(Uri.parse(url));
-                  } else {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) {
-                        return const AppWebView(url: url, title: 'Accounting');
-                      }),
-                    );
-                  }
+                  tryOpenWpaWithFallback(
+                    'web+gna://account.globalgnet.net',
+                    url,
+                  );
+
+                  // if (kIsWeb) {
+                  //   launchUrl(Uri.parse(url));
+                  // } else {
+                  //   Navigator.of(context).push(
+                  //     MaterialPageRoute(builder: (context) {
+                  //       return const AppWebView(url: url, title: 'Accounting');
+                  //     }),
+                  //   );
+                  // }
                   return;
                 }
                 if (AppLocalizations.of(context)!.media == item) {
@@ -477,16 +494,20 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                   return;
                 }
                 if (AppLocalizations.of(context)!.shop == item) {
-                  const url = 'http://globalgnet.net';
-                  if (kIsWeb) {
-                    launchUrl(Uri.parse(url));
-                  } else {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) {
-                        return const AppWebView(url: url, title: 'Shop');
-                      }),
-                    );
-                  }
+                  const url = 'https://globalgnet.net';
+                  tryOpenWpaWithFallback(
+                    'web+gns://globalgnet.net',
+                    url,
+                  );
+                  // if (kIsWeb) {
+                  //   launchUrl(Uri.parse(url));
+                  // } else {
+                  //   Navigator.of(context).push(
+                  //     MaterialPageRoute(builder: (context) {
+                  //       return const AppWebView(url: url, title: 'Shop');
+                  //     }),
+                  //   );
+                  // }
                   return;
                 } else if (AppLocalizations.of(context)!.news == item) {
                   Navigator.of(context).push(

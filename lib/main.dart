@@ -14,7 +14,6 @@ import 'package:streaming_shared_preferences/streaming_shared_preferences.dart';
 
 import 'ads/applovin_ad_unit_id.dart';
 import 'app.dart';
-import 'package:g_recaptcha_v3/g_recaptcha_v3.dart';
 
 const bool useEmulator = kDebugMode;
 const String _host = '192.168.1.2';

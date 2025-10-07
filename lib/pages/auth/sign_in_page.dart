@@ -8,7 +8,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_signin_button/button_list.dart';
 import 'package:flutter_signin_button/button_view.dart';
-import 'package:g_recaptcha_v3/g_recaptcha_v3.dart';
 import 'package:global_net/ads/login_ads.dart';
 import 'package:global_net/data/user.dart' as data;
 import 'package:global_net/pages/auth/add_credit_to_account.dart';

@@ -4,6 +4,16 @@ import 'dart:ui' as ui;
 
 import 'dart:async';
 import 'package:flutter/material.dart';
+// ignore: avoid_web_libraries_in_flutter
+import 'dart:js' as js;
+
+void tryOpenWpaWithFallback(String protocol, String fallbackUrl) {
+  js.context.callMethod('openOrInstall', [protocol, fallbackUrl]);
+}
+
+Future<void> launchX(String url) async {
+  html.window.open(url, '_blank');
+}
 
 class RecaptchaBox extends StatefulWidget {
   final String siteKey;

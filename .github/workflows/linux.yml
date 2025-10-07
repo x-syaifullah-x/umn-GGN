@@ -15,6 +15,12 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        
+      - name: Setup flutter SDK
+        uses: flutter-actions/setup-flutter@v4
+        with:
+          channel: stable
+          version: 3.7.12
 
       - name: Setup JDK
         uses: actions/setup-java@v4
@@ -22,11 +28,6 @@ jobs:
           java-version: "17" # java-version > 17 Error Execution failed for task ':video_player_android:compileReleaseJavaWithJavac'
           distribution: "jetbrains"
 
-      - name: Setup flutter SDK
-        uses: flutter-actions/setup-flutter@v4
-        with:
-          channel: stable
-          version: 3.7.12
 
       - name: Flutter pub get
         run: flutter pub get

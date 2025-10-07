@@ -1,4 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
+
+void tryOpenWpaWithFallback(String protocol, String fallbackUrl) {
+  Uri uri = Uri.parse(fallbackUrl);
+  launchUrl(
+    uri,
+    mode: LaunchMode.platformDefault,
+    webOnlyWindowName: '_self',
+  );
+}
 
 class RecaptchaBox extends StatelessWidget {
   final String siteKey;

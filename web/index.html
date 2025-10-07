@@ -92,6 +92,26 @@
     }
 </script> -->
   <script>
+    async function tryOpenProtocol(uri_p) {
+      return new Promise(resolve => {
+        const timeout = setTimeout(() => resolve(false), 1000);
+        const onBlur = () => {
+          clearTimeout(timeout);
+          resolve(true);
+          window.removeEventListener('blur', onBlur);
+        };
+        window.addEventListener('blur', onBlur);
+        window.open(uri_p, '_self');
+      });
+    }
+
+    async function openOrInstall(protocol, fallback) {
+      const opened = await tryOpenProtocol(protocol);
+      if (!opened) {
+        window.open(fallback, '_blank');
+      }
+    }
+
     window.addEventListener('load', function (ev) {
       // Download main.dart.js
       _flutter.loader.loadEntrypoint({
