@@ -177,9 +177,17 @@ class _ProfileState extends State<Profile2> {
     setState(() {
       isLoading = false;
       postCount = snapshot.docs.length;
-      posts = snapshot.docs.map((doc) {
-        return SinglePost.fromDocument(doc);
-      }).toList();
+      posts.clear();
+      for (int i = 0; i < postCount; i++) {
+        QueryDocumentSnapshot<Object?> doc = snapshot.docs[i];
+        SinglePost s = SinglePost.fromDocumentX(doc, () {
+          setState(() {
+            posts.removeAt(i);
+          });
+        });
+
+        posts.add(s);
+      }
     });
   }
 
@@ -205,6 +213,52 @@ class _ProfileState extends State<Profile2> {
         }
       });
     }
+  }
+
+  Widget buildCountColumnAsStream(String label, Function() onTap) {
+    double maxWidth = MediaQuery.of(context).size.width *
+        (isWeb || (MediaQuery.of(context).size.width > 600) ? 0.11 : 0.2);
+    return StreamBuilder<QuerySnapshot>(
+      stream: postsCollection
+          .doc(widget.user.id)
+          .collection('userPosts')
+          .orderBy('timestamp', descending: true)
+          .snapshots(), // 🔁 listen to real-time updates
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const CircularProgressIndicator();
+        }
+
+        final posts = snapshot.data?.docs;
+        final length = posts?.length ?? 0;
+        return Card(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Container(
+                margin: const EdgeInsets.only(top: 4.0),
+                width: maxWidth,
+                child: Text(
+                  label,
+                  style: const TextStyle(
+                    color: Colors.grey,
+                    fontSize: 15.0,
+                    fontWeight: FontWeight.w400,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+              Text(
+                length.toString(),
+                style: const TextStyle(
+                    fontSize: 20.0, fontWeight: FontWeight.bold),
+              ),
+            ],
+          ),
+        ).onTap(onTap);
+      },
+    );
   }
 
   Widget buildCountColumn(String label, int count, Function() onTap) {
@@ -1009,9 +1063,8 @@ class _ProfileState extends State<Profile2> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
-              buildCountColumn(
+              buildCountColumnAsStream(
                 AppLocalizations.of(context)!.posts,
-                postCount,
                 () => Navigator.push(
                   context,
                   CupertinoPageRoute(
@@ -1463,7 +1516,9 @@ class _ProfileState extends State<Profile2> {
   _buildProfilePosts() {
     if (isLoading) {
       return circularProgress();
-    } else if (posts.isEmpty) {
+    }
+
+    if (posts.isEmpty) {
       return Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
@@ -1484,10 +1539,11 @@ class _ProfileState extends State<Profile2> {
           ),
         ],
       );
-    } else if (postOrientation == 'list') {
-      return Column(
-        children: posts,
-      );
     }
+
+// postOrientation == 'list'
+    return Column(
+      children: posts,
+    );
   }
 }

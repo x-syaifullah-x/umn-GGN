@@ -44,6 +44,8 @@ class SinglePost extends StatefulWidget {
   final String? timestamp;
   final String? videoUrl;
 
+  final Function? onDelete;
+
   const SinglePost({
     Key? key,
     this.postId,
@@ -57,7 +59,25 @@ class SinglePost extends StatefulWidget {
     this.type,
     this.timestamp,
     this.videoUrl,
+    this.onDelete,
   }) : super(key: key);
+
+  factory SinglePost.fromDocumentX(DocumentSnapshot doc, Function? onDelete) {
+    return SinglePost(
+      onDelete: onDelete,
+      postId: doc['postId'],
+      ownerId: doc['ownerId'],
+      username: doc['username'],
+      pdfUrl: doc['pdfUrl'],
+      pdfName: doc['pdfName'],
+      pdfsize: doc['pdfsize'],
+      description: doc['description'],
+      mediaUrl: doc['mediaUrl'],
+      timestamp: doc['timestamp'],
+      videoUrl: doc['videoUrl'],
+      type: doc['type'],
+    );
+  }
 
   factory SinglePost.fromDocument(DocumentSnapshot doc) {
     return SinglePost(
@@ -303,6 +323,8 @@ class _SinglePostState extends State<SinglePost> {
         doc.reference.delete();
       }
     });
+
+    widget.onDelete?.call();
   }
 
   Widget buildPostImage() {

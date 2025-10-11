@@ -144,6 +144,11 @@ class NewTimelineState extends State<NewTimeline>
               ],
             ),
           ),
+          query: timelineCollection
+              .doc(user.id)
+              .collection('timelinePosts')
+              .orderBy('timestamp', descending: true),
+          isLive: true,
           itemBuilderType: PaginateBuilderType.listView,
           itemBuilder: (context, documentSnapshots, index) {
             final post = documentSnapshots[index].data() as Map?;
@@ -163,9 +168,22 @@ class NewTimelineState extends State<NewTimeline>
                     AdOne(
                       key: Key('$index'),
                     ),
-                  // AdTwo(
-                  //   key: Key('$index'),
-                  // ),
+                  Container(
+                    key: Key('$index'),
+                    margin: const EdgeInsets.only(
+                      top: 5,
+                      bottom: 5,
+                    ),
+                    color: Theme.of(c).cardColor,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        _buildPostHeader(post),
+                        _buildPostImage(post),
+                        _buildPostFooter(post),
+                      ],
+                    ),
+                  ),
                 ],
               );
             } else {
@@ -187,11 +205,6 @@ class NewTimelineState extends State<NewTimeline>
               );
             }
           },
-          query: timelineCollection
-              .doc(user.id)
-              .collection('timelinePosts')
-              .orderBy('timestamp', descending: true),
-          isLive: true,
         ),
         onRefresh: () async {
           refreshChangeListener.refreshed = true;
@@ -910,11 +923,23 @@ class NewTimelineState extends State<NewTimeline>
   }
 
   void deletePost(post) async {
-    log(post['ownerId']);
+    String userId = post['ownerId'];
+    String postId = post['postId'];
     postsCollection
-        .doc(post['ownerId'])
+        .doc(userId)
         .collection('userPosts')
-        .doc(post['postId'])
+        .doc(postId)
+        .get()
+        .then((doc) {
+      if (doc.exists) {
+        doc.reference.delete();
+      }
+    });
+
+    timelineCollection
+        .doc(userId)
+        .collection('timelinePosts')
+        .doc(postId)
         .get()
         .then((doc) {
       if (doc.exists) {
