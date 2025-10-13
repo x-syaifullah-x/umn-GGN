@@ -63,6 +63,7 @@ class _SettingsState extends State<SettingsPage> {
   Widget _body(BuildContext context, data_user.User user) {
     final bool widthMoreThan_500 = (MediaQuery.of(context).size.width > 500);
     final mode = AdaptiveTheme.of(context).mode;
+    const appVersion = String.fromEnvironment('APP_VERSION', defaultValue: '1.0.0');
     return RawScrollbar(
       controller: _scrollController,
       interactive: true,
@@ -290,6 +291,17 @@ class _SettingsState extends State<SettingsPage> {
               },
             ),
           ),
+          if (!appVersion.isEmptyOrNull)
+            Container(
+              margin: const EdgeInsets.all(8),
+              child: const Center(
+                child: Text('v$appVersion',
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                    )),
+              ),
+            ),
         ],
       ),
     );

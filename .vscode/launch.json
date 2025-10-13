@@ -47,7 +47,9 @@
                 "--web-hostname",
                 "localhost",
                 "--web-port",
-                "49430"
+                "49430",
+                "--dart-define",
+                "APP_VERSION=1.0.0"
             ]
         }
     ]

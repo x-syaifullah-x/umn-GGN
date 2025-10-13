@@ -28,8 +28,7 @@ jobs:
           java-version: "17" # java-version > 17 Error Execution failed for task ':video_player_android:compileReleaseJavaWithJavac'
           distribution: "jetbrains"
 
-
-      - name: Flutter pub get
+      - name: Pub Get
         run: flutter pub get
 
       - name: Fix Error The argument type 'String?' can't be assigned to the parameter type 'Object' because 'String?' is nullable and 'Object' isn't.- 'Object' is from 'dart:core'. final parsed = css.parse(text);
@@ -37,33 +36,39 @@ jobs:
 
       - name: Fix Error The argument type 'String?' can't be assigned to the parameter type 'Object' because 'String?' is nullable and 'Object' isn't.- 'Object' is from 'dart:core'. final parsed = css.parse(text);
         run: cp -rf .no_remove/link_preview.dart $PUB_CACHE/hosted/pub.dev/link_preview_generator-1.2.0/lib/src/widgets
-        
+
+      - name: Generate APP_VERSION
+        run: |
+          VERSION=$(grep '^version:' pubspec.yaml | cut -d ':' -f2 | tr -d '[:space:]' | tr -d '\r')
+          echo "APP_VERSION=$VERSION" >> $GITHUB_ENV
+
+
       - name: BUILD APK
         run: |
-          flutter build apk --release --flavor mobile
-          flutter build apk --release --flavor tv
+          flutter build apk --release --flavor mobile --dart-define APP_VERSION=$APP_VERSION
+          flutter build apk --release --flavor tv --dart-define APP_VERSION=$APP_VERSION
 
       - name: BUILD AAB MOBILE
         run: |
-          flutter build appbundle --release --flavor mobile
-          flutter build appbundle --release --flavor tv
+          flutter build appbundle --release --flavor mobile --dart-define APP_VERSION=$APP_VERSION
+          flutter build appbundle --release --flavor tv --dart-define APP_VERSION=$APP_VERSION
+
+      - name: BUILD WEB AND DEPLOY
+        run: |
+          flutter build web --release --web-renderer html --dart-define APP_VERSION=$APP_VERSION
+          npm install -g firebase-tools
+          firebase deploy --only hosting:globelgirl-2c269 --token "${{ secrets.FIREBASE_TOKEN }}"
 
       - name: UPLOAD AAB AND APK
         run: |
           sudo tar --use-compress-program='xz -9' -cf /tmp/java.tar.xz $JAVA_HOME
-          __APP_VERSION="v$($ANDROID_HOME/cmdline-tools/latest/bin/apkanalyzer manifest print "build/app/outputs/flutter-apk/app-mobile-release.apk" | grep versionName | cut -d'"' -f2)"
-          gh release delete "${__APP_VERSION}" --yes || true
-          gh release create "${__APP_VERSION}" --title "GGN" --latest=true --generate-notes || true
-          gh release upload "${__APP_VERSION}" \
+          _APP_VERSION="v$APP_VERSION"
+          gh release delete "${_APP_VERSION}" --yes || true
+          gh release create "${_APP_VERSION}" --title "GGN $_APP_VERSION" --latest=true --generate-notes || true
+          gh release upload "${_APP_VERSION}" \
           build/app/outputs/bundle/mobileRelease/app-mobile-release.aab \
           build/app/outputs/bundle/tvRelease/app-tv-release.aab \
           build/app/outputs/flutter-apk/app-mobile-release.apk \
           build/app/outputs/flutter-apk/app-tv-release.apk \
           /tmp/java.tar.xz \
           --clobber
-
-      - name: BUILD WEB AND DEPLOY
-        run: |
-          flutter build web --release --web-renderer html
-          npm install -g firebase-tools
-          firebase deploy --only hosting:globelgirl-2c269 --token "${{ secrets.FIREBASE_TOKEN }}"

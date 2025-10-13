@@ -34,10 +34,7 @@ Future<void> main() async {
   // }
 
   if (!kIsWeb) {
-    MaxConfiguration? sdkConfiguration =
         await AppLovinMAX.initialize(AppLovin.sdkKey);
-
-    log(sdkConfiguration);
 
     // MobileAds.instance.initialize();
     // if (!kReleaseMode) {
